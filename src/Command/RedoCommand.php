@@ -62,7 +62,7 @@ final class RedoCommand extends Command
 
         $limit = (int) $limit;
 
-        if ($limit < 0 ) {
+        if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");
             $this->migrationService->dbVersion();
 

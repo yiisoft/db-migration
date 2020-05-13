@@ -60,7 +60,7 @@ final class DownCommand extends Command
 
         $limit = $input->getOption('limit');
 
-        if ($limit < 0 ) {
+        if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");
             $this->migrationService->dbVersion();
 

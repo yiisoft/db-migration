@@ -222,7 +222,7 @@ class Migration implements MigrationInterface
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function update(string $table, array $columns, $condition = '', array  $params = []): void
+    public function update(string $table, array $columns, $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("update $table");
         $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
@@ -411,12 +411,22 @@ class Migration implements MigrationInterface
         ?string $update = null
     ): void {
         $time = $this->beginCommand(
-            "add foreign key $name: $table (" . implode(',',
-            (array) $columns) . ") references $refTable (" . implode(',',
-            (array) $refColumns) . ')'
+            "add foreign key $name: $table (" . implode(
+                ',',
+                (array) $columns
+            ) . ") references $refTable (" . implode(
+                ',',
+                (array) $refColumns
+            ) . ')'
         );
         $this->db->createCommand()->addForeignKey(
-            $name, $table, $columns, $refTable, $refColumns, $delete, $update
+            $name,
+            $table,
+            $columns,
+            $refTable,
+            $refColumns,
+            $delete,
+            $update
         )->execute();
         $this->endCommand($time);
     }
