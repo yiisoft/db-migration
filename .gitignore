@@ -31,6 +31,3 @@ phpunit.phar
 
 # Phan
 analysis.txt
-
-#runtime
-/runtime
