@@ -19,7 +19,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4",
+        "php": "7.4.* || 8.0.*",
         "symfony/event-dispatcher": "^5.0",
         "yiisoft/aliases": "^3.0@dev",
         "yiisoft/arrays": "^3.0@dev",
