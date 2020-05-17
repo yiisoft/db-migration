@@ -20,7 +20,7 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the creation of table `<?= $table ?>`.

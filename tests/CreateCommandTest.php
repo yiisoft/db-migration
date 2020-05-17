@@ -36,7 +36,7 @@ final class CreateCommandTest extends TestCase
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Class $file
@@ -89,7 +89,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the creation of table `post`.
@@ -143,7 +143,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the creation of table `post`.
@@ -200,7 +200,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the creation of table `post`.
@@ -320,7 +320,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the dropping of table `post`.
@@ -376,7 +376,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles adding columns to table `post`.
@@ -428,7 +428,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles dropping columns from table `post`.
@@ -481,7 +481,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles the creation of table `post_tag`.

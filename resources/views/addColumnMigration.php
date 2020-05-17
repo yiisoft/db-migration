@@ -18,7 +18,7 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Handles adding columns to table `<?= $table ?>`.

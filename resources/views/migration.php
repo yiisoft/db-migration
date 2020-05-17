@@ -16,7 +16,7 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\Migration;
 
 /**
  * Class <?= $className . "\n" ?>
