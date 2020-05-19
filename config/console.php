@@ -27,6 +27,10 @@ use Yiisoft\View\Theme;
 use Yiisoft\View\View;
 
 return [
+    ContainerInterface::class => static function (ContainerInterface $container) {
+        return $container;
+    },
+
     Aliases::class => [
         '@root' => dirname(__DIR__, 1),
         '@runtime' => '@root/runtime',

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Composer\Config\Builder;
+use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Di\Container;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
@@ -24,6 +25,7 @@ abstract class TestCase extends BaseTestCase
 {
     protected Application $application;
     protected Aliases $aliases;
+    protected Connection $db;
     private Container $container;
 
     protected function setUp(): void
@@ -50,6 +52,7 @@ abstract class TestCase extends BaseTestCase
 
         $this->application = $this->container->get(Application::class);
         $this->aliases = $this->container->get(Aliases::class);
+        $this->db = $this->container->get(Connection::class);
 
         $loader = new \Symfony\Component\Console\CommandLoader\ContainerCommandLoader(
             $this->container,

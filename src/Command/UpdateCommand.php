@@ -63,7 +63,8 @@ final class UpdateCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->success("No new migrations found. Your system is up-to-date.");
+            $output->writeln("<fg=green>  >>> No new migrations found.</>\n");
+            $this->consoleHelper->io()->success("Your system is up-to-date.");
             $this->migrationService->dbVersion();
 
             return ExitCode::OK;
