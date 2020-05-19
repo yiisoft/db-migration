@@ -84,9 +84,6 @@ final class UpdateCommandTest extends TestCase
 
     public function testExecuteUpdate(): void
     {
-        $tableMaster = 'department';
-        $tableRelation = 'student';
-
         $update = $this->application->find('migrate/up');
 
         $commandUpdate = new CommandTester($update);
