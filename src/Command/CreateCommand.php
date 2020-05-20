@@ -146,9 +146,10 @@ final class CreateCommand extends Command
                 $and
             );
 
-            if (file_exists($migrationPath)) {
+            if (!file_exists($migrationPath)) {
                 FileHelper::createDirectory($migrationPath);
             }
+
             file_put_contents($file, $content, LOCK_EX);
 
             $output->writeln("\n\t<info>$className</info>");
