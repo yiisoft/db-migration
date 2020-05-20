@@ -58,7 +58,7 @@ final class UpdateCommand extends Command
         $this->migrationService->title();
         $this->migrationService->before();
 
-        $limit = $input->getOption('limit');
+        $limit = (int) $input->getOption('limit');
 
         $migrations = $this->migrationService->getNewMigrations();
 
@@ -71,7 +71,6 @@ final class UpdateCommand extends Command
         }
 
         $total = count($migrations);
-        $limit = (int) $limit;
 
         if ($limit > 0) {
             $migrations = array_slice($migrations, 0, $limit);

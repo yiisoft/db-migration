@@ -17,6 +17,7 @@ use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function explode;
+use function file_exist;
 use function file_put_contents;
 use function in_array;
 use function preg_match;
@@ -145,7 +146,9 @@ final class CreateCommand extends Command
                 $and
             );
 
-            @FileHelper::createDirectory($migrationPath);
+            if (file_exists($migrationPath)) {
+                FileHelper::createDirectory($migrationPath);
+            }
             file_put_contents($file, $content, LOCK_EX);
 
             $output->writeln("\n\t<info>$className</info>");

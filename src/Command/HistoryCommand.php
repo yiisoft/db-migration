@@ -55,7 +55,7 @@ final class HistoryCommand extends Command
         $this->migrationService->title();
         $this->migrationService->before();
 
-        $limit = $input->getOption('limit');
+        $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");
@@ -63,8 +63,6 @@ final class HistoryCommand extends Command
 
             return ExitCode::DATAERR;
         }
-
-        $limit = (int) $limit;
 
         $migrations = $this->migrationService->getMigrationHistory($limit);
 

@@ -59,7 +59,8 @@
         },
         "config-plugin-dev": {
             "tests": [
-                "$console"
+                "$console",
+                "config/tests.php"
             ]
         }
     },
