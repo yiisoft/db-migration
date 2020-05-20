@@ -53,7 +53,7 @@ final class HistoryCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before();
+       $this->migrationService->before(static::$defaultName);;
 
         $limit = (int) $input->getOption('limit');
 

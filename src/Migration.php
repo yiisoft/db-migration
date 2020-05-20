@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
@@ -7,9 +9,11 @@ use Throwable;
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
+
 use function implode;
 
 /**
@@ -135,7 +139,7 @@ class Migration implements MigrationInterface
     {
         $sqlOutput = $sql;
         if ($this->maxSqlOutputLength !== null) {
-            $sqlOutput = StringHelper::truncate($sql, $this->maxSqlOutputLength, '[... hidden]');
+            $sqlOutput = StringHelper::truncateCharacters($sql, $this->maxSqlOutputLength, '[... hidden]');
         }
 
         $time = $this->beginCommand("execute SQL: $sqlOutput");

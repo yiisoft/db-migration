@@ -17,7 +17,7 @@ use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function explode;
-use function file_exist;
+use function file_exists;
 use function file_put_contents;
 use function in_array;
 use function preg_match;
@@ -84,7 +84,7 @@ final class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before();
+        $this->migrationService->before(static::$defaultName);
 
         $name = $input->getArgument('name');
         $command = $input->getOption('command') ?? [];
@@ -94,7 +94,7 @@ final class CreateCommand extends Command
         $table = $name;
 
         if ($fields !== []) {
-            $this->fields = \explode(',', $fields);
+            $this->fields = explode(',', $fields);
         }
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
@@ -127,7 +127,6 @@ final class CreateCommand extends Command
         $migrationPath = $this->migrationService->findMigrationPath($namespace);
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
         $helper = $this->getHelper('question');
-        $result = false;
 
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Create new migration y/n: </>",

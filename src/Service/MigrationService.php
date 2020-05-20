@@ -10,6 +10,7 @@ use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Files\FileHelper;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
@@ -66,12 +67,14 @@ final class MigrationService
     private Aliases $aliases;
     private Connection $db;
     private ConsoleHelper $consoleHelper;
+    private Inflector $inflector;
 
     public function __construct(Aliases $aliases, Connection $db, ConsoleHelper $consoleHelper)
     {
         $this->aliases = $aliases;
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
+        $this->inflector = new Inflector();
     }
 
     /**
@@ -83,7 +86,7 @@ final class MigrationService
      *
      * @return bool whether the action should continue to be executed.
      */
-    public function before(): bool
+    public function before($defaultName): bool
     {
         if (empty($this->migrationNamespaces) && empty($this->migrationPath)) {
             throw new InvalidConfigException(
@@ -102,7 +105,7 @@ final class MigrationService
         } elseif ($this->migrationPath !== null) {
             $path = $this->aliases->get($this->migrationPath);
             if (!is_dir($path)) {
-                if (self::$defaultName !== 'migrate/create') {
+                if ($defaultName !== 'migrate/create') {
                     throw new InvalidConfigException(
                         "Migration failed. Directory specified in migrationPath doesn't exist: {$this->migrationPath}"
                     );
@@ -552,7 +555,7 @@ final class MigrationService
         if ($namespace === null) {
             $class = 'm' . gmdate('ymd_His') . '_' . $name;
         } else {
-            $class = 'M' . gmdate('ymdHis') . Inflector::camelize($name);
+            $class = 'M' . gmdate('ymdHis') . $this->inflector->camelize($name);
         }
 
         return [$namespace, $class];
