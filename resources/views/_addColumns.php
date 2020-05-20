@@ -1,4 +1,4 @@
-<?php foreach ($fields as $field): ?>
+<?php foreach ($fields as $field) : ?>
         $this->addColumn('<?=
             $table
         ?>', '<?=
