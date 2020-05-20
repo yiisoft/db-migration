@@ -1,6 +1,6 @@
 <?php
 /**
- * This view is used by console/controllers/MigrateController.php.
+ * This view is used by Yiisoft\Db\Yii\Migration\Command.
  *
  * The following variables are available in this view:
  */

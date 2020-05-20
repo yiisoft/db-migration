@@ -1,10 +1,6 @@
 <?php
 /**
- * This view is used by console/controllers/MigrateController.php.
- *
- * The following variables are available in this view:
- * @since 2.0.7
- * @deprecated since 2.0.8
+ * This view is used by Yiisoft\Db\Yii\Migration\Command.
  */
 /* @var $className string the new migration class name without namespace */
 /* @var $namespace string the new migration class namespace */

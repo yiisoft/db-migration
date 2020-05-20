@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Creates a call for the method `yii\db\Migration::createTable()`.
+ * Creates a call for the method `Yiisoft\Yii\Db\Migration\Migration::createTable()`.
  */
 /* @var $foreignKeys array the foreign keys */
 
