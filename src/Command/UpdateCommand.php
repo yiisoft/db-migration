@@ -36,8 +36,11 @@ final class UpdateCommand extends Command
 
     protected static $defaultName = 'migrate/up';
 
-    public function __construct(ConsoleHelper $consoleHelper, UpdateService $updateService, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        UpdateService $updateService,
+        MigrationService $migrationService
+    ) {
         $this->consoleHelper = $consoleHelper;
         $this->updateService = $updateService;
         $this->migrationService = $migrationService;
@@ -56,7 +59,7 @@ final class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before(static::$defaultName);;
+        $this->migrationService->before(static::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
@@ -123,7 +126,9 @@ final class UpdateCommand extends Command
                 $applied++;
             }
 
-            $output->writeln("\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " applied.</>\n");
+            $output->writeln(
+                "\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " applied.</>\n"
+            );
             $this->consoleHelper->io()->success("Migrated update successfully.");
         }
 

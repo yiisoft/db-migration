@@ -65,7 +65,7 @@ final class RedoCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before(static::$defaultName);;
+        $this->migrationService->before(static::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
@@ -116,7 +116,9 @@ final class RedoCommand extends Command
                 }
             }
 
-            $output->writeln("\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n");
+            $output->writeln(
+                "\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n"
+            );
             $this->consoleHelper->io()->success("Migration redone successfully.");
         }
 

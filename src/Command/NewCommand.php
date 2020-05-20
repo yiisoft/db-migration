@@ -53,7 +53,7 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before(static::$defaultName);;
+        $this->migrationService->before(static::$defaultName);
 
         $limit = $input->getOption('limit');
 
@@ -79,7 +79,9 @@ final class NewCommand extends Command
 
         if ($limit && $n > $limit) {
             $migrations = array_slice($migrations, 0, $limit);
-            $this->consoleHelper->io()->warning("Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n");
+            $this->consoleHelper->io()->warning(
+                "Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n"
+            );
         } else {
             $this->consoleHelper->io()->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ":");
         }
