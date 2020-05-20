@@ -13,7 +13,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\GeneratorService;
+use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function explode;
@@ -52,15 +52,18 @@ final class CreateCommand extends Command
 {
     private ConsoleHelper $consoleHelper;
     private array $fields = [];
-    private GeneratorService $generatorService;
+    private CreateService $createService;
     private MigrationService $migrationService;
 
     protected static $defaultName = 'generate/create';
 
-    public function __construct(ConsoleHelper $consoleHelper, GeneratorService $generatorService, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        CreateService $createService,
+        MigrationService $migrationService
+    ) {
         $this->consoleHelper = $consoleHelper;
-        $this->generatorService = $generatorService;
+        $this->createService = $createService;
         $this->migrationService = $migrationService;
 
         parent::__construct();
@@ -90,7 +93,7 @@ final class CreateCommand extends Command
         $table = $name;
 
         if ($fields !== []) {
-            $this->fields = explode(',', $fields);
+            $this->fields = \explode(',', $fields);
         }
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
@@ -132,10 +135,9 @@ final class CreateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            $content = $this->generatorService->create(
+            $content = $this->createService->run(
                 $command,
                 $this->migrationService->getGeneratorTemplateFiles($command),
-                $name,
                 $table,
                 $className,
                 $namespace,
@@ -158,25 +160,29 @@ final class CreateCommand extends Command
 
     private function generateName(string $command, string $name, ?string $and): string
     {
+        $result = '';
+
         switch ($command) {
             case 'create':
-                return 'create_' . $name;
+                $result = 'create_' . $name;
                 break;
             case 'table':
-                return 'create_' . $name . '_table';
+                $result = 'create_' . $name . '_table';
                 break;
             case 'dropTable':
-                return 'drop_' . $name . '_table';
+                $result = 'drop_' . $name . '_table';
                 break;
             case 'addColumn':
-                return 'add_column_' . $name;
+                $result = 'add_column_' . $name;
                 break;
             case 'dropColumn':
-                return 'drop_column_' . $name;
+                $result = 'drop_column_' . $name;
                 break;
             case 'junction':
-                return 'junction_table_for_' . $name . '_and_' . $and . '_tables';
+                $result = 'junction_table_for_' . $name . '_and_' . $and . '_tables';
                 break;
         }
+
+        return $result;
     }
 }

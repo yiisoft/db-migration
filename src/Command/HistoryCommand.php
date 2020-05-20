@@ -71,7 +71,7 @@ final class HistoryCommand extends Command
         if (empty($migrations)) {
             $this->consoleHelper->io()->warning("No migration has been done before.");
 
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $n = count($migrations);
@@ -84,12 +84,14 @@ final class HistoryCommand extends Command
             );
         }
 
+        $output->writeln("<fg=green> >>> List migration history.</>\n");
+
         foreach ($migrations as $version => $time) {
             $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int) $time) . ') ' . $version . '</info>');
         }
 
         $output->writeln("\n");
-        $this->consoleHelper->io()->success("List migration history.");
+        $this->consoleHelper->io()->success("Success.");
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;

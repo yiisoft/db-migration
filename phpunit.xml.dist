@@ -12,7 +12,13 @@
 
     <testsuites>
         <testsuite name="Yii Db Migration Tests">
-            <directory>./tests</directory>
+            <file>./tests/CreateCommandTest.php</file>
+            <file>./tests/UpdateCommandTest.php</file>
+            <file>./tests/HistoryCommandTest.php</file>
+            <file>./tests/ListTablesCommandTest.php</file>
+            <file>./tests/RedoCommandTest.php</file>
+            <file>./tests/DownCommandTest.php</file>
+            <file>./tests/NewCommandTest.php</file>
         </testsuite>
     </testsuites>
 

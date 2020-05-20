@@ -2,24 +2,42 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Widget;
+namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
+use Yiisoft\Yii\Console\ExitCode;
+
+use function explode;
+use function file_get_contents;
+use function str_repeat;
+use function substr;
+use function trim;
 
 final class CreateCommandTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        $this->removeFiles($this->aliases->get('@migration'));
+
+        parent::tearDown();
+    }
+
     public function testExecute(): void
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post'
-        ]);
-        $output = $commandTester->getDisplay();
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post'
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -65,14 +83,19 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post',
-            '--command' => 'table'
-        ]);
-        $output = $commandTester->getDisplay();
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'table'
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -118,15 +141,20 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
             'name' => 'post',
             '--command' => 'table',
             '--fields' => 'title:string,body:text'
-        ]);
-        $output = $commandTester->getDisplay();
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -174,16 +202,21 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post',
-            '--command' => 'table',
-            '--fields' => 'author_id:integer:notNull:foreignKey(user),category_id:integer:defaultValue(1)' .
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'table',
+                '--fields' => 'author_id:integer:notNull:foreignKey(user),category_id:integer:defaultValue(1)' .
                 ':foreignKey,title:string,body:text'
-        ]);
-        $output = $commandTester->getDisplay();
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -223,14 +256,14 @@ class $file extends Migration
 
         // creates index for column `author_id`
         \$this->createIndex(
-            '{{%idx-post-author_id}}',
+            'idx-post-author_id',
             'post',
             'author_id'
         );
 
         // add foreign key for table `{{%user}}`
         \$this->addForeignKey(
-            '{{%fk-post-author_id}}',
+            'fk-post-author_id',
             'post',
             'author_id',
             '{{%user}}',
@@ -240,14 +273,14 @@ class $file extends Migration
 
         // creates index for column `category_id`
         \$this->createIndex(
-            '{{%idx-post-category_id}}',
+            'idx-post-category_id',
             'post',
             'category_id'
         );
 
         // add foreign key for table `{{%category}}`
         \$this->addForeignKey(
-            '{{%fk-post-category_id}}',
+            'fk-post-category_id',
             'post',
             'category_id',
             '{{%category}}',
@@ -260,25 +293,25 @@ class $file extends Migration
     {
         // drops foreign key for table `{{%user}}`
         \$this->dropForeignKey(
-            '{{%fk-post-author_id}}',
+            'fk-post-author_id',
             'post'
         );
 
         // drops index for column `author_id`
         \$this->dropIndex(
-            '{{%idx-post-author_id}}',
+            'idx-post-author_id',
             'post'
         );
 
         // drops foreign key for table `{{%category}}`
         \$this->dropForeignKey(
-            '{{%fk-post-category_id}}',
+            'fk-post-category_id',
             'post'
         );
 
         // drops index for column `category_id`
         \$this->dropIndex(
-            '{{%idx-post-category_id}}',
+            'idx-post-category_id',
             'post'
         );
 
@@ -295,15 +328,20 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post',
-            '--command' => 'dropTable',
-            '--fields' => 'title:string(12):notNull:unique,body:text'
-        ]);
-        $output = $commandTester->getDisplay();
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'dropTable',
+                '--fields' => 'title:string(12):notNull:unique,body:text'
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -351,15 +389,20 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
             'name' => 'post',
             '--command' => 'addColumn',
             '--fields' => 'position:integer'
-        ]);
-        $output = $commandTester->getDisplay();
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -403,15 +446,20 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post',
-            '--command' => 'dropColumn',
-            '--fields' => 'position:integer'
-        ]);
-        $output = $commandTester->getDisplay();
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'dropColumn',
+                '--fields' => 'position:integer'
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -455,16 +503,21 @@ EOF;
     {
         $command = $this->application->find('generate/create');
 
-        $commandTester = new CommandTester($command);
+        $commandCreate = new CommandTester($command);
 
-        $commandTester->setInputs(['yes']);
-        $commandTester->execute([
-            'name' => 'post',
-            '--command' => 'junction',
-            '--and' => 'tag',
-            '--fields' => 'created_at:dateTime'
-        ]);
-        $output = $commandTester->getDisplay();
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::OK,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'junction',
+                '--and' => 'tag',
+                '--fields' => 'created_at:dateTime'
+            ])
+        );
+
+        $output = $commandCreate->getDisplay(true);
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
@@ -503,14 +556,14 @@ class $file extends Migration
 
         // creates index for column `post_id`
         \$this->createIndex(
-            '{{%idx-post_tag-post_id}}',
+            'idx-post_tag-post_id',
             'post_tag',
             'post_id'
         );
 
         // add foreign key for table `{{%post}}`
         \$this->addForeignKey(
-            '{{%fk-post_tag-post_id}}',
+            'fk-post_tag-post_id',
             'post_tag',
             'post_id',
             '{{%post}}',
@@ -520,14 +573,14 @@ class $file extends Migration
 
         // creates index for column `tag_id`
         \$this->createIndex(
-            '{{%idx-post_tag-tag_id}}',
+            'idx-post_tag-tag_id',
             'post_tag',
             'tag_id'
         );
 
         // add foreign key for table `{{%tag}}`
         \$this->addForeignKey(
-            '{{%fk-post_tag-tag_id}}',
+            'fk-post_tag-tag_id',
             'post_tag',
             'tag_id',
             '{{%tag}}',
@@ -540,25 +593,25 @@ class $file extends Migration
     {
         // drops foreign key for table `{{%post}}`
         \$this->dropForeignKey(
-            '{{%fk-post_tag-post_id}}',
+            'fk-post_tag-post_id',
             'post_tag'
         );
 
         // drops index for column `post_id`
         \$this->dropIndex(
-            '{{%idx-post_tag-post_id}}',
+            'idx-post_tag-post_id',
             'post_tag'
         );
 
         // drops foreign key for table `{{%tag}}`
         \$this->dropForeignKey(
-            '{{%fk-post_tag-tag_id}}',
+            'fk-post_tag-tag_id',
             'post_tag'
         );
 
         // drops index for column `tag_id`
         \$this->dropIndex(
-            '{{%idx-post_tag-tag_id}}',
+            'idx-post_tag-tag_id',
             'post_tag'
         );
 
@@ -569,5 +622,54 @@ class $file extends Migration
 EOF;
         $generated = file_get_contents($this->aliases->get('@migration/' . $file . '.php'));
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
+    }
+
+    public function testExecuteNameException(): void
+    {
+        $command = $this->application->find('generate/create');
+
+        $commandCreate = new CommandTester($command);
+
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::DATAERR,
+            $commandCreate->execute([
+                'name' => 'post?'
+            ])
+        );
+    }
+
+    public function testExecuteCommandException(): void
+    {
+        $command = $this->application->find('generate/create');
+
+        $commandCreate = new CommandTester($command);
+
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::DATAERR,
+            $commandCreate->execute([
+                'name' => 'post',
+                '--command' => 'noExist'
+            ])
+        );
+    }
+
+    public function testExecuteNameToLongException(): void
+    {
+        $command = $this->application->find('generate/create');
+
+        $commandCreate = new CommandTester($command);
+
+        $commandCreate->setInputs(['yes']);
+
+        $this->assertEquals(
+            ExitCode::DATAERR,
+            $commandCreate->execute([
+                'name' => str_repeat('x', 200)
+            ])
+        );
     }
 }

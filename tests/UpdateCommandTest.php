@@ -2,17 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Widget;
+namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
+use Yiisoft\Yii\Console\ExitCode;
 
 final class UpdateCommandTest extends TestCase
 {
     public function testExecute(): void
     {
+        $migrationTable = 'migration';
         $tableMaster = 'department';
         $tableRelation = 'student';
+
+        if ($this->db->getSchema()->getTableSchema($migrationTable) !== null) {
+            $this->db->createCommand()->dropTable($migrationTable)->execute();
+        }
+
+        if ($this->db->getSchema()->getTableSchema($tableRelation) !== null) {
+            $this->db->createCommand()->dropTable($tableRelation)->execute();
+        }
+
+        if ($this->db->getSchema()->getTableSchema($tableMaster) !== null) {
+            $this->db->createCommand()->dropTable($tableMaster)->execute();
+        }
 
         $create = $this->application->find('generate/create');
 
@@ -35,11 +48,13 @@ final class UpdateCommandTest extends TestCase
         $commandUpdate = new CommandTester($update);
 
         $commandUpdate->setInputs(['yes']);
-        $commandUpdate->execute([]);
+
+        $this->assertEquals(ExitCode::OK, $commandUpdate->execute([]));
+
         $columsDeparment = $this->db->getSchema()->getTableSchema($tableMaster);
 
         /** Check create table deparment columns*/
-        $this->assertEquals(2, count($columsDeparment->getColumns()));
+        $this->assertCount(2, $columsDeparment->getColumns());
 
         /** Check table deparment field id */
         $this->assertEquals('id', $columsDeparment->getColumn('id')->getName());
@@ -56,7 +71,7 @@ final class UpdateCommandTest extends TestCase
         $columsStudent = $this->db->getSchema()->getTableSchema($tableRelation);
 
         /** Check create table student columns*/
-        $this->assertEquals(4, count($columsStudent->getColumns()));
+        $this->assertCount(4, $columsStudent->getColumns());
 
         /** Check table student field id */
         $this->assertEquals('id', $columsStudent->getColumn('id')->getName());
@@ -82,16 +97,17 @@ final class UpdateCommandTest extends TestCase
         $this->asserttrue($columsStudent->getColumn('dateofbirth')->isAllowNull());
     }
 
-    public function testExecuteUpdate(): void
+    public function testExecuteAgain(): void
     {
         $update = $this->application->find('migrate/up');
 
         $commandUpdate = new CommandTester($update);
 
         $commandUpdate->setInputs(['yes']);
-        $commandUpdate->execute([]);
 
-        $output = $commandUpdate->getDisplay();
+        $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandUpdate->execute([]));
+
+        $output = $commandUpdate->getDisplay(true);
 
         $this->assertStringContainsString('>>> No new migrations found.', $output);
     }

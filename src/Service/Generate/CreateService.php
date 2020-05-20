@@ -2,30 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Service;
+namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
+use ReflectionException;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\Connection;
-use Yiisoft\Db\Exception\Exception;
-use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_merge;
 use function array_shift;
 use function array_unshift;
 use function count;
 use function implode;
-use function microtime;
+use function in_array;
+use function is_array;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
-use function sprintf;
+use function preg_split;
 use function str_replace;
+use function strncmp;
 use function strripos;
 
-final class GeneratorService
+final class CreateService
 {
     private Aliases $aliases;
     private Connection $db;
@@ -47,10 +48,9 @@ final class GeneratorService
         $this->view = $view;
     }
 
-    public function create(
+    public function run(
         string $command,
         string $templateFile,
-        string $name,
         string $table,
         string $className,
         ?string $namespace = null,
@@ -85,77 +85,34 @@ final class GeneratorService
     }
 
     /**
-     * Downgrades with the specified migration class.
+     * Adds default primary key to fields list if there's no primary key specified.
      *
-     * @param string $class the migration class name
+     * @param array $fields parsed fields
      *
-     * @return bool whether the migration is successful
-     *
-     * @throws Exception
-     * @throws InvalidConfigException
-     * @throws NotSupportedException
+     * @return array
      */
-    public function down(string $class): bool
+    private function addDefaultPrimaryKey(array $fields): array
     {
-        if ($class === $this->migrationService::BASE_MIGRATION) {
-            return true;
+        foreach ($fields as $field) {
+            if (false !== strripos($field['decorators'], 'primaryKey()')) {
+                return [];
+            }
         }
 
-        $this->consoleHelper->io()->title("\nreverting $class");
+        array_unshift($fields, ['property' => 'id', 'decorators' => 'primaryKey()']);
 
-        $start = microtime(true);
-        $migration = $this->migrationService->createMigration($class);
-
-        if ($migration->safeDown() !== false) {
-            $this->migrationService->removeMigrationHistory($class);
-            $time = microtime(true) - $start;
-            $this->consoleHelper->output()->writeln(
-                "\n\t<info>>>> [Ok] -  reverted $class (time: " . sprintf('%.3f', $time) . "s)</info>"
-            );
-
-            return true;
-        }
-
-        $time = microtime(true) - $start;
-
-        $this->consoleHelper->output()->writeln("\n");
-        $this->consoleHelper->io()->error("Failed to revert $class (time: " . sprintf('%.3f', $time) . "s)");
-
-        return false;
+        return $fields;
     }
 
     /**
-     * Upgrades with the specified migration class.
+     * Adds foreign key to fields list.
      *
-     * @param string $class the migration class name
+     * @param string $table
+     * @param array $foreignKeys
      *
-     * @return bool whether the migration is successful
+     * @return array
      */
-    public function update(string $class): bool
-    {
-        if ($class === $this->migrationService::BASE_MIGRATION) {
-            return true;
-        }
-
-        $this->consoleHelper->io()->title("\nApplying $class:");
-        $start = microtime(true);
-        $migration = $this->migrationService->createMigration($class);
-
-        if ($migration->safeUp() !== false) {
-            $this->migrationService->addMigrationHistory($class);
-            $time = microtime(true) - $start;
-            $this->consoleHelper->output()->writeln("\n\t<info>>>> [Ok] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>");
-
-            return true;
-        }
-
-        $time = microtime(true) - $start;
-        $this->consoleHelper->io()->error("Failed to apply $class (time: " . sprintf('%.3f', $time) . "s)");
-
-        return false;
-    }
-
-    public function addforeignKeys(string $table, array $foreignKeys = []): array
+    private function addForeignKeys(string $table, array $foreignKeys = []): array
     {
         foreach ($foreignKeys as $column => $foreignKey) {
             $relatedColumn = $foreignKey['column'];
@@ -186,7 +143,7 @@ final class GeneratorService
                             );
                         }
                     }
-                } catch (\ReflectionException $e) {
+                } catch (ReflectionException $e) {
                     $this->consoleHelper->output()->writeln(
                         "<fg=yellow>Cannot initialize database component to try reading referenced table schema for" .
                         "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
@@ -195,35 +152,14 @@ final class GeneratorService
             }
 
             $foreignKeys[$column] = [
-                'idx' => $this->generateTableName("idx-$table-$column"),
-                'fk' => $this->generateTableName("fk-$table-$column"),
+                'idx' => "idx-$table-$column",
+                'fk' => "fk-$table-$column",
                 'relatedTable' => $this->generateTableName($relatedTable),
                 'relatedColumn' => $relatedColumn,
             ];
         }
 
         return $foreignKeys;
-    }
-
-
-    /**
-     * Adds default primary key to fields list if there's no primary key specified.
-     *
-     * @param array $fields parsed fields
-     *
-     * @return array
-     */
-    private function addDefaultPrimaryKey(array $fields): array
-    {
-        foreach ($fields as $field) {
-            if (false !== strripos($field['decorators'], 'primaryKey()')) {
-                return [];
-            }
-        }
-
-        array_unshift($fields, ['property' => 'id', 'decorators' => 'primaryKey()']);
-
-        return $fields;
     }
 
     private function addJunction(string $name, string $and, array $fields): array
@@ -258,6 +194,22 @@ final class GeneratorService
         $table = $name . '_' . $and;
 
         return [$foreignKeys, $table, $fields];
+    }
+
+    /**
+     * If `useTablePrefix` equals true, then the table name will contain the prefix format.
+     *
+     * @param string $tableName the table name to generate.
+     *
+     * @return string
+     */
+    private function generateTableName(string $tableName): string
+    {
+        if (!$this->migrationService->getUseTablePrefix()) {
+            return $tableName;
+        }
+
+        return '{{%' . $tableName . '}}';
     }
 
     /**
@@ -338,21 +290,5 @@ final class GeneratorService
         }
 
         return $chunks;
-    }
-
-    /**
-     * If `useTablePrefix` equals true, then the table name will contain the prefix format.
-     *
-     * @param string $tableName the table name to generate.
-     *
-     * @return string
-     */
-    private function generateTableName(string $tableName): string
-    {
-        if (!$this->migrationService->getUseTablePrefix()) {
-            return $tableName;
-        }
-
-        return '{{%' . $tableName . '}}';
     }
 }

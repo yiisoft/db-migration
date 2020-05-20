@@ -10,16 +10,21 @@ use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Composer\Config\Builder;
 use Yiisoft\Db\Connection\Connection;
+use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Di\Container;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Command\ListTableCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Command\ToCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
+
+use function closedir;
+use function is_dir;
+use function opendir;
+use function str_replace;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -39,8 +44,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::tearDown();
 
-        $this->removeFiles($this->aliases->get('@migration'));
-
         unset($this->aliases, $this->application, $this->container);
     }
 
@@ -54,11 +57,11 @@ abstract class TestCase extends BaseTestCase
         $this->aliases = $this->container->get(Aliases::class);
         $this->db = $this->container->get(Connection::class);
 
-        $loader = new \Symfony\Component\Console\CommandLoader\ContainerCommandLoader(
+        $loader = new ContainerCommandLoader(
             $this->container,
             [
                 'generate/create' => CreateCommand::class,
-                'database/list' => ListTableCommand::class,
+                'database/list' => ListTablesCommand::class,
                 'migrate/down' => DownCommand::class,
                 'migrate/history' => HistoryCommand::class,
                 'migrate/new' => NewCommand::class,
@@ -87,12 +90,12 @@ abstract class TestCase extends BaseTestCase
         $this->assertEquals($expected, $actual, $message);
     }
 
-    private function removeFiles(string $basePath): void
+    protected function removeFiles(string $basePath): void
     {
         $handle = opendir($dir = $this->aliases->get($basePath));
 
         if ($handle === false) {
-            throw new \Exception("Unable to open directory: $dir");
+            throw new Exception("Unable to open directory: $dir");
         }
 
         while (($file = readdir($handle)) !== false) {

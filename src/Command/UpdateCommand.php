@@ -11,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\GeneratorService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 
 use function array_slice;
 use function count;
@@ -31,15 +31,15 @@ use function strlen;
 final class UpdateCommand extends Command
 {
     private ConsoleHelper $consoleHelper;
-    private GeneratorService $generatorService;
+    private UpdateService $updateService;
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/up';
 
-    public function __construct(ConsoleHelper $consoleHelper, GeneratorService $generatorService, MigrationService $migrationService)
+    public function __construct(ConsoleHelper $consoleHelper, UpdateService $updateService, MigrationService $migrationService)
     {
         $this->consoleHelper = $consoleHelper;
-        $this->generatorService = $generatorService;
+        $this->updateService = $updateService;
         $this->migrationService = $migrationService;
 
         parent::__construct();
@@ -63,11 +63,11 @@ final class UpdateCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $output->writeln("<fg=green>  >>> No new migrations found.</>\n");
+            $output->writeln("<fg=green> >>> No new migrations found.</>\n");
             $this->consoleHelper->io()->success("Your system is up-to-date.");
             $this->migrationService->dbVersion();
 
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $total = count($migrations);
@@ -114,7 +114,7 @@ final class UpdateCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->generatorService->update($migration)) {
+                if (!$this->updateService->run($migration)) {
                     $output->writeln("\n<fg=red>$applied from $n " . ($applied === 1 ? 'migration was' :
                         'migrations were') . " applied.</>\n");
                     $output->writeln("\n<fg=red>Migration failed. The rest of the migrations are canceled.</>\n");
@@ -124,7 +124,7 @@ final class UpdateCommand extends Command
                 $applied++;
             }
 
-            $output->writeln("\n\t<fg=green>>>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " applied.</>\n");
+            $output->writeln("\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " applied.</>\n");
             $this->consoleHelper->io()->success("Migrated update successfully.");
         }
 

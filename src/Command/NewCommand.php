@@ -72,7 +72,7 @@ final class NewCommand extends Command
             $this->consoleHelper->io()->success("No new migrations found. Your system is up-to-date.");
             $this->migrationService->dbVersion();
 
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $n = count($migrations);

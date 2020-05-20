@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Service;
+namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_column;
 use function array_merge;
+use function implode;
 use function preg_match;
 
-final class DatabaseService
+final class ListTablesService
 {
     private Connection $db;
     private ConsoleHelper $consoleHelper;
@@ -26,7 +28,7 @@ final class DatabaseService
         $this->migrationService = $migrationService;
     }
 
-    public function listTables(): int
+    public function run(): int
     {
         $this->migrationService->title();
         $this->consoleHelper->io()->section('Command: migrate/list');
@@ -37,7 +39,7 @@ final class DatabaseService
         if (empty($tables) || implode(',', $tables) === $migrationTable) {
             $this->consoleHelper->io()->error('Your database does not contain any tables yet.');
 
-            return ExitCode::DATAERR;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $dbname = $this->getDsnAttribute('dbname', $this->db->getDSN());
@@ -56,8 +58,9 @@ final class DatabaseService
         }
 
         $this->consoleHelper->table()->render();
+
         $this->consoleHelper->output()->writeln("\n");
-        $this->consoleHelper->io()->success("Lists all tables in the database.");
+        $this->consoleHelper->io()->success("Success.");
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;
@@ -92,6 +95,10 @@ final class DatabaseService
         $result = null;
 
         if (preg_match('/' . $name . '=([^;]*)/', $dsn, $match)) {
+            $result = $match[1];
+        }
+
+        if (preg_match('~([^/]+)\.sq3~', $dsn, $match)) {
             $result = $match[1];
         }
 

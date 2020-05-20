@@ -11,9 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\GeneratorService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 
+use function array_keys;
+use function array_reverse;
 use function count;
 
 /**
@@ -31,16 +34,22 @@ use function count;
 final class RedoCommand extends Command
 {
     private ConsoleHelper $consoleHelper;
-    private GeneratorService $generatorService;
+    private DownService $downService;
     private MigrationService $migrationService;
+    private UpdateService $updateService;
 
     protected static $defaultName = 'migrate/redo';
 
-    public function __construct(ConsoleHelper $consoleHelper, GeneratorService $generatorService, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        DownService $downService,
+        MigrationService $migrationService,
+        UpdateService $updateService
+    ) {
         $this->consoleHelper = $consoleHelper;
-        $this->generatorService = $generatorService;
+        $this->downService = $downService;
         $this->migrationService = $migrationService;
+        $this->updateService = $updateService;
 
         parent::__construct();
     }
@@ -74,7 +83,7 @@ final class RedoCommand extends Command
         if (empty($migrations)) {
             $this->consoleHelper->io()->warning("No migration has been done before.");
 
-            return ExitCode::OK;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $migrations = array_keys($migrations);
@@ -95,21 +104,21 @@ final class RedoCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->generatorService->down($migration)) {
+                if (!$this->downService->run($migration)) {
                     $this->consoleHelper->io()->danger("Migration failed. The rest of the migrations are canceled.");
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
             }
             foreach (array_reverse($migrations) as $migration) {
-                if (!$this->generatorService->update($migration)) {
+                if (!$this->updateService->run($migration)) {
                     $this->consoleHelper->io()->danger("Migration failed. The rest of the migrations are canceled.");
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
             }
 
-            $output->writeln("\n<info> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n");
+            $output->writeln("\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n");
             $this->consoleHelper->io()->success("Migration redone successfully.");
         }
 

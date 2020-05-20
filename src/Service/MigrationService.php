@@ -13,10 +13,13 @@ use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
+use function array_shift;
 use function array_slice;
 use function array_values;
 use function closedir;
 use function file_exists;
+use function gmdate;
+use function in_array;
 use function is_array;
 use function is_dir;
 use function is_file;
@@ -24,8 +27,13 @@ use function ksort;
 use function opendir;
 use function preg_match;
 use function readdir;
+use function reset;
 use function str_replace;
 use function strcasecmp;
+use function strpos;
+use function strrpos;
+use function substr;
+use function time;
 use function trim;
 use function usort;
 

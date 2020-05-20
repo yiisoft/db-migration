@@ -7,21 +7,20 @@ namespace Yiisoft\Yii\Db\Migration\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\Yii\Db\Migration\Service\DatabaseService;
-use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 
 /**
  * Lists all tables in the database.
  */
-final class ListTableCommand extends Command
+final class ListTablesCommand extends Command
 {
-    private DatabaseService $databaseService;
+    private ListTablesService $listTablesService;
 
     protected static $defaultName = 'database/list';
 
-    public function __construct(DatabaseService $databaseService)
+    public function __construct(ListTablesService $listTablesService)
     {
-        $this->databaseService = $databaseService;
+        $this->listTablesService = $listTablesService;
 
         parent::__construct();
     }
@@ -34,8 +33,6 @@ final class ListTableCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->databaseService->listTables();
-
-        return ExitCode::OK;
+        return $this->listTablesService->run();
     }
 }
