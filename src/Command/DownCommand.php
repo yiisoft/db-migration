@@ -36,8 +36,11 @@ final class DownCommand extends Command
 
     protected static $defaultName = 'migrate/down';
 
-    public function __construct(ConsoleHelper $consoleHelper, DownService $downService, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        DownService $downService,
+        MigrationService $migrationService
+    ) {
         $this->consoleHelper = $consoleHelper;
         $this->downService = $downService;
         $this->migrationService = $migrationService;
@@ -56,7 +59,7 @@ final class DownCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-       $this->migrationService->before(static::$defaultName);;
+        $this->migrationService->before(static::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
@@ -99,7 +102,8 @@ final class DownCommand extends Command
             foreach ($migrations as $migration) {
                 if (!$this->downService->run($migration)) {
                     $output->writeln(
-                        "<fg=red>\n$reverted from $n " . ($reverted === 1 ? 'migration was' : 'migrations were') . " reverted.</>"
+                        "<fg=red>\n$reverted from $n " . ($reverted === 1 ? 'migration was' : 'migrations were') .
+                        " reverted.</>"
                     );
                     $output->writeln(
                         "<fg=red>\nMigration failed. The rest of the migrations are canceled.</>"
@@ -110,7 +114,9 @@ final class DownCommand extends Command
                 $reverted++;
             }
 
-            $output->writeln("\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n");
+            $output->writeln(
+                "\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
+            );
             $this->consoleHelper->io()->success("Migrated down successfully.");
         }
 

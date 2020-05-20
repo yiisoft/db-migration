@@ -166,7 +166,8 @@ final class MigrationService
             return $this->migrationNameLimit;
         }
 
-        $tableSchema = $this->db->getSchema() ? $this->db->getSchema()->getTableSchema($this->migrationTable, true) : null;
+        $tableSchema = $this->db->getSchema() ? $this->db->getSchema()->getTableSchema($this->migrationTable, true)
+            : null;
 
         if ($tableSchema !== null) {
             return $this->migrationNameLimit = $tableSchema->getColumns()['version']->getSize();
@@ -447,7 +448,8 @@ final class MigrationService
     public function dbVersion(): void
     {
         $this->consoleHelper->output()->writeln(
-            "<fg=cyan>\nDriver: {$this->db->getDrivername()} - Version: {$this->db->getServerVersion()}. </><fg=white>Powered by: YiiFrameWork</>"
+            "<fg=cyan>\nDriver: {$this->db->getDrivername()} - Version: {$this->db->getServerVersion()}. </>" .
+            "<fg=white>Powered by: YiiFrameWork</>"
         );
     }
 
