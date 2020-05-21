@@ -51,50 +51,50 @@ final class UpdateCommandTest extends TestCase
 
         $this->assertEquals(ExitCode::OK, $commandUpdate->execute([]));
 
-        $columsDeparment = $this->db->getSchema()->getTableSchema($tableMaster);
+        $departmentSchema = $this->db->getSchema()->getTableSchema($tableMaster);
 
-        /** Check create table deparment columns*/
-        $this->assertCount(2, $columsDeparment->getColumns());
+        /** Check create table department columns*/
+        $this->assertCount(2, $departmentSchema->getColumns());
 
-        /** Check table deparment field id */
-        $this->assertEquals('id', $columsDeparment->getColumn('id')->getName());
-        $this->assertEquals('integer', $columsDeparment->getColumn('id')->getType());
-        $this->assertTrue($columsDeparment->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($columsDeparment->getColumn('id')->isAutoIncrement());
+        /** Check table department field id */
+        $this->assertEquals('id', $departmentSchema->getColumn('id')->getName());
+        $this->assertEquals('integer', $departmentSchema->getColumn('id')->getType());
+        $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
+        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
 
-        /** Check table deparment field name */
-        $this->assertEquals('name', $columsDeparment->getColumn('name')->getName());
-        $this->assertEquals(50, $columsDeparment->getColumn('name')->getSize());
-        $this->assertEquals('string', $columsDeparment->getColumn('name')->getType());
-        $this->assertTrue($columsDeparment->getColumn('name')->isAllowNull());
+        /** Check table department field name */
+        $this->assertEquals('name', $departmentSchema->getColumn('name')->getName());
+        $this->assertEquals(50, $departmentSchema->getColumn('name')->getSize());
+        $this->assertEquals('string', $departmentSchema->getColumn('name')->getType());
+        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
 
-        $columsStudent = $this->db->getSchema()->getTableSchema($tableRelation);
+        $studentSchema = $this->db->getSchema()->getTableSchema($tableRelation);
 
         /** Check create table student columns*/
-        $this->assertCount(4, $columsStudent->getColumns());
+        $this->assertCount(4, $studentSchema->getColumns());
 
         /** Check table student field id */
-        $this->assertEquals('id', $columsStudent->getColumn('id')->getName());
-        $this->assertEquals('integer', $columsStudent->getColumn('id')->getType());
-        $this->assertTrue($columsStudent->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($columsStudent->getColumn('id')->isAutoIncrement());
+        $this->assertEquals('id', $studentSchema->getColumn('id')->getName());
+        $this->assertEquals('integer', $studentSchema->getColumn('id')->getType());
+        $this->assertTrue($studentSchema->getColumn('id')->isPrimaryKey());
+        $this->assertTrue($studentSchema->getColumn('id')->isAutoIncrement());
 
         /** Check table student field name */
-        $this->assertEquals('name', $columsStudent->getColumn('name')->getName());
-        $this->assertEquals('string', $columsStudent->getColumn('name')->getType());
-        $this->assertEquals(50, $columsStudent->getColumn('name')->getSize());
-        $this->assertTrue($columsStudent->getColumn('name')->isAllowNull());
+        $this->assertEquals('name', $studentSchema->getColumn('name')->getName());
+        $this->assertEquals('string', $studentSchema->getColumn('name')->getType());
+        $this->assertEquals(50, $studentSchema->getColumn('name')->getSize());
+        $this->assertTrue($studentSchema->getColumn('name')->isAllowNull());
 
         /** Check table student field department_id */
-        $this->assertEquals('department_id', $columsStudent->getColumn('department_id')->getName());
-        $this->assertEquals('integer', $columsStudent->getColumn('department_id')->getType());
-        $this->assertFalse($columsStudent->getColumn('department_id')->isAllowNull());
+        $this->assertEquals('department_id', $studentSchema->getColumn('department_id')->getName());
+        $this->assertEquals('integer', $studentSchema->getColumn('department_id')->getType());
+        $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
         $this->assertEquals(['department_id'], $this->db->getSchema()->getTableForeignKeys($tableRelation, true)[0]->getColumnNames());
 
         /** Check table student field dateofbirth */
-        $this->assertEquals('dateofbirth', $columsStudent->getColumn('dateofbirth')->getName());
-        $this->assertEquals('date', $columsStudent->getColumn('dateofbirth')->getType());
-        $this->asserttrue($columsStudent->getColumn('dateofbirth')->isAllowNull());
+        $this->assertEquals('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());
+        $this->assertEquals('date', $studentSchema->getColumn('dateofbirth')->getType());
+        $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
     }
 
     public function testExecuteAgain(): void
