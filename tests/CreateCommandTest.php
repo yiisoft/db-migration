@@ -198,7 +198,7 @@ EOF;
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
-    public function testExecuteCommandTableWithFieldsForeingKey(): void
+    public function testExecuteCommandTableWithFieldsForeignKey(): void
     {
         $command = $this->application->find('generate/create');
 
