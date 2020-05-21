@@ -16,8 +16,6 @@ use Yiisoft\Db\Connection\ConnectionPool;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Log\Logger;
-use Yiisoft\Log\Target\File\FileRotator;
-use Yiisoft\Log\Target\File\FileRotatorInterface;
 use Yiisoft\Profiler\Profiler;
 
 return [
@@ -37,13 +35,6 @@ return [
     SimpleCacheInterface::class => ArrayCache::class,
 
     CacheInterface::class => Cache::class,
-
-    FileRotatorInterface::class => [
-        '__class' => FileRotator::class,
-        '__construct()' => [
-            10,
-        ],
-    ],
 
     LoggerInterface::class => Logger::class,
 
