@@ -1,7 +1,7 @@
 {
     "name": "yiisoft/yii-db-migration",
     "type": "library",
-    "description": "The package db migrations.",
+    "description": "Yii Db Migration",
     "keywords": [
         "yii",
         "db",
@@ -10,11 +10,11 @@
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/yii-form/issues?state=open",
+        "issues": "https://github.com/yiisoft/yii-db-migration/issues?state=open",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii-form"
+        "source": "https://github.com/yiisoft/yii-db-migration"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
