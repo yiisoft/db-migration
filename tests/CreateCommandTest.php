@@ -41,8 +41,8 @@ final class CreateCommandTest extends TestCase
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -99,8 +99,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -158,8 +158,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -220,8 +220,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -345,8 +345,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -406,8 +406,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -463,8 +463,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
@@ -521,8 +521,8 @@ EOF;
         $words = explode(' ', $output);
 
         foreach ($words as $word) {
-            $result = substr($word, 1);
-            if ($result = 'm') {
+            $result = substr(trim($word), 0, 1);
+            if ($result === 'm') {
                 $file = trim($word);
             }
         }
