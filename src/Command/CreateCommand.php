@@ -105,9 +105,10 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        if (!in_array($command, ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'])) {
+        $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
+        if (!in_array($command, $availableCommands, true)) {
             $this->consoleHelper->io()->error(
-                "Command not found \"$command\". Avaibles: create, table, dropTable, addColumn, dropColumn, junction"
+                "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'
             );
 
             return ExitCode::DATAERR;
