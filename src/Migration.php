@@ -45,19 +45,13 @@ use function implode;
  *
  * For more details and usage information on Migration, see the [guide article on Migration](guide:db-migrations).
  */
-class Migration implements MigrationInterface
+abstract class Migration implements MigrationInterface
 {
     use SchemaBuilderTrait;
 
-    protected Connection $db;
-
-    /**
-     * @var int max number of characters of the SQL outputted. Useful for reduction of long statements and making
-     * console output more compact.
-     */
     private int $maxSqlOutputLength = 0;
-
     private bool $compact = false;
+    protected Connection $db;
 
     public function __construct(Connection $db)
     {
@@ -104,15 +98,6 @@ class Migration implements MigrationInterface
      */
     public function safeDown()
     {
-    }
-
-    /**
-     * @param Throwable|Exception $e
-     */
-    private function printException($e): void
-    {
-        echo 'Exception: ' . $e->getMessage() . ' (' . $e->getFile() . ':' . $e->getLine() . ")\n";
-        echo $e->getTraceAsString() . "\n";
     }
 
     /**
@@ -232,7 +217,7 @@ class Migration implements MigrationInterface
      *
      * @param string $table the table where the data will be deleted from.
      * @param array|string $condition the conditions that will be put in the WHERE part. Please refer to
-     * {@see \Yiisoft\Query\Query::where()} on how to specify conditions.
+     * {@see \Yiisoft\Db\Query\Query::where()} on how to specify conditions.
      * @param array $params the parameters to be bound to the query.
      *
      * @throws Exception
@@ -253,8 +238,8 @@ class Migration implements MigrationInterface
      * stands for a column name which will be properly quoted by the method, and definition stands for the column type
      * which can contain an abstract DB type.
      *
-     * The {@see \Yiisoft\Query\QueryBuilder::getColumnType()} method will be invoked to convert any abstract type into
-     * a physical one.
+     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert any abstract type
+     * into a physical one.
      *
      * If a column is specified with definition only (e.g. 'PRIMARY KEY (name, type)'), it will be directly put into the
      * generated SQL.

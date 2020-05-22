@@ -54,7 +54,7 @@ final class MigrationService
         'junction' => '@views/createTableMigration.php',
     ];
     private int $maxNameLength = 180;
-    private ?int $migrationNameLimit = null;
+    private int $migrationNameLimit = 0;
     private string $migrationTable = '{{%migration}}';
     private string $templateFile = '@views/migration.php';
     private bool $useTablePrefix = true;
@@ -123,9 +123,9 @@ final class MigrationService
         return $this->generatorTemplateFiles[$key] ?? null;
     }
 
-    public function getMigrationNameLimit()
+    public function getMigrationNameLimit(): int
     {
-        if ($this->migrationNameLimit !== null) {
+        if ($this->migrationNameLimit !== 0) {
             return $this->migrationNameLimit;
         }
 
