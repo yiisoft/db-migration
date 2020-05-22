@@ -158,7 +158,7 @@ final class CreateCommand extends Command
 
         $nameLimit = $this->migrationService->getMigrationNameLimit();
 
-        if ($nameLimit !== null && strlen($className) > $nameLimit) {
+        if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
             $this->consoleHelper->io()->error('The migration name is too long.');
 
             return ExitCode::DATAERR;
