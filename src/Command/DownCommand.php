@@ -52,7 +52,7 @@ final class DownCommand extends Command
     {
         $this
             ->setDescription('Downgrades the application by reverting old migrations.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', null)
             ->setHelp('This command downgrades the application by reverting old migrations.');
     }
 
@@ -61,7 +61,7 @@ final class DownCommand extends Command
         $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
-        $limit = (int) $input->getOption('limit');
+        $limit = $input->getOption('limit');
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");

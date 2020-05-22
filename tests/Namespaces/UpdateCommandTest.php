@@ -2,13 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests;
+namespace Yiisoft\Yii\Db\Migration\Tests\Namespaces;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
+/**
+ * @group namespaces
+ */
 final class UpdateCommandTest extends TestCase
 {
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Build';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /** Set namespace for generate migration */
+        $this->migrationService->createNamespace($this->namespace);
+
+        /** Set list namespace for update migrations */
+        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+    }
+
     public function testExecute(): void
     {
         $migrationTable = 'migration';
@@ -89,7 +106,10 @@ final class UpdateCommandTest extends TestCase
         $this->assertEquals('department_id', $studentSchema->getColumn('department_id')->getName());
         $this->assertEquals('integer', $studentSchema->getColumn('department_id')->getType());
         $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
-        $this->assertEquals(['department_id'], $this->db->getSchema()->getTableForeignKeys($tableRelation, true)[0]->getColumnNames());
+        $this->assertEquals(
+            ['department_id'],
+            $this->db->getSchema()->getTableForeignKeys($tableRelation, true)[0]->getColumnNames()
+        );
 
         /** Check table student field dateofbirth */
         $this->assertEquals('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());

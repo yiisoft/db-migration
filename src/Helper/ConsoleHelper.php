@@ -10,6 +10,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Helper\Table;
+use Yiisoft\Aliases\Aliases;
+use Yiisoft\Composer\Config\Builder;
+use Yiisoft\Strings\Inflector;
 
 final class ConsoleHelper
 {
@@ -17,6 +20,13 @@ final class ConsoleHelper
     private ?OutputInterface $output = null;
     private ?SymfonyStyle $io = null;
     private ?Table $table = null;
+    private Aliases $aliases;
+    private ?Inflector $inflector = null;
+
+    public function __construct(Aliases $aliases)
+    {
+        $this->aliases = $aliases;
+    }
 
     public function input(): InputInterface
     {
@@ -52,5 +62,28 @@ final class ConsoleHelper
         }
 
         return $this->table;
+    }
+
+    public function getPathFromNameSpace(string $path): string
+    {
+        $packages = require Builder::path('aliases');
+
+        $aliases = new Aliases($packages);
+
+        return $aliases->get($path);
+    }
+
+    public function inflector(): Inflector
+    {
+        if ($this->inflector === null) {
+            $this->inflector = new Inflector();
+        }
+
+        return $this->inflector;
+    }
+
+    public function aliases(): Aliases
+    {
+        return $this->aliases;
     }
 }

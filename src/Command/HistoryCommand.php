@@ -46,7 +46,7 @@ final class HistoryCommand extends Command
     {
         $this
             ->setDescription('Displays the migration history.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', null)
             ->setHelp('This command displays the migration history.');
     }
 
@@ -55,7 +55,7 @@ final class HistoryCommand extends Command
         $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
-        $limit = (int) $input->getOption('limit');
+        $limit = $input->getOption('limit');
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");

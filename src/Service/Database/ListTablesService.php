@@ -50,7 +50,7 @@ final class ListTablesService
 
         $this->consoleHelper->table()->setHeaders(['Nº', 'Table']);
 
-        foreach ($tables as $key => $value) {
+        foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
                 $this->consoleHelper->table()->addRow([(string)($count), (string)($value)]);
@@ -76,7 +76,7 @@ final class ListTablesService
         } catch (NotSupportedException $ex) {
         }
 
-        if ($schemaNames === null || count($schemaNames) < 2) {
+        if (count($schemaNames) < 2) {
             $tables = $this->db->getSchema()->getTableNames();
         } else {
             $schemaTables = [];

@@ -1,39 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Yii\Db\Migration\Service;
 
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
-use Yiisoft\Files\FileHelper;
-use Yiisoft\Strings\Inflector;
+use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
-use function array_shift;
 use function array_slice;
 use function array_values;
 use function closedir;
 use function file_exists;
 use function gmdate;
-use function in_array;
-use function is_array;
-use function is_dir;
 use function is_file;
 use function ksort;
 use function opendir;
 use function preg_match;
 use function readdir;
-use function reset;
 use function str_replace;
 use function strcasecmp;
 use function strpos;
-use function strrpos;
-use function substr;
 use function time;
 use function trim;
 use function usort;
@@ -45,6 +38,10 @@ final class MigrationService
      */
     public const BASE_MIGRATION = 'm000000_000000_base';
 
+    private string $createNamespace = '';
+    private string $createPath = '';
+    private array $updateNamespace = [];
+    private array $updatePath = [];
     private string $comment = '';
     private bool $compact = false;
     private array $fields = [];
@@ -58,81 +55,57 @@ final class MigrationService
     ];
     private int $maxNameLength = 180;
     private ?int $migrationNameLimit = null;
-    private array $migrationNamespaces = [];
-    private array $migrationPath = ['@migration'];
     private string $migrationTable = '{{%migration}}';
     private string $templateFile = '@views/migration.php';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
-    private Aliases $aliases;
     private Connection $db;
     private ConsoleHelper $consoleHelper;
-    private Inflector $inflector;
 
-    public function __construct(Aliases $aliases, Connection $db, ConsoleHelper $consoleHelper)
+    public function __construct(Connection $db, ConsoleHelper $consoleHelper)
     {
-        $this->aliases = $aliases;
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
-        $this->inflector = new Inflector();
     }
 
     /**
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
-     * It checks the existence of the {@see migrationPath}.
+     * It checks the existence of the {@see createPath}, {@see updatePath}, {@see createNamespace},
+     * {@see updateNamespace}.
      *
-     * @throws InvalidConfigException if directory specified in migrationPath doesn't exist and action isn't "create".
+     * {@see createNamespace}, {@see updateNamespace}.
      *
-     * @return bool whether the action should continue to be executed.
+     * @param $defaultName
+     *
+     * @return int whether the action should continue to be executed.
      */
-    public function before($defaultName): bool
+    public function before($defaultName): int
     {
-        if (empty($this->migrationNamespaces) && empty($this->migrationPath)) {
-            throw new InvalidConfigException(
-                'At least one of `migrationPath` or `migrationNamespaces` should be specified.'
-            );
-        }
+        $result = ExitCode::OK;
 
-        foreach ($this->migrationNamespaces as $key => $value) {
-            $this->migrationNamespaces[$key] = trim($value, '\\');
-        }
-
-        if (is_array($this->migrationPath)) {
-            foreach ($this->migrationPath as $i => $path) {
-                $this->migrationPath[$i] = $this->aliases->get($path);
-            }
-        } elseif ($this->migrationPath !== null) {
-            $path = $this->aliases->get($this->migrationPath);
-            if (!is_dir($path)) {
-                if ($defaultName !== 'migrate/create') {
-                    throw new InvalidConfigException(
-                        "Migration failed. Directory specified in migrationPath doesn't exist: {$this->migrationPath}"
+        switch ($defaultName) {
+            case 'generate/create':
+                if (empty($this->createNamespace) && empty($this->createPath)) {
+                    $this->consoleHelper->io()->error(
+                        "At least one of `createNamespace` or `createPath` should be specified."
                     );
+
+                    $result = ExitCode::DATAERR;
                 }
-                @FileHelper::createDirectory($path);
-            }
-            $this->migrationPath = $path;
+                break;
+            case 'migrate/up':
+                if (empty($this->updateNamespace) && empty($this->updatePath)) {
+                    $this->consoleHelper->io()->error(
+                        "At least one of `updateNamespace` or `updatePath` should be specified."
+                    );
+
+                    $result = ExitCode::DATAERR;
+                }
+                break;
         }
 
-        return true;
-    }
-
-    /**
-     * Set of template paths for generating migration code automatically.
-     *
-     * @param array $value
-     *
-     * The key is the template type, the value is a path or the alias. Supported types are:
-     * - `create_table`: table creating template
-     * - `drop_table`: table dropping template
-     * - `add_column`: adding new column template
-     * - `drop_column`: dropping column template
-     * - `create_junction`: create junction template
-     */
-    public function generatorTemplateFiles(array $value): void
-    {
-        $this->generatorTemplateFiles = $value;
+        return $result;
     }
 
     public function getComment(): string
@@ -140,24 +113,14 @@ final class MigrationService
         return $this->comment;
     }
 
-    public function getCompact(): bool
-    {
-        return $this->compact;
-    }
-
     public function getFields(): array
     {
         return $this->fields;
     }
 
-    public function getGeneratorTemplateFiles(string $key): ?string
+    public function getGeneratorTemplateFiles(?string $key): ?string
     {
         return $this->generatorTemplateFiles[$key] ?? null;
-    }
-
-    public function getMaxNameLength(): int
-    {
-        return $this->maxNameLength;
     }
 
     public function getMigrationNameLimit()
@@ -166,8 +129,7 @@ final class MigrationService
             return $this->migrationNameLimit;
         }
 
-        $tableSchema = $this->db->getSchema() ? $this->db->getSchema()->getTableSchema($this->migrationTable, true)
-            : null;
+        $tableSchema = $this->db->getSchema()->getTableSchema($this->migrationTable, true);
 
         if ($tableSchema !== null) {
             return $this->migrationNameLimit = $tableSchema->getColumns()['version']->getSize();
@@ -176,7 +138,7 @@ final class MigrationService
         return $this->maxNameLength;
     }
 
-    public function getMigrationHistory(?int $limit = 0): array
+    public function getMigrationHistory(?int $limit = null): array
     {
         if ($this->db->getSchema()->getTableSchema($this->migrationTable, true) === null) {
             $this->createMigrationHistoryTable();
@@ -187,7 +149,7 @@ final class MigrationService
             ->from($this->migrationTable)
             ->orderBy(['apply_time' => SORT_DESC, 'version' => SORT_DESC]);
 
-        if (empty($this->migrationNamespaces)) {
+        if (empty($this->updateNamespace)) {
             if ($limit > 0) {
                 $query->limit($limit);
             }
@@ -201,9 +163,9 @@ final class MigrationService
         }
 
         $rows = $query->all();
-
         $history = [];
-        foreach ($rows as $key => $row) {
+
+        foreach ($rows as $row) {
             if ($row['version'] === self::BASE_MIGRATION) {
                 continue;
             }
@@ -237,16 +199,6 @@ final class MigrationService
         return $history;
     }
 
-    public function getMigrationNamespaces(): array
-    {
-        return $this->migrationNamespaces;
-    }
-
-    public function getMigrationPath(): array
-    {
-        return $this->migrationPath;
-    }
-
     public function getMigrationTable(): string
     {
         return $this->migrationTable;
@@ -266,30 +218,32 @@ final class MigrationService
         }
 
         $migrationPaths = [];
-        if (is_array($this->migrationPath)) {
-            foreach ($this->migrationPath as $path) {
-                $migrationPaths[] = [$path, ''];
-            }
-        } elseif (!empty($this->migrationPath)) {
-            $migrationPaths[] = [$this->migrationPath, ''];
+
+        foreach ($this->updatePath as $path) {
+            $migrationPaths[] = [$path, ''];
         }
 
-        foreach ($this->migrationNamespaces as $namespace) {
+        foreach ($this->updateNamespace as $namespace) {
             $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
         }
 
         $migrations = [];
         foreach ($migrationPaths as $item) {
-            [$migrationPath, $namespace] = $item;
-            if (!file_exists($migrationPath)) {
+            [$updatePath, $namespace] = $item;
+            $updatePath = $this->consoleHelper->aliases()->get($updatePath);
+
+            if (!file_exists($updatePath)) {
                 continue;
             }
-            $handle = opendir($migrationPath);
+
+            $handle = opendir($updatePath);
             while (($file = readdir($handle)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
                 }
-                $path = $migrationPath . DIRECTORY_SEPARATOR . $file;
+
+                $path = $updatePath . DIRECTORY_SEPARATOR . $file;
+
                 if (preg_match('/^(m(\d{6}_?\d{6})\D.*?)\.php$/is', $file, $matches) && is_file($path)) {
                     $class = $matches[1];
                     if (!empty($namespace)) {
@@ -306,11 +260,6 @@ final class MigrationService
         ksort($migrations);
 
         return array_values($migrations);
-    }
-
-    public function getTemplateFile(): string
-    {
-        return $this->templateFile;
     }
 
     public function getUseTablePrefix(): bool
@@ -369,7 +318,7 @@ final class MigrationService
     }
 
     /**
-     * List of namespaces containing the migration classes.
+     * List of namespaces containing the migration update classes.
      *
      * @param array $value
      *
@@ -379,33 +328,33 @@ final class MigrationService
      *
      * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
      */
-    public function migrationNamespaces(array $value): void
+    public function updateNamespace(array $value): void
     {
-        $this->migrationNamespaces = $value;
+        $this->updateNamespace = $value;
     }
 
     /**
-     * The directory containing the migration classes.
+     * The directory containing the migration update classes.
      *
      * This can be either a [path alias](guide:concept-aliases) or a directory path.
      *
      * Migration classes located at this path should be declared without a namespace.
-     * Use {@see migrationNamespaces} property in case you are using namespaced migrations.
+     * Use {@see createNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {migrationNamespaces}, you may set this field to `null` in order to disable usage of
-     * migrations that are not namespaced.
+     * If you have set up {createNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * that are not namespaced.
      *
-     * In general, to load migrations from different locations, {migrationNamespaces} is the preferable solution as the
+     * In general, to load migrations from different locations, {createNamespace} is the preferable solution as the
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
      * @param array $value
      *
-     * {@see $migrationNamespaces}
+     * {@see $createNamespace}
      */
-    public function migrationPath(array $value): void
+    public function updatePath(array $value): void
     {
-        $this->migrationPath = $value;
+        $this->updatePath = $value;
     }
 
     /**
@@ -467,19 +416,35 @@ final class MigrationService
      *
      * @param string $class the migration class name
      *
-     * @return MigrationInterface the migration instance
+     * @return MigrationInterface|null the migration instance
      */
-    public function createMigration(string $class): MigrationInterface
+    public function createMigration(string $class): ?MigrationInterface
     {
+        $migration = null;
+
         $this->includeMigrationFile($class);
 
-        $migration = new $class($this->db);
+        $class = '\\' . $class;
+
+        if (class_exists($class)) {
+            $migration = new $class($this->db);
+        }
 
         if ($migration instanceof MigrationInterface) {
-            $migration->compact = $this->compact;
+            $migration->compact($this->compact);
         }
 
         return $migration;
+    }
+
+    public function createNamespace(string $value): void
+    {
+        $this->createNamespace = $value;
+    }
+
+    public function createPath(string $value): void
+    {
+        $this->createPath = $value;
     }
 
     /**
@@ -507,7 +472,7 @@ final class MigrationService
      * Includes the migration file for a given migration class name.
      *
      * This function will do nothing on namespaced migrations, which are loaded by autoloading automatically. It will
-     * include the migration file, by searching {@see migrationPath} for classes without namespace.
+     * include the migration file, by searching {@see updatePath} for classes without namespace.
      *
      * @param string $class the migration class name.
      */
@@ -515,17 +480,13 @@ final class MigrationService
     {
         $class = trim($class, '\\');
         if (strpos($class, '\\') === false) {
-            if (is_array($this->migrationPath)) {
-                foreach ($this->migrationPath as $path) {
-                    $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
-                    if (is_file($file)) {
-                        require_once $file;
-                        break;
-                    }
+            foreach ($this->updatePath as $path) {
+                $file = $this->consoleHelper->aliases()->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
+
+                if (is_file($file)) {
+                    require_once $file;
+                    break;
                 }
-            } else {
-                $file = $this->migrationPath . DIRECTORY_SEPARATOR . $class . '.php';
-                require_once $file;
             }
         }
     }
@@ -538,26 +499,21 @@ final class MigrationService
     /**
      * Generates class base name and namespace from migration name from user input.
      *
+     * @param string|null $namespace migration.
      * @param string $name migration name from user input.
      *
-     * @return array list of 2 elements: 'namespace' and 'class base name'
+     * @return array list of 2 elements: 'namespace' and 'class base name'.
      */
-    public function generateClassName(string $name): array
+    public function generateClassName(?string $namespace, string $name): array
     {
-        $namespace = null;
-        $name = trim($name, '\\');
-        if (strpos($name, '\\') !== false) {
-            $namespace = substr($name, 0, strrpos($name, '\\'));
-            $name = substr($name, strrpos($name, '\\') + 1);
-        } elseif ($this->migrationPath === null) {
-            $migrationNamespaces = $this->migrationNamespaces;
-            $namespace = array_shift($migrationNamespaces);
+        if (empty($this->createPath)) {
+            $namespace = $this->createNamespace;
         }
 
         if ($namespace === null) {
-            $class = 'm' . gmdate('ymd_His') . '_' . $name;
+            $class = 'M' . gmdate('ymd_His') . '_' . $name;
         } else {
-            $class = 'M' . gmdate('ymdHis') . $this->inflector->camelize($name);
+            $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->camelize($name);
         }
 
         return [$namespace, $class];
@@ -569,42 +525,16 @@ final class MigrationService
      * @param string|null $namespace migration namespace.
      *
      * @return string migration file path.
-     * @throws Exception on failure.
      */
     public function findMigrationPath(?string $namespace): string
     {
-        if (empty($namespace)) {
-            return is_array($this->migrationPath) ? reset($this->migrationPath) : $this->migrationPath;
-        }
+        $namespace = $namespace ?? $this->createNamespace;
 
-        if (!in_array($namespace, $this->migrationNamespaces, true)) {
-            throw new Exception("Namespace '{$namespace}' not found in `migrationNamespaces`");
+        if (empty($namespace)) {
+            return $this->createPath;
         }
 
         return $this->getNamespacePath($namespace);
-    }
-
-    /**
-     * Normalizes table name for generator.
-     *
-     * When name is preceded with underscore name case is kept - otherwise it's converted from camelcase to underscored.
-     * Last underscore is always trimmed so if there should be underscore at the end of name use two of them.
-     *
-     * @param string $name
-     *
-     * @return string
-     */
-    private function normalizeTableName(string $name): string
-    {
-        if (substr($name, -1) === '_') {
-            $name = substr($name, 0, -1);
-        }
-
-        if (strpos($name, '_') === 0) {
-            return substr($name, 1);
-        }
-
-        return $this->inflector->underscore($name);
     }
 
     /**
@@ -633,6 +563,9 @@ final class MigrationService
      */
     private function getNamespacePath(string $namespace): string
     {
-        return str_replace('/', DIRECTORY_SEPARATOR, $this->aliases->get('@' . str_replace('\\', '/', $namespace)));
+        $aliases = '@' . str_replace('\\', '/', $namespace);
+        $path = $this->consoleHelper->getPathFromNameSpace($aliases);
+
+        return $path;
     }
 }

@@ -59,7 +59,10 @@ final class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before(static::$defaultName);
+
+        if ($this->migrationService->before(static::$defaultName) === ExitCode::DATAERR) {
+            return ExitCode::DATAERR;
+        }
 
         $limit = (int) $input->getOption('limit');
 

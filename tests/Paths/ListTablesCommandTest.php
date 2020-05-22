@@ -2,13 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests;
+namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
+/**
+ * @group paths
+ */
 final class ListTablesCommandTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     public function testExecute(): void
     {
         $create = $this->application->find('database/list');

@@ -2,13 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests;
+namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
+/**
+ * @group paths
+ */
 final class DownCommandTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /** Set list path for update migration */
+        $this->migrationService->updatePath(['@migration']);
+    }
+
     public function testExecute(): void
     {
         $create = $this->application->find('migrate/down');

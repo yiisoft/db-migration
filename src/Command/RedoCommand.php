@@ -58,7 +58,7 @@ final class RedoCommand extends Command
     {
         $this
             ->setDescription('Redoes the last few migrations.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', null)
             ->setHelp('This command redoes the last few migrations.');
     }
 
@@ -67,7 +67,7 @@ final class RedoCommand extends Command
         $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
-        $limit = (int) $input->getOption('limit');
+        $limit = $input->getOption('limit');
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error("The step argument must be greater than 0.");

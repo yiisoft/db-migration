@@ -36,6 +36,7 @@ final class UpdateService
 
         $this->consoleHelper->io()->title("\nApplying $class:");
         $start = microtime(true);
+
         $migration = $this->migrationService->createMigration($class);
 
         if ($migration->safeUp() !== false) {

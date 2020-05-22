@@ -5,8 +5,8 @@ namespace Yiisoft\Yii\Db\Migration;
 /**
  * The MigrationInterface defines the minimum set of methods to be implemented by a database migration.
  *
- * Each migration class should provide the {@see up()} method containing the logic for "upgrading" the database and the
- * {@see down()} method for the "downgrading" logic.
+ * Each migration class should provide the {@see safeUp()} method containing the logic for "upgrading" the database
+ * and the {@see safeDown()} method for the "downgrading" logic.
  */
 interface MigrationInterface
 {
@@ -40,4 +40,13 @@ interface MigrationInterface
      * return values mean the migration succeeds.
      */
     public function safeDown();
+
+    /**
+     * @param bool $value indicates whether the console output should be compacted.
+     *
+     * If this is set to true, the individual commands ran within the migration will not be output to the console.
+     *
+     * Default is false, in other words the output is fully verbose by default.
+     */
+    public function compact(bool $value);
 }

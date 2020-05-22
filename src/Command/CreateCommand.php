@@ -28,11 +28,45 @@ use function strlen;
  *
  * This command creates a new migration using the available migration template.
  *
+ * Config in di-container console.php migrations paths `createPath` and `updatePath`:
+ *
+ * ```php
+ * MigrationService::class => static function (ContainerInterface $container) {
+ *    $aliases = $container->get(Aliases::class);
+ *     $db = $container->get(Connection::class);
+ *     $consoleHelper = $container->get(ConsoleHelper::class);
+ *
+ *     $migration = new MigrationService($aliases, $db, $consoleHelper);
+ *
+ *     $migration->createPath($aliases->get('@migration'));
+ *     $migration->updatePath([$aliases->get('@migration'), $aliases->get('@root/src/Build')]);
+ *
+ *    return $migration;
+ * }
+ * ```
+ *
+ * Config in di-container console.php namespace paths `createPath` and `updatePath`:
+ *
+ * ```php
+ * MigrationService::class => static function (ContainerInterface $container) {
+ *    $aliases = $container->get(Aliases::class);
+ *     $db = $container->get(Connection::class);
+ *     $consoleHelper = $container->get(ConsoleHelper::class);
+ *
+ *     $migration = new MigrationService($aliases, $db, $consoleHelper);
+ *
+ *     $migration->createNamespace($aliases->get('@migration'));
+ *     $migration->updateNamespace(['Yiisoft\\Db\\Yii\Migration', 'App\\Migration')]);
+ *
+ *    return $migration;
+ * }
+ * ```
+ *
  * After using this command, developers should modify the created migration skeleton by filling up the actual
  * migration logic.
  *
  * ```php
- * yii migrate/create create_user_table
+ * vendor/bin/yii migrate/create table --command=table
  * ```
  *
  * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
@@ -43,11 +77,10 @@ use function strlen;
  * For example:
  *
  * ```php
- * yii migrate/create 'app\\migrations\\createUserTable'
+ * vendor/bin/yii migrate/create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
  * ```
  *
- * In case {@see migrationPath} is not set and no namespace is provided, the first entry of {@see migrationNamespaces}
- * will be used.
+ * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
  */
 final class CreateCommand extends Command
 {
@@ -78,22 +111,27 @@ final class CreateCommand extends Command
             ->addOption('command', 'c', InputOption::VALUE_OPTIONAL, 'Command to execute.', 'create')
             ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'To create table fields right away')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction')
+            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace migration')
             ->setHelp('This command Generate migration template.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->title();
-        $this->migrationService->before(static::$defaultName);
 
-        $name = $input->getArgument('name');
-        $command = $input->getOption('command') ?? [];
-        $fields = $input->getOption('fields') ?? [];
-        $and = $input->getOption('and');
+        if ($this->migrationService->before(static::$defaultName) === ExitCode::DATAERR) {
+            return ExitCode::DATAERR;
+        }
+
+        $name = (string) $input->getArgument('name');
+        $command = (string) $input->getOption('command');
+        $fields = (string) $input->getOption('fields');
+        $and = (string) $input->getOption('and');
+        $namespace = (string) $input->getOption('namespace');
 
         $table = $name;
 
-        if ($fields !== []) {
+        if (!empty($fields)) {
             $this->fields = explode(',', $fields);
         }
 
@@ -114,9 +152,10 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $name = $this->generateName($command, $name, $and);
+        $name = $this->generateName($command, $this->consoleHelper->inflector()->camelize($name), $and);
 
-        [$namespace, $className] = $this->migrationService->generateClassName($name);
+        [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
+
         $nameLimit = $this->migrationService->getMigrationNameLimit();
 
         if ($nameLimit !== null && strlen($className) > $nameLimit) {
@@ -125,9 +164,19 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrationPath = $this->migrationService->findMigrationPath($namespace);
+        $migrationPath = $this->consoleHelper->aliases()->get(
+            FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
+        );
+
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
+
         $helper = $this->getHelper('question');
+
+        if (!file_exists($migrationPath)) {
+            $this->consoleHelper->io()->error("Invalid path directory {$migrationPath}");
+
+            return ExitCode::DATAERR;
+        }
 
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Create new migration y/n: </>",
@@ -145,10 +194,6 @@ final class CreateCommand extends Command
                 $this->fields,
                 $and
             );
-
-            if (!file_exists($migrationPath)) {
-                FileHelper::createDirectory($migrationPath);
-            }
 
             file_put_contents($file, $content, LOCK_EX);
 
@@ -168,22 +213,22 @@ final class CreateCommand extends Command
 
         switch ($command) {
             case 'create':
-                $result = 'create_' . $name;
+                $result = 'Create_' . $name;
                 break;
             case 'table':
-                $result = 'create_' . $name . '_table';
+                $result = 'Create_' . $name . '_Table';
                 break;
             case 'dropTable':
-                $result = 'drop_' . $name . '_table';
+                $result = 'Drop_' . $name . '_Table';
                 break;
             case 'addColumn':
-                $result = 'add_column_' . $name;
+                $result = 'Add_Column_' . $name;
                 break;
             case 'dropColumn':
-                $result = 'drop_column_' . $name;
+                $result = 'Drop_Column_' . $name;
                 break;
             case 'junction':
-                $result = 'junction_table_for_' . $name . '_and_' . $and . '_tables';
+                $result = 'Junction_Table_For_' . $name . '_And_' . $and . '_Tables';
                 break;
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
+use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
@@ -20,6 +21,8 @@ use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function closedir;
 use function is_dir;
@@ -31,7 +34,9 @@ abstract class TestCase extends BaseTestCase
     protected Application $application;
     protected Aliases $aliases;
     protected Connection $db;
-    private Container $container;
+    protected ConsoleHelper $consoleHelper;
+    protected MigrationService $migrationService;
+    private ContainerInterface $container;
 
     protected function setUp(): void
     {
@@ -44,7 +49,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::tearDown();
 
-        unset($this->aliases, $this->application, $this->container);
+        unset($this->aliases, $this->application, $this->container, $this->migrationService);
     }
 
     protected function configContainer(): void
@@ -55,7 +60,9 @@ abstract class TestCase extends BaseTestCase
 
         $this->application = $this->container->get(Application::class);
         $this->aliases = $this->container->get(Aliases::class);
+        $this->consoleHelper = $this->container->get(ConsoleHelper::class);
         $this->db = $this->container->get(Connection::class);
+        $this->migrationService = $this->container->get(MigrationService::class);
 
         $loader = new ContainerCommandLoader(
             $this->container,

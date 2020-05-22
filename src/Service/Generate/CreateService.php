@@ -50,19 +50,19 @@ final class CreateService
 
     public function run(
         string $command,
-        string $templateFile,
+        ?string $templateFile,
         string $table,
         string $className,
         ?string $namespace = null,
         array $fields = [],
-        string $and = null
+        ?string $and = null
     ): string {
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
 
         $foreignKeys = $parsedFields['foreignKeys'];
 
-        if (in_array($command, ['table', 'dropTable'])) {
+        if (in_array($command, ['table', 'dropTable'], true)) {
             $fields = $this->addDefaultPrimaryKey($fields);
         }
 
@@ -162,7 +162,7 @@ final class CreateService
         return $foreignKeys;
     }
 
-    private function addJunction(string $name, string $and, array $fields): array
+    private function addJunction(string $name, ?string $and, array $fields): array
     {
         $foreignKeys = [];
 
@@ -227,7 +227,7 @@ final class CreateService
         $fields = [];
         $foreignKeys = [];
 
-        foreach ($value as $index => $field) {
+        foreach ($value as $field) {
             $chunks = $this->splitFieldIntoChunks($field);
             $property = array_shift($chunks);
 
@@ -271,7 +271,10 @@ final class CreateService
      */
     private function splitFieldIntoChunks(string $field): array
     {
+        $defaultValue = '';
+        $originalDefaultValue = '';
         $hasDoubleQuotes = false;
+
         preg_match_all('/defaultValue\(.*?:.*?\)/', $field, $matches);
 
         if (isset($matches[0][0])) {
@@ -289,6 +292,6 @@ final class CreateService
             }
         }
 
-        return $chunks;
+        return (array) $chunks;
     }
 }

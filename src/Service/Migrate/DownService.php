@@ -39,7 +39,7 @@ final class DownService
         $start = microtime(true);
         $migration = $this->migrationService->createMigration($class);
 
-        if ($migration->safeDown() !== false) {
+        if ($migration !== null && $migration->safeDown() !== false) {
             $this->migrationService->removeMigrationHistory($class);
             $time = microtime(true) - $start;
             $this->consoleHelper->output()->writeln(
@@ -51,7 +51,6 @@ final class DownService
 
         $time = microtime(true) - $start;
 
-        $this->consoleHelper->output()->writeln("\n");
         $this->consoleHelper->io()->error("Failed to revert $class (time: " . sprintf('%.3f', $time) . "s)");
 
         return false;

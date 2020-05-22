@@ -55,15 +55,9 @@ class Migration implements MigrationInterface
      * @var int max number of characters of the SQL outputted. Useful for reduction of long statements and making
      * console output more compact.
      */
-    public int $maxSqlOutputLength = 0;
+    private int $maxSqlOutputLength = 0;
 
-    /**
-     * @var bool indicates whether the console output should be compacted.
-     *
-     * If this is set to true, the individual commands ran within the migration will not be output to the console.
-     * Default is false, in other words the output is fully verbose by default.
-     */
-    public bool $compact = false;
+    private bool $compact = false;
 
     public function __construct(Connection $db)
     {
@@ -138,7 +132,7 @@ class Migration implements MigrationInterface
     public function execute($sql, $params = []): void
     {
         $sqlOutput = $sql;
-        if ($this->maxSqlOutputLength !== null) {
+        if ($this->maxSqlOutputLength > 0) {
             $sqlOutput = StringHelper::truncateCharacters($sql, $this->maxSqlOutputLength, '[... hidden]');
         }
 
@@ -563,6 +557,16 @@ class Migration implements MigrationInterface
         $time = $this->beginCommand("drop comment from table $table");
         $this->db->createCommand()->dropCommentFromTable($table)->execute();
         $this->endCommand($time);
+    }
+
+    public function compact(bool $value): void
+    {
+        $this->compact = $value;
+    }
+
+    public function maxSqlOutputLength(int $value): void
+    {
+        $this->maxSqlOutputLength = $value;
     }
 
     /**
