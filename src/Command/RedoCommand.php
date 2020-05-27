@@ -103,14 +103,14 @@ final class RedoCommand extends Command
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
                 if (!$this->downService->run($migration)) {
-                    $this->consoleHelper->io()->danger("Migration failed. The rest of the migrations are canceled.");
+                    $this->consoleHelper->io()->error("Migration failed. The rest of the migrations are canceled.");
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
             }
             foreach (array_reverse($migrations) as $migration) {
                 if (!$this->updateService->run($migration)) {
-                    $this->consoleHelper->io()->danger("Migration failed. The rest of the migrations are canceled.");
+                    $this->consoleHelper->io()->error("Migration failed. The rest of the migrations are canceled.");
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }

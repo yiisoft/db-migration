@@ -13,15 +13,17 @@ interface MigrationInterface
     /**
      * This method contains the logic to be executed when applying this migration.
      *
-     * This method differs from {@see up()} in that the DB logic implemented here will be enclosed within a DB
+     * This method differs from {@see safeUp()} in that the DB logic implemented here will be enclosed within a DB
      * transaction.
-     * Child classes may implement this method instead of {@see up()} if the DB logic needs to be within a transaction.
+     *
+     * Child classes may implement this method instead of {@see safeUp()} if the DB logic needs to be within a
+     * transaction.
      *
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
      *
-     * @return bool return a false value to indicate the migration fails and should not proceed further. All other
-     * return values mean the migration succeeds.
+     * @return bool return a false value to indicate the migration fails and should not proceed further, and return
+     * true mean the migration succeeds.
      */
     public function safeUp();
 
@@ -36,8 +38,8 @@ interface MigrationInterface
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
      *
-     * @return bool return a false value to indicate the migration fails and should not proceed further. All other
-     * return values mean the migration succeeds.
+     * @return bool return a false value to indicate the migration fails and should not proceed further, and return
+     * true mean the migration succeeds.
      */
     public function safeDown();
 

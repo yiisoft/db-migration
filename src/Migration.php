@@ -24,8 +24,8 @@ use function implode;
  * Each child class of Migration represents an individual database migration which is identified by the child class
  * name.
  *
- * Within each migration, the {@see up() method should be overridden to contain the logic for "upgrading" the database;
- * while the {@see down()} method for the "downgrading" logic. The "yii migrate" command manages all available
+ * Within each migration, the {@see safeUp() method should be overridden to contain the logic for "upgrading" the database;
+ * while the {@see safeDown()} method for the "downgrading" logic. The "yii migrate" command manages all available
  * migrations in an application.
  *
  * If the database supports transactions, you may also override {@see safeUp()} and {@see safeDown()} so that if
@@ -68,9 +68,11 @@ abstract class Migration implements MigrationInterface
     /**
      * This method contains the logic to be executed when applying this migration.
      *
-     * This method differs from {@see up()} in that the DB logic implemented here will be enclosed within a DB
+     * This method differs from {@see safeUp()} in that the DB logic implemented here will be enclosed within a DB
      * transaction.
-     * Child classes may implement this method instead of {@see up()} if the DB logic needs to be within a transaction.
+     *
+     * Child classes may implement this method instead of {@see safeUp()} if the DB logic needs to be within a
+     * transaction.
      *
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).

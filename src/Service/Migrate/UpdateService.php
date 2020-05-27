@@ -39,7 +39,7 @@ final class UpdateService
 
         $migration = $this->migrationService->createMigration($class);
 
-        if ($migration->safeUp() !== false) {
+        if ($migration !== null && $migration->safeUp() !== false) {
             $this->migrationService->addMigrationHistory($class);
             $time = microtime(true) - $start;
             $this->consoleHelper->output()->writeln(
