@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
-use Throwable;
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
@@ -200,7 +199,7 @@ abstract class Migration implements MigrationInterface
      * @param string $table the table to be updated.
      * @param array $columns the column data (name => value) to be updated.
      * @param array|string $condition the conditions that will be put in the WHERE part. Please refer to
-     * {@see \Yiisoft\Query\Query::where()} on how to specify conditions.
+     * {@see \Yiisoft\Db\Query\Query::where()} on how to specify conditions.
      * @param array $params the parameters to be bound to the query.
      *
      * @throws Exception

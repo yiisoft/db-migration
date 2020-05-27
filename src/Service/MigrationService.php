@@ -564,8 +564,6 @@ final class MigrationService
     private function getNamespacePath(string $namespace): string
     {
         $aliases = '@' . str_replace('\\', '/', $namespace);
-        $path = $this->consoleHelper->getPathFromNameSpace($aliases);
-
-        return $path;
+        return $this->consoleHelper->getPathFromNameSpace($aliases);
     }
 }
