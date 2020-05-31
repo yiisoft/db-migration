@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="false"
+         colors="true"
+         verbose="true"
+         bootstrap="vendor/autoload.php"
+         failOnRisky="true"
+         failOnWarning="true">
+    <php>
+        <ini name="error_reporting" value="-1"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Yii Db Migration Tests">
+            <directory>./tests/Paths/CreateCommandTest.php</directory>
+            <directory>./tests/Paths/UpdateCommandTest.php</directory>
+            <directory>./tests/Paths/RedoCommandTest.php</directory>
+            <directory>./tests/Paths/HistoryCommandTest.php</directory>
+            <directory>./tests/Paths/ListTablesCommandTest.php</directory>
+            <directory>./tests/Paths/DownCommandTest.php</directory>
+            <directory>./tests/Paths/NewCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateCommandTest.php</directory>
+            <directory>./tests/Namespaces/UpdateCommandTest.php</directory>
+            <directory>./tests/Namespaces/RedoCommandTest.php</directory>
+            <directory>./tests/Namespaces/HistoryCommandTest.php</directory>
+            <directory>./tests/Namespaces/ListTablesCommandTest.php</directory>
+            <directory>./tests/Namespaces/DownCommandTest.php</directory>
+            <directory>./tests/Namespaces/NewCommandTest.php</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
