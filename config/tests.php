@@ -49,7 +49,7 @@ return [
         $db->setUsername('root');
         $db->setPassword('root');
 
-        ConnectionPool::setConnectionsPool('mysql', $db);
+        ConnectionPool::setConnectionsPool('db', $db);
 
         return $db;
     },
