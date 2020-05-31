@@ -13,7 +13,7 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
  */
 final class HistoryCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
 
     protected function setUp(): void
     {

@@ -18,7 +18,7 @@ use function trim;
  */
 final class CreateTableCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
     private string $pathAliases = '';
 
     protected function setUp(): void
