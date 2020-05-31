@@ -66,7 +66,7 @@ abstract class Migration implements MigrationInterface
 
     abstract public function up(): void;
 
-    abstract function down(): void;
+    abstract public function down(): void;
 
     /**
      * Executes a SQL statement.
