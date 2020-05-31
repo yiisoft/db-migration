@@ -89,7 +89,7 @@ abstract class Migration implements MigrationInterface
             $sqlOutput = StringHelper::truncateCharacters($sql, $this->maxSqlOutputLength, '[... hidden]');
         }
 
-        $time = $this->beginCommand("execute SQL: $sqlOutput");
+        $time = $this->beginCommand("Execute SQL: $sqlOutput");
         $this->db->createCommand($sql)->bindValues($params)->execute();
         $this->endCommand($time);
     }
@@ -108,7 +108,7 @@ abstract class Migration implements MigrationInterface
      */
     public function insert($table, $columns): void
     {
-        $time = $this->beginCommand("insert into $table");
+        $time = $this->beginCommand("Insert into $table");
         $this->db->createCommand()->insert($table, $columns)->execute();
         $this->endCommand($time);
     }
@@ -128,7 +128,7 @@ abstract class Migration implements MigrationInterface
      */
     public function batchInsert($table, $columns, $rows): void
     {
-        $time = $this->beginCommand("insert into $table");
+        $time = $this->beginCommand("Insert into $table");
         $this->db->createCommand()->batchInsert($table, $columns, $rows)->execute();
         $this->endCommand($time);
     }
@@ -153,7 +153,7 @@ abstract class Migration implements MigrationInterface
      */
     public function upsert(string $table, $insertColumns, $updateColumns = true, array $params = []): void
     {
-        $time = $this->beginCommand("upsert into $table");
+        $time = $this->beginCommand("Upsert into $table");
         $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
         $this->endCommand($time);
     }
@@ -175,7 +175,7 @@ abstract class Migration implements MigrationInterface
      */
     public function update(string $table, array $columns, $condition = '', array $params = []): void
     {
-        $time = $this->beginCommand("update $table");
+        $time = $this->beginCommand("Update $table");
         $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
         $this->endCommand($time);
     }
@@ -194,7 +194,7 @@ abstract class Migration implements MigrationInterface
      */
     public function delete(string $table, $condition = '', array $params = []): void
     {
-        $time = $this->beginCommand("delete from $table");
+        $time = $this->beginCommand("Delete from $table");
         $this->db->createCommand()->delete($table, $condition, $params)->execute();
         $this->endCommand($time);
     }
@@ -244,7 +244,7 @@ abstract class Migration implements MigrationInterface
      */
     public function dropTable(string $table): void
     {
-        $time = $this->beginCommand("drop table $table");
+        $time = $this->beginCommand("Drop table $table");
         $this->db->createCommand()->dropTable($table)->execute();
         $this->endCommand($time);
     }
@@ -262,7 +262,7 @@ abstract class Migration implements MigrationInterface
      */
     public function renameColumn(string $table, string $name, string $newName): void
     {
-        $time = $this->beginCommand("rename column $name in table $table to $newName");
+        $time = $this->beginCommand("Rename column $name in table $table to $newName");
         $this->db->createCommand()->renameColumn($table, $name, $newName)->execute();
         $this->endCommand($time);
     }
@@ -284,7 +284,7 @@ abstract class Migration implements MigrationInterface
      */
     public function alterColumn(string $table, string $column, string $type): void
     {
-        $time = $this->beginCommand("alter column $column in table $table to $type");
+        $time = $this->beginCommand("Alter column $column in table $table to $type");
         $this->db->createCommand()->alterColumn($table, $column, $type)->execute();
         if ($type instanceof ColumnSchemaBuilder && $type->getComment() !== null) {
             $this->db->createCommand()->addCommentOnColumn($table, $column, $type->getComment())->execute();
@@ -308,7 +308,7 @@ abstract class Migration implements MigrationInterface
     public function addPrimaryKey(string $name, string $table, $columns): void
     {
         $time = $this->beginCommand(
-            "add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
+            "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
         );
         $this->db->createCommand()->addPrimaryKey($name, $table, $columns)->execute();
         $this->endCommand($time);
@@ -326,7 +326,7 @@ abstract class Migration implements MigrationInterface
      */
     public function dropPrimaryKey(string $name, string $table): void
     {
-        $time = $this->beginCommand("drop primary key $name");
+        $time = $this->beginCommand("Drop primary key $name");
         $this->db->createCommand()->dropPrimaryKey($name, $table)->execute();
         $this->endCommand($time);
     }
@@ -362,7 +362,7 @@ abstract class Migration implements MigrationInterface
         ?string $update = null
     ): void {
         $time = $this->beginCommand(
-            "add foreign key $name: $table (" . implode(
+            "Add foreign key $name: $table (" . implode(
                 ',',
                 (array) $columns
             ) . ") references $refTable (" . implode(
@@ -395,7 +395,7 @@ abstract class Migration implements MigrationInterface
      */
     public function dropForeignKey(string $name, string $table): void
     {
-        $time = $this->beginCommand("drop foreign key $name from table $table");
+        $time = $this->beginCommand("Drop foreign key $name from table $table");
         $this->db->createCommand()->dropForeignKey($name, $table)->execute();
         $this->endCommand($time);
     }
@@ -417,7 +417,7 @@ abstract class Migration implements MigrationInterface
     public function createIndex(string $name, string $table, $columns, bool $unique = false): void
     {
         $time = $this->beginCommand(
-            'create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array) $columns) . ')'
+            'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array) $columns) . ')'
         );
         $this->db->createCommand()->createIndex($name, $table, $columns, $unique)->execute();
         $this->endCommand($time);
@@ -435,7 +435,7 @@ abstract class Migration implements MigrationInterface
      */
     public function dropIndex(string $name, string $table): void
     {
-        $time = $this->beginCommand("drop index $name on $table");
+        $time = $this->beginCommand("Drop index $name on $table");
         $this->db->createCommand()->dropIndex($name, $table)->execute();
         $this->endCommand($time);
     }
@@ -455,7 +455,7 @@ abstract class Migration implements MigrationInterface
      */
     public function addCommentOnColumn(string $table, string $column, string $comment): void
     {
-        $time = $this->beginCommand("add comment on column $column");
+        $time = $this->beginCommand("Add comment on column $column");
         $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
         $this->endCommand($time);
     }
@@ -472,7 +472,7 @@ abstract class Migration implements MigrationInterface
      */
     public function addCommentOnTable(string $table, string $comment): void
     {
-        $time = $this->beginCommand("add comment on table $table");
+        $time = $this->beginCommand("Add comment on table $table");
         $this->db->createCommand()->addCommentOnTable($table, $comment)->execute();
         $this->endCommand($time);
     }
@@ -491,7 +491,7 @@ abstract class Migration implements MigrationInterface
      */
     public function dropCommentFromColumn(string $table, string $column): void
     {
-        $time = $this->beginCommand("drop comment from column $column");
+        $time = $this->beginCommand("Drop comment from column $column");
         $this->db->createCommand()->dropCommentFromColumn($table, $column)->execute();
         $this->endCommand($time);
     }
@@ -545,7 +545,7 @@ abstract class Migration implements MigrationInterface
     protected function endCommand(float $time): void
     {
         if (!$this->compact) {
-            echo ' done (time: ' . sprintf('%.3f', microtime(true) - $time) . "s)\n";
+            echo ' Done in ' . sprintf('%.3f', microtime(true) - $time) . "s.\n";
         }
     }
 }

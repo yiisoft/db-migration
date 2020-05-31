@@ -52,7 +52,6 @@ final class HistoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
         $limit = $input->getOption('limit');
@@ -75,14 +74,12 @@ final class HistoryCommand extends Command
         $n = count($migrations);
 
         if ($limit > 0) {
-            $output->writeln("Showing the last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ":\n");
+            $this->consoleHelper->io()->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
         } else {
             $this->consoleHelper->io()->section(
                 "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . " been applied before:"
             );
         }
-
-        $output->writeln("<fg=green> >>> List migration history.</>\n");
 
         foreach ($migrations as $version => $time) {
             $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int) $time) . ') ' . $version . '</info>');

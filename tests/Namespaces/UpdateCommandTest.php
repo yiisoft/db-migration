@@ -129,6 +129,6 @@ final class UpdateCommandTest extends TestCase
 
         $output = $commandUpdate->getDisplay(true);
 
-        $this->assertStringContainsString('>>> No new migrations found.', $output);
+        $this->assertStringContainsString('No new migrations found.', $output);
     }
 }

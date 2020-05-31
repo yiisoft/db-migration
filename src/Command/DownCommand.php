@@ -58,7 +58,6 @@ final class DownCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
         $limit = $input->getOption('limit');
@@ -115,7 +114,7 @@ final class DownCommand extends Command
             }
 
             $output->writeln(
-                "\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
+                "\n<fg=green> >>> [OK] $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
             );
             $this->consoleHelper->io()->success("Migrated down successfully.");
         }

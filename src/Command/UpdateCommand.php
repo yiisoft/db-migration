@@ -58,8 +58,6 @@ final class UpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->title();
-
         if ($this->migrationService->before(static::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
@@ -130,9 +128,9 @@ final class UpdateCommand extends Command
             }
 
             $output->writeln(
-                "\n<fg=green> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " applied.</>\n"
+                "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
             );
-            $this->consoleHelper->io()->success("Migrated update successfully.");
+            $this->consoleHelper->io()->success("Updated successfully.");
         }
 
         $this->migrationService->dbVersion();

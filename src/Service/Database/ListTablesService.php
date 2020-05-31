@@ -30,9 +30,6 @@ final class ListTablesService
 
     public function run(): int
     {
-        $this->migrationService->title();
-        $this->consoleHelper->io()->section('Command: migrate/list');
-
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrationService->getMigrationTable());
 
@@ -58,9 +55,6 @@ final class ListTablesService
         }
 
         $this->consoleHelper->table()->render();
-
-        $this->consoleHelper->output()->writeln("\n");
-        $this->consoleHelper->io()->success("Success.");
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;

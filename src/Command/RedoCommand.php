@@ -64,7 +64,6 @@ final class RedoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->title();
         $this->migrationService->before(static::$defaultName);
 
         $limit = $input->getOption('limit');

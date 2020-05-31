@@ -397,8 +397,7 @@ final class MigrationService
     public function dbVersion(): void
     {
         $this->consoleHelper->output()->writeln(
-            "<fg=cyan>\nDriver: {$this->db->getDrivername()} - Version: {$this->db->getServerVersion()}. </>" .
-            "<fg=white>Powered by: YiiFrameWork</>"
+            "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
         );
     }
 
@@ -465,7 +464,7 @@ final class MigrationService
             'apply_time' => time(),
         ])->execute();
 
-        $this->consoleHelper->output()->writeln("\t<fg=green>>>> [Ok] - Done.</>\n");
+        $this->consoleHelper->output()->writeln("\t<fg=green>>>> [OK] - Done.</>\n");
     }
 
     /**
@@ -489,11 +488,6 @@ final class MigrationService
                 }
             }
         }
-    }
-
-    public function title(): void
-    {
-        $this->consoleHelper->io()->title("Yii Db Migration Tool Generator v-{$this->version}");
     }
 
     /**

@@ -38,7 +38,7 @@ final class RedoCommandTest extends TestCase
 
         $output = $commandRedo->getDisplay(true);
 
-        $this->assertStringContainsString('>>> 2 migrations were redone.', $output);
+        $this->assertStringContainsString('2 migrations were redone.', $output);
         $this->assertNotEmpty($this->db->getSchema()->getTableSchema('department'));
         $this->assertNotEmpty($this->db->getSchema()->getTableSchema('student'));
     }

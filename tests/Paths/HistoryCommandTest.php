@@ -31,6 +31,6 @@ final class HistoryCommandTest extends TestCase
 
         $output = $commandHistory->getDisplay(true);
 
-        $this->assertStringContainsString('>>> List migration history.', $output);
+        $this->assertMatchesRegularExpression('/M\d+[a-z_]/i', $output);
     }
 }

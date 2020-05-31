@@ -38,7 +38,7 @@ final class DownCommandTest extends TestCase
 
         $output = $commandDown->getDisplay(true);
 
-        $this->assertStringContainsString('>>> 2 migrations were reverted.', $output);
+        $this->assertStringContainsString('2 migrations were reverted.', $output);
 
         $this->assertEmpty($this->db->getSchema()->getTableSchema('department'));
         $this->assertEmpty($this->db->getSchema()->getTableSchema('student'));
@@ -54,6 +54,6 @@ final class DownCommandTest extends TestCase
 
         $output = $commandDown->getDisplay(true);
 
-        $this->assertStringContainsString('>>> Apply a new migration to run this command.', $output);
+        $this->assertStringContainsString('Apply a new migration to run this command.', $output);
     }
 }

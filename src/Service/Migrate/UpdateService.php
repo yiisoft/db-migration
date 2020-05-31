@@ -43,7 +43,7 @@ final class UpdateService
             $this->migrationService->addMigrationHistory($class);
             $time = microtime(true) - $start;
             $this->consoleHelper->output()->writeln(
-                "\n\t<info>>>> [Ok] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>"
+                "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>"
             );
 
             return true;
