@@ -87,7 +87,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         \$this->createTable('post_tag', [
             'post_id' => \$this->integer(),
@@ -131,7 +131,7 @@ class $file extends Migration
         );
     }
 
-    public function safeDown()
+    public function down(): void
     {
         // drops foreign key for table `{{%post}}`
         \$this->dropForeignKey(

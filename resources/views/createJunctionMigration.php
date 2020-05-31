@@ -25,7 +25,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class <?= $className ?> extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         $this->createTable('<?= $table ?>', [
             '<?= $field_first ?>_id' => $this->integer(),
@@ -64,7 +64,7 @@ class <?= $className ?> extends Migration
         );
     }
 
-    public function safeDown()
+    public function down(): void
     {
         $this->dropTable('<?= $table ?>');
     }

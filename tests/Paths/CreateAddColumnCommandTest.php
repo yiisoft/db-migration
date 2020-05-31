@@ -75,12 +75,12 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         \$this->addColumn('post', 'position', \$this->integer());
     }
 
-    public function safeDown()
+    public function down(): void
     {
         \$this->dropColumn('post', 'position');
     }

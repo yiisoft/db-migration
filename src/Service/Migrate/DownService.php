@@ -39,7 +39,7 @@ final class DownService
         $start = microtime(true);
         $migration = $this->migrationService->createMigration($class);
 
-        if ($migration !== null && $migration->safeDown() !== false) {
+        if ($migration !== null && $migration->down() !== false) {
             $this->migrationService->removeMigrationHistory($class);
             $time = microtime(true) - $start;
             $this->consoleHelper->output()->writeln(

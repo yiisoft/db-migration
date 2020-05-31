@@ -73,14 +73,14 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         \$this->createTable('post', [
             'id' => \$this->primaryKey(),
         ]);
     }
 
-    public function safeDown()
+    public function down(): void
     {
         \$this->dropTable('post');
     }
@@ -132,7 +132,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         \$this->createTable('post', [
             'id' => \$this->primaryKey(),
@@ -141,7 +141,7 @@ class $file extends Migration
         ]);
     }
 
-    public function safeDown()
+    public function down(): void
     {
         \$this->dropTable('post');
     }
@@ -198,7 +198,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
         \$this->createTable('post', [
             'id' => \$this->primaryKey(),
@@ -243,7 +243,7 @@ class $file extends Migration
         );
     }
 
-    public function safeDown()
+    public function down(): void
     {
         // drops foreign key for table `{{%user}}`
         \$this->dropForeignKey(

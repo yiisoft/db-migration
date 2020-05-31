@@ -23,16 +23,16 @@ use function implode;
  * Each child class of Migration represents an individual database migration which is identified by the child class
  * name.
  *
- * Within each migration, the {@see safeUp() method should be overridden to contain the logic for "upgrading" the database;
- * while the {@see safeDown()} method for the "downgrading" logic. The "yii migrate" command manages all available
+ * Within each migration, the {@see up() method should be overridden to contain the logic for "upgrading" the database;
+ * while the {@see down()} method for the "downgrading" logic. The "yii migrate" command manages all available
  * migrations in an application.
  *
- * If the database supports transactions, you may also override {@see safeUp()} and {@see safeDown()} so that if
- * anything wrong happens during the upgrading or downgrading, the whole migration can be reverted in a whole.
+ * If the database supports transactions, if anything wrong happens during the upgrading or downgrading, the whole
+ * migration can be reverted in a whole.
  *
  * Note that some DB queries in some DBMS cannot be put into a transaction. For some examples, please refer to
  * [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html). If this is the case, you should still
- * implement `safeUp()` and `safeDown()`, instead.
+ * implement `up()` and `down()`, instead.
  *
  * Migration provides a set of convenient methods for manipulating database data and schema.
  *
@@ -64,42 +64,9 @@ abstract class Migration implements MigrationInterface
         return $this->db;
     }
 
-    /**
-     * This method contains the logic to be executed when applying this migration.
-     *
-     * This method differs from {@see safeUp()} in that the DB logic implemented here will be enclosed within a DB
-     * transaction.
-     *
-     * Child classes may implement this method instead of {@see safeUp()} if the DB logic needs to be within a
-     * transaction.
-     *
-     * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
-     * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
-     *
-     * @return bool return a false value to indicate the migration fails and should not proceed further. All other
-     * return values mean the migration succeeds.
-     */
-    public function safeUp()
-    {
-    }
+    abstract public function up(): void;
 
-    /**
-     * This method contains the logic to be executed when removing this migration.
-     *
-     * This method differs from {@see down()} in that the DB logic implemented here will be enclosed within a DB
-     * transaction.
-     * Child classes may implement this method instead of {@see down()} if the DB logic needs to be within a
-     * transaction.
-     *
-     * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
-     * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
-     *
-     * @return bool return a false value to indicate the migration fails and should not proceed further. All other
-     * return values mean the migration succeeds.
-     */
-    public function safeDown()
-    {
-    }
+    abstract function down(): void;
 
     /**
      * Executes a SQL statement.

@@ -28,7 +28,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class <?= $className ?> extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
 <?= $this->render('_addColumns', [
     'table' => $table,
@@ -38,7 +38,7 @@ class <?= $className ?> extends Migration
 ?>
     }
 
-    public function safeDown()
+    public function down(): void
     {
 <?= $this->render('_dropColumns', [
     'table' => $table,

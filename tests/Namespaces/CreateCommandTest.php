@@ -80,16 +80,14 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
 
     }
 
-    public function safeDown()
+    public function down(): void
     {
-        echo "$file cannot be reverted.<br\>";
-
-        return false;
+        throw new \RuntimeException('Cannot revert migration. down() is not implemented.');
     }
 }
 
@@ -145,16 +143,14 @@ use Yiisoft\Yii\Db\Migration\Migration;
  */
 class $file extends Migration
 {
-    public function safeUp()
+    public function up(): void
     {
 
     }
 
-    public function safeDown()
+    public function down(): void
     {
-        echo "$file cannot be reverted.<br\>";
-
-        return false;
+        throw new \RuntimeException('Cannot revert migration. down() is not implemented.');
     }
 }
 
