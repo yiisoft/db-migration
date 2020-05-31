@@ -106,7 +106,7 @@ abstract class TestCase extends BaseTestCase
         }
 
         while (($file = readdir($handle)) !== false) {
-            if ($file === '.' || $file === '..' || $file === '.gitignore') {
+            if (in_array($file, ['.', '..', '.gitignore', '.gitkeep'], true)) {
                 continue;
             }
             $path = $dir . DIRECTORY_SEPARATOR . $file;
