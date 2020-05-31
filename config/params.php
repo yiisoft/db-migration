@@ -12,8 +12,8 @@ use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 return [
     'console' => [
-        'id' => 'yii-migration',
-        'name' => 'Yii Db Migration Tool Generator',
+        'id' => 'yii-db-migration',
+        'name' => 'Yii Database Migration Tool',
         'commands' => [
             'generate/create' => CreateCommand::class,
             'database/list' => ListTablesCommand::class,

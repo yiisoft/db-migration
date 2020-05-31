@@ -8,11 +8,11 @@
 
 The package implementing migration for yiisoft/db.
 
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii-migration/v/stable.png)](https://packagist.org/packages/yiisoft/yii-migration)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii-migration/downloads.png)](https://packagist.org/packages/yiisoft/yii-migration)
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii-db-migration/v/stable.png)](https://packagist.org/packages/yiisoft/yii-db-migration)
+[![Total Downloads](https://poser.pugx.org/yiisoft/yii-db-migration/downloads.png)](https://packagist.org/packages/yiisoft/yii-db-migration)
 [![Build status](https://github.com/yiisoft/yii-db-migration/workflows/build/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/yii-migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-migration/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/yii-migration/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-migration/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/?branch=master)
 
 ## Installation
 
