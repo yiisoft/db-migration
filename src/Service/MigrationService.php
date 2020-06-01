@@ -51,12 +51,11 @@ final class MigrationService
         'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
         'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
         'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
-        'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
+        'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
     ];
     private int $maxNameLength = 180;
     private int $migrationNameLimit = 0;
     private string $migrationTable = '{{%migration}}';
-    private string $templateFile = '@views/migration.php';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
     private Connection $db;
@@ -368,16 +367,6 @@ final class MigrationService
     }
 
     /**
-     * Set the value of templateFile
-     *
-     * @param string $value
-     */
-    public function templateFile(string $value): void
-    {
-        $this->templateFile = $value;
-    }
-
-    /**
      * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
      *
      * For example, if the table name is `post` the generator wil return `{{%post}}`.
@@ -546,6 +535,30 @@ final class MigrationService
         $command->delete($this->migrationTable, [
             'version' => $version,
         ])->execute();
+    }
+
+    /**
+     * Set of template paths for generating migration code automatically.
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * The key is the template type, the value is a path or the alias.
+     *
+     * Supported types are:
+     *
+     * ```php
+     *   'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
+     *   'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
+     *   'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
+     *   'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
+     *   'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
+     *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
+     *```
+     */
+    public function generatorTemplateFiles(string $key, string $value): void
+    {
+        return $this->generatorTemplateFiles[$key] = $value;
     }
 
     /**
