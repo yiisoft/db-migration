@@ -32,7 +32,7 @@ final class CreateService
     private Connection $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
-    private WebView $view;
+    private WebView $webView;
 
     public function __construct(
         Aliases $aliases,
