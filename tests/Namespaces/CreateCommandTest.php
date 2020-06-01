@@ -78,7 +78,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Class $file
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -101,7 +101,7 @@ EOF;
     public function testExecuteInputNamespaces(): void
     {
         /** Set path for generate migration */
-        $this->migrationService->createPath('@migration');
+        $this->migrationService->createPath('@yiisoft/yii/db/migration/migration');
 
         $command = $this->application->find('generate/create');
 
@@ -141,7 +141,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Class $file
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {

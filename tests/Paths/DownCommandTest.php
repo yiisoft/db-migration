@@ -18,7 +18,7 @@ final class DownCommandTest extends TestCase
         parent::setUp();
 
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@migration']);
+        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration']);
     }
 
     public function testExecute(): void

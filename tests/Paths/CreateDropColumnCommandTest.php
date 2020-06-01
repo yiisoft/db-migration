@@ -24,12 +24,12 @@ final class CreateDropColumnCommandTest extends TestCase
         parent::setUp();
 
         /** Set path for generate migration */
-        $this->migrationService->createPath('@migration');
+        $this->migrationService->createPath('@yiisoft/yii/db/migration/migration');
     }
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->aliases->get('@migration'));
+        $this->removeFiles($this->aliases->get('@yiisoft/yii/db/migration/migration'));
 
         parent::tearDown();
     }
@@ -73,7 +73,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles dropping columns from table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -87,7 +87,7 @@ class $file extends Migration
 }
 
 EOF;
-        $generated = file_get_contents($this->aliases->get('@migration/' . $file . '.php'));
+        $generated = file_get_contents($this->aliases->get('@yiisoft/yii/db/migration/migration/' . $file . '.php'));
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 }

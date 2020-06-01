@@ -23,5 +23,5 @@ return [
             'migrate/redo' => RedoCommand::class,
             'migrate/up' => UpdateCommand::class
         ],
-    ]
+    ],
 ];
