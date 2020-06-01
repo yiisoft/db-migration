@@ -23,13 +23,6 @@ return [
         return $container;
     },
 
-    Aliases::class => [
-        '@root' => dirname(__DIR__, 1),
-        '@runtime' => '@root/runtime',
-        '@migration' => '@root/migration',
-        '@views' => '@root/resources/views'
-    ],
-
     ListenerProviderInterface::class => Provider::class,
     EventDispatcherInterface::class => Dispatcher::class,
     SimpleCacheInterface::class => ArrayCache::class,
@@ -44,7 +37,12 @@ return [
         $logger = $container->get(LoggerInterface::class);
         $profiler = $container->get(Profiler::class);
 
-        $db = new Connection($cache, $logger, $profiler, 'sqlite:' . $aliases->get('@runtime') . '/yiitest.sq3');
+        $db = new Connection(
+            $cache,
+            $logger,
+            $profiler,
+            'sqlite:' . $aliases->get('@yiisoft/yii/db/migration/runtime') . '/yiitest.sq3'
+        );
 
         $db->setUsername('root');
         $db->setPassword('root');

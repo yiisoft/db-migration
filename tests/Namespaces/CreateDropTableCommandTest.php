@@ -80,7 +80,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the dropping of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {

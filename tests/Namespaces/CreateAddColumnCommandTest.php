@@ -80,7 +80,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles adding columns to table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {

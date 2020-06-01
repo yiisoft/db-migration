@@ -7,7 +7,7 @@ namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 use ReflectionException;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\Connection;
-use Yiisoft\View\View;
+use Yiisoft\View\WebView;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -32,20 +32,20 @@ final class CreateService
     private Connection $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
-    private View $view;
+    private WebView $view;
 
     public function __construct(
         Aliases $aliases,
         Connection $db,
         ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
-        View $view
+        WebView $webView
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
-        $this->view = $view;
+        $this->webView = $webView;
     }
 
     public function run(
@@ -72,7 +72,7 @@ final class CreateService
 
         $foreignKeys = $this->addforeignKeys($table, $foreignKeys);
 
-        return $this->view->renderFile(
+        return $this->webView->renderFile(
             $this->aliases->get($templateFile),
             [
                 'table' => $table,

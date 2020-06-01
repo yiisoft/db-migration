@@ -21,7 +21,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Class <?= $className . "\n" ?>
  */
-class <?= $className ?> extends Migration
+final class <?= $className ?> extends Migration
 {
     public function up(): void
     {

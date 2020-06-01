@@ -46,12 +46,12 @@ final class MigrationService
     private bool $compact = false;
     private array $fields = [];
     private array $generatorTemplateFiles = [
-        'create' => '@views/migration.php',
-        'table' => '@views/createTableMigration.php',
-        'dropTable' => '@views/dropTableMigration.php',
-        'addColumn' => '@views/addColumnMigration.php',
-        'dropColumn' => '@views/dropColumnMigration.php',
-        'junction' => '@views/createTableMigration.php',
+        'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
+        'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
+        'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
+        'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
+        'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
+        'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
     ];
     private int $maxNameLength = 180;
     private int $migrationNameLimit = 0;

@@ -28,7 +28,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
     'foreignKeys' => $foreignKeys,
 ]) ?>
  */
-class <?= $className ?> extends Migration
+final class <?= $className ?> extends Migration
 {
     public function up(): void
     {

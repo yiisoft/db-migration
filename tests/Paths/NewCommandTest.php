@@ -21,12 +21,12 @@ final class NewCommandTest extends TestCase
         parent::setUp();
 
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@migration']);
+        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration']);
     }
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->aliases->get('@migration'));
+        $this->removeFiles($this->aliases->get('@yiisoft/yii/db/migration/migration'));
 
         parent::tearDown();
     }
@@ -43,7 +43,7 @@ final class NewCommandTest extends TestCase
 
         $words = explode("\n", $output);
 
-        $this->assertFileExists($this->aliases->get('@migration') . DIRECTORY_SEPARATOR . trim($words[0]) . '.php');
-        $this->assertFileExists($this->aliases->get('@migration') . DIRECTORY_SEPARATOR . trim($words[1]) . '.php');
+        $this->assertFileExists($this->aliases->get('@yiisoft/yii/db/migration/migration') . DIRECTORY_SEPARATOR . trim($words[0]) . '.php');
+        $this->assertFileExists($this->aliases->get('@yiisoft/yii/db/migration/migration') . DIRECTORY_SEPARATOR . trim($words[1]) . '.php');
     }
 }

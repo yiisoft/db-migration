@@ -85,7 +85,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  * - `{{%post}}`
  * - `{{%tag}}`
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
