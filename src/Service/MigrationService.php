@@ -558,7 +558,7 @@ final class MigrationService
      */
     public function generatorTemplateFiles(string $key, string $value): void
     {
-        return $this->generatorTemplateFiles[$key] = $value;
+        $this->generatorTemplateFiles[$key] = $value;
     }
 
     /**
