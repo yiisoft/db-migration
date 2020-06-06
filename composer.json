@@ -20,7 +20,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^7.4",
-        "yiisoft/aliases": "^3.0@dev",
+        "yiisoft/aliases": "^1.0",
         "yiisoft/arrays": "^3.0@dev",
         "yiisoft/db": "^3.0@dev",
         "yiisoft/view": "^3.0@dev",
