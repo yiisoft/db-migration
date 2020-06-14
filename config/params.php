@@ -11,9 +11,7 @@ use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 return [
-    'console' => [
-        'id' => 'yii-db-migration',
-        'name' => 'Yii Database Migration Tool',
+    'yiisoft/yii-console' => [
         'commands' => [
             'generate/create' => CreateCommand::class,
             'database/list' => ListTablesCommand::class,
