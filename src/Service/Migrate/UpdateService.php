@@ -39,19 +39,19 @@ final class UpdateService
 
         $migration = $this->migrationService->createMigration($class);
 
-        if ($migration !== null && $migration->up() !== false) {
-            $this->migrationService->addMigrationHistory($class);
+        if ($migration === null) {
             $time = microtime(true) - $start;
-            $this->consoleHelper->output()->writeln(
-                "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>"
-            );
-
-            return true;
+            $this->consoleHelper->io()->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . "s)");
+            return false;
         }
 
+        $migration->up();
+        $this->migrationService->addMigrationHistory($class);
         $time = microtime(true) - $start;
-        $this->consoleHelper->io()->error("Failed to apply $class (time: " . sprintf('%.3f', $time) . "s)");
+        $this->consoleHelper->output()->writeln(
+            "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>"
+        );
 
-        return false;
+        return true;
     }
 }
