@@ -6,6 +6,9 @@ use Yiisoft\Aliases\Aliases;
 
 return [
     Aliases::class => [
-        '@yiisoft/yii/db/migration' => dirname(__DIR__)
+        '__class' => Aliases::class,
+        '__construct()' => [
+            $params['aliases']
+        ]
     ],
 ];
