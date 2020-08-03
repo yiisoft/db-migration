@@ -18,7 +18,7 @@ return [
     CacheInterface::class => Cache::class,
     LoggerInterface::class => Logger::class,
 
-    Connection::class => static function (ContainerInterface $container) {
+    Connection::class => function (ContainerInterface $container) {
         $aliases = $container->get(Aliases::class);
         $cache = $container->get(CacheInterface::class);
         $logger = $container->get(LoggerInterface::class);
