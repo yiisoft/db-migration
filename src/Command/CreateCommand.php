@@ -150,7 +150,7 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $name = $this->generateName($command, $this->consoleHelper->inflector()->camelize($name), $and);
+        $name = $this->generateName($command, $this->consoleHelper->inflector()->toPascalCase($name), $and);
 
         [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
