@@ -1,7 +1,8 @@
 <?php
+
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
-use \Yiisoft\Yii\Db\Migration\Migration as BaseMigration;
+use Yiisoft\Yii\Db\Migration\Migration as BaseMigration;
 
 /**
  * Stub Migration class
