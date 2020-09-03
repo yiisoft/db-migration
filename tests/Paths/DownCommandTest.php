@@ -18,7 +18,10 @@ final class DownCommandTest extends TestCase
         parent::setUp();
 
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration']);
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
+
+        $this->migrateUp();
+
     }
 
     public function testExecute(): void
@@ -44,6 +47,7 @@ final class DownCommandTest extends TestCase
         $create = $this->application->find('migrate/down');
 
         $commandDown = new CommandTester($create);
+        $commandDown->execute([]);
 
         $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandDown->execute([]));
 

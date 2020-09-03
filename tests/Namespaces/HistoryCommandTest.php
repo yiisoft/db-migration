@@ -13,14 +13,15 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
  */
 final class HistoryCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigrationGenerated';
 
     protected function setUp(): void
     {
         parent::setUp();
 
         /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigration']);
+        $this->migrateUp();
     }
 
     public function testExecute(): void

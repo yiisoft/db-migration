@@ -16,7 +16,7 @@ use function trim;
  */
 final class NewCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigration';
     private string $pathAliases = '';
 
     protected function setUp(): void
@@ -24,15 +24,8 @@ final class NewCommandTest extends TestCase
         parent::setUp();
 
         /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+        $this->migrationService->updateNamespace([$this->namespace]);
         $this->pathAliases = '@' . str_replace('\\', '/', $this->namespace);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->removeFiles($this->consoleHelper->getPathFromNameSpace($this->pathAliases));
-
-        parent::tearDown();
     }
 
     public function testExecute(): void

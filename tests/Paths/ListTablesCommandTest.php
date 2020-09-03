@@ -16,6 +16,8 @@ final class ListTablesCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
+        $this->migrateUp();
     }
 
     public function testExecute(): void

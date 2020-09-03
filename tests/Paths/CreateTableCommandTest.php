@@ -23,12 +23,12 @@ final class CreateTableCommandTest extends TestCase
         parent::setUp();
 
         /** Set path for generate migration */
-        $this->migrationService->createPath('@yiisoft/yii/db/migration/migration');
+        $this->migrationService->createPath($this->getGeneratedMigrationFolder());
     }
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->aliases->get('@yiisoft/yii/db/migration/migration'));
+        $this->removeFiles($this->getGeneratedMigrationFolder());
 
         parent::tearDown();
     }
@@ -71,7 +71,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -87,7 +87,7 @@ class $file extends Migration
 }
 
 EOF;
-        $generated = file_get_contents($this->aliases->get('@yiisoft/yii/db/migration/migration/' . $file . '.php'));
+        $generated = file_get_contents($this->getGeneratedMigrationFolder() . $file . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -130,7 +130,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -148,7 +148,7 @@ class $file extends Migration
 }
 
 EOF;
-        $generated = file_get_contents($this->aliases->get('@yiisoft/yii/db/migration/migration/' . $file . '.php'));
+        $generated = file_get_contents($this->getGeneratedMigrationFolder() . $file . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -274,7 +274,7 @@ final class $file extends Migration
 }
 
 EOF;
-        $generated = file_get_contents($this->aliases->get('@yiisoft/yii/db/migration/migration/' . $file . '.php'));
+        $generated = file_get_contents($this->getGeneratedMigrationFolder() . $file . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 }

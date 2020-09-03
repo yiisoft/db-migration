@@ -19,7 +19,7 @@ use function trim;
  */
 final class CreateAddColumnCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigrationGenerated';
     private string $pathAliases = '';
 
     protected function setUp(): void
@@ -95,7 +95,7 @@ final class $file extends Migration
 
 EOF;
         $generated = file_get_contents(
-            $this->consoleHelper->getPathFromNameSpace($this->pathAliases) . '/' . $file . '.php'
+            $this->getNamespaceMigrationFolder() . $file . '.php'
         );
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }

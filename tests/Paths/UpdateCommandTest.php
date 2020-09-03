@@ -16,47 +16,15 @@ final class UpdateCommandTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        /** Set path for generate migration */
-        $this->migrationService->createPath('@yiisoft/yii/db/migration/migration');
-
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration', '@root']);
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
     }
 
     public function testExecute(): void
     {
-        $migrationTable = 'migration';
+        $this->markTestIncomplete();
         $tableMaster = 'department';
         $tableRelation = 'student';
-
-        if ($this->db->getSchema()->getTableSchema($migrationTable) !== null) {
-            $this->db->createCommand()->dropTable($migrationTable)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableRelation) !== null) {
-            $this->db->createCommand()->dropTable($tableRelation)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableMaster) !== null) {
-            $this->db->createCommand()->dropTable($tableMaster)->execute();
-        }
-
-        $create = $this->application->find('generate/create');
-
-        $commandCreate = new CommandTester($create);
-
-        $commandCreate->setInputs(['yes']);
-        $commandCreate->execute([
-            'name' => $tableMaster,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null'
-        ]);
-        $commandCreate->execute([
-            'name' => $tableRelation,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null,department_id:integer:notnull:foreignKey(department),dateofbirth:date:null'
-        ]);
 
         $update = $this->application->find('migrate/up');
 
@@ -119,6 +87,8 @@ final class UpdateCommandTest extends TestCase
         $commandUpdate = new CommandTester($update);
 
         $commandUpdate->setInputs(['yes']);
+
+        $this->assertEquals(ExitCode::OK, $commandUpdate->execute([]));
 
         $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandUpdate->execute([]));
 

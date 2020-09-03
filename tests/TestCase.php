@@ -8,6 +8,7 @@ use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
+use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Composer\Config\Builder;
 use Yiisoft\Db\Connection\Connection;
@@ -43,13 +44,29 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->configContainer();
+        $this->db->beginTransaction();
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
-
+        $this->db->getTransaction()->rollBack();
         unset($this->aliases, $this->application, $this->container, $this->migrationService);
+    }
+
+    protected function getMigrationFolder()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR;
+    }
+
+    protected function getNamespaceMigrationFolder()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'NamespaceMigrationGenerated' . DIRECTORY_SEPARATOR;
+    }
+
+    protected function getGeneratedMigrationFolder()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'migrationGenerated' . DIRECTORY_SEPARATOR;
     }
 
     protected function configContainer(): void
@@ -99,7 +116,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function removeFiles(string $basePath): void
     {
-        $handle = opendir($dir = $this->aliases->get($basePath));
+        $handle = opendir($dir = $basePath);
 
         if ($handle === false) {
             throw new Exception("Unable to open directory: $dir");
@@ -118,5 +135,16 @@ abstract class TestCase extends BaseTestCase
         }
 
         closedir($handle);
+    }
+
+    protected function migrateUp(): void
+    {
+        $create = $this->application->find('migrate/up');
+
+        $commandUp = new CommandTester($create);
+
+        $commandUp->setInputs(['yes']);
+
+        $commandUp->execute([]);
     }
 }

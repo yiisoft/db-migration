@@ -13,17 +13,15 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
  */
 final class RedoCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigration';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        /** Set namespace for generate migration */
-        $this->migrationService->createNamespace($this->namespace);
-
         /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+        $this->migrationService->updateNamespace([$this->namespace]);
+        $this->migrateUp();
     }
 
     public function testExecute(): void

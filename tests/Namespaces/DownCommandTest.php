@@ -13,17 +13,16 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
  */
 final class DownCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigrationGenerated';
 
     protected function setUp(): void
     {
         parent::setUp();
 
         /** Set namespace for generate migration */
-        $this->migrationService->createNamespace($this->namespace);
-
-        /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+        $this->migrationService->updateNamespace([$this->namespace]);
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
+        $this->migrateUp();
     }
 
     public function testExecute(): void
@@ -50,6 +49,7 @@ final class DownCommandTest extends TestCase
 
         $commandDown = new CommandTester($create);
 
+        $commandDown->execute([]);
         $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandDown->execute([]));
 
         $output = $commandDown->getDisplay(true);

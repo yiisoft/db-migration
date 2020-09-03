@@ -18,7 +18,8 @@ final class HistoryCommandTest extends TestCase
         parent::setUp();
 
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration', '@root']);
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
+        $this->migrateUp();
     }
 
     public function testExecute(): void

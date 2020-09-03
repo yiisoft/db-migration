@@ -17,11 +17,9 @@ final class RedoCommandTest extends TestCase
     {
         parent::setUp();
 
-        /** Set path for generate migration */
-        $this->migrationService->createPath('@yiisoft/yii/db/migration/migration');
-
         /** Set list path for update migration */
-        $this->migrationService->updatePath(['@yiisoft/yii/db/migration/migration', '@root']);
+        $this->migrationService->updatePath([$this->getMigrationFolder()]);
+        $this->migrateUp();
     }
 
     public function testExecute(): void

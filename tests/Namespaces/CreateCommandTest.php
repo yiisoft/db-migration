@@ -19,7 +19,7 @@ use function trim;
  */
 final class CreateCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigrationGenerated';
     private string $pathAliases = '';
 
     protected function setUp(): void

@@ -11,10 +11,11 @@ final class MigrationTest extends TestCase
 {
     public function testExecute() {
         $db = $this->db;
+        $db->createCommand('CREATE TABLE test_table (id int)')->execute();
         $migration = $this->getMigration($db);
 
-        $migration->execute('DROP TABLE migration');
-        $this->assertEmpty($db->getSchema()->getTableSchema('migration'));
+        $migration->execute('DROP TABLE test_table');
+        $this->assertEmpty($db->getSchema()->getTableSchema('test'));
     }
 
     /**

@@ -13,20 +13,30 @@
 
     <testsuites>
         <testsuite name="Yii Db Migration Tests">
+            <directory>./tests/Paths/CreateAddColumnCommandTest.php</directory>
             <directory>./tests/Paths/CreateCommandTest.php</directory>
-            <directory>./tests/Paths/UpdateCommandTest.php</directory>
-            <directory>./tests/Paths/RedoCommandTest.php</directory>
+            <directory>./tests/Paths/CreateDropColumnCommandTest.php</directory>
+            <directory>./tests/Paths/CreateDropTableCommandTest.php</directory>
+            <directory>./tests/Paths/CreateJunctionCommandTest.php</directory>
+            <directory>./tests/Paths/CreateTableCommandTest.php</directory>
+            <directory>./tests/Paths/DownCommandTest.php</directory>
             <directory>./tests/Paths/HistoryCommandTest.php</directory>
             <directory>./tests/Paths/ListTablesCommandTest.php</directory>
-            <directory>./tests/Paths/DownCommandTest.php</directory>
             <directory>./tests/Paths/NewCommandTest.php</directory>
+            <directory>./tests/Paths/RedoCommandTest.php</directory>
+            <directory>./tests/Paths/UpdateCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateAddColumnCommandTest.php</directory>
             <directory>./tests/Namespaces/CreateCommandTest.php</directory>
-            <directory>./tests/Namespaces/UpdateCommandTest.php</directory>
-            <directory>./tests/Namespaces/RedoCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateDropColumnCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateDropTableCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateJunctionCommandTest.php</directory>
+            <directory>./tests/Namespaces/CreateTableCommandTest.php</directory>
+            <directory>./tests/Namespaces/DownCommandTest.php</directory>
             <directory>./tests/Namespaces/HistoryCommandTest.php</directory>
             <directory>./tests/Namespaces/ListTablesCommandTest.php</directory>
-            <directory>./tests/Namespaces/DownCommandTest.php</directory>
             <directory>./tests/Namespaces/NewCommandTest.php</directory>
+            <directory>./tests/Namespaces/RedoCommandTest.php</directory>
+            <directory>./tests/Namespaces/UpdateCommandTest.php</directory>
             <directory>./tests/MigrationTest.php</directory>
         </testsuite>
     </testsuites>

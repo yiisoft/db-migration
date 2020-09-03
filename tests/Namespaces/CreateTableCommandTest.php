@@ -18,7 +18,7 @@ use function trim;
  */
 final class CreateTableCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigrationGenerated';
     private string $pathAliases = '';
 
     protected function setUp(): void
@@ -34,7 +34,6 @@ final class CreateTableCommandTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->aliases->get('@yiisoft/yii/db/migration/migration'));
         $this->removeFiles($this->consoleHelper->getPathFromNameSpace($this->pathAliases));
 
         parent::tearDown();
@@ -143,7 +142,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -213,7 +212,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  * - `{{%user}}`
  * - `{{%category}}`
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {

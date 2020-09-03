@@ -13,52 +13,20 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
  */
 final class UpdateCommandTest extends TestCase
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\NamespaceMigration';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        /** Set namespace for generate migration */
-        $this->migrationService->createNamespace($this->namespace);
-
         /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
+        $this->migrationService->updateNamespace([$this->namespace]);
     }
 
     public function testExecute(): void
     {
-        $migrationTable = 'migration';
         $tableMaster = 'department';
         $tableRelation = 'student';
-
-        if ($this->db->getSchema()->getTableSchema($migrationTable) !== null) {
-            $this->db->createCommand()->dropTable($migrationTable)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableRelation) !== null) {
-            $this->db->createCommand()->dropTable($tableRelation)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableMaster) !== null) {
-            $this->db->createCommand()->dropTable($tableMaster)->execute();
-        }
-
-        $create = $this->application->find('generate/create');
-
-        $commandCreate = new CommandTester($create);
-
-        $commandCreate->setInputs(['yes']);
-        $commandCreate->execute([
-            'name' => $tableMaster,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null'
-        ]);
-        $commandCreate->execute([
-            'name' => $tableRelation,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null,department_id:integer:notnull:foreignKey(department),dateofbirth:date:null'
-        ]);
 
         $update = $this->application->find('migrate/up');
 
@@ -125,6 +93,7 @@ final class UpdateCommandTest extends TestCase
 
         $commandUpdate->setInputs(['yes']);
 
+        $commandUpdate->execute([]);
         $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandUpdate->execute([]));
 
         $output = $commandUpdate->getDisplay(true);
