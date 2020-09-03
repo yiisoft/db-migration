@@ -36,7 +36,7 @@ final class MigrationTest extends TestCase
 
         ob_start();
         $migration->insert('test_table', ['id' => 1]);
-        $this->assertEquals('1', $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertEquals('1', $this->db->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar());
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
 
@@ -49,7 +49,7 @@ final class MigrationTest extends TestCase
             ['id' => 1],
             ['id' => 2],
         ]);
-        $this->assertEquals('2', $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertEquals('2', $this->db->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar());
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
 
