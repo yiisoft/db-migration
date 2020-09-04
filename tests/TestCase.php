@@ -34,6 +34,7 @@ abstract class TestCase extends BaseTestCase
 {
     protected Application $application;
     protected Aliases $aliases;
+    protected Migration $migration;
     protected Connection $db;
     protected ConsoleHelper $consoleHelper;
     protected MigrationService $migrationService;
@@ -79,6 +80,7 @@ abstract class TestCase extends BaseTestCase
         $this->aliases = $this->container->get(Aliases::class);
         $this->consoleHelper = $this->container->get(ConsoleHelper::class);
         $this->db = $this->container->get(Connection::class);
+        $this->migration = $this->container->get(Migration::class);
         $this->migrationService = $this->container->get(MigrationService::class);
 
         $loader = new ContainerCommandLoader(
