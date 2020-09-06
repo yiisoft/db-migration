@@ -141,7 +141,7 @@ abstract class TestCase extends BaseTestCase
         return [
             Aliases::class => [
                 '@root' => dirname(__DIR__, 1),
-                '@runtime' => '@root/tests/Data/Runtime',
+                '@data' => '@root/tests/Data',
                 '@yiisoft/yii/db/migration' => dirname(__DIR__, 1),
                 '@views' =>  '@yiisoft/yii/db/migration/resources/views'
             ],
@@ -174,7 +174,7 @@ abstract class TestCase extends BaseTestCase
                     $cache,
                     $logger,
                     $profiler,
-                    'sqlite:' . $aliases->get('@runtime/yiitest.sq3')
+                    'sqlite:' . $aliases->get('@data/yiitest.sq3')
                 );
 
                 return $db;

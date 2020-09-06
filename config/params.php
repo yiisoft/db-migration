@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
@@ -11,6 +12,10 @@ use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 return [
+    'aliases' => [
+        '@yiisoft/yii/db/migration' => dirname(__DIR__, 1)
+    ],
+
     'yiisoft/yii-console' => [
         'commands' => [
             'generate/create' => CreateCommand::class,
