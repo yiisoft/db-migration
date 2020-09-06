@@ -563,7 +563,7 @@ final class MigrationService
         if ($value === [] && $this->generatorTemplateFiles === []) {
             $this->generatorTemplateFiles = [
                 'create' =>  $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
-                'table' => $this->consoleHelper->getBaseDir() .  '/resources/views/createTableMigration.php',
+                'table' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
                 'dropTable' => $this->consoleHelper->getBaseDir() . '/resources/views/dropTableMigration.php',
                 'addColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/addColumnMigration.php',
                 'dropColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/dropColumnMigration.php',
