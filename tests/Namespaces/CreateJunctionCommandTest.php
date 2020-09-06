@@ -10,7 +10,6 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 use function explode;
 use function file_get_contents;
-use function str_repeat;
 use function substr;
 use function trim;
 
@@ -77,6 +76,7 @@ declare(strict_types=1);
 namespace $this->namespace;
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `post_tag`.
@@ -85,7 +85,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  * - `{{%post}}`
  * - `{{%tag}}`
  */
-final class $file extends Migration
+final class $file extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
