@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yiisoft\Yii\Db\Migration;
 
 /**
