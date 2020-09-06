@@ -27,6 +27,7 @@
             <directory>./tests/Namespaces/ListTablesCommandTest.php</directory>
             <directory>./tests/Namespaces/DownCommandTest.php</directory>
             <directory>./tests/Namespaces/NewCommandTest.php</directory>
+            <directory>./tests/MigrationTest.php</directory>
         </testsuite>
     </testsuites>
 

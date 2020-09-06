@@ -84,7 +84,7 @@ abstract class Migration implements MigrationInterface
     {
         $sqlOutput = $sql;
         if ($this->maxSqlOutputLength > 0) {
-            $sqlOutput = StringHelper::truncateCharacters($sql, $this->maxSqlOutputLength, '[... hidden]');
+            $sqlOutput = StringHelper::truncateEnd($sql, $this->maxSqlOutputLength, '[... hidden]');
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
