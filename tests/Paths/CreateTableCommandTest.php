@@ -71,7 +71,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
@@ -130,7 +130,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
 /**
  * Handles the creation of table `post`.
  */
-class $file extends Migration
+final class $file extends Migration
 {
     public function up(): void
     {
