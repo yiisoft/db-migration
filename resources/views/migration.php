@@ -17,11 +17,12 @@ if (!empty($namespace)) {
 ?>
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Class <?= $className . "\n" ?>
  */
-final class <?= $className ?> extends Migration
+final class <?= $className ?> extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -30,6 +31,6 @@ final class <?= $className ?> extends Migration
 
     public function down(): void
     {
-        throw new \RuntimeException('Cannot revert migration. down() is not implemented.');
+
     }
 }

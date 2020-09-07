@@ -75,11 +75,12 @@ declare(strict_types=1);
 namespace $this->namespace;
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $file extends Migration
+final class $file extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -138,11 +139,12 @@ declare(strict_types=1);
 namespace $this->namespace;
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $file extends Migration
+final class $file extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -204,6 +206,7 @@ declare(strict_types=1);
 namespace $this->namespace;
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -212,7 +215,7 @@ use Yiisoft\Yii\Db\Migration\Migration;
  * - `{{%user}}`
  * - `{{%category}}`
  */
-final class $file extends Migration
+final class $file extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {

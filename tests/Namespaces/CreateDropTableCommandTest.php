@@ -10,7 +10,6 @@ use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 use function explode;
 use function file_get_contents;
-use function str_repeat;
 use function substr;
 use function trim;
 

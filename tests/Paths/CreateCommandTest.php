@@ -67,11 +67,12 @@ final class CreateCommandTest extends TestCase
 declare(strict_types=1);
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Class $file
  */
-final class $file extends Migration
+final class $file extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -80,7 +81,7 @@ final class $file extends Migration
 
     public function down(): void
     {
-        throw new \RuntimeException('Cannot revert migration. down() is not implemented.');
+
     }
 }
 

@@ -18,12 +18,13 @@ if (!empty($namespace)) {
 ?>
 
 use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `<?= $table ?>` which is a junction between
  * table `<?= $field_first ?>` and table `<?= $field_second ?>`.
  */
-final class <?= $className ?> extends Migration
+final class <?= $className ?> extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
