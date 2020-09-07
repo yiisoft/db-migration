@@ -56,9 +56,6 @@ final class UpdateCommand extends Command
             ->setHelp('This command applying new migrations to database.');
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($this->migrationService->before(static::$defaultName) === ExitCode::DATAERR) {
