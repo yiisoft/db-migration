@@ -61,21 +61,19 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  * Add to existing configuration.
  */
 return [
-    ConnectionInterface::class => static function (ContainerInterface $container) use ($params) {
+    ConnectionInterface::class => static function (ContainerInterface $container){
         $aliases = $container->get(Aliases::class);
         $cache = $container->get(CacheInterface::class);
         $logger = $container->get(LoggerInterface::class);
         $profiler = $container->get(Profiler::class);
 
-        $db = new SqliteConnection(
+        return new SqliteConnection(
             $cache,
             $logger,
             $profiler,
             'sqlite:' . $aliases->get('@runtime/yiitest.sq3')
         );
-
-        return $db;
-        },
+    },
 
     MigrationService::class => static function (ContainerInterface $container) {
         $migrationService = new MigrationService(
