@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
