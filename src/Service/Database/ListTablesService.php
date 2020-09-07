@@ -35,14 +35,15 @@ final class ListTablesService
     {
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrationService->getMigrationTable());
+        $dsn = $this->db->getDSN();
 
-        if (empty($tables) || implode(',', $tables) === $migrationTable) {
+        if (empty($tables) || implode(',', $tables) === $migrationTable || $dsn === null) {
             $this->consoleHelper->io()->error('Your database does not contain any tables yet.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
-        $dbname = $this->getDsnAttribute('dbname', $this->db->getDSN());
+        $dbname = $this->getDsnAttribute('dbname', $dsn);
 
         $this->consoleHelper->io()->section("List of tables for database: {$dbname}");
 
