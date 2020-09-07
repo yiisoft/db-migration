@@ -105,8 +105,6 @@ final class ConsoleHelper
 
     public function getBaseDir(): string
     {
-        $class = new ReflectionClass(ClassLoader::class);
-
-        return dirname($class->getFileName(), 3);
+        return $this->aliases->get('@yiisoft/yii/db/migration');
     }
 }
