@@ -62,7 +62,8 @@ final class UpdateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $limit = (int) $input->getOption('limit');
+        /** @var int|null */
+        $limit = $input->getOption('limit');
 
         $migrations = $this->migrationService->getNewMigrations();
 
@@ -96,7 +97,8 @@ final class UpdateCommand extends Command
 
         foreach ($migrations as $migration) {
             $nameLimit = $this->migrationService->getMigrationNameLimit();
-            if ($nameLimit !== null && strlen($migration) > $nameLimit) {
+
+            if (strlen($migration) > $nameLimit) {
                 $output->writeln(
                     "\n<fg=red>The migration name '$migration' is too long. Its not possible to apply " .
                     "this migration.</>"
@@ -104,6 +106,7 @@ final class UpdateCommand extends Command
 
                 return ExitCode::UNSPECIFIED_ERROR;
             }
+
             $output->writeln("\t<fg=yellow>$migration</>");
         }
 

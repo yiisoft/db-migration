@@ -85,7 +85,6 @@ use function strlen;
 final class CreateCommand extends Command
 {
     private ConsoleHelper $consoleHelper;
-    private array $fields = [];
     private CreateService $createService;
     private MigrationService $migrationService;
 
@@ -115,22 +114,38 @@ final class CreateCommand extends Command
             ->setHelp('This command Generate migration template.');
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($this->migrationService->before(static::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 
-        $name = (string) $input->getArgument('name');
-        $command = (string) $input->getOption('command');
-        $fields = (string) $input->getOption('fields');
-        $and = (string) $input->getOption('and');
-        $namespace = (string) $input->getOption('namespace');
+        /** @var string */
+        $name = $input->getArgument('name');
 
+        /** @var string */
         $table = $name;
 
-        if (!empty($fields)) {
-            $this->fields = explode(',', $fields);
+        /** @var string */
+        $command = $input->getOption('command');
+
+        /** @var array */
+        $fields = [];
+
+        /** @var string */
+        $field = $input->getOption('fields');
+
+        /** @var string */
+        $and = $input->getOption('and');
+
+        /** @var string */
+        $namespace = $input->getOption('namespace');
+
+        if (!empty($field)) {
+            $fields = explode(',', $field);
         }
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
@@ -142,6 +157,7 @@ final class CreateCommand extends Command
         }
 
         $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
+
         if (!in_array($command, $availableCommands, true)) {
             $this->consoleHelper->io()->error(
                 "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'
@@ -189,7 +205,7 @@ final class CreateCommand extends Command
                 $table,
                 $className,
                 $namespace,
-                $this->fields,
+                $fields,
                 $and
             );
 
