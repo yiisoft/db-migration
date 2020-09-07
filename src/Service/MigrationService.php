@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service;
 
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Connection\Connection;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
@@ -45,26 +45,21 @@ final class MigrationService
     private string $comment = '';
     private bool $compact = false;
     private array $fields = [];
-    private array $generatorTemplateFiles = [
-        'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
-        'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
-        'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
-        'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
-        'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
-        'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
-    ];
+    private array $generatorTemplateFiles = [];
     private int $maxNameLength = 180;
     private int $migrationNameLimit = 0;
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
-    private Connection $db;
+    private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
 
-    public function __construct(Connection $db, ConsoleHelper $consoleHelper)
+    public function __construct(ConnectionInterface $db, ConsoleHelper $consoleHelper)
     {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
+
+        $this->generatorTemplateFiles();
     }
 
     /**
@@ -556,9 +551,25 @@ final class MigrationService
      *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
      *```
      */
-    public function generatorTemplateFiles(string $key, string $value): void
+    public function generatorTemplateFile(string $key, string $value): void
     {
         $this->generatorTemplateFiles[$key] = $value;
+    }
+
+    public function generatorTemplateFiles(array $value = []): void
+    {
+        $this->generatorTemplateFiles = $value;
+
+        if ($value === [] && $this->generatorTemplateFiles === []) {
+            $this->generatorTemplateFiles = [
+                'create' =>  $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
+                'table' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
+                'dropTable' => $this->consoleHelper->getBaseDir() . '/resources/views/dropTableMigration.php',
+                'addColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/addColumnMigration.php',
+                'dropColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/dropColumnMigration.php',
+                'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php'
+            ];
+        }
     }
 
     /**
@@ -571,6 +582,7 @@ final class MigrationService
     private function getNamespacePath(string $namespace): string
     {
         $aliases = '@' . str_replace('\\', '/', $namespace);
+
         return $this->consoleHelper->getPathFromNameSpace($aliases);
     }
 }

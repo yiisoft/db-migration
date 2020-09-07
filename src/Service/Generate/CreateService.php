@@ -6,7 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 use ReflectionException;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Connection\Connection;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\View\WebView;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -29,14 +29,14 @@ use function strripos;
 final class CreateService
 {
     private Aliases $aliases;
-    private Connection $db;
+    private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private WebView $webView;
 
     public function __construct(
         Aliases $aliases,
-        Connection $db,
+        ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         WebView $webView

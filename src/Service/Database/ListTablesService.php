@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
-use Yiisoft\Db\Connection\Connection;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
@@ -17,12 +17,15 @@ use function preg_match;
 
 final class ListTablesService
 {
-    private Connection $db;
+    private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
 
-    public function __construct(Connection $db, ConsoleHelper $consoleHelper, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConnectionInterface $db,
+        ConsoleHelper $consoleHelper,
+        MigrationService $migrationService
+    ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;

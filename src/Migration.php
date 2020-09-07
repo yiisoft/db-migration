@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
-use Yiisoft\Db\Connection\Connection;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
@@ -50,16 +50,16 @@ abstract class Migration implements MigrationInterface
 
     private int $maxSqlOutputLength = 0;
     private bool $compact = false;
-    protected Connection $db;
+    protected ConnectionInterface $db;
 
-    public function __construct(Connection $db)
+    public function __construct(ConnectionInterface $db)
     {
         $this->db = $db;
         $this->db->getSchema()->refresh();
         $this->db->setEnableSlaves(false);
     }
 
-    public function getDb(): Connection
+    public function getDb(): ConnectionInterface
     {
         return $this->db;
     }
@@ -69,7 +69,7 @@ abstract class Migration implements MigrationInterface
     /**
      * Executes a SQL statement.
      *
-     * This method executes the specified SQL statement using {@see \Yiisoft\Db\Connection\Connection}.
+     * This method executes the specified SQL statement using {@see ConnectionInterface}.
      *
      * @param string $sql the SQL statement to be executed
      * @param array $params input parameters (name => value) for the SQL execution.

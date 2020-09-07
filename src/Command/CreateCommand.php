@@ -33,7 +33,7 @@ use function strlen;
  * ```php
  * MigrationService::class => static function (ContainerInterface $container) {
  *    $aliases = $container->get(Aliases::class);
- *     $db = $container->get(Connection::class);
+ *     $db = $container->get(ConnectionInterface::class);
  *     $consoleHelper = $container->get(ConsoleHelper::class);
  *
  *     $migration = new MigrationService($aliases, $db, $consoleHelper);
@@ -50,7 +50,7 @@ use function strlen;
  * ```php
  * MigrationService::class => static function (ContainerInterface $container) {
  *    $aliases = $container->get(Aliases::class);
- *     $db = $container->get(Connection::class);
+ *     $db = $container->get(ConnectionInterface::class);
  *     $consoleHelper = $container->get(ConsoleHelper::class);
  *
  *     $migration = new MigrationService($aliases, $db, $consoleHelper);
