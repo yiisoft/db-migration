@@ -47,7 +47,7 @@ final class MigrationService
     private array $fields = [];
     private array $generatorTemplateFiles = [];
     private int $maxNameLength = 180;
-    private int $migrationNameLimit = 0;
+    private ?int $migrationNameLimit = 0;
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
@@ -70,11 +70,11 @@ final class MigrationService
      *
      * {@see createNamespace}, {@see updateNamespace}.
      *
-     * @param $defaultName
+     * @param string $defaultName
      *
      * @return int whether the action should continue to be executed.
      */
-    public function before($defaultName): int
+    public function before(string $defaultName): int
     {
         $result = ExitCode::OK;
 
@@ -112,21 +112,27 @@ final class MigrationService
         return $this->fields;
     }
 
-    public function getGeneratorTemplateFiles(?string $key): ?string
+    public function getGeneratorTemplateFiles(?string $key): string
     {
-        return $this->generatorTemplateFiles[$key] ?? null;
+        if (!isset($this->generatorTemplateFiles[$key])) {
+            throw new InvalidConfigException('You must define a template to generate the migration.');
+        }
+
+        return $this->generatorTemplateFiles[$key];
     }
 
     public function getMigrationNameLimit(): int
     {
-        if ($this->migrationNameLimit !== 0) {
+        if ($this->migrationNameLimit !== null) {
             return $this->migrationNameLimit;
         }
 
         $tableSchema = $this->db->getSchema()->getTableSchema($this->migrationTable, true);
 
         if ($tableSchema !== null) {
-            return $this->migrationNameLimit = $tableSchema->getColumns()['version']->getSize();
+            $this->migrationNameLimit = $tableSchema->getColumns()['version']->getSize();
+
+            return $this->migrationNameLimit === null ? 0 : $this->migrationNameLimit;
         }
 
         return $this->maxNameLength;
@@ -175,7 +181,7 @@ final class MigrationService
             $history[] = $row;
         }
 
-        usort($history, static function ($a, $b) {
+        usort($history, static function (array $a, array $b) {
             if ($a['apply_time'] === $b['apply_time']) {
                 if (($compareResult = strcasecmp($b['canonicalVersion'], $a['canonicalVersion'])) !== 0) {
                     return $compareResult;
@@ -385,9 +391,10 @@ final class MigrationService
         );
     }
 
-    public function addMigrationHistory($version): void
+    public function addMigrationHistory(string $version): void
     {
         $command = $this->db->createCommand();
+
         $command->insert($this->migrationTable, [
             'version' => $version,
             'apply_time' => time(),
@@ -396,6 +403,9 @@ final class MigrationService
 
     /**
      * Creates a new migration instance.
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      *
      * @param string $class the migration class name
      *
@@ -467,6 +477,7 @@ final class MigrationService
                 $file = $this->consoleHelper->aliases()->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
+                    /** @psalm-suppress UnresolvableInclude */
                     require_once $file;
                     break;
                 }

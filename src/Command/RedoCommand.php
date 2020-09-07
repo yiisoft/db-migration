@@ -62,10 +62,14 @@ final class RedoCommand extends Command
             ->setHelp('This command redoes the last few migrations.');
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->before(static::$defaultName);
 
+        /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {

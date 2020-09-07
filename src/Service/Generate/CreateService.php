@@ -50,7 +50,7 @@ final class CreateService
 
     public function run(
         string $command,
-        ?string $templateFile,
+        string $templateFile,
         string $table,
         string $className,
         ?string $namespace = null,

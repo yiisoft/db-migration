@@ -50,10 +50,14 @@ final class HistoryCommand extends Command
             ->setHelp('This command displays the migration history.');
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->before(static::$defaultName);
 
+        /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {
