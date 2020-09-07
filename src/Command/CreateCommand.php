@@ -157,6 +157,7 @@ final class CreateCommand extends Command
         }
 
         $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
+
         if (!in_array($command, $availableCommands, true)) {
             $this->consoleHelper->io()->error(
                 "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'

@@ -47,7 +47,7 @@ final class MigrationService
     private array $fields = [];
     private array $generatorTemplateFiles = [];
     private int $maxNameLength = 180;
-    private ?int $migrationNameLimit = 0;
+    private int $migrationNameLimit = 0;
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
@@ -123,16 +123,16 @@ final class MigrationService
 
     public function getMigrationNameLimit(): int
     {
-        if ($this->migrationNameLimit !== null) {
+        if ($this->migrationNameLimit !== 0) {
             return $this->migrationNameLimit;
         }
 
         $tableSchema = $this->db->getSchema()->getTableSchema($this->migrationTable, true);
 
         if ($tableSchema !== null) {
-            $this->migrationNameLimit = $tableSchema->getColumns()['version']->getSize();
+            $nameLimit = $tableSchema->getColumns()['version']->getSize();
 
-            return $this->migrationNameLimit === null ? 0 : $this->migrationNameLimit;
+            return $nameLimit === null ? 0 : $this->migrationNameLimit = $nameLimit;
         }
 
         return $this->maxNameLength;
