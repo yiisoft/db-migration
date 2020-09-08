@@ -37,7 +37,13 @@ final class ListTablesService
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrationService->getMigrationTable());
         $dsn = $this->db->getDSN();
 
-        if (empty($tables) || implode(',', $tables) === $migrationTable || $dsn === null) {
+        if ($dsn === null) {
+            $this->consoleHelper->io()->error('Dsn cannot be empty.');
+
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        if (empty($tables) || implode(',', $tables) === $migrationTable) {
             $this->consoleHelper->io()->error('Your database does not contain any tables yet.');
 
             return ExitCode::UNSPECIFIED_ERROR;
