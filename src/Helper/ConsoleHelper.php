@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Helper;
 
+use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Helper\Table;
+use ReflectionClass;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Composer\Config\Builder;
 use Yiisoft\Strings\Inflector;
 
 final class ConsoleHelper
@@ -66,9 +67,17 @@ final class ConsoleHelper
 
     public function getPathFromNameSpace(string $path): string
     {
-        $packages = require Builder::path('aliases');
+        $namespacesPath = [];
 
-        $aliases = new Aliases($packages);
+        $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
+
+        foreach ($map as $namespace => $directorys) {
+            foreach ($directorys as $directory) {
+                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] =  $directory;
+            }
+        }
+
+        $aliases = new Aliases($namespacesPath);
 
         return $aliases->get($path);
     }
@@ -85,5 +94,17 @@ final class ConsoleHelper
     public function aliases(): Aliases
     {
         return $this->aliases;
+    }
+
+    public function getVendorDir(): string
+    {
+        $class = new ReflectionClass(ClassLoader::class);
+
+        return dirname($class->getFileName(), 2);
+    }
+
+    public function getBaseDir(): string
+    {
+        return $this->aliases->get('@yiisoft/yii/db/migration');
     }
 }

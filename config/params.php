@@ -11,6 +11,10 @@ use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 return [
+    'aliases' => [
+        '@yiisoft/yii/db/migration' => dirname(__DIR__, 1)
+    ],
+
     'yiisoft/yii-console' => [
         'commands' => [
             'generate/create' => CreateCommand::class,

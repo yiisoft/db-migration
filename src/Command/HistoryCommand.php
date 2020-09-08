@@ -54,6 +54,7 @@ final class HistoryCommand extends Command
     {
         $this->migrationService->before(static::$defaultName);
 
+        /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {

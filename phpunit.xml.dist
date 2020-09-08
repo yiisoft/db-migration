@@ -12,7 +12,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Yii Db Migration Tests">
+        <testsuite name="Migration">
             <directory>./tests/Paths/CreateAddColumnCommandTest.php</directory>
             <directory>./tests/Paths/CreateCommandTest.php</directory>
             <directory>./tests/Paths/CreateDropColumnCommandTest.php</directory>

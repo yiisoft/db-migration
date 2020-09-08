@@ -56,10 +56,14 @@ final class DownCommand extends Command
             ->setHelp('This command downgrades the application by reverting old migrations.');
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->migrationService->before(static::$defaultName);
 
+        /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {

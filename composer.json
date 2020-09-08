@@ -29,9 +29,9 @@
         "yiisoft/strings": "^1.0"
     },
     "require-dev": {
-        "infection/infection": "^0.16.3",
-        "phan/phan": "^3.0",
+        "infection/infection": "^0.17.0",
         "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "^3.15",
         "yiisoft/composer-config-plugin": "^1.0@dev",
         "yiisoft/db-sqlite": "^3.0@dev",
         "yiisoft/di": " ^3.0@dev",
@@ -53,19 +53,8 @@
             "dev-master": "1.0.x-dev"
         },
         "config-plugin": {
-            "params": "config/params.php",
-            "common": "config/common.php",
-            "console": "config/console.php"
-        },
-        "config-plugin-dev": {
-            "tests": [
-                "$console",
-                "config/tests.php"
-            ]
+            "params": "config/params.php"
         }
-    },
-    "scripts": {
-        "phan": "phan --progress-bar -o analysis.txt"
     },
     "config": {
         "sort-packages": true
