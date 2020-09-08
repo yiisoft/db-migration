@@ -69,6 +69,7 @@ final class ConsoleHelper
     {
         $namespacesPath = [];
 
+        /** @psalm-suppress UnresolvableInclude */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
         foreach ($map as $namespace => $directorys) {
