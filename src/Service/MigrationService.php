@@ -495,7 +495,7 @@ final class MigrationService
      */
     public function generateClassName(?string $namespace, string $name): array
     {
-        if (empty($this->createPath)) {
+        if (empty($this->createPath) && empty($namespace)) {
             $namespace = $this->createNamespace;
         }
 

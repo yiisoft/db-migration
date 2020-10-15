@@ -37,7 +37,7 @@ final class ListTablesService
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrationService->getMigrationTable());
         $dsn = $this->db->getDSN();
 
-        if ($dsn === null) {
+        if (empty($dsn)) {
             $this->consoleHelper->io()->error('Dsn cannot be empty.');
 
             return ExitCode::UNSPECIFIED_ERROR;
