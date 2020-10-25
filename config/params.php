@@ -26,4 +26,11 @@ return [
             'migrate/up' => UpdateCommand::class
         ],
     ],
+
+    'yiisoft/yii-db-migration' => [
+        'createNameSpace' => '',
+        'createPath' => '',
+        'updateNameSpace' => [],
+        'updatePath' => []
+    ]
 ];
