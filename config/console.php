@@ -16,9 +16,9 @@ return [
             Reference::to(ConnectionInterface::class),
             Reference::to(ConsoleHelper::class)
         ],
-        'createNamespace()' => [fn() => $params['yiisoft/yii-db-migration']['createNameSpace']],
+        'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNameSpace']],
         'updateNamespace()' => [
-            fn() => $params['yiisoft/yii-db-migration']['updateNameSpace']
+            fn () => $params['yiisoft/yii-db-migration']['updateNameSpace']
         ],
         'createPath()' => [$params['yiisoft/yii-db-migration']['createPath']],
         'updatePath()' => [$params['yiisoft/yii-db-migration']['updatePath']]
