@@ -54,7 +54,6 @@ return [
             'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
         ]
     ],
-
 ];
 ```
 
@@ -74,7 +73,7 @@ return [
             fn () => $params['yiisoft/yii-db-migration']['updateNameSpace']
         ]
     ]
-]
+];
 ```
 
 Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
