@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Yiisoft\Aliases\Aliases;
@@ -17,14 +17,13 @@ use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
 use Yiisoft\Di\Container;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
+use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Files\FileHelper;
-use Yiisoft\Log\Logger;
-use Yiisoft\Profiler\Profiler;
-use Yiisoft\View\Theme;
 use Yiisoft\View\WebView;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
@@ -136,66 +135,39 @@ abstract class TestCase extends BaseTestCase
 
     private function config(): array
     {
-        $params = $this->params();
-
         return [
             Aliases::class => [
                 '@root' => dirname(__DIR__, 1),
-                '@data' => '@root/tests/Data',
-                '@yiisoft/yii/db/migration' => dirname(__DIR__, 1),
-                '@views' =>  '@yiisoft/yii/db/migration/resources/views'
+                '@yiisoft/yii/db/migration' => dirname(__DIR__, 1)
             ],
 
-            CacheInterface::class => static function (ContainerInterface $container) {
-                return new Cache(new ArrayCache());
-            },
+            Cache::class => [
+                '__class' => Cache::class,
+                '__construct()' => [Reference::to(ArrayCache::class)]
+            ],
 
-            FileRotatorInterface::class => static function () {
-                return new FileRotator(10);
-            },
+            CacheInterface::class => Cache::class,
 
             ListenerProviderInterface::class => Provider::class,
+
             EventDispatcherInterface::class => Dispatcher::class,
 
-            LoggerInterface::class => Logger::class,
+            LoggerInterface::class => NullLogger::class,
 
-            Profiler::class => static function (ContainerInterface $container) {
-                return new Profiler($container->get(LoggerInterface::class));
-            },
+            SqliteConnection::class => [
+                '__class' => SqliteConnection::class,
+                '__construct()' => [
+                    'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
+                ]
+            ],
 
-            ConnectionInterface::class => static function (ContainerInterface $container) use ($params) {
-                $aliases = $container->get(Aliases::class);
-                $cache = $container->get(CacheInterface::class);
-                $logger = $container->get(LoggerInterface::class);
-                $profiler = $container->get(Profiler::class);
+            ConnectionInterface::class => SqliteConnection::class,
 
-
-                $db = new SqliteConnection(
-                    $cache,
-                    $logger,
-                    $profiler,
-                    'sqlite:' . $aliases->get('@data/yiitest.sq3')
-                );
-
-                return $db;
-            },
-
-            WebView::class => function (ContainerInterface $container) {
-                $aliases = $container->get(Aliases::class);
-                $eventDispatcher = $container->get(EventDispatcherInterface::class);
-                $theme = $container->get(Theme::class);
-                $logger = $container->get(LoggerInterface::class);
-
-                return new WebView($aliases->get('@views'), $theme, $eventDispatcher, $logger);
-            },
-        ];
-    }
-
-    private function params(): array
-    {
-        return [
-            'yiisoft/db-sqlite' => [
-                'fixture' => __DIR__ . '/Data/sqlite.sql'
+            WebView::class => [
+                '__class' => WebView::class,
+                '__construct()' => [
+                    'basePath' => dirname(__DIR__) . '/resources/views'
+                ]
             ]
         ];
     }

@@ -24,7 +24,7 @@ return [
             'migrate/new' => NewCommand::class,
             'migrate/redo' => RedoCommand::class,
             'migrate/up' => UpdateCommand::class
-        ],
+        ]
     ],
 
     'yiisoft/yii-db-migration' => [
