@@ -46,25 +46,27 @@ declare(strict_types=1);
 
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
-
-/** 
- * Config both console and web.
- *
- * Add to existing configuration.
- */
 return [
-    SqliteConnection::class => [
+    ConnectionInterface::class => [
         '__class' => SqliteConnection::class,
         '__construct()' => [
             'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
         ]
     ],
 
-    ConnectionInterface::class => SqliteConnection::class,
+];
+```
 
+config/console.php
+```php
+<?php
+
+declare(strict_types=1);
+
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+return [
     MigrationService::class => [
         '__class' => MigrationService::class,
         'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNameSpace']],
@@ -72,44 +74,10 @@ return [
             fn () => $params['yiisoft/yii-db-migration']['updateNameSpace']
         ]
     ]
-];
+]
 ```
 
-Now the `MigrationService::class` uses the `View` of the application that is already registered in `providers-web.php`, we must move its registry to `provider.php`, so that it is defined in the console and web respectively.
-
-config/providers.php
-```php
-<?php
-
-declare(strict_types=1);
-
-use App\Provider\ThemeProvider;
-use App\Provider\WebViewProvider;
-
-/** 
- * Config both console and web.
- *
- * Add to existing configuration.
- */
-
-return [
-    'yiisoft/view/theme' => [
-        '__class' => ThemeProvider::class,
-        '__construct()' => [
-            $params['yiisoft/view']['theme']['pathMap'],
-            $params['yiisoft/view']['theme']['basePath'],
-            $params['yiisoft/view']['theme']['baseUrl'],
-        ],
-    ],
-    'yiisoft/view/webview' => [
-        '__class' => WebViewProvider::class,
-        '__construct()' => [
-            $params['yiisoft/view']['basePath'],
-            $params['yiisoft/view']['defaultParameters'],
-        ],
-    ],
-];
-```
+Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
 
 Execute `composer du` in console config its rebuild.
 

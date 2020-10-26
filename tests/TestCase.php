@@ -154,14 +154,12 @@ abstract class TestCase extends BaseTestCase
 
             LoggerInterface::class => NullLogger::class,
 
-            SqliteConnection::class => [
+            ConnectionInterface::class => [
                 '__class' => SqliteConnection::class,
                 '__construct()' => [
                     'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
                 ]
             ],
-
-            ConnectionInterface::class => SqliteConnection::class,
 
             WebView::class => [
                 '__class' => WebView::class,
