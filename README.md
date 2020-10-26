@@ -53,7 +53,7 @@ return [
         '__construct()' => [
             'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
         ]
-    ],
+    ]
 ];
 ```
 
