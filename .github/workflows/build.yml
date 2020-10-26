@@ -23,6 +23,7 @@ jobs:
 
         php:
           - "7.4"
+          - "8.0"
 
     steps:
       - name: Checkout
@@ -84,8 +85,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.php == '8.0'
         run: vendor/bin/phpunit --colors=always
 
-      - name: Run tests with phpunit without coverage on Windows php 7.4
-        if: matrix.os == 'windows-latest' && matrix.php == '7.4'
+      - name: Run tests with phpunit without coverage on Windows
+        if: matrix.os == 'windows-latest'
         run: vendor/bin/phpunit --colors=always
 
       - name: Upload code coverage scrutinizer on Linux php 7.4
