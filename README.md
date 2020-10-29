@@ -13,7 +13,6 @@ The package implementing migration for [yiisoft/db](https://github.com/yiisoft/d
 [![Build status](https://github.com/yiisoft/yii-db-migration/workflows/build/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3Abuild)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/yii-db-migration/?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fyii-db-migration%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/yii-db-migration/master)
-
 [![static analysis](https://github.com/yiisoft/yii-db-migration/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/yii-db-migration/coverage.svg)](https://shepherd.dev/github/yiisoft/yii-db-migration)
 
@@ -45,89 +44,39 @@ config/common.php
 
 declare(strict_types=1);
 
-use Psr\Log\LoggerInterface;
-use Yiisoft\Aliases\Aliases;
-use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
-use Yiisoft\Log\Logger;
-use Yiisoft\Profiler\Profiler;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
-
-/** 
- * Config both console and web.
- *
- * Add to existing configuration.
- */
 return [
-    ConnectionInterface::class => static function (ContainerInterface $container){
-        $aliases = $container->get(Aliases::class);
-        $cache = $container->get(CacheInterface::class);
-        $logger = $container->get(LoggerInterface::class);
-        $profiler = $container->get(Profiler::class);
-
-        return new SqliteConnection(
-            $cache,
-            $logger,
-            $profiler,
-            'sqlite:' . $aliases->get('@runtime/yiitest.sq3')
-        );
-    },
-
-    MigrationService::class => static function (ContainerInterface $container) {
-        $migrationService = new MigrationService(
-            $container->get(ConnectionInterface::class),
-            $container->get(ConsoleHelper::class)
-        );
-
-        /** Namespace store migrations */
-        $migrationService->createNamespace('App\\Migration');
-
-        /** Namaspaces find migration all packages */
-        $migrationService->updateNamespace(['App\\Migration']);
-
-        return $migrationService;
-    }
+    ConnectionInterface::class => [
+        '__class' => SqliteConnection::class,
+        '__construct()' => [
+            'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
+        ]
+    ]
 ];
 ```
 
-Now the `MigrationService::class` uses the `View` of the application that is already registered in `providers-web.php`, we must move its registry to `provider.php`, so that it is defined in the console and web respectively.
-
-config/providers.php
+config/console.php
 ```php
 <?php
 
 declare(strict_types=1);
 
-use App\Provider\ThemeProvider;
-use App\Provider\WebViewProvider;
-
-/** 
- * Config both console and web.
- *
- * Add to existing configuration.
- */
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 return [
-    'yiisoft/view/theme' => [
-        '__class' => ThemeProvider::class,
-        '__construct()' => [
-            $params['yiisoft/view']['theme']['pathMap'],
-            $params['yiisoft/view']['theme']['basePath'],
-            $params['yiisoft/view']['theme']['baseUrl'],
-        ],
-    ],
-    'yiisoft/view/webview' => [
-        '__class' => WebViewProvider::class,
-        '__construct()' => [
-            $params['yiisoft/view']['basePath'],
-            $params['yiisoft/view']['defaultParameters'],
-        ],
-    ],
+    MigrationService::class => [
+        '__class' => MigrationService::class,
+        'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNameSpace']],
+        'updateNamespace()' => [
+            fn () => $params['yiisoft/yii-db-migration']['updateNameSpace']
+        ]
+    ]
 ];
 ```
+
+Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
 
 Execute `composer du` in console config its rebuild.
 
