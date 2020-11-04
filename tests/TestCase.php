@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
+use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
@@ -76,6 +77,9 @@ abstract class TestCase extends BaseTestCase
         $this->db = $this->container->get(ConnectionInterface::class);
         $this->migration = $this->container->get(Migration::class);
         $this->migrationService = $this->container->get(MigrationService::class);
+
+        $this->consoleHelper->output()->setVerbosity(OutputInterface::VERBOSITY_QUIET);
+        $this->migrationService->compact(true);
 
         $loader = new ContainerCommandLoader(
             $this->container,

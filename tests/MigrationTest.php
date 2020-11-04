@@ -53,7 +53,10 @@ final class MigrationTest extends TestCase
 
         $this->migration->insert('test_table', ['id' => 1]);
 
-        $this->assertEquals('1', $this->db->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar());
+        $this->assertEquals(
+            '1',
+            $this->db->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar()
+        );
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
 
@@ -63,15 +66,18 @@ final class MigrationTest extends TestCase
 
         $this->migration->batchInsert('test_table', ['id'], [['id' => 1], ['id' => 2]]);
 
-        $this->assertEquals('2', $this->db->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar());
+        $this->assertEquals(
+            '2',
+            $this->db->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar()
+        );
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
 
     public function testUpsert(): void
     {
-        $this->migration->insert('test_table', ['id' => 1]);
-
         ob_start();
+
+        $this->migration->insert('test_table', ['id' => 1]);
 
         $this->migration->upsert('test_table', ['id' => 1], false);
 
@@ -86,9 +92,10 @@ final class MigrationTest extends TestCase
 
     public function testUpdate(): void
     {
+        ob_start();
+
         $this->migration->insert('test_table', ['id' => 1]);
 
-        ob_start();
         $this->migration->update('test_table', ['id' => 2], 'id=:id', ['id' => 1]);
 
         $this->assertEquals(
@@ -102,9 +109,9 @@ final class MigrationTest extends TestCase
 
     public function testDelete(): void
     {
-        $this->migration->insert('test_table', ['id' => 1]);
-
         ob_start();
+
+        $this->migration->insert('test_table', ['id' => 1]);
 
         $this->migration->delete('test_table', 'id=:id', ['id' => 1]);
 
@@ -136,6 +143,8 @@ final class MigrationTest extends TestCase
     {
         $this->expectException(NotSupportedException::class);
 
+        $this->migration->compact(true);
+
         $this->migration->renameColumn('test_table', 'id', 'id_new');
     }
 
@@ -143,14 +152,16 @@ final class MigrationTest extends TestCase
     {
         $this->expectException(NotSupportedException::class);
 
+        $this->migration->compact(true);
+
         $this->migration->alterColumn('test_table', 'id', $this->migration->string());
     }
 
     public function testAddPrimaryKey(): void
     {
-        $this->migration->createTable('test_create_table', ['id2' => $this->migration->integer()]);
-
         ob_start();
+
+        $this->migration->createTable('test_create_table', ['id2' => $this->migration->integer()]);
 
         $this->migration->addPrimaryKey('id2', 'test_create_table', ['id2']);
 
@@ -167,6 +178,8 @@ final class MigrationTest extends TestCase
     {
         $this->expectException(NotSupportedException::class);
 
+        $this->migration->compact(true);
+
         $this->migration->createTable('test_create_table', ['id' => $this->migration->primaryKey()]);
 
         $this->migration->dropPrimaryKey('id', 'test_create_table');
@@ -174,8 +187,9 @@ final class MigrationTest extends TestCase
 
     public function testAddForeignKey(): void
     {
-        $this->migration->createTable('target_table', ['id' => $this->migration->primaryKey()]);
         ob_start();
+
+        $this->migration->createTable('target_table', ['id' => $this->migration->primaryKey()]);
 
         $this->migration->addForeignKey(
             'fk',
@@ -194,6 +208,8 @@ final class MigrationTest extends TestCase
 
     public function testDropForeignKey(): void
     {
+        ob_start();
+
         $this->migration->createTable('target_table', ['id2' => $this->migration->primaryKey()]);
 
         $this->migration->addForeignKey(
@@ -205,8 +221,6 @@ final class MigrationTest extends TestCase
             'CASCADE',
             'CASCADE'
         );
-
-        ob_start();
 
         $this->migration->dropForeignKey('fk2', 'test_table');
 
@@ -236,9 +250,9 @@ final class MigrationTest extends TestCase
 
     public function testDropIndex(): void
     {
-        $this->migration->createIndex('unique_index', 'test_table', 'foreign_id', true);
-
         ob_start();
+
+        $this->migration->createIndex('unique_index', 'test_table', 'foreign_id', true);
 
         $this->migration->dropIndex('unique_index', 'test_table');
 
@@ -252,12 +266,16 @@ final class MigrationTest extends TestCase
     {
         $this->expectException(NotSupportedException::class);
 
+        $this->migration->compact(true);
+
         $this->migration->addCommentOnColumn('test_table', 'id', 'test comment');
     }
 
     public function testAddCommentOnTable(): void
     {
         $this->expectException(NotSupportedException::class);
+
+        $this->migration->compact(true);
 
         $this->migration->addCommentOnTable('test_table', 'id');
     }
@@ -266,12 +284,16 @@ final class MigrationTest extends TestCase
     {
         $this->expectException(NotSupportedException::class);
 
+        $this->migration->compact(true);
+
         $this->migration->dropCommentFromColumn('test_table', 'id');
     }
 
     public function testDropCommentFromTable(): void
     {
         $this->expectException(NotSupportedException::class);
+
+        $this->migration->compact(true);
 
         $this->migration->dropCommentFromTable('test_table');
     }
