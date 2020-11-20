@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
+use function explode;
 use Symfony\Component\Console\Tester\CommandTester;
+use function trim;
+
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Tests\TestCase;
-
-use function explode;
-use function trim;
 
 /**
  * @group paths
