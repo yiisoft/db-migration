@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
-use function explode;
-use function file_get_contents;
-use function substr;
-
 use Symfony\Component\Console\Tester\CommandTester;
-use function trim;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Tests\TestCase;
+
+use function explode;
+use function file_get_contents;
+use function str_repeat;
+use function substr;
+use function trim;
 
 /**
  * @group paths
@@ -44,9 +45,9 @@ final class CreateAddColumnCommandTest extends TestCase
         $this->assertEquals(
             ExitCode::OK,
             $commandCreate->execute([
-                'name' => 'post',
-                '--command' => 'addColumn',
-                '--fields' => 'position:integer',
+            'name' => 'post',
+            '--command' => 'addColumn',
+            '--fields' => 'position:integer'
             ])
         );
 

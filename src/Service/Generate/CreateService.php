@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
+use ReflectionException;
+use Yiisoft\Aliases\Aliases;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\View\WebView;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use function array_merge;
 use function array_shift;
 use function array_unshift;
 use function count;
 use function implode;
 use function in_array;
-
 use function is_array;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function preg_split;
-use ReflectionException;
 use function str_replace;
 use function strncmp;
 use function strripos;
-use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\View\WebView;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class CreateService
 {
@@ -79,7 +79,7 @@ final class CreateService
                 'className' => $className,
                 'namespace' => $namespace,
                 'fields' => $fields,
-                'foreignKeys' => $foreignKeys,
+                'foreignKeys' => $foreignKeys
             ]
         );
     }
@@ -145,7 +145,7 @@ final class CreateService
                     }
                 } catch (ReflectionException $e) {
                     $this->consoleHelper->output()->writeln(
-                        '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
+                        "<fg=yellow>Cannot initialize database component to try reading referenced table schema for" .
                         "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
                     );
                 }
@@ -252,7 +252,7 @@ final class CreateService
 
             $fields[] = [
                 'property' => $property,
-                'decorators' => implode('->', $chunks),
+                'decorators' => implode('->', $chunks)
             ];
         }
 

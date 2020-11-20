@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use function array_slice;
-use function count;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Yii\Console\ExitCode;
-
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_slice;
+use function count;
 
 /**
  * Displays the un-applied new migrations.
@@ -52,13 +52,13 @@ final class NewCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->before(self::$defaultName);
+        $this->migrationService->before(static::$defaultName);
 
         /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {
-            $this->consoleHelper->io()->error('The step argument must be greater than 0.');
+            $this->consoleHelper->io()->error("The step argument must be greater than 0.");
             $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
@@ -67,7 +67,7 @@ final class NewCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->success('No new migrations found. Your system is up-to-date.');
+            $this->consoleHelper->io()->success("No new migrations found. Your system is up-to-date.");
             $this->migrationService->dbVersion();
 
             return ExitCode::UNSPECIFIED_ERROR;
@@ -81,11 +81,11 @@ final class NewCommand extends Command
                 "Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n"
             );
         } else {
-            $this->consoleHelper->io()->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ':');
+            $this->consoleHelper->io()->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ":");
         }
 
         foreach ($migrations as $migration) {
-            $output->writeln("<info>\t" . $migration . '</info>');
+            $output->writeln("<info>\t" . $migration . "</info>");
         }
 
         $this->migrationService->dbVersion();

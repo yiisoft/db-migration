@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
-use function array_column;
-use function array_merge;
-use function implode;
-use function preg_match;
 use Yiisoft\Db\Connection\ConnectionInterface;
-
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_column;
+use function array_merge;
+use function implode;
+use function preg_match;
 
 final class ListTablesService
 {

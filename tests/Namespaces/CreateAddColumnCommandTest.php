@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Namespaces;
 
+use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
+
 use function explode;
 use function file_get_contents;
 use function substr;
-
-use Symfony\Component\Console\Tester\CommandTester;
 use function trim;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 /**
  * @group namespaces
@@ -49,9 +49,9 @@ final class CreateAddColumnCommandTest extends TestCase
         $this->assertEquals(
             ExitCode::OK,
             $commandCreate->execute([
-                'name' => 'post',
-                '--command' => 'addColumn',
-                '--fields' => 'position:integer',
+            'name' => 'post',
+            '--command' => 'addColumn',
+            '--fields' => 'position:integer'
             ])
         );
 

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
+use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
+
 use function explode;
 use function file_get_contents;
 use function str_repeat;
-
 use function substr;
-use Symfony\Component\Console\Tester\CommandTester;
 use function trim;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 /**
  * @group paths
@@ -45,7 +45,7 @@ final class CreateCommandTest extends TestCase
         $this->assertEquals(
             ExitCode::OK,
             $commandCreate->execute([
-                'name' => 'post',
+                'name' => 'post'
             ])
         );
 
@@ -101,7 +101,7 @@ EOF;
         $this->assertEquals(
             ExitCode::DATAERR,
             $commandCreate->execute([
-                'name' => 'post?',
+                'name' => 'post?'
             ])
         );
     }
@@ -118,7 +118,7 @@ EOF;
             ExitCode::DATAERR,
             $commandCreate->execute([
                 'name' => 'post',
-                '--command' => 'noExist',
+                '--command' => 'noExist'
             ])
         );
     }
@@ -134,7 +134,7 @@ EOF;
         $this->assertEquals(
             ExitCode::DATAERR,
             $commandCreate->execute([
-                'name' => str_repeat('x', 200),
+                'name' => str_repeat('x', 200)
             ])
         );
     }

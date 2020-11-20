@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
+use Yiisoft\Arrays\ArrayHelper;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\Exception;
+use Yiisoft\Db\Exception\InvalidConfigException;
+use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Db\Query\Query;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\MigrationInterface;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+
 use function array_slice;
 use function array_values;
 use function closedir;
@@ -13,7 +23,6 @@ use function is_file;
 use function ksort;
 use function opendir;
 use function preg_match;
-
 use function readdir;
 use function str_replace;
 use function strcasecmp;
@@ -21,15 +30,6 @@ use function strpos;
 use function time;
 use function trim;
 use function usort;
-use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\Exception;
-use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Db\Query\Query;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\MigrationInterface;
 
 final class MigrationService
 {
@@ -82,7 +82,7 @@ final class MigrationService
             case 'generate/create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     $this->consoleHelper->io()->error(
-                        'At least one of `createNamespace` or `createPath` should be specified.'
+                        "At least one of `createNamespace` or `createPath` should be specified."
                     );
 
                     $result = ExitCode::DATAERR;
@@ -91,7 +91,7 @@ final class MigrationService
             case 'migrate/up':
                 if (empty($this->updateNamespace) && empty($this->updatePath)) {
                     $this->consoleHelper->io()->error(
-                        'At least one of `updateNamespace` or `updatePath` should be specified.'
+                        "At least one of `updateNamespace` or `updatePath` should be specified."
                     );
 
                     $result = ExitCode::DATAERR;
@@ -280,7 +280,7 @@ final class MigrationService
     /**
      * Indicates whether the console output should be compacted.
      *
-     * @var bool
+     * @var bool $value
      *
      * If this is set to true, the individual commands ran within the migration will not be output to the console.
      * Default is false, in other words the output is fully verbose by default.
@@ -573,12 +573,12 @@ final class MigrationService
 
         if ($value === [] && $this->generatorTemplateFiles === []) {
             $this->generatorTemplateFiles = [
-                'create' => $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
+                'create' =>  $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
                 'table' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
                 'dropTable' => $this->consoleHelper->getBaseDir() . '/resources/views/dropTableMigration.php',
                 'addColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/addColumnMigration.php',
                 'dropColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/dropColumnMigration.php',
-                'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
+                'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php'
             ];
         }
     }

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Helper;
 
 use Composer\Autoload\ClassLoader;
-use ReflectionClass;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Helper\Table;
+use ReflectionClass;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Strings\Inflector;
 
@@ -74,7 +74,7 @@ final class ConsoleHelper
 
         foreach ($map as $namespace => $directorys) {
             foreach ($directorys as $directory) {
-                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
+                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] =  $directory;
             }
         }
 
