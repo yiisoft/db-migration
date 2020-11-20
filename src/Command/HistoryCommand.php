@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use function count;
+use function date;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Yii\Console\ExitCode;
+
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-
-use function count;
-use function date;
 
 /**
  * Displays the migration history.
@@ -52,13 +52,13 @@ final class HistoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->before(static::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {
-            $this->consoleHelper->io()->error("The step argument must be greater than 0.");
+            $this->consoleHelper->io()->error('The step argument must be greater than 0.');
             $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
@@ -67,7 +67,7 @@ final class HistoryCommand extends Command
         $migrations = $this->migrationService->getMigrationHistory($limit);
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->warning("No migration has been done before.");
+            $this->consoleHelper->io()->warning('No migration has been done before.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -78,7 +78,7 @@ final class HistoryCommand extends Command
             $this->consoleHelper->io()->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
         } else {
             $this->consoleHelper->io()->section(
-                "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . " been applied before:"
+                "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:'
             );
         }
 
@@ -87,7 +87,7 @@ final class HistoryCommand extends Command
         }
 
         $output->writeln("\n");
-        $this->consoleHelper->io()->success("Success.");
+        $this->consoleHelper->io()->success('Success.');
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;

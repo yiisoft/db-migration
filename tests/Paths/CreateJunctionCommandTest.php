@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
-use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
-
 use function explode;
 use function file_get_contents;
-use function str_repeat;
 use function substr;
+
+use Symfony\Component\Console\Tester\CommandTester;
 use function trim;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 /**
  * @group paths
@@ -48,7 +47,7 @@ final class CreateJunctionCommandTest extends TestCase
                 'name' => 'post',
                 '--command' => 'junction',
                 '--and' => 'tag',
-                '--fields' => 'created_at:dateTime'
+                '--fields' => 'created_at:dateTime',
             ])
         );
 

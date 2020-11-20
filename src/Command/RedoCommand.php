@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use function array_keys;
+use function array_reverse;
+use function count;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -11,13 +14,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
-
-use function array_keys;
-use function array_reverse;
-use function count;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 /**
  * Redoes the last few migrations.
@@ -64,13 +64,13 @@ final class RedoCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->migrationService->before(static::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         /** @var int|null */
         $limit = $input->getOption('limit');
 
         if ($limit < 0) {
-            $this->consoleHelper->io()->error("The step argument must be greater than 0.");
+            $this->consoleHelper->io()->error('The step argument must be greater than 0.');
             $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
@@ -79,7 +79,7 @@ final class RedoCommand extends Command
         $migrations = $this->migrationService->getMigrationHistory($limit);
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->warning("No migration has been done before.");
+            $this->consoleHelper->io()->warning('No migration has been done before.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -95,7 +95,7 @@ final class RedoCommand extends Command
 
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Redo the above " . ($n === 1 ? "migration y/n: " : "migrations y/n: "),
+            "\n<fg=cyan>Redo the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
             true
         );
 
@@ -103,14 +103,14 @@ final class RedoCommand extends Command
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
                 if (!$this->downService->run($migration)) {
-                    $this->consoleHelper->io()->error("Migration failed. The rest of the migrations are canceled.");
+                    $this->consoleHelper->io()->error('Migration failed. The rest of the migrations are canceled.');
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
             }
             foreach (array_reverse($migrations) as $migration) {
                 if (!$this->updateService->run($migration)) {
-                    $this->consoleHelper->io()->error("Migration failed. The rest of the migrations are canceled.");
+                    $this->consoleHelper->io()->error('Migration failed. The rest of the migrations are canceled.');
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
@@ -119,7 +119,7 @@ final class RedoCommand extends Command
             $output->writeln(
                 "\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n"
             );
-            $this->consoleHelper->io()->success("Migration redone successfully.");
+            $this->consoleHelper->io()->success('Migration redone successfully.');
         }
 
         $this->migrationService->dbVersion();

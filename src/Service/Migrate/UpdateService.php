@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Migrate;
 
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-
 use function microtime;
 use function sprintf;
+
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class UpdateService
 {
@@ -41,7 +41,7 @@ final class UpdateService
 
         if ($migration === null) {
             $time = microtime(true) - $start;
-            $this->consoleHelper->io()->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . "s)");
+            $this->consoleHelper->io()->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
             return false;
         }
 
@@ -49,7 +49,7 @@ final class UpdateService
         $this->migrationService->addMigrationHistory($class);
         $time = microtime(true) - $start;
         $this->consoleHelper->output()->writeln(
-            "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . "s)<info>"
+            "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . 's)<info>'
         );
 
         return true;

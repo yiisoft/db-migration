@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
+use function implode;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
-use Yiisoft\Strings\StringHelper;
 
-use function implode;
+use Yiisoft\Strings\StringHelper;
 
 /**
  * Migration is the base class for representing a database migration.
@@ -97,12 +97,12 @@ abstract class Migration implements MigrationInterface
      *
      * The method will properly escape the column names, and bind the values to be inserted.
      *
+     * @param string $table the table that new rows will be inserted into.
+     * @param array $columns the column data (name => value) to be inserted into the table.
+     *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
-     *
-     * @param string $table the table that new rows will be inserted into.
-     * @param array $columns the column data (name => value) to be inserted into the table.
      */
     public function insert($table, $columns): void
     {
@@ -116,13 +116,13 @@ abstract class Migration implements MigrationInterface
      *
      * The method will properly escape the column names, and bind the values to be inserted.
      *
-     * @throws Exception
-     * @throws InvalidConfigException
-     * @throws NotSupportedException
-     *
      * @param string $table the table that new rows will be inserted into.
      * @param array $columns the column names.
      * @param array $rows the rows to be batch inserted into the table
+     *
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws NotSupportedException
      */
     public function batchInsert($table, $columns, $rows): void
     {
@@ -302,7 +302,7 @@ abstract class Migration implements MigrationInterface
      *
      * @param string $name the name of the primary key constraint.
      * @param string $table the table that the primary key constraint will be added to.
-     * @param string|array $columns comma separated string or array of columns that the primary key will consist of.
+     * @param array|string $columns comma separated string or array of columns that the primary key will consist of.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -341,10 +341,10 @@ abstract class Migration implements MigrationInterface
      *
      * @param string $name the name of the foreign key constraint.
      * @param string $table the table that the foreign key constraint will be added to.
-     * @param string|array $columns the name of the column to that the constraint will be added on. If there are
+     * @param array|string $columns the name of the column to that the constraint will be added on. If there are
      * multiple columns, separate them with commas or use an array.
      * @param string $refTable the table that the foreign key references to.
-     * @param string|array $refColumns the name of the column that the foreign key references to. If there are multiple
+     * @param array|string $refColumns the name of the column that the foreign key references to. If there are multiple
      * columns, separate them with commas or use an array.
      * @param string|null $delete the ON DELETE option. Most DBMS support these options: RESTRICT, CASCADE, NO ACTION,
      * SET DEFAULT, SET NULL.
@@ -405,10 +405,11 @@ abstract class Migration implements MigrationInterface
 
     /**
      * Builds and executes a SQL statement for creating a new index.
+     *
      * @param string $name the name of the index. The name will be properly quoted by the method.
      * @param string $table the table that the new index will be created for. The table name will be properly quoted by
      * the method.
-     * @param string|array $columns the column(s) that should be included in the index. If there are multiple columns,
+     * @param array|string $columns the column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
      * @param bool $unique whether to add UNIQUE constraint on the created index.
@@ -504,6 +505,7 @@ abstract class Migration implements MigrationInterface
      *
      * @param string $table the table whose column is to be commented. The table name will be properly quoted by the
      * method.
+     *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
