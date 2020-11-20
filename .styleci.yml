@@ -1,5 +1,3 @@
-UseStatementParser:
-    php:
 preset: psr12
 risky: true
 
