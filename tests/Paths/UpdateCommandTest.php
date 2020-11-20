@@ -50,12 +50,12 @@ final class UpdateCommandTest extends TestCase
         $commandCreate->execute([
             'name' => $tableMaster,
             '--command' => 'table',
-            '--fields' => 'name:string(50):null'
+            '--fields' => 'name:string(50):null',
         ]);
         $commandCreate->execute([
             'name' => $tableRelation,
             '--command' => 'table',
-            '--fields' => 'name:string(50):null,department_id:integer:notnull:foreignKey(department),dateofbirth:date:null'
+            '--fields' => 'name:string(50):null,department_id:integer:notnull:foreignKey(department),dateofbirth:date:null',
         ]);
 
         $update = $this->application->find('migrate/up');

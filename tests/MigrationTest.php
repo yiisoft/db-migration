@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
@@ -14,8 +16,8 @@ final class MigrationTest extends TestCase
         $this->db->createCommand()->createTable(
             'test_table',
             [
-                'id' =>  'INTEGER NOT NULL PRIMARY KEY',
-                'foreign_id' => 'INTEGER'
+                'id' => 'INTEGER NOT NULL PRIMARY KEY',
+                'foreign_id' => 'INTEGER',
             ]
         )->execute();
     }

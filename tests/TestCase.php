@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
+use function closedir;
+use function is_dir;
+use function opendir;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use function str_replace;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,15 +35,11 @@ use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
+
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-
-use function closedir;
-use function is_dir;
-use function opendir;
-use function str_replace;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -90,7 +90,7 @@ abstract class TestCase extends BaseTestCase
                 'migrate/history' => HistoryCommand::class,
                 'migrate/new' => NewCommand::class,
                 'migrate/redo' => RedoCommand::class,
-                'migrate/up' => UpdateCommand::class
+                'migrate/up' => UpdateCommand::class,
             ]
         );
 
@@ -103,8 +103,6 @@ abstract class TestCase extends BaseTestCase
      * @param string $expected
      * @param string $actual
      * @param string $message
-     *
-     * @return void
      */
     protected function assertEqualsWithoutLE(string $expected, string $actual, string $message = ''): void
     {
@@ -142,12 +140,12 @@ abstract class TestCase extends BaseTestCase
         return [
             Aliases::class => [
                 '@root' => dirname(__DIR__, 1),
-                '@yiisoft/yii/db/migration' => dirname(__DIR__, 1)
+                '@yiisoft/yii/db/migration' => dirname(__DIR__, 1),
             ],
 
             Cache::class => [
                 '__class' => Cache::class,
-                '__construct()' => [Reference::to(ArrayCache::class)]
+                '__construct()' => [Reference::to(ArrayCache::class)],
             ],
 
             CacheInterface::class => Cache::class,
@@ -161,16 +159,16 @@ abstract class TestCase extends BaseTestCase
             ConnectionInterface::class => [
                 '__class' => SqliteConnection::class,
                 '__construct()' => [
-                    'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
-                ]
+                    'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3',
+                ],
             ],
 
             WebView::class => [
                 '__class' => WebView::class,
                 '__construct()' => [
-                    'basePath' => dirname(__DIR__) . '/resources/views'
-                ]
-            ]
+                    'basePath' => dirname(__DIR__) . '/resources/views',
+                ],
+            ],
         ];
     }
 }

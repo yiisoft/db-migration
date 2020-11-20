@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Paths;
 
-use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
-
 use function explode;
 use function file_get_contents;
 use function substr;
+
+use Symfony\Component\Console\Tester\CommandTester;
 use function trim;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
 /**
  * @group paths
@@ -45,7 +45,7 @@ final class CreateTableCommandTest extends TestCase
             ExitCode::OK,
             $commandCreate->execute([
                 'name' => 'post',
-                '--command' => 'table'
+                '--command' => 'table',
             ])
         );
 
@@ -102,9 +102,9 @@ EOF;
         $this->assertEquals(
             ExitCode::OK,
             $commandCreate->execute([
-            'name' => 'post',
-            '--command' => 'table',
-            '--fields' => 'title:string,body:text'
+                'name' => 'post',
+                '--command' => 'table',
+                '--fields' => 'title:string,body:text',
             ])
         );
 
@@ -166,7 +166,7 @@ EOF;
                 'name' => 'post',
                 '--command' => 'table',
                 '--fields' => 'author_id:integer:notNull:foreignKey(user),category_id:integer:defaultValue(1)' .
-                ':foreignKey,title:string,body:text'
+                ':foreignKey,title:string,body:text',
             ])
         );
 
