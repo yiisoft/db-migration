@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
-use function implode;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
-
 use Yiisoft\Strings\StringHelper;
+
+use function implode;
 
 /**
  * Migration is the base class for representing a database migration.
@@ -275,10 +275,11 @@ abstract class Migration implements MigrationInterface
      * @param string $table the table whose column is to be changed. The table name will be properly quoted by the
      * method.
      * @param string $column the name of the column to be changed. The name will be properly quoted by the method.
-     * @param ColumnSchemaBuilder|string $type the new column type. The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will
-     * be invoked to convert abstract column type (if any) into the physical one. Anything that is not recognized as
-     * abstract type will be kept in the generated SQL. For example, 'string' will be turned into 'varchar(255)', while
-     * 'string not null' will become 'varchar(255) not null'.
+     * @param ColumnSchemaBuilder|string $type the new column type.
+     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert abstract column
+     * type (if any) into the physical one. Anything that is not recognized as abstract type will be kept in the
+     * generated SQL. For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become
+     * 'varchar(255) not null'.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -286,11 +287,20 @@ abstract class Migration implements MigrationInterface
      */
     public function alterColumn(string $table, string $column, $type): void
     {
+        $comment = null;
+
+        if ($type instanceof ColumnSchemaBuilder) {
+            $comment = $type->getComment();
+            $type = $type->__toString();
+        }
+
         $time = $this->beginCommand("Alter column $column in table $table to $type");
 
         $this->db->createCommand()->alterColumn($table, $column, $type)->execute();
 
-        $this->db->createCommand()->addCommentOnColumn($table, $column, $type)->execute();
+        if ($comment !== null) {
+            $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+        }
 
         $this->endCommand($time);
     }

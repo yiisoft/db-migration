@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
-use function closedir;
-use function is_dir;
-use function opendir;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use function str_replace;
+use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,11 +32,15 @@ use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function closedir;
+use function is_dir;
+use function opendir;
+use function str_replace;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -149,6 +150,8 @@ abstract class TestCase extends BaseTestCase
             ],
 
             CacheInterface::class => Cache::class,
+
+            SimpleCacheInterface::class => CacheInterface::class,
 
             ListenerProviderInterface::class => Provider::class,
 
