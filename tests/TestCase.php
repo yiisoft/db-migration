@@ -10,7 +10,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -144,14 +143,10 @@ abstract class TestCase extends BaseTestCase
                 '@yiisoft/yii/db/migration' => dirname(__DIR__, 1),
             ],
 
-            Cache::class => [
+            CacheInterface::class => [
                 '__class' => Cache::class,
                 '__construct()' => [Reference::to(ArrayCache::class)],
             ],
-
-            CacheInterface::class => Cache::class,
-
-            SimpleCacheInterface::class => CacheInterface::class,
 
             ListenerProviderInterface::class => Provider::class,
 
