@@ -34,7 +34,7 @@ final class CreateCommandTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->consoleHelper->getPathFromNameSpace($this->pathAliases));
+        $this->removeFiles($this->consoleHelper->getPathFromNamespace($this->pathAliases));
 
         parent::tearDown();
     }
@@ -94,7 +94,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 
 EOF;
         $generated = file_get_contents(
-            $this->consoleHelper->getPathFromNameSpace($this->pathAliases) . '/' . $file . '.php'
+            $this->consoleHelper->getPathFromNamespace($this->pathAliases) . '/' . $file . '.php'
         );
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
@@ -158,7 +158,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 
 EOF;
         $generated = file_get_contents(
-            $this->consoleHelper->getPathFromNameSpace($this->pathAliases) . '/' . $file . '.php'
+            $this->consoleHelper->getPathFromNamespace($this->pathAliases) . '/' . $file . '.php'
         );
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }

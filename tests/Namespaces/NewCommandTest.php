@@ -30,7 +30,7 @@ final class NewCommandTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->removeFiles($this->consoleHelper->getPathFromNameSpace($this->pathAliases));
+        $this->removeFiles($this->consoleHelper->getPathFromNamespace($this->pathAliases));
 
         parent::tearDown();
     }
@@ -50,7 +50,7 @@ final class NewCommandTest extends TestCase
         foreach ($words as $word) {
             if (!empty($word)) {
                 $word = '@' . str_replace('\\', '/', trim($word));
-                $this->assertFileExists($this->consoleHelper->getPathFromNameSpace($word) . '.php');
+                $this->assertFileExists($this->consoleHelper->getPathFromNamespace($word) . '.php');
             }
         }
     }

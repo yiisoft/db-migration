@@ -30,9 +30,9 @@ return [
     ],
 
     'yiisoft/yii-db-migration' => [
-        'createNameSpace' => '',
+        'createNamespace' => '',
         'createPath' => '',
-        'updateNameSpace' => [],
+        'updateNamespace' => [],
         'updatePath' => [],
     ],
 ];

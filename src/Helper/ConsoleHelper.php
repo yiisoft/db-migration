@@ -65,7 +65,7 @@ final class ConsoleHelper
         return $this->table;
     }
 
-    public function getPathFromNameSpace(string $path): string
+    public function getPathFromNamespace(string $path): string
     {
         $namespacesPath = [];
 
