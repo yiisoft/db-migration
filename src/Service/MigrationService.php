@@ -4,23 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
-use function array_slice;
-use function array_values;
-use function closedir;
-use function file_exists;
-use function gmdate;
-use function is_file;
-use function ksort;
-use function opendir;
-use function preg_match;
-
-use function readdir;
-use function str_replace;
-use function strcasecmp;
-use function strpos;
-use function time;
-use function trim;
-use function usort;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
@@ -30,6 +13,8 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
+
+use function array_slice;
 
 final class MigrationService
 {
@@ -147,7 +132,7 @@ final class MigrationService
         $query = (new Query($this->db))
             ->select(['version', 'apply_time'])
             ->from($this->migrationTable)
-            ->orderBy(['apply_time' => SORT_DESC, 'version' => SORT_DESC]);
+            ->orderBy(['apply_time' => SORT_DESC, 'id' => SORT_DESC]);
 
         if (empty($this->updateNamespace)) {
             if ($limit > 0) {
@@ -170,28 +155,9 @@ final class MigrationService
                 continue;
             }
 
-            if (preg_match('/m?(\d{6}_?\d{6})(\D.*)?$/is', $row['version'], $matches)) {
-                $time = str_replace('_', '', $matches[1]);
-                $row['canonicalVersion'] = $time;
-            } else {
-                $row['canonicalVersion'] = $row['version'];
-            }
-
-            $row['apply_time'] = (int) $row['apply_time'];
+            $row['apply_time'] = (int)$row['apply_time'];
             $history[] = $row;
         }
-
-        usort($history, static function (array $a, array $b) {
-            if ($a['apply_time'] === $b['apply_time']) {
-                if (($compareResult = strcasecmp($b['canonicalVersion'], $a['canonicalVersion'])) !== 0) {
-                    return $compareResult;
-                }
-
-                return strcasecmp($b['version'], $a['version']);
-            }
-
-            return ($a['apply_time'] > $b['apply_time']) ? -1 : +1;
-        });
 
         $history = array_slice($history, 0, $limit);
         $history = ArrayHelper::map($history, 'version', 'apply_time');
@@ -450,7 +416,8 @@ final class MigrationService
         $this->consoleHelper->io()->section("Creating migration history table \"$tableName\"...");
 
         $this->db->createCommand()->createTable($this->migrationTable, [
-            'version' => 'varchar(' . $this->maxNameLength . ') NOT NULL PRIMARY KEY',
+            'id' => 'pk',
+            'version' => 'varchar(' . $this->maxNameLength . ') NOT NULL',
             'apply_time' => 'integer',
         ])->execute();
         $this->db->createCommand()->insert($this->migrationTable, [
