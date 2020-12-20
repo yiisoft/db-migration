@@ -24,6 +24,37 @@ final class HistoryCommandTest extends PathsCommandTest
         $this->assertMatchesRegularExpression('/M\d+[a-z_]/i', $output);
     }
 
+    public function testLimit(): void
+    {
+        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => 1]);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+    }
+
+    public function testIncorrectLimit(): void
+    {
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => -1]);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testWithoutNewMigrations(): void
+    {
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute([]);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+    }
+
     private function getCommand(): CommandTester
     {
         return new CommandTester(

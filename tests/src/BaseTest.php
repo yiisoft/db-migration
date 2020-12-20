@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
+use Closure;
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -123,7 +124,8 @@ abstract class BaseTest extends TestCase
         string $name,
         string $command,
         string $table,
-        array $fields = []
+        array $fields = [],
+        Closure $callback = null
     ): void {
         $migrationService = $this->getMigrationService();
 
@@ -138,10 +140,14 @@ abstract class BaseTest extends TestCase
             $fields
         );
 
-        $path = $this->getAliases()->get($migrationService->findMigrationPath($namespace));
-        $fileName = $className . '.php';
+        if ($callback) {
+            $content = call_user_func($callback, $content);
+        }
 
-        file_put_contents($path . '/' . $fileName, $content);
+        file_put_contents(
+            $this->getAliases()->get($migrationService->findMigrationPath($namespace)) . '/' . $className . '.php',
+            $content
+        );
     }
 
     protected function applyNewMigrations(): void

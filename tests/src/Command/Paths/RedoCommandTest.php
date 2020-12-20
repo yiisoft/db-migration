@@ -29,6 +29,38 @@ final class RedoCommandTest extends PathsCommandTest
         $this->assertExistsTables('post', 'user');
     }
 
+    public function testIncorrectLimit(): void
+    {
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => -1]);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testWithoutNewMigrations(): void
+    {
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute([]);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+    }
+
+    public function testFiledDown(): void
+    {
+        $this->createMigration('Create_Chunk', 'table', 'chunk', ['name:string'], function ($content) {
+            return str_replace(' implements RevertibleMigrationInterface', '', $content);
+        });
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute([]);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+    }
+
     private function getCommand(): CommandTester
     {
         return new CommandTester(
