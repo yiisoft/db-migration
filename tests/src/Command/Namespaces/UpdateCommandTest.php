@@ -2,73 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Namespaces;
+namespace Yiisoft\Yii\Db\Migration\Tests\Command\Namespaces;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\TestCase;
 
-/**
- * @group namespaces
- */
-final class UpdateCommandTest extends TestCase
+final class UpdateCommandTest extends NamespacesCommandTest
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\Tests\\Build';
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        /** Set namespace for generate migration */
-        $this->migrationService->createNamespace($this->namespace);
-
-        /** Set list namespace for update migrations */
-        $this->migrationService->updateNamespace([$this->namespace, 'Yiisoft\\Yii\\Db\\Migration']);
-    }
-
     public function testExecute(): void
     {
-        $migrationTable = 'migration';
-        $tableMaster = 'department';
-        $tableRelation = 'student';
-
-        if ($this->db->getSchema()->getTableSchema($migrationTable) !== null) {
-            $this->db->createCommand()->dropTable($migrationTable)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableRelation) !== null) {
-            $this->db->createCommand()->dropTable($tableRelation)->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema($tableMaster) !== null) {
-            $this->db->createCommand()->dropTable($tableMaster)->execute();
-        }
-
-        $create = $this->application->find('generate/create');
-
-        $commandCreate = new CommandTester($create);
-
-        $commandCreate->setInputs(['yes']);
-        $commandCreate->execute([
-            'name' => $tableMaster,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null',
+        $this->createMigration('Create_Department', 'table', 'department', [
+            'name:string(50)',
         ]);
-        $commandCreate->execute([
-            'name' => $tableRelation,
-            '--command' => 'table',
-            '--fields' => 'name:string(50):null,department_id:integer:notnull:foreignKey(department),dateofbirth:date:null',
+        $this->createMigration('Create_Student', 'table', 'student', [
+            'name:string(50)',
+            'department_id:integer:notNull:foreignKey(department)',
+            'dateofbirth:date',
         ]);
 
-        $update = $this->application->find('migrate/up');
+        $command = $this->getCommand();
 
-        $commandUpdate = new CommandTester($update);
+        $command->setInputs(['yes']);
 
-        $commandUpdate->setInputs(['yes']);
+        $this->assertEquals(ExitCode::OK, $command->execute([]));
 
-        $this->assertEquals(ExitCode::OK, $commandUpdate->execute([]));
-
-        $departmentSchema = $this->db->getSchema()->getTableSchema($tableMaster);
+        $departmentSchema = $this->getDb()->getSchema()->getTableSchema('department');
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
@@ -85,7 +43,7 @@ final class UpdateCommandTest extends TestCase
         $this->assertEquals('string', $departmentSchema->getColumn('name')->getType());
         $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
 
-        $studentSchema = $this->db->getSchema()->getTableSchema($tableRelation);
+        $studentSchema = $this->getDb()->getSchema()->getTableSchema('student');
 
         /** Check create table student columns*/
         $this->assertCount(4, $studentSchema->getColumns());
@@ -108,7 +66,7 @@ final class UpdateCommandTest extends TestCase
         $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
         $this->assertEquals(
             ['department_id'],
-            $this->db->getSchema()->getTableForeignKeys($tableRelation, true)[0]->getColumnNames()
+            $this->getDb()->getSchema()->getTableForeignKeys('student', true)[0]->getColumnNames()
         );
 
         /** Check table student field dateofbirth */
@@ -119,16 +77,21 @@ final class UpdateCommandTest extends TestCase
 
     public function testExecuteAgain(): void
     {
-        $update = $this->application->find('migrate/up');
+        $command = $this->getCommand();
 
-        $commandUpdate = new CommandTester($update);
+        $command->setInputs(['yes']);
 
-        $commandUpdate->setInputs(['yes']);
+        $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $command->execute([]));
 
-        $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $commandUpdate->execute([]));
-
-        $output = $commandUpdate->getDisplay(true);
+        $output = $command->getDisplay(true);
 
         $this->assertStringContainsString('No new migrations found.', $output);
+    }
+
+    private function getCommand(): CommandTester
+    {
+        return new CommandTester(
+            $this->getApplication()->find('migrate/up')
+        );
     }
 }

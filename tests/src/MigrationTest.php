@@ -6,14 +6,19 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Yii\Db\Migration\Migration;
 
-final class MigrationTest extends TestCase
+final class MigrationTest extends BaseTest
 {
+    private Migration $migration;
+
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->db->createCommand()->createTable(
+        $this->migration = $this->getContainer()->get(MigrationStub::class);
+
+        $this->getDb()->createCommand()->createTable(
             'test_table',
             [
                 'id' => 'INTEGER NOT NULL PRIMARY KEY',
@@ -22,30 +27,13 @@ final class MigrationTest extends TestCase
         )->execute();
     }
 
-    public function tearDown(): void
-    {
-        parent::tearDown();
-
-        if ($this->db->getSchema()->getTableSchema('test_table') !== null) {
-            $this->db->createCommand()->dropTable('test_table')->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema('target_table') !== null) {
-            $this->db->createCommand()->dropTable('target_table')->execute();
-        }
-
-        if ($this->db->getSchema()->getTableSchema('test_create_table') !== null) {
-            $this->db->createCommand()->dropTable('test_create_table')->execute();
-        }
-    }
-
     public function testExecute(): void
     {
         ob_start();
 
         $this->migration->execute('DROP TABLE test_table');
 
-        $this->assertEmpty($this->db->getSchema()->getTableSchema('test_table'));
+        $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
         $this->assertStringContainsString('    > Execute SQL: DROP TABLE test_table ... Done in ', ob_get_clean());
     }
 
@@ -57,7 +45,7 @@ final class MigrationTest extends TestCase
 
         $this->assertEquals(
             '1',
-            $this->db->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar()
+            $this->getDb()->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar()
         );
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
@@ -70,7 +58,7 @@ final class MigrationTest extends TestCase
 
         $this->assertEquals(
             '2',
-            $this->db->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar()
+            $this->getDb()->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar()
         );
         $this->assertStringContainsString('    > Insert into test_table ... Done in ', ob_get_clean());
     }
@@ -87,7 +75,7 @@ final class MigrationTest extends TestCase
             [
                 ['id' => 1],
             ],
-            $this->db->createCommand('SELECT id FROM test_table')->queryAll()
+            $this->getDb()->createCommand('SELECT id FROM test_table')->queryAll()
         );
         $this->assertStringContainsString('    > Upsert into test_table ... Done in ', ob_get_clean());
     }
@@ -104,7 +92,7 @@ final class MigrationTest extends TestCase
             [
                 ['id' => 2],
             ],
-            $this->db->createCommand('SELECT id FROM test_table')->queryAll()
+            $this->getDb()->createCommand('SELECT id FROM test_table')->queryAll()
         );
         $this->assertStringContainsString('    > Update test_table ... Done in ', ob_get_clean());
     }
@@ -117,7 +105,7 @@ final class MigrationTest extends TestCase
 
         $this->migration->delete('test_table', 'id=:id', ['id' => 1]);
 
-        $this->assertEquals('0', $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertEquals('0', $this->getDb()->createCommand('SELECT count(*) FROM test_table')->queryScalar());
         $this->assertStringContainsString('    > Delete from test_table ... Done in ', ob_get_clean());
     }
 
@@ -127,7 +115,7 @@ final class MigrationTest extends TestCase
 
         $this->migration->createTable('test_create_table', ['id' => $this->migration->primaryKey()]);
 
-        $this->assertNotEmpty($this->db->getSchema()->getTableSchema('test_create_table'));
+        $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
         $this->assertStringContainsString('    > create table test_create_table ... Done in ', ob_get_clean());
     }
 
@@ -137,7 +125,7 @@ final class MigrationTest extends TestCase
 
         $this->migration->dropTable('test_table');
 
-        $this->assertEmpty($this->db->getSchema()->getTableSchema('test_table'));
+        $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
         $this->assertStringContainsString('    > Drop table test_table ... Done in ', ob_get_clean());
     }
 
@@ -168,7 +156,7 @@ final class MigrationTest extends TestCase
         $this->migration->addPrimaryKey('id2', 'test_create_table', ['id2']);
 
         $this->assertTrue(
-            $this->db->getSchema()->getTableSchema('test_create_table')->getColumn('id2')->isPrimaryKey()
+            $this->getDb()->getSchema()->getTableSchema('test_create_table')->getColumn('id2')->isPrimaryKey()
         );
         $this->assertStringContainsString(
             '    > Add primary key id2 on test_create_table (id2) ... Done in ',
@@ -243,11 +231,11 @@ final class MigrationTest extends TestCase
             ob_get_clean()
         );
 
-        $this->db->createCommand()->insert('test_table', ['id' => 1, 'foreign_id' => 1])->execute();
+        $this->getDb()->createCommand()->insert('test_table', ['id' => 1, 'foreign_id' => 1])->execute();
 
         $this->expectException(IntegrityException::class);
 
-        $this->db->createCommand()->insert('test_table', ['id' => 2, 'foreign_id' => 1])->execute();
+        $this->getDb()->createCommand()->insert('test_table', ['id' => 2, 'foreign_id' => 1])->execute();
     }
 
     public function testDropIndex(): void
@@ -260,8 +248,8 @@ final class MigrationTest extends TestCase
 
         $this->assertStringContainsString('    > Drop index unique_index on test_table ... Done in ', ob_get_clean());
 
-        $this->db->createCommand()->insert('test_table', ['id' => 1, 'foreign_id' => 1])->execute();
-        $this->db->createCommand()->insert('test_table', ['id' => 2, 'foreign_id' => 1])->execute();
+        $this->getDb()->createCommand()->insert('test_table', ['id' => 1, 'foreign_id' => 1])->execute();
+        $this->getDb()->createCommand()->insert('test_table', ['id' => 2, 'foreign_id' => 1])->execute();
     }
 
     public function testAddCommentOnColumn(): void
