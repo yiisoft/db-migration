@@ -127,7 +127,7 @@ abstract class BaseTest extends TestCase
     ): void {
         $migrationService = $this->getMigrationService();
 
-        list($namespace, $className) = $migrationService->generateClassName(null, $name);
+        [$namespace, $className] = $migrationService->generateClassName(null, $name);
 
         $content = $this->getCreateService()->run(
             $command,

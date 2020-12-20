@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Command\Namespaces;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Tests\Command\Namespaces\NamespacesCommandTest;
 
 final class CreateCommandTest extends NamespacesCommandTest
 {

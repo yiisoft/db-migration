@@ -14,4 +14,3 @@ final class MigrationStub extends \Yiisoft\Yii\Db\Migration\Migration
     {
     }
 }
-

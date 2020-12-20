@@ -9,7 +9,6 @@ use Yiisoft\Yii\Console\ExitCode;
 
 final class HistoryCommandTest extends NamespacesCommandTest
 {
-
     public function testExecute(): void
     {
         $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
