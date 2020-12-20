@@ -41,6 +41,29 @@ final class DownCommandTest extends NamespacesCommandTest
         $this->assertStringContainsString('Apply a new migration to run this command.', $output);
     }
 
+    public function testIncorrectLimit(): void
+    {
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => -1]);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testFiled(): void
+    {
+        $this->createMigration('Create_Ship', 'table', 'ship', ['name:string'], function ($content) {
+            return str_replace(' implements RevertibleMigrationInterface', '', $content);
+        });
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute([]);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+    }
+
     private function getCommand(): CommandTester
     {
         return new CommandTester(

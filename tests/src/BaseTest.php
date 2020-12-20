@@ -10,6 +10,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
@@ -21,7 +22,10 @@ use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\View\WebView;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -30,6 +34,13 @@ abstract class BaseTest extends TestCase
     public const DB_FILE = __DIR__ . '/../runtime/yiitest.sq3';
 
     private ?Container $container = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->getConsoleHelper()->output()->setVerbosity(OutputInterface::VERBOSITY_QUIET);
+    }
 
     protected function tearDown(): void
     {
@@ -97,14 +108,29 @@ abstract class BaseTest extends TestCase
         return $this->getContainer()->get(MigrationService::class);
     }
 
+    protected function getListTablesService(): ListTablesService
+    {
+        return $this->getContainer()->get(ListTablesService::class);
+    }
+
     protected function getCreateService(): CreateService
     {
         return $this->getContainer()->get(CreateService::class);
     }
 
+    protected function getDownService(): DownService
+    {
+        return $this->getContainer()->get(DownService::class);
+    }
+
     protected function getUpdateService(): UpdateService
     {
         return $this->getContainer()->get(UpdateService::class);
+    }
+
+    protected function getConsoleHelper(): ConsoleHelper
+    {
+        return $this->getContainer()->get(ConsoleHelper::class);
     }
 
     protected function getParams(): array
@@ -126,7 +152,7 @@ abstract class BaseTest extends TestCase
         string $table,
         array $fields = [],
         Closure $callback = null
-    ): void {
+    ): string {
         $migrationService = $this->getMigrationService();
 
         [$namespace, $className] = $migrationService->generateClassName(null, $name);
@@ -148,6 +174,8 @@ abstract class BaseTest extends TestCase
             $this->getAliases()->get($migrationService->findMigrationPath($namespace)) . '/' . $className . '.php',
             $content
         );
+
+        return $namespace . '\\' . $className;
     }
 
     protected function applyNewMigrations(): void

@@ -642,6 +642,28 @@ EOF;
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
+    public function testIncorrectCreatePath(): void
+    {
+        $this->getMigrationService()->createPath(__DIR__ . '/not-exists');
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['name' => 'post']);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testWithoutCreatePath(): void
+    {
+        $this->getMigrationService()->createPath('');
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['name' => 'post']);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
     private function getCommand(): CommandTester
     {
         return new CommandTester(

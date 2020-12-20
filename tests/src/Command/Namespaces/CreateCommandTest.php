@@ -721,6 +721,28 @@ EOF;
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
+    public function testIncorrectCreateNamespace(): void
+    {
+        $this->getMigrationService()->createNamespace('Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists');
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['name' => 'post']);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testWithoutCreateNamespace(): void
+    {
+        $this->getMigrationService()->createNamespace('');
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['name' => 'post']);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
     private function getCommand(): CommandTester
     {
         return new CommandTester(

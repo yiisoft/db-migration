@@ -35,12 +35,12 @@ abstract class PathsCommandTest extends CommandTest
         parent::tearDown();
     }
 
-    public function getPathAlias(): string
+    protected function getPathAlias(): string
     {
         return $this->pathAlias;
     }
 
-    public function getPath(): string
+    protected function getPath(): string
     {
         return $this->path;
     }
