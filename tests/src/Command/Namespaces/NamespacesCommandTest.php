@@ -9,7 +9,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Command\CommandTest;
 
 abstract class NamespacesCommandTest extends CommandTest
 {
-    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\Command';
+    private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\MigrationNamespace';
     private string $path;
 
     protected function setUp(): void

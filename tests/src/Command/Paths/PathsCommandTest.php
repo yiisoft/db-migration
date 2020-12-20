@@ -9,7 +9,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Command\CommandTest;
 
 abstract class PathsCommandTest extends CommandTest
 {
-    private string $pathAlias = '@runtime/migration';
+    private string $pathAlias = '@runtime/migration-path';
     private string $path;
 
     protected function setUp(): void
