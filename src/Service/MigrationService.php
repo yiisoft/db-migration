@@ -160,9 +160,7 @@ final class MigrationService
         }
 
         $history = array_slice($history, 0, $limit);
-        $history = ArrayHelper::map($history, 'version', 'apply_time');
-
-        return $history;
+        return ArrayHelper::map($history, 'version', 'apply_time');
     }
 
     public function getMigrationTable(): string

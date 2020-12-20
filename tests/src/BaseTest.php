@@ -167,7 +167,7 @@ abstract class BaseTest extends TestCase
         );
 
         if ($callback) {
-            $content = call_user_func($callback, $content);
+            $content = $callback($content);
         }
 
         file_put_contents(
