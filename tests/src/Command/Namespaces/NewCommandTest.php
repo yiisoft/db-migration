@@ -22,8 +22,8 @@ final class NewCommandTest extends NamespacesCommandTest
 
         $words = explode("\n", $output);
 
-        $this->assertFileExists($this->getPath() . '/' . basename(trim($words[0])) . '.php');
-        $this->assertFileExists($this->getPath() . '/' . basename(trim($words[1])) . '.php');
+        $this->assertFileExists($this->getPath() . '/' . $this->getClassShortname($words[0]) . '.php');
+        $this->assertFileExists($this->getPath() . '/' . $this->getClassShortname($words[1]) . '.php');
     }
 
     private function getCommand(): CommandTester
@@ -31,5 +31,12 @@ final class NewCommandTest extends NamespacesCommandTest
         return new CommandTester(
             $this->getApplication()->find('migrate/new')
         );
+    }
+
+    private function getClassShortname(string $name): string
+    {
+        $name = trim($name);
+        $chunks = explode('\\', $name);
+        return array_pop($chunks);
     }
 }
