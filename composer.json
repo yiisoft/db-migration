@@ -34,7 +34,7 @@
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.3",
         "yiisoft/db-sqlite": "^3.0@dev",
-        "yiisoft/di": " ^3.0@dev",
+        "yiisoft/di": "^3.0@dev",
         "yiisoft/event-dispatcher": "^3.0@dev"
     },
     "autoload": {
@@ -44,7 +44,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Yii\\Db\\Migration\\Tests\\": "tests"
+            "Yiisoft\\Yii\\Db\\Migration\\Tests\\": "tests/src",
+            "Yiisoft\\Yii\\Db\\Migration\\TestsRuntime\\": "tests/runtime"
         }
     },
     "extra": {

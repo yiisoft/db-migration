@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" colors="true" verbose="true" bootstrap="vendor/autoload.php" executionOrder="default" failOnRisky="true" failOnWarning="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage>
-    <include>
-      <directory>./</directory>
-    </include>
-    <exclude>
-      <directory>./tests</directory>
-      <directory>./vendor</directory>
-    </exclude>
-  </coverage>
-  <php>
-    <ini name="error_reporting" value="-1"/>
-  </php>
-  <testsuites>
-    <testsuite name="Migration">
-      <directory>./tests/Paths/CreateCommandTest.php</directory>
-      <directory>./tests/Paths/UpdateCommandTest.php</directory>
-      <directory>./tests/Paths/RedoCommandTest.php</directory>
-      <directory>./tests/Paths/HistoryCommandTest.php</directory>
-      <directory>./tests/Paths/ListTablesCommandTest.php</directory>
-      <directory>./tests/Paths/DownCommandTest.php</directory>
-      <directory>./tests/Paths/NewCommandTest.php</directory>
-      <directory>./tests/Namespaces/CreateCommandTest.php</directory>
-      <directory>./tests/Namespaces/UpdateCommandTest.php</directory>
-      <directory>./tests/Namespaces/RedoCommandTest.php</directory>
-      <directory>./tests/Namespaces/HistoryCommandTest.php</directory>
-      <directory>./tests/Namespaces/ListTablesCommandTest.php</directory>
-      <directory>./tests/Namespaces/DownCommandTest.php</directory>
-      <directory>./tests/Namespaces/NewCommandTest.php</directory>
-      <directory>./tests/MigrationTest.php</directory>
-    </testsuite>
-  </testsuites>
+
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true"
+         verbose="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         stopOnFailure="false"
+         executionOrder="random"
+         resolveDependencies="true"
+         backupGlobals="false">
+    <php>
+        <ini name="error_reporting" value="-1"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Yii DB Migration tests">
+            <directory>./tests/src</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage>
+        <include>
+            <directory>./src</directory>
+            <directory>./resources</directory>
+        </include>
+    </coverage>
 </phpunit>

@@ -38,7 +38,7 @@ Example using [yiisoft/app](https://github.com/yiisoft/app).
 
 Di-Container:
 
-config/common.php
+Create `config/common/db.php` with content:
 ```php
 <?php
 
@@ -57,23 +57,14 @@ return [
 ];
 ```
 
-config/console.php
+Add to `config/params.php`:
 ```php
-<?php
-
-declare(strict_types=1);
-
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-
-return [
-    MigrationService::class => [
-        '__class' => MigrationService::class,
-        'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNameSpace']],
-        'updateNamespace()' => [
-            fn () => $params['yiisoft/yii-db-migration']['updateNameSpace']
-        ]
-    ]
-];
+...
+'yiisoft/yii-db-migration' => [
+    'createNamespace' => 'App\\Migration',
+    'updateNamespace' => ['App\\Migration'],
+],
+...
 ```
 
 Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
