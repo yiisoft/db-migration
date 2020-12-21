@@ -287,4 +287,15 @@ final class MigrationTest extends BaseTest
 
         $this->migration->dropCommentFromTable('test_table');
     }
+
+    public function testMaxSqlOutputLength(): void
+    {
+        $this->migration->maxSqlOutputLength(15);
+
+        ob_start();
+        $this->migration->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
+        $output = ob_get_clean();
+
+        $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
+    }
 }
