@@ -23,14 +23,7 @@ final class CreateCommandTest extends PathsCommandTest
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -43,9 +36,9 @@ use Yiisoft\Yii\Db\Migration\Migration;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
- * Class $file
+ * Class $className
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -59,7 +52,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -120,14 +113,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -142,7 +128,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles adding columns to table `post`.
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -156,7 +142,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -176,14 +162,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -198,7 +177,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles dropping columns from table `post`.
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -212,7 +191,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -232,14 +211,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -254,7 +226,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles the dropping of table `post`.
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -272,7 +244,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -293,14 +265,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -319,7 +284,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%post}}`
  * - `{{%tag}}`
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -396,7 +361,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -415,14 +380,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -437,7 +395,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles the creation of table `post`.
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -453,7 +411,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -473,14 +431,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -495,7 +446,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles the creation of table `post`.
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -513,7 +464,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
@@ -534,14 +485,7 @@ EOF;
         );
 
         $output = $command->getDisplay(true);
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            $result = substr(trim($word), 0, 1);
-            if ($result === 'M') {
-                $file = trim($word);
-            }
-        }
+        $className = $this->findMigrationClassNameInOutput($output);
 
         $this->assertStringContainsString('Create new migration y/n:', $output);
 
@@ -560,7 +504,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%user}}`
  * - `{{%category}}`
  */
-final class $file extends Migration implements RevertibleMigrationInterface
+final class $className extends Migration implements RevertibleMigrationInterface
 {
     public function up(): void
     {
@@ -638,7 +582,7 @@ final class $file extends Migration implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $file . '.php');
+        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 

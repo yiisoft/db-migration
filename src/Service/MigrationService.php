@@ -21,7 +21,7 @@ final class MigrationService
     /**
      * The name of the dummy migration that marks the beginning of the whole migration history.
      */
-    public const BASE_MIGRATION = 'm000000_000000_base';
+    public const BASE_MIGRATION = 'M000000000000Base';
 
     private string $createNamespace = '';
     private string $createPath = '';
@@ -208,12 +208,12 @@ final class MigrationService
 
                 $path = $updatePath . DIRECTORY_SEPARATOR . $file;
 
-                if (preg_match('/^(m(\d{6}_?\d{6})\D.*?)\.php$/is', $file, $matches) && is_file($path)) {
+                if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
                     $class = $matches[1];
                     if (!empty($namespace)) {
                         $class = $namespace . '\\' . $class;
                     }
-                    $time = str_replace('_', '', $matches[2]);
+                    $time = $matches[2];
                     if (!isset($applied[$class])) {
                         $migrations[$time . '\\' . $class] = $class;
                     }
@@ -464,11 +464,7 @@ final class MigrationService
             $namespace = $this->createNamespace;
         }
 
-        if ($namespace === null) {
-            $class = 'M' . gmdate('ymd_His') . '_' . $name;
-        } else {
-            $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->toPascalCase($name);
-        }
+        $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->toPascalCase($name);
 
         return [$namespace, $class];
     }
