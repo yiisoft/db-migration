@@ -465,7 +465,7 @@ final class MigrationService
         }
 
         if ($namespace === null) {
-            $class = 'M' . gmdate('ymd_His') . '_' . $name;
+            $class = 'm' . gmdate('ymd_His') . '_' . $name;
         } else {
             $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->toPascalCase($name);
         }
