@@ -22,6 +22,8 @@ interface RevertibleMigrationInterface extends MigrationInterface
      *
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
+     *
+     * @param MigrationHelper $m
      */
-    public function down(): void;
+    public function down(MigrationHelper $m): void;
 }

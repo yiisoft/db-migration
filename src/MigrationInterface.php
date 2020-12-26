@@ -22,15 +22,8 @@ interface MigrationInterface
      *
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
-     */
-    public function up(): void;
-
-    /**
-     * @param bool $value indicates whether the console output should be compacted.
      *
-     * If this is set to true, the individual commands ran within the migration will not be output to the console.
-     *
-     * Default is false, in other words the output is fully verbose by default.
+     * @param MigrationHelper $m
      */
-    public function compact(bool $value): void;
+    public function up(MigrationHelper $m): void;
 }

@@ -50,7 +50,7 @@ final class RedoCommandTest extends PathsCommandTest
     public function testFiledDown(): void
     {
         $this->createMigration('Create_Chunk', 'table', 'chunk', ['name:string'], function ($content) {
-            return str_replace(' implements RevertibleMigrationInterface', '', $content);
+            return str_replace('RevertibleMigrationInterface', 'MigrationInterface', $content);
         });
         $this->applyNewMigrations();
 

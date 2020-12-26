@@ -12,7 +12,9 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 use function array_slice;
 
@@ -355,7 +357,7 @@ final class MigrationService
         );
     }
 
-    public function addMigrationHistory(string $version): void
+    private function addMigrationHistory(string $version): void
     {
         $command = $this->db->createCommand();
 
@@ -385,10 +387,6 @@ final class MigrationService
 
         if (class_exists($class)) {
             $migration = new $class($this->db);
-        }
-
-        if ($migration instanceof MigrationInterface) {
-            $migration->compact($this->compact);
         }
 
         return $migration;
@@ -542,6 +540,26 @@ final class MigrationService
                 'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
             ];
         }
+    }
+
+    public function up(MigrationInterface $migration): void
+    {
+        $migration->up($this->getHelper());
+        $this->addMigrationHistory(get_class($migration));
+    }
+
+    public function down(RevertibleMigrationInterface $migration): void
+    {
+        $migration->down($this->getHelper());
+        $this->removeMigrationHistory(get_class($migration));
+    }
+
+    private function getHelper(): MigrationHelper
+    {
+        return new MigrationHelper(
+            $this->db,
+            $this->compact
+        );
     }
 
     /**

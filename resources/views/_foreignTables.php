@@ -1,14 +1,16 @@
 <?php
 
-/**
- * Creates a call for the method `Yiisoft\Yii\Db\Migration\Migration::createTable()`.
- */
-/* @var $foreignKeys array the foreign keys */
+declare(strict_types=1);
 
-if (!empty($foreignKeys)) : ?>
- * Has foreign keys to the tables:
- *
-<?php foreach ($foreignKeys as $fkData): ?>
- * - `<?= $fkData['relatedTable'] ?>`
-<?php endforeach;
-endif;
+/**
+ * @var $this \Yiisoft\View\WebView
+ * @var $foreignKeys array the foreign keys
+ */
+
+if (!empty($foreignKeys)) {
+    echo " * Has foreign keys to the tables:\n";
+    echo " *\n";
+    foreach ($foreignKeys as $fkData) {
+        echo " * - `{$fkData['relatedTable']}`\n";
+    }
+}

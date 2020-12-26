@@ -52,8 +52,8 @@ final class DownService
             return false;
         }
 
-        $migration->down();
-        $this->migrationService->removeMigrationHistory($class);
+        $this->migrationService->down($migration);
+
         $time = microtime(true) - $start;
         $this->consoleHelper->output()->writeln(
             "\n\t<info>>>> [OK] -  Reverted $class (time: " . sprintf('%.3f', $time) . 's)</info>'

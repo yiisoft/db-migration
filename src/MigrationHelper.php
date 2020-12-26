@@ -13,58 +13,31 @@ use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
 
-use function implode;
-
-/**
- * Migration is the base class for representing a database migration.
- *
- * Migration is designed to be used together with the "vendor/bin/yii migrate" command.
- *
- * Each child class of Migration represents an individual database migration which is identified by the child class
- * name.
- *
- * Within each migration, the {@see up() method should be overridden to contain the logic for "upgrading" the database;
- * while the {@see down()} method for the "downgrading" logic. The "yii migrate" command manages all available
- * migrations in an application.
- *
- * If the database supports transactions, if anything wrong happens during the upgrading or downgrading, the whole
- * migration can be reverted in a whole.
- *
- * Note that some DB queries in some DBMS cannot be put into a transaction. For some examples, please refer to
- * [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html). If this is the case, you should still
- * implement `up()` and `down()`, instead.
- *
- * Migration provides a set of convenient methods for manipulating database data and schema.
- *
- * For example, the {@see insert()} method can be used to easily insert a row of data into a database table; the
- * {@see createTable()} method can be used to create a database table.
- *
- * Compared with the same methods in {@see Command}, these methods will display extra information showing the method
- * parameters and execution time, which may be useful when applying migrations.
- *
- * For more details and usage information on Migration, see the [guide article on Migration](guide:db-migrations).
- */
-abstract class Migration implements MigrationInterface
+final class MigrationHelper
 {
     use SchemaBuilderTrait;
 
-    private int $maxSqlOutputLength = 0;
-    private bool $compact = false;
-    protected ConnectionInterface $db;
+    private ConnectionInterface $db;
+    private bool $compact;
+    private int $maxSqlOutputLength;
 
-    public function __construct(ConnectionInterface $db)
-    {
+    public function __construct(
+        ConnectionInterface $db,
+        bool $compact = false,
+        int $maxSqlOutputLength = 0
+    ) {
         $this->db = $db;
         $this->db->getSchema()->refresh();
         $this->db->setEnableSlaves(false);
+
+        $this->compact = $compact;
+        $this->maxSqlOutputLength = $maxSqlOutputLength;
     }
 
-    public function getDb(): ?ConnectionInterface
+    public function getDb(): ConnectionInterface
     {
         return $this->db;
     }
-
-    abstract public function up(): void;
 
     /**
      * Executes a SQL statement.
@@ -80,7 +53,7 @@ abstract class Migration implements MigrationInterface
      *
      * {See \Yiisoft\Db\Command\Command::execute()} for more details.
      */
-    public function execute($sql, $params = []): void
+    public function execute(string $sql, array $params = []): void
     {
         $sqlOutput = $sql;
         if ($this->maxSqlOutputLength > 0) {
@@ -104,7 +77,7 @@ abstract class Migration implements MigrationInterface
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function insert($table, $columns): void
+    public function insert(string $table, array $columns): void
     {
         $time = $this->beginCommand("Insert into $table");
         $this->db->createCommand()->insert($table, $columns)->execute();
@@ -124,7 +97,7 @@ abstract class Migration implements MigrationInterface
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function batchInsert($table, $columns, $rows): void
+    public function batchInsert(string $table, array $columns, array $rows): void
     {
         $time = $this->beginCommand("Insert into $table");
         $this->db->createCommand()->batchInsert($table, $columns, $rows)->execute();
@@ -377,10 +350,10 @@ abstract class Migration implements MigrationInterface
         $time = $this->beginCommand(
             "Add foreign key $name: $table (" . implode(
                 ',',
-                (array) $columns
+                (array)$columns
             ) . ") references $refTable (" . implode(
                 ',',
-                (array) $refColumns
+                (array)$refColumns
             ) . ')'
         );
         $this->db->createCommand()->addForeignKey(
@@ -431,7 +404,7 @@ abstract class Migration implements MigrationInterface
     public function createIndex(string $name, string $table, $columns, bool $unique = false): void
     {
         $time = $this->beginCommand(
-            'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array) $columns) . ')'
+            'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array)$columns) . ')'
         );
         $this->db->createCommand()->createIndex($name, $table, $columns, $unique)->execute();
         $this->endCommand($time);
@@ -525,16 +498,6 @@ abstract class Migration implements MigrationInterface
         $time = $this->beginCommand("drop comment from table $table");
         $this->db->createCommand()->dropCommentFromTable($table)->execute();
         $this->endCommand($time);
-    }
-
-    public function compact(bool $value): void
-    {
-        $this->compact = $value;
-    }
-
-    public function maxSqlOutputLength(int $value): void
-    {
-        $this->maxSqlOutputLength = $value;
     }
 
     /**

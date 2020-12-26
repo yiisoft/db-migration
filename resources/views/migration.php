@@ -16,20 +16,20 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Class <?= $className . "\n" ?>
  */
-final class <?= $className ?> extends Migration implements RevertibleMigrationInterface
+final class <?= $className ?> implements RevertibleMigrationInterface
 {
-    public function up(): void
+    public function up(MigrationHelper $m): void
     {
 
     }
 
-    public function down(): void
+    public function down(MigrationHelper $m): void
     {
 
     }
