@@ -208,12 +208,12 @@ final class MigrationService
 
                 $path = $updatePath . DIRECTORY_SEPARATOR . $file;
 
-                if (preg_match('/^(M(\d{12})\D.*)\.php$/s', $file, $matches) && is_file($path)) {
+                if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
                     $class = $matches[1];
                     if (!empty($namespace)) {
                         $class = $namespace . '\\' . $class;
                     }
-                    $time = str_replace('_', '', $matches[2]);
+                    $time = $matches[2];
                     if (!isset($applied[$class])) {
                         $migrations[$time . '\\' . $class] = $class;
                     }
