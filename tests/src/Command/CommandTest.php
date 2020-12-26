@@ -23,4 +23,17 @@ abstract class CommandTest extends BaseTest
 
         return $application;
     }
+
+    protected function findMigrationClassNameInOutput(string $output): string
+    {
+        $words = explode(' ', $output);
+
+        foreach ($words as $word) {
+            if (preg_match('/^\s*M\d{12}\D.*/', $word)) {
+                return trim($word);
+            }
+        }
+
+        return '';
+    }
 }

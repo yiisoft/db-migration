@@ -614,17 +614,4 @@ EOF;
             $this->getApplication()->find('generate/create')
         );
     }
-
-    private function findMigrationClassNameInOutput(string $output): string
-    {
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            if (preg_match('/^\s*m\d{6}/i', $word)) {
-                return trim($word);
-            }
-        }
-
-        return '';
-    }
 }
