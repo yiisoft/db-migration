@@ -11,7 +11,7 @@ return [
     View::class => [
         '__class' => View::class,
         '__construct()' => [
-            'basePath' => fn(Aliases $aliases) => $aliases->get($params['yiisoft/view']['basePath'])
+            'basePath' => fn (Aliases $aliases) => $aliases->get($params['yiisoft/view']['basePath'])
         ],
     ],
 
