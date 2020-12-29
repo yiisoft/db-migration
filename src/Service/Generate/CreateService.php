@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
+use ReflectionException;
+use Yiisoft\Aliases\Aliases;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\View\View;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use function array_merge;
 use function array_shift;
 use function array_unshift;
 use function count;
 use function implode;
 use function in_array;
-
 use function is_array;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function preg_split;
-use ReflectionException;
 use function str_replace;
 use function strncmp;
 use function strripos;
-use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\View\WebView;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class CreateService
 {
@@ -32,20 +32,20 @@ final class CreateService
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
-    private WebView $webView;
+    private View $view;
 
     public function __construct(
         Aliases $aliases,
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
-        WebView $webView
+        View $view
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
-        $this->webView = $webView;
+        $this->view = $view;
     }
 
     public function run(
@@ -72,7 +72,7 @@ final class CreateService
 
         $foreignKeys = $this->addforeignKeys($table, $foreignKeys);
 
-        return $this->webView->renderFile(
+        return $this->view->renderFile(
             $this->aliases->get($templateFile),
             [
                 'table' => $table,
