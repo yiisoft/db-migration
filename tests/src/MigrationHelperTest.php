@@ -126,6 +126,18 @@ final class MigrationHelperTest extends BaseTest
         $this->assertStringContainsString('    > create table test_create_table ... Done in ', $output);
     }
 
+    public function testCreateTableWithStringColumnDefinition(): void
+    {
+        $m = $this->getHelper();
+
+        ob_start();
+        $m->createTable('test_create_table', ['name' => 'varchar(50)']);
+        $output = ob_get_clean();
+
+        $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
+        $this->assertStringContainsString('    > create table test_create_table ... Done in ', $output);
+    }
+
     public function testDropTable(): void
     {
         $m = $this->getHelper();

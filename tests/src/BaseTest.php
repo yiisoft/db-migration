@@ -21,6 +21,8 @@ use Yiisoft\Di\Container;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Profiler\Profiler;
+use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\WebView;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
@@ -74,6 +76,8 @@ abstract class BaseTest extends TestCase
                 EventDispatcherInterface::class => Dispatcher::class,
 
                 LoggerInterface::class => NullLogger::class,
+
+                ProfilerInterface::class => Profiler::class,
 
                 ConnectionInterface::class => [
                     '__class' => SqlLiteConnection::class,

@@ -198,10 +198,11 @@ final class MigrationHelper
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
         foreach ($columns as $column => $type) {
-            $comment = $type->getComment();
-
-            if ($type instanceof ColumnSchemaBuilder && $comment !== null) {
-                $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+            if ($type instanceof ColumnSchemaBuilder) {
+                $comment = $type->getComment();
+                if ($comment !== null) {
+                    $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+                }
             }
         }
 
