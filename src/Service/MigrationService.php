@@ -46,8 +46,7 @@ final class MigrationService
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
         Injector $injector
-    )
-    {
+    ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
