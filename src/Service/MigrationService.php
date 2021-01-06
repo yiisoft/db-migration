@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
@@ -40,11 +42,16 @@ final class MigrationService
     private string $version = '1.0';
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
+    private ContainerInterface $container;
 
-    public function __construct(ConnectionInterface $db, ConsoleHelper $consoleHelper)
-    {
+    public function __construct(
+        ConnectionInterface $db,
+        ConsoleHelper $consoleHelper,
+        ContainerInterface $container,
+    ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
+        $this->container = $container;
 
         $this->generatorTemplateFiles();
     }
@@ -379,17 +386,15 @@ final class MigrationService
      */
     public function createMigration(string $class): ?MigrationInterface
     {
-        $migration = null;
-
         $this->includeMigrationFile($class);
-
         $class = '\\' . $class;
 
-        if (class_exists($class)) {
-            $migration = new $class($this->db);
+        /** @psalm-suppress InvalidCatch */
+        try {
+            return $this->container->get($class);
+        } catch (NotFoundExceptionInterface $e) {
+            return null;
         }
-
-        return $migration;
     }
 
     public function createNamespace(string $value): void
