@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
+use ReflectionException;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
+use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
@@ -38,11 +40,17 @@ final class MigrationService
     private string $version = '1.0';
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
+    private Injector $injector;
 
-    public function __construct(ConnectionInterface $db, ConsoleHelper $consoleHelper)
+    public function __construct(
+        ConnectionInterface $db,
+        ConsoleHelper $consoleHelper,
+        Injector $injector
+    )
     {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
+        $this->injector = $injector;
 
         $this->generatorTemplateFiles();
     }
@@ -377,14 +385,13 @@ final class MigrationService
      */
     public function createMigration(string $class): ?MigrationInterface
     {
-        $migration = null;
-
         $this->includeMigrationFile($class);
-
         $class = '\\' . $class;
 
-        if (class_exists($class)) {
-            $migration = new $class($this->db);
+        try {
+            $migration = $this->injector->make($class);
+        } catch (ReflectionException $e) {
+            $migration = null;
         }
 
         if ($migration instanceof MigrationInterface) {
