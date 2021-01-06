@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use ReflectionException;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
+use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationHelper;
@@ -42,16 +42,16 @@ final class MigrationService
     private string $version = '1.0';
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
-    private ContainerInterface $container;
+    private Injector $injector;
 
     public function __construct(
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
-        ContainerInterface $container
+        Injector $injector
     ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
-        $this->container = $container;
+        $this->injector = $injector;
 
         $this->generatorTemplateFiles();
     }
@@ -389,10 +389,9 @@ final class MigrationService
         $this->includeMigrationFile($class);
         $class = '\\' . $class;
 
-        /** @psalm-suppress InvalidCatch */
         try {
-            return $this->container->get($class);
-        } catch (NotFoundExceptionInterface $e) {
+            return $this->injector->make($class);
+        } catch (ReflectionException $e) {
             return null;
         }
     }
