@@ -47,7 +47,7 @@ final class MigrationService
     public function __construct(
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
-        ContainerInterface $container,
+        ContainerInterface $container
     ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
