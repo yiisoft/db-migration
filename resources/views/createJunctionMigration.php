@@ -17,7 +17,7 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -26,27 +26,27 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class <?= $className ?> implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper $m): void
+    public function up(MigrationBuilder $b): void
     {
-        $m->createTable('<?= $table ?>', [
-            '<?= $field_first ?>_id' => $m->integer(),
-            '<?= $field_second ?>_id' => $m->integer(),
+        $b->createTable('<?= $table ?>', [
+            '<?= $field_first ?>_id' => $b->integer(),
+            '<?= $field_second ?>_id' => $b->integer(),
             'PRIMARY KEY(<?= $field_first ?>_id, <?= $field_second ?>_id)',
         ]);
 
-        $m->createIndex(
+        $b->createIndex(
             'idx-<?= $table . '-' . $field_first ?>_id',
             '<?= $table ?>',
             '<?= $field_first ?>_id'
         );
 
-        $m->createIndex(
+        $b->createIndex(
             'idx-<?= $table . '-' . $field_second ?>_id',
             '<?= $table ?>',
             '<?= $field_second ?>_id'
         );
 
-        $m->addForeignKey(
+        $b->addForeignKey(
             'fk-<?= $table . '-' . $field_first ?>_id',
             '<?= $table ?>',
             '<?= $field_first ?>_id',
@@ -55,7 +55,7 @@ final class <?= $className ?> implements RevertibleMigrationInterface
             'CASCADE'
         );
 
-        $m->addForeignKey(
+        $b->addForeignKey(
             'fk-<?= $table . '-' . $field_second ?>_id',
             '<?= $table ?>',
             '<?= $field_second ?>_id',
@@ -65,8 +65,8 @@ final class <?= $className ?> implements RevertibleMigrationInterface
         );
     }
 
-    public function down(MigrationHelper $m): void
+    public function down(MigrationBuilder $b): void
     {
-        $m->dropTable('<?= $table ?>');
+        $b->dropTable('<?= $table ?>');
     }
 }

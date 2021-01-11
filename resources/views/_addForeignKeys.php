@@ -11,14 +11,14 @@ declare(strict_types=1);
 foreach ($foreignKeys as $column => $fkData) {
     echo "\n";
     echo "        // creates index for column `$column`\n";
-    echo "        \$m->createIndex(\n";
+    echo "        \$b->createIndex(\n";
     echo "            '{$fkData['idx']}',\n";
     echo "            '$table',\n";
     echo "            '$column'\n";
     echo "        );\n";
     echo "\n";
     echo "        // add foreign key for table `{$fkData['relatedTable']}`\n";
-    echo "        \$m->addForeignKey(\n";
+    echo "        \$b->addForeignKey(\n";
     echo "            '{$fkData['fk']}',\n";
     echo "            '$table',\n";
     echo "            '$column',\n";

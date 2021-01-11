@@ -6,9 +6,9 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
-final class MigrationHelperTest extends BaseTest
+final class MigrationBuilderTest extends BaseTest
 {
     public function setUp(): void
     {
@@ -25,10 +25,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testExecute(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->execute('DROP TABLE test_table');
+        $b->execute('DROP TABLE test_table');
         $output = ob_get_clean();
 
         $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
@@ -37,10 +37,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testInsert(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->insert('test_table', ['id' => 1]);
+        $b->insert('test_table', ['id' => 1]);
         $output = ob_get_clean();
 
         $this->assertEquals(
@@ -52,10 +52,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testBatchInsert(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->batchInsert('test_table', ['id'], [['id' => 1], ['id' => 2]]);
+        $b->batchInsert('test_table', ['id'], [['id' => 1], ['id' => 2]]);
         $output = ob_get_clean();
 
         $this->assertEquals(
@@ -67,11 +67,11 @@ final class MigrationHelperTest extends BaseTest
 
     public function testUpsert(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->insert('test_table', ['id' => 1]);
-        $m->upsert('test_table', ['id' => 1], false);
+        $b->insert('test_table', ['id' => 1]);
+        $b->upsert('test_table', ['id' => 1], false);
         $output = ob_get_clean();
 
         $this->assertEquals(
@@ -85,11 +85,11 @@ final class MigrationHelperTest extends BaseTest
 
     public function testUpdate(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->insert('test_table', ['id' => 1]);
-        $m->update('test_table', ['id' => 2], 'id=:id', ['id' => 1]);
+        $b->insert('test_table', ['id' => 1]);
+        $b->update('test_table', ['id' => 2], 'id=:id', ['id' => 1]);
         $output = ob_get_clean();
 
         $this->assertEquals(
@@ -103,11 +103,11 @@ final class MigrationHelperTest extends BaseTest
 
     public function testDelete(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->insert('test_table', ['id' => 1]);
-        $m->delete('test_table', 'id=:id', ['id' => 1]);
+        $b->insert('test_table', ['id' => 1]);
+        $b->delete('test_table', 'id=:id', ['id' => 1]);
         $output = ob_get_clean();
 
         $this->assertEquals('0', $this->getDb()->createCommand('SELECT count(*) FROM test_table')->queryScalar());
@@ -116,10 +116,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testCreateTable(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createTable('test_create_table', ['id' => $m->primaryKey()]);
+        $b->createTable('test_create_table', ['id' => $b->primaryKey()]);
         $output = ob_get_clean();
 
         $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
@@ -128,10 +128,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testCreateTableWithStringColumnDefinition(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createTable('test_create_table', ['name' => 'varchar(50)']);
+        $b->createTable('test_create_table', ['name' => 'varchar(50)']);
         $output = ob_get_clean();
 
         $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
@@ -140,10 +140,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testDropTable(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->dropTable('test_table');
+        $b->dropTable('test_table');
         $output = ob_get_clean();
 
         $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
@@ -152,27 +152,27 @@ final class MigrationHelperTest extends BaseTest
 
     public function testRenameColumn(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->renameColumn('test_table', 'id', 'id_new');
+        $b->renameColumn('test_table', 'id', 'id_new');
     }
 
     public function testAlterColumn(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->alterColumn('test_table', 'id', $m->string());
+        $b->alterColumn('test_table', 'id', $b->string());
     }
 
     public function testAddPrimaryKey(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createTable('test_create_table', ['id2' => $m->integer()]);
-        $m->addPrimaryKey('id2', 'test_create_table', ['id2']);
+        $b->createTable('test_create_table', ['id2' => $b->integer()]);
+        $b->addPrimaryKey('id2', 'test_create_table', ['id2']);
         $output = ob_get_clean();
 
         $this->assertTrue(
@@ -186,20 +186,20 @@ final class MigrationHelperTest extends BaseTest
 
     public function testDropPrimaryKey(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
-        $m->createTable('test_create_table', ['id' => $m->primaryKey()]);
+        $b->createTable('test_create_table', ['id' => $b->primaryKey()]);
         $this->expectException(NotSupportedException::class);
-        $m->dropPrimaryKey('id', 'test_create_table');
+        $b->dropPrimaryKey('id', 'test_create_table');
     }
 
     public function testAddForeignKey(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createTable('target_table', ['id' => $m->primaryKey()]);
-        $m->addForeignKey(
+        $b->createTable('target_table', ['id' => $b->primaryKey()]);
+        $b->addForeignKey(
             'fk',
             'test_table',
             'foreign_id',
@@ -218,11 +218,11 @@ final class MigrationHelperTest extends BaseTest
 
     public function testDropForeignKey(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createTable('target_table', ['id2' => $m->primaryKey()]);
-        $m->addForeignKey(
+        $b->createTable('target_table', ['id2' => $b->primaryKey()]);
+        $b->addForeignKey(
             'fk2',
             'test_table',
             'foreign_id',
@@ -231,7 +231,7 @@ final class MigrationHelperTest extends BaseTest
             'CASCADE',
             'CASCADE'
         );
-        $m->dropForeignKey('fk2', 'test_table');
+        $b->dropForeignKey('fk2', 'test_table');
         $output = ob_get_clean();
 
         $this->assertStringContainsString(
@@ -242,10 +242,10 @@ final class MigrationHelperTest extends BaseTest
 
     public function testCreateIndex(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createIndex('unique_index', 'test_table', 'foreign_id', true);
+        $b->createIndex('unique_index', 'test_table', 'foreign_id', true);
         $output = ob_get_clean();
 
         $this->assertStringContainsString(
@@ -260,11 +260,11 @@ final class MigrationHelperTest extends BaseTest
 
     public function testDropIndex(): void
     {
-        $m = $this->getHelper();
+        $b = $this->getBuilder();
 
         ob_start();
-        $m->createIndex('unique_index', 'test_table', 'foreign_id', true);
-        $m->dropIndex('unique_index', 'test_table');
+        $b->createIndex('unique_index', 'test_table', 'foreign_id', true);
+        $b->dropIndex('unique_index', 'test_table');
         $output = ob_get_clean();
 
         $this->assertStringContainsString('    > Drop index unique_index on test_table ... Done in ', $output);
@@ -272,49 +272,49 @@ final class MigrationHelperTest extends BaseTest
 
     public function testAddCommentOnColumn(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->addCommentOnColumn('test_table', 'id', 'test comment');
+        $b->addCommentOnColumn('test_table', 'id', 'test comment');
     }
 
     public function testAddCommentOnTable(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->addCommentOnTable('test_table', 'id');
+        $b->addCommentOnTable('test_table', 'id');
     }
 
     public function testDropCommentFromColumn(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->dropCommentFromColumn('test_table', 'id');
+        $b->dropCommentFromColumn('test_table', 'id');
     }
 
     public function testDropCommentFromTable(): void
     {
-        $m = $this->getHelper(true);
+        $b = $this->getBuilder(true);
 
         $this->expectException(NotSupportedException::class);
-        $m->dropCommentFromTable('test_table');
+        $b->dropCommentFromTable('test_table');
     }
 
     public function testMaxSqlOutputLength(): void
     {
-        $m = $this->getHelper(false, 15);
+        $b = $this->getBuilder(false, 15);
 
         ob_start();
-        $m->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
+        $b->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
         $output = ob_get_clean();
 
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
     }
 
-    private function getHelper(bool $compact = false, int $maxSqlOutputLength = 0): MigrationHelper
+    private function getBuilder(bool $compact = false, int $maxSqlOutputLength = 0): MigrationBuilder
     {
-        return new MigrationHelper($this->getDb(), $compact, $maxSqlOutputLength);
+        return new MigrationBuilder($this->getDb(), $compact, $maxSqlOutputLength);
     }
 }

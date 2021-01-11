@@ -16,7 +16,7 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -24,12 +24,12 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class <?= $className ?> implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper $m): void
+    public function up(MigrationBuilder $b): void
     {
 
     }
 
-    public function down(MigrationHelper $m): void
+    public function down(MigrationBuilder $b): void
     {
 
     }

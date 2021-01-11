@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Creates a call for the method `Yiisoft\Yii\Db\Migration\MigrationHelper::dropTable()`.
+ * Creates a call for the method `Yiisoft\Yii\Db\Migration\MigrationBuilder::dropTable()`.
  *
  * @var $this \Yiisoft\View\WebView
  * @var $table string the name table
@@ -15,4 +15,4 @@ echo $this->render('_dropForeignKeys', [
     'foreignKeys' => $foreignKeys,
 ]);
 
-echo "        \$m->dropTable('$table');\n";
+echo "        \$b->dropTable('$table');\n";

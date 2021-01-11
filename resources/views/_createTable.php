@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Creates a call for the method `Yiisoft\Yii\Db\Migration\MigrationHelper::createTable()`.
+ * Creates a call for the method `Yiisoft\Yii\Db\Migration\MigrationBuilder::createTable()`.
  *
  * @var $this \Yiisoft\View\WebView
  * @var $table string the name table
@@ -11,12 +11,12 @@ declare(strict_types=1);
  * @var $foreignKeys array the foreign keys
  */
 
-echo "        \$m->createTable('$table', [\n";
+echo "        \$b->createTable('$table', [\n";
 foreach ($fields as $field) {
     if (empty($field['decorators'])) {
         echo "            '{$field['property']}',\n";
     } else {
-        echo "            '{$field['property']}' => \$m->{$field['decorators']},\n";
+        echo "            '{$field['property']}' => \$b->{$field['decorators']},\n";
     }
 }
 echo "        ]);\n";

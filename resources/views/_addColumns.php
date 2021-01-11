@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 
 foreach ($fields as $field) {
-    echo "        \$m->addColumn('$table', '{$field['property']}', \$m->{$field['decorators']});\n";
+    echo "        \$b->addColumn('$table', '{$field['property']}', \$b->{$field['decorators']});\n";
 }
 
 echo $this->render('_addForeignKeys', [

@@ -32,7 +32,7 @@ final class CreateCommandTest extends PathsCommandTest
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -40,12 +40,12 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
 
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
 
     }
@@ -122,7 +122,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -130,14 +130,14 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->addColumn('post', 'position', \$m->integer());
+        \$b->addColumn('post', 'position', \$b->integer());
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
-        \$m->dropColumn('post', 'position');
+        \$b->dropColumn('post', 'position');
     }
 }
 
@@ -171,7 +171,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -179,14 +179,14 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->dropColumn('post', 'position');
+        \$b->dropColumn('post', 'position');
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
-        \$m->addColumn('post', 'position', \$m->integer());
+        \$b->addColumn('post', 'position', \$b->integer());
     }
 }
 
@@ -220,7 +220,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -228,17 +228,17 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->dropTable('post');
+        \$b->dropTable('post');
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
-        \$m->createTable('post', [
-            'id' => \$m->primaryKey(),
-            'title' => \$m->string(12)->notNull()->unique(),
-            'body' => \$m->text(),
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'title' => \$b->string(12)->notNull()->unique(),
+            'body' => \$b->text(),
         ]);
     }
 }
@@ -274,7 +274,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -286,24 +286,24 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->createTable('post_tag', [
-            'post_id' => \$m->integer(),
-            'tag_id' => \$m->integer(),
-            'created_at' => \$m->dateTime(),
+        \$b->createTable('post_tag', [
+            'post_id' => \$b->integer(),
+            'tag_id' => \$b->integer(),
+            'created_at' => \$b->dateTime(),
             'PRIMARY KEY(post_id, tag_id)',
         ]);
 
         // creates index for column `post_id`
-        \$m->createIndex(
+        \$b->createIndex(
             'idx-post_tag-post_id',
             'post_tag',
             'post_id'
         );
 
         // add foreign key for table `{{%post}}`
-        \$m->addForeignKey(
+        \$b->addForeignKey(
             'fk-post_tag-post_id',
             'post_tag',
             'post_id',
@@ -313,14 +313,14 @@ final class $className implements RevertibleMigrationInterface
         );
 
         // creates index for column `tag_id`
-        \$m->createIndex(
+        \$b->createIndex(
             'idx-post_tag-tag_id',
             'post_tag',
             'tag_id'
         );
 
         // add foreign key for table `{{%tag}}`
-        \$m->addForeignKey(
+        \$b->addForeignKey(
             'fk-post_tag-tag_id',
             'post_tag',
             'tag_id',
@@ -330,33 +330,33 @@ final class $className implements RevertibleMigrationInterface
         );
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
         // drops foreign key for table `{{%post}}`
-        \$m->dropForeignKey(
+        \$b->dropForeignKey(
             'fk-post_tag-post_id',
             'post_tag'
         );
 
         // drops index for column `post_id`
-        \$m->dropIndex(
+        \$b->dropIndex(
             'idx-post_tag-post_id',
             'post_tag'
         );
 
         // drops foreign key for table `{{%tag}}`
-        \$m->dropForeignKey(
+        \$b->dropForeignKey(
             'fk-post_tag-tag_id',
             'post_tag'
         );
 
         // drops index for column `tag_id`
-        \$m->dropIndex(
+        \$b->dropIndex(
             'idx-post_tag-tag_id',
             'post_tag'
         );
 
-        \$m->dropTable('post_tag');
+        \$b->dropTable('post_tag');
     }
 }
 
@@ -389,7 +389,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -397,16 +397,16 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->createTable('post', [
-            'id' => \$m->primaryKey(),
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
         ]);
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
-        \$m->dropTable('post');
+        \$b->dropTable('post');
     }
 }
 
@@ -440,7 +440,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -448,18 +448,18 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->createTable('post', [
-            'id' => \$m->primaryKey(),
-            'title' => \$m->string(),
-            'body' => \$m->text(),
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'title' => \$b->string(),
+            'body' => \$b->text(),
         ]);
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
-        \$m->dropTable('post');
+        \$b->dropTable('post');
     }
 }
 
@@ -494,7 +494,7 @@ EOF;
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
@@ -506,25 +506,25 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  */
 final class $className implements RevertibleMigrationInterface
 {
-    public function up(MigrationHelper \$m): void
+    public function up(MigrationBuilder \$b): void
     {
-        \$m->createTable('post', [
-            'id' => \$m->primaryKey(),
-            'author_id' => \$m->integer()->notNull(),
-            'category_id' => \$m->integer()->defaultValue(1),
-            'title' => \$m->string(),
-            'body' => \$m->text(),
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'author_id' => \$b->integer()->notNull(),
+            'category_id' => \$b->integer()->defaultValue(1),
+            'title' => \$b->string(),
+            'body' => \$b->text(),
         ]);
 
         // creates index for column `author_id`
-        \$m->createIndex(
+        \$b->createIndex(
             'idx-post-author_id',
             'post',
             'author_id'
         );
 
         // add foreign key for table `{{%user}}`
-        \$m->addForeignKey(
+        \$b->addForeignKey(
             'fk-post-author_id',
             'post',
             'author_id',
@@ -534,14 +534,14 @@ final class $className implements RevertibleMigrationInterface
         );
 
         // creates index for column `category_id`
-        \$m->createIndex(
+        \$b->createIndex(
             'idx-post-category_id',
             'post',
             'category_id'
         );
 
         // add foreign key for table `{{%category}}`
-        \$m->addForeignKey(
+        \$b->addForeignKey(
             'fk-post-category_id',
             'post',
             'category_id',
@@ -551,33 +551,33 @@ final class $className implements RevertibleMigrationInterface
         );
     }
 
-    public function down(MigrationHelper \$m): void
+    public function down(MigrationBuilder \$b): void
     {
         // drops foreign key for table `{{%user}}`
-        \$m->dropForeignKey(
+        \$b->dropForeignKey(
             'fk-post-author_id',
             'post'
         );
 
         // drops index for column `author_id`
-        \$m->dropIndex(
+        \$b->dropIndex(
             'idx-post-author_id',
             'post'
         );
 
         // drops foreign key for table `{{%category}}`
-        \$m->dropForeignKey(
+        \$b->dropForeignKey(
             'fk-post-category_id',
             'post'
         );
 
         // drops index for column `category_id`
-        \$m->dropIndex(
+        \$b->dropIndex(
             'idx-post-category_id',
             'post'
         );
 
-        \$m->dropTable('post');
+        \$b->dropTable('post');
     }
 }
 

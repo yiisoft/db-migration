@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 /**
- * The RevertibleMigrationInterface defines the minimum set of methods to be implemented by a revertible database migration.
+ * The RevertibleMigrationInterface defines the minimum set of methods to be implemented
+ * by a revertible database migration.
  *
  * Each migration class should provide the {@see up()} method containing the logic for "upgrading" the database.
  * and the {@see down()} method for the "downgrading" logic. If you do not need the migration to be revertible,
@@ -23,7 +24,7 @@ interface RevertibleMigrationInterface extends MigrationInterface
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
      * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
      *
-     * @param MigrationHelper $m
+     * @param MigrationBuilder $b
      */
-    public function down(MigrationHelper $m): void;
+    public function down(MigrationBuilder $b): void;
 }

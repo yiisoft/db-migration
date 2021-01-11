@@ -13,7 +13,7 @@ use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
 
-final class MigrationHelper
+final class MigrationBuilder
 {
     use SchemaBuilderTrait;
 

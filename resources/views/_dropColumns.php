@@ -15,5 +15,5 @@ echo $this->render('_dropForeignKeys', [
 ]);
 
 foreach ($fields as $field) {
-    echo "        \$m->dropColumn('$table', '{$field['property']}');\n";
+    echo "        \$b->dropColumn('$table', '{$field['property']}');\n";
 }
