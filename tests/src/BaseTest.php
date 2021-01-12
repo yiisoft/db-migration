@@ -28,6 +28,8 @@ use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Profiler\Profiler;
+use Yiisoft\Profiler\ProfilerInterface;
 
 abstract class BaseTest extends TestCase
 {
