@@ -14,7 +14,9 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 use function array_slice;
 
@@ -362,7 +364,7 @@ final class MigrationService
         );
     }
 
-    public function addMigrationHistory(string $version): void
+    private function addMigrationHistory(string $version): void
     {
         $command = $this->db->createCommand();
 
@@ -388,16 +390,10 @@ final class MigrationService
         $class = '\\' . $class;
 
         try {
-            $migration = $this->injector->make($class);
+            return $this->injector->make($class);
         } catch (ReflectionException $e) {
-            $migration = null;
+            return null;
         }
-
-        if ($migration instanceof MigrationInterface) {
-            $migration->compact($this->compact);
-        }
-
-        return $migration;
     }
 
     public function createNamespace(string $value): void
@@ -548,6 +544,26 @@ final class MigrationService
                 'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
             ];
         }
+    }
+
+    public function up(MigrationInterface $migration): void
+    {
+        $migration->up($this->createBuilder());
+        $this->addMigrationHistory(get_class($migration));
+    }
+
+    public function down(RevertibleMigrationInterface $migration): void
+    {
+        $migration->down($this->createBuilder());
+        $this->removeMigrationHistory(get_class($migration));
+    }
+
+    private function createBuilder(): MigrationBuilder
+    {
+        return new MigrationBuilder(
+            $this->db,
+            $this->compact
+        );
     }
 
     /**

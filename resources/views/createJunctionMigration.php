@@ -17,36 +17,36 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\Migration;
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the creation of table `<?= $table ?>` which is a junction between
  * table `<?= $field_first ?>` and table `<?= $field_second ?>`.
  */
-final class <?= $className ?> extends Migration implements RevertibleMigrationInterface
+final class <?= $className ?> implements RevertibleMigrationInterface
 {
-    public function up(): void
+    public function up(MigrationBuilder $b): void
     {
-        $this->createTable('<?= $table ?>', [
-            '<?= $field_first ?>_id' => $this->integer(),
-            '<?= $field_second ?>_id' => $this->integer(),
+        $b->createTable('<?= $table ?>', [
+            '<?= $field_first ?>_id' => $b->integer(),
+            '<?= $field_second ?>_id' => $b->integer(),
             'PRIMARY KEY(<?= $field_first ?>_id, <?= $field_second ?>_id)',
         ]);
 
-        $this->createIndex(
+        $b->createIndex(
             'idx-<?= $table . '-' . $field_first ?>_id',
             '<?= $table ?>',
             '<?= $field_first ?>_id'
         );
 
-        $this->createIndex(
+        $b->createIndex(
             'idx-<?= $table . '-' . $field_second ?>_id',
             '<?= $table ?>',
             '<?= $field_second ?>_id'
         );
 
-        $this->addForeignKey(
+        $b->addForeignKey(
             'fk-<?= $table . '-' . $field_first ?>_id',
             '<?= $table ?>',
             '<?= $field_first ?>_id',
@@ -55,7 +55,7 @@ final class <?= $className ?> extends Migration implements RevertibleMigrationIn
             'CASCADE'
         );
 
-        $this->addForeignKey(
+        $b->addForeignKey(
             'fk-<?= $table . '-' . $field_second ?>_id',
             '<?= $table ?>',
             '<?= $field_second ?>_id',
@@ -65,8 +65,8 @@ final class <?= $className ?> extends Migration implements RevertibleMigrationIn
         );
     }
 
-    public function down(): void
+    public function down(MigrationBuilder $b): void
     {
-        $this->dropTable('<?= $table ?>');
+        $b->dropTable('<?= $table ?>');
     }
 }

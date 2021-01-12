@@ -45,8 +45,8 @@ final class UpdateService
             return false;
         }
 
-        $migration->up();
-        $this->migrationService->addMigrationHistory($class);
+        $this->migrationService->up($migration);
+
         $time = microtime(true) - $start;
         $this->consoleHelper->output()->writeln(
             "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . 's)<info>'

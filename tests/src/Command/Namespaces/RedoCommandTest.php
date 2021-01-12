@@ -50,7 +50,7 @@ final class RedoCommandTest extends NamespacesCommandTest
     public function testFiledDown(): void
     {
         $this->createMigration('Create_Ship', 'table', 'ship', ['name:string'], function ($content) {
-            return str_replace(' implements RevertibleMigrationInterface', '', $content);
+            return str_replace('RevertibleMigrationInterface', 'MigrationInterface', $content);
         });
         $this->applyNewMigrations();
 
