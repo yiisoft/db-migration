@@ -21,6 +21,8 @@ use Yiisoft\Di\Container;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Profiler\Profiler;
+use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
@@ -28,8 +30,6 @@ use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Profiler\Profiler;
-use Yiisoft\Profiler\ProfilerInterface;
 
 abstract class BaseTest extends TestCase
 {
