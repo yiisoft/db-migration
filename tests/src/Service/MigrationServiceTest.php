@@ -22,13 +22,16 @@ final class MigrationServiceTest extends NamespaceMigrationServiceTest
 
     public function testCompact(): void
     {
+        $service = $this->getMigrationService();
+
         $className = $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
 
-        $this->getMigrationService()->compact(true);
-        $migration = $this->getMigrationService()->createMigration($className);
+        $service->compact(true);
+        $migration = $service->createMigration($className);
+        $service->getMigrationHistory();
 
         ob_start();
-        $migration->up();
+        $service->up($migration);
         $output = ob_get_clean();
 
         $this->assertEmpty($output);

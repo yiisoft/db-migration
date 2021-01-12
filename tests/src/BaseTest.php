@@ -75,6 +75,8 @@ abstract class BaseTest extends TestCase
 
                 LoggerInterface::class => NullLogger::class,
 
+                ProfilerInterface::class => Profiler::class,
+
                 ConnectionInterface::class => [
                     '__class' => SqlLiteConnection::class,
                     '__construct()' => [
