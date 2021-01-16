@@ -584,7 +584,7 @@ final class MigrationService
         if ($this->schemaCacheEnabled) {
             $this->schemaCache->setEnable(true);
         }
-        
+
         $this->db->getSchema()->refresh();
     }
 
