@@ -210,6 +210,19 @@ final class MigrationBuilder
     }
 
     /**
+     * Builds and executes a SQL statement for renaming a DB table.
+     *
+     * @param string $table the table to be renamed. The name will be properly quoted by the method.
+     * @param string $newName the new table name. The name will be properly quoted by the method.
+     */
+    public function renameTable(string $table, string $newName): void
+    {
+        $time = $this->beginCommand("rename table $table to $newName");
+        $this->db->createCommand()->renameTable($table, $newName)->execute();
+        $this->endCommand($time);
+    }
+
+    /**
      * Builds and executes a SQL statement for dropping a DB table.
      *
      * @param string $table the table to be dropped. The name will be properly quoted by the method.
@@ -222,6 +235,58 @@ final class MigrationBuilder
     {
         $time = $this->beginCommand("Drop table $table");
         $this->db->createCommand()->dropTable($table)->execute();
+        $this->endCommand($time);
+    }
+
+    /**
+     * Builds and executes a SQL statement for truncating a DB table.
+     *
+     * @param string $table the table to be truncated. The name will be properly quoted by the method.
+     */
+    public function truncateTable(string $table): void
+    {
+        $time = $this->beginCommand("truncate table $table");
+        $this->db->createCommand()->truncateTable($table)->execute();
+        $this->endCommand($time);
+    }
+
+    /**
+     * Builds and executes a SQL statement for adding a new DB column.
+     *
+     * @param string $table the table that the new column will be added to.
+     * The table name will be properly quoted by the method.
+     * @param string $column the name of the new column. The name will be properly quoted by the method.
+     * @param ColumnSchemaBuilder|string $type the column type. The {@see QueryBuilder::getColumnType()} method
+     * will be invoked to convert abstract column type (if any) into the physical one. Anything that is not
+     * recognized as abstract type will be kept in the generated SQL. For example, 'string' will be turned
+     * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     */
+    public function addColumn(string $table, string $column, $type): void
+    {
+        $comment = null;
+        if ($type instanceof ColumnSchemaBuilder) {
+            $comment = $type->getComment();
+            $type = $type->__toString();
+        }
+
+        $time = $this->beginCommand("add column $column $type to table $table");
+        $this->db->createCommand()->addColumn($table, $column, $type)->execute();
+        if ($comment !== null) {
+            $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+        }
+        $this->endCommand($time);
+    }
+
+    /**
+     * Builds and executes a SQL statement for dropping a DB column.
+     *
+     * @param string $table the table whose column is to be dropped. The name will be properly quoted by the method.
+     * @param string $column the name of the column to be dropped. The name will be properly quoted by the method.
+     */
+    public function dropColumn(string $table, string $column): void
+    {
+        $time = $this->beginCommand("drop column $column from table $table");
+        $this->db->createCommand()->dropColumn($table, $column)->execute();
         $this->endCommand($time);
     }
 
