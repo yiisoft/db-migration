@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 
 use ReflectionException;
 use Yiisoft\Arrays\ArrayHelper;
+use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
@@ -41,20 +42,22 @@ final class MigrationService
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
-    private bool $schemaCacheEnabled = false;
     private ConnectionInterface $db;
     private SchemaCache $schemaCache;
+    private QueryCache $queryCache;
     private ConsoleHelper $consoleHelper;
     private Injector $injector;
 
     public function __construct(
         ConnectionInterface $db,
         SchemaCache $schemaCache,
+        QueryCache $queryCache,
         ConsoleHelper $consoleHelper,
         Injector $injector
     ) {
         $this->db = $db;
         $this->schemaCache = $schemaCache;
+        $this->queryCache = $queryCache;
         $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
 
@@ -555,7 +558,6 @@ final class MigrationService
     {
         $this->beforeMigrate();
         $migration->up($this->createBuilder());
-        $this->afterMigrate();
         $this->addMigrationHistory(get_class($migration));
     }
 
@@ -563,29 +565,14 @@ final class MigrationService
     {
         $this->beforeMigrate();
         $migration->down($this->createBuilder());
-        $this->afterMigrate();
         $this->removeMigrationHistory(get_class($migration));
     }
 
     private function beforeMigrate(): void
     {
         $this->db->setEnableSlaves(false);
-
-        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(false);
-        }
-
-        $this->db->getSchema()->refresh();
-    }
-
-    private function afterMigrate(): void
-    {
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(true);
-        }
-
-        $this->db->getSchema()->refresh();
+        $this->queryCache->setEnable(false);
+        $this->schemaCache->setEnable(false);
     }
 
     private function createBuilder(): MigrationBuilder
