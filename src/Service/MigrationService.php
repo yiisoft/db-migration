@@ -42,6 +42,8 @@ final class MigrationService
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
+    private bool $schemaCacheEnabled = false;
+    private bool $queryCacheEnabled = false;
     private ConnectionInterface $db;
     private SchemaCache $schemaCache;
     private QueryCache $queryCache;
@@ -419,6 +421,8 @@ final class MigrationService
      */
     private function createMigrationHistoryTable(): void
     {
+        $this->beforeMigrate();
+
         $tableName = $this->db->getSchema()->getRawTableName($this->migrationTable);
 
         $this->consoleHelper->io()->section("Creating migration history table \"$tableName\"...");
@@ -434,6 +438,8 @@ final class MigrationService
         ])->execute();
 
         $this->consoleHelper->output()->writeln("\t<fg=green>>>> [OK] - Done.</>\n");
+
+        $this->afterMigrate();
     }
 
     /**
@@ -558,21 +564,48 @@ final class MigrationService
     {
         $this->beforeMigrate();
         $migration->up($this->createBuilder());
+        $this->afterMigrate();
         $this->addMigrationHistory(get_class($migration));
+//        $this->afterMigrate();
     }
 
     public function down(RevertibleMigrationInterface $migration): void
     {
         $this->beforeMigrate();
         $migration->down($this->createBuilder());
+        $this->afterMigrate();
         $this->removeMigrationHistory(get_class($migration));
     }
 
     private function beforeMigrate(): void
     {
         $this->db->setEnableSlaves(false);
-        $this->queryCache->setEnable(false);
-        $this->schemaCache->setEnable(false);
+
+        $this->db->getSchema()->refresh();
+
+        $this->queryCacheEnabled = $this->queryCache->isEnabled();
+        if ($this->queryCacheEnabled) {
+            $this->queryCache->setEnable(false);
+        }
+
+        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
+        if ($this->schemaCacheEnabled) {
+            $this->schemaCache->setEnable(false);
+        }
+    }
+
+    private function afterMigrate(): void
+    {
+        if ($this->queryCacheEnabled) {
+            $this->queryCache->setEnable(true);
+        }
+
+        if ($this->schemaCacheEnabled) {
+            $this->schemaCache->setEnable(true);
+        }
+
+        $this->queryCache->info = [];
+        $this->db->getSchema()->refresh();
     }
 
     private function createBuilder(): MigrationBuilder
