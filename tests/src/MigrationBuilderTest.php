@@ -138,6 +138,18 @@ final class MigrationBuilderTest extends BaseTest
         $this->assertStringContainsString('    > create table test_create_table ... Done in ', $output);
     }
 
+    public function testRenameTable(): void
+    {
+        $b = $this->getBuilder();
+
+        ob_start();
+        $b->renameTable('test_table', 'new_table');
+        $output = ob_get_clean();
+
+        $this->assertExistsTables('new_table');
+        $this->assertStringContainsString('    > rename table test_table to new_table ... Done in ', $output);
+    }
+
     public function testDropTable(): void
     {
         $b = $this->getBuilder();
@@ -148,6 +160,39 @@ final class MigrationBuilderTest extends BaseTest
 
         $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
         $this->assertStringContainsString('    > Drop table test_table ... Done in ', $output);
+    }
+
+    public function testTruncateTable(): void
+    {
+        $b = $this->getBuilder();
+        $b->insert('test_table', ['foreign_id' => 42]);
+
+        ob_start();
+        $b->truncateTable('test_table');
+        $output = ob_get_clean();
+
+        $this->assertSame('0', $this->getDb()->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertStringContainsString('    > truncate table test_table ... Done in ', $output);
+    }
+
+    public function testAddColumn(): void
+    {
+        $b = $this->getBuilder();
+
+        ob_start();
+        $b->addColumn('test_table', 'code', 'string(4)');
+        $output = ob_get_clean();
+
+        $this->assertContains('code', $this->getDb()->getSchema()->getTableSchema('test_table')->getColumnNames());
+        $this->assertStringContainsString('    > add column code string(4) to table test_table ... Done in ', $output);
+    }
+
+    public function testDropColumn(): void
+    {
+        $b = $this->getBuilder();
+
+        $this->expectException(NotSupportedException::class);
+        $b->dropColumn('test_table', 'code');
     }
 
     public function testRenameColumn(): void
