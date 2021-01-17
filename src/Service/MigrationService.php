@@ -566,7 +566,6 @@ final class MigrationService
         $migration->up($this->createBuilder());
         $this->afterMigrate();
         $this->addMigrationHistory(get_class($migration));
-//        $this->afterMigrate();
     }
 
     public function down(RevertibleMigrationInterface $migration): void
@@ -604,7 +603,6 @@ final class MigrationService
             $this->schemaCache->setEnable(true);
         }
 
-        $this->queryCache->info = [];
         $this->db->getSchema()->refresh();
     }
 
