@@ -580,8 +580,6 @@ final class MigrationService
     {
         $this->db->setEnableSlaves(false);
 
-        $this->db->getSchema()->refresh();
-
         $this->queryCacheEnabled = $this->queryCache->isEnabled();
         if ($this->queryCacheEnabled) {
             $this->queryCache->setEnable(false);
