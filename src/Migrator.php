@@ -80,7 +80,6 @@ final class Migrator
         $tableSchema = $this->db->getSchema()->getTableSchema($this->historyTable, true);
         if ($tableSchema === null) {
             return null;
-
         }
 
         $limit = $tableSchema->getColumns()['name']->getSize();
