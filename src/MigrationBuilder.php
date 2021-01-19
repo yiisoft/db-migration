@@ -12,21 +12,21 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
-use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\InformerType;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerType;
 
 final class MigrationBuilder
 {
     use SchemaBuilderTrait;
 
     private ConnectionInterface $db;
-    private InformerInterface $informer;
+    private MigrationInformerInterface $informer;
 
     private int $maxSqlOutputLength;
 
     public function __construct(
         ConnectionInterface $db,
-        InformerInterface $informer,
+        MigrationInformerInterface $informer,
         int $maxSqlOutputLength = 0
     ) {
         $this->db = $db;
@@ -575,7 +575,7 @@ final class MigrationBuilder
      */
     protected function beginCommand(string $description): float
     {
-        $this->informer->info(InformerType::BEGIN_COMMAND, $description);
+        $this->informer->info(MigrationInformerType::BEGIN_COMMAND, $description);
         return microtime(true);
     }
 
@@ -587,7 +587,7 @@ final class MigrationBuilder
     protected function endCommand(float $time): void
     {
         $this->informer->info(
-            InformerType::END_COMMAND,
+            MigrationInformerType::END_COMMAND,
             'Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.',
         );
     }

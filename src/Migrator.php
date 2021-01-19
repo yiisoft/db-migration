@@ -9,16 +9,16 @@ use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
-use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\InformerType;
-use Yiisoft\Yii\Db\Migration\Informer\NullInformer;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerType;
+use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
 final class Migrator
 {
     private ConnectionInterface $db;
     private SchemaCache $schemaCache;
     private QueryCache $queryCache;
-    private InformerInterface $informer;
+    private MigrationInformerInterface $informer;
 
     private string $historyTable;
     private ?int $migrationNameLimit;
@@ -31,7 +31,7 @@ final class Migrator
         ConnectionInterface $db,
         SchemaCache $schemaCache,
         QueryCache $queryCache,
-        InformerInterface $informer,
+        MigrationInformerInterface $informer,
         string $historyTable = '{{%migration}}',
         ?int $maxMigrationNameLength = 180
     ) {
@@ -44,7 +44,7 @@ final class Migrator
         $this->migrationNameLimit = $maxMigrationNameLength;
     }
 
-    public function setInformer(InformerInterface $informer): void
+    public function setInformer(MigrationInformerInterface $informer): void
     {
         $this->informer = $informer;
     }
@@ -153,13 +153,13 @@ final class Migrator
     {
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
         $this->informer->info(
-            InformerType::BEGIN_CREATE_HISTORY_TABLE,
+            MigrationInformerType::BEGIN_CREATE_HISTORY_TABLE,
             'Creating migration history table "' . $tableName . '"...',
         );
 
         $this->beforeMigrate();
 
-        $b = $this->createBuilder(new NullInformer());
+        $b = $this->createBuilder(new NullMigrationInformer());
         $b->createTable($this->historyTable, [
             'id' => $b->primaryKey(),
             'name' => $b->string($this->migrationNameLimit)->notNull(),
@@ -169,7 +169,7 @@ final class Migrator
         $this->afterMigrate();
 
         $this->informer->info(
-            InformerType::END_CREATE_HISTORY_TABLE,
+            MigrationInformerType::END_CREATE_HISTORY_TABLE,
             'Done.',
         );
     }
@@ -202,7 +202,7 @@ final class Migrator
         $this->db->getSchema()->refresh();
     }
 
-    private function createBuilder(?InformerInterface $informer = null): MigrationBuilder
+    private function createBuilder(?MigrationInformerInterface $informer = null): MigrationBuilder
     {
         return new MigrationBuilder(
             $this->db,

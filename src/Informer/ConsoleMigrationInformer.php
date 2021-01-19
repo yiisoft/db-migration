@@ -6,7 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Informer;
 
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
-final class ConsoleInformer implements InformerInterface
+final class ConsoleMigrationInformer implements MigrationInformerInterface
 {
     private ConsoleHelper $helper;
 
@@ -18,19 +18,19 @@ final class ConsoleInformer implements InformerInterface
     public function info(int $type, string $message): void
     {
         switch ($type) {
-            case InformerType::BEGIN_CREATE_HISTORY_TABLE:
+            case MigrationInformerType::BEGIN_CREATE_HISTORY_TABLE:
                 $this->helper->io()->section($message);
                 break;
 
-            case InformerType::END_CREATE_HISTORY_TABLE:
+            case MigrationInformerType::END_CREATE_HISTORY_TABLE:
                 $this->helper->output()->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>\n");
                 break;
 
-            case InformerType::BEGIN_COMMAND:
+            case MigrationInformerType::BEGIN_COMMAND:
                 echo '    > ' . $message . ' ...';
                 break;
 
-            case InformerType::END_COMMAND:
+            case MigrationInformerType::END_COMMAND:
                 echo ' ' . $message . "\n";
                 break;
         }

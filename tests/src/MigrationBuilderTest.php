@@ -6,7 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
 final class MigrationBuilderTest extends BaseTest
@@ -359,11 +359,11 @@ final class MigrationBuilderTest extends BaseTest
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
     }
 
-    private function getBuilder(?InformerInterface $informer = null, int $maxSqlOutputLength = 0): MigrationBuilder
+    private function getBuilder(?MigrationInformerInterface $informer = null, int $maxSqlOutputLength = 0): MigrationBuilder
     {
         return new MigrationBuilder(
             $this->getDb(),
-            $informer ?? $this->getContainer()->get(InformerInterface::class),
+            $informer ?? $this->getContainer()->get(MigrationInformerInterface::class),
             $maxSqlOutputLength
         );
     }
