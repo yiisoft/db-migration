@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Yii\Db\Migration\ConsoleLogger;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
 final class MigrationBuilderTest extends BaseTest
@@ -197,7 +200,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testRenameColumn(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->renameColumn('test_table', 'id', 'id_new');
@@ -205,7 +208,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testAlterColumn(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->alterColumn('test_table', 'id', $b->string());
@@ -231,7 +234,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testDropPrimaryKey(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $b->createTable('test_create_table', ['id' => $b->primaryKey()]);
         $this->expectException(NotSupportedException::class);
@@ -317,7 +320,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testAddCommentOnColumn(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->addCommentOnColumn('test_table', 'id', 'test comment');
@@ -325,7 +328,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testAddCommentOnTable(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->addCommentOnTable('test_table', 'id');
@@ -333,7 +336,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testDropCommentFromColumn(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->dropCommentFromColumn('test_table', 'id');
@@ -341,7 +344,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testDropCommentFromTable(): void
     {
-        $b = $this->getBuilder(true);
+        $b = $this->getBuilder();
 
         $this->expectException(NotSupportedException::class);
         $b->dropCommentFromTable('test_table');
@@ -349,7 +352,7 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testMaxSqlOutputLength(): void
     {
-        $b = $this->getBuilder(false, 15);
+        $b = $this->getBuilder(null, 15);
 
         ob_start();
         $b->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
@@ -358,8 +361,12 @@ final class MigrationBuilderTest extends BaseTest
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
     }
 
-    private function getBuilder(bool $compact = false, int $maxSqlOutputLength = 0): MigrationBuilder
+    private function getBuilder(?LoggerInterface $logger = null, int $maxSqlOutputLength = 0): MigrationBuilder
     {
-        return new MigrationBuilder($this->getDb(), $compact, $maxSqlOutputLength);
+        return new MigrationBuilder(
+            $this->getDb(),
+            $logger ?? $this->getContainer()->get(ConsoleLogger::class),
+            $maxSqlOutputLength
+        );
     }
 }

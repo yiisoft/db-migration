@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_column;
 use function array_merge;
 use function implode;
@@ -20,21 +21,24 @@ final class ListTablesService
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
+    private Migrator $migrator;
 
     public function __construct(
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
-        MigrationService $migrationService
+        MigrationService $migrationService,
+        Migrator $migrator
     ) {
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
     }
 
     public function run(): int
     {
         $tables = $this->getAllTableNames();
-        $migrationTable = $this->db->getSchema()->getRawTableName($this->migrationService->getMigrationTable());
+        $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
         $dsn = $this->db->getDSN();
 
         if (empty($tables) || implode(',', $tables) === $migrationTable) {

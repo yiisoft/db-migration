@@ -20,6 +20,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -89,15 +90,18 @@ final class CreateCommand extends Command
     private MigrationService $migrationService;
 
     protected static $defaultName = 'generate/create';
+    private Migrator $migrator;
 
     public function __construct(
         ConsoleHelper $consoleHelper,
         CreateService $createService,
-        MigrationService $migrationService
+        MigrationService $migrationService,
+        Migrator $migrator
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->createService = $createService;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
 
         parent::__construct();
     }
@@ -170,7 +174,7 @@ final class CreateCommand extends Command
 
         [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
-        $nameLimit = $this->migrationService->getMigrationNameLimit();
+        $nameLimit = $this->migrator->getMigrationNameLimit();
 
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
             $this->consoleHelper->io()->error('The migration name is too long.');

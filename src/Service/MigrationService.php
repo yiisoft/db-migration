@@ -6,62 +6,41 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 
 use ReflectionException;
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Cache\QueryCache;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_slice;
 
 final class MigrationService
 {
-    /**
-     * The name of the dummy migration that marks the beginning of the whole migration history.
-     */
-    public const BASE_MIGRATION = 'M000000000000Base';
-
     private string $createNamespace = '';
     private string $createPath = '';
     private array $updateNamespace = [];
     private array $updatePath = [];
-    private string $comment = '';
-    private bool $compact = false;
-    private array $fields = [];
     private array $generatorTemplateFiles = [];
-    private int $maxNameLength = 180;
-    private int $migrationNameLimit = 0;
-    private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
-    private bool $schemaCacheEnabled = false;
-    private bool $queryCacheEnabled = false;
     private ConnectionInterface $db;
-    private SchemaCache $schemaCache;
-    private QueryCache $queryCache;
     private ConsoleHelper $consoleHelper;
     private Injector $injector;
+    private Migrator $migrator;
 
     public function __construct(
         ConnectionInterface $db,
-        SchemaCache $schemaCache,
-        QueryCache $queryCache,
         ConsoleHelper $consoleHelper,
-        Injector $injector
+        Injector $injector,
+        Migrator $migrator
     ) {
         $this->db = $db;
-        $this->schemaCache = $schemaCache;
-        $this->queryCache = $queryCache;
         $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
+        $this->migrator = $migrator;
 
         $this->generatorTemplateFiles();
     }
@@ -106,16 +85,6 @@ final class MigrationService
         return $result;
     }
 
-    public function getComment(): string
-    {
-        return $this->comment;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-
     public function getGeneratorTemplateFiles(?string $key): string
     {
         if (!isset($this->generatorTemplateFiles[$key])) {
@@ -123,68 +92,6 @@ final class MigrationService
         }
 
         return $this->generatorTemplateFiles[$key];
-    }
-
-    public function getMigrationNameLimit(): int
-    {
-        if ($this->migrationNameLimit !== 0) {
-            return $this->migrationNameLimit;
-        }
-
-        $tableSchema = $this->db->getSchema()->getTableSchema($this->migrationTable, true);
-
-        if ($tableSchema !== null) {
-            $nameLimit = $tableSchema->getColumns()['version']->getSize();
-
-            return $nameLimit === null ? 0 : $this->migrationNameLimit = $nameLimit;
-        }
-
-        return $this->maxNameLength;
-    }
-
-    public function getMigrationHistory(?int $limit = null): array
-    {
-        if ($this->db->getSchema()->getTableSchema($this->migrationTable, true) === null) {
-            $this->createMigrationHistoryTable();
-        }
-
-        $query = (new Query($this->db))
-            ->select(['version', 'apply_time'])
-            ->from($this->migrationTable)
-            ->orderBy(['apply_time' => SORT_DESC, 'id' => SORT_DESC]);
-
-        if (empty($this->updateNamespace)) {
-            if ($limit > 0) {
-                $query->limit($limit);
-            }
-
-            $rows = $query->all();
-
-            $history = ArrayHelper::map($rows, 'version', 'apply_time');
-            unset($history[self::BASE_MIGRATION]);
-
-            return $history;
-        }
-
-        $rows = $query->all();
-        $history = [];
-
-        foreach ($rows as $row) {
-            if ($row['version'] === self::BASE_MIGRATION) {
-                continue;
-            }
-
-            $row['apply_time'] = (int)$row['apply_time'];
-            $history[] = $row;
-        }
-
-        $history = array_slice($history, 0, $limit);
-        return ArrayHelper::map($history, 'version', 'apply_time');
-    }
-
-    public function getMigrationTable(): string
-    {
-        return $this->migrationTable;
     }
 
     /**
@@ -196,7 +103,7 @@ final class MigrationService
     {
         $applied = [];
 
-        foreach ($this->getMigrationHistory() as $class => $time) {
+        foreach ($this->migrator->getHistory() as $class => $time) {
             $applied[trim($class, '\\')] = true;
         }
 
@@ -251,56 +158,6 @@ final class MigrationService
     }
 
     /**
-     * Set the comment for the table being created.
-     *
-     * @param string $value
-     */
-    public function comment(string $value): void
-    {
-        $this->comment = $value;
-    }
-
-    /**
-     * Indicates whether the console output should be compacted.
-     *
-     * @var bool $value
-     *
-     * If this is set to true, the individual commands ran within the migration will not be output to the console.
-     * Default is false, in other words the output is fully verbose by default.
-     */
-    public function compact(bool $value): void
-    {
-        $this->compact = $value;
-    }
-
-    /**
-     * Column definition strings used for creating migration code.
-     *
-     * The format of each definition is `COLUMN_NAME:COLUMN_TYPE:COLUMN_DECORATOR`. Delimiter is `,`. For example,
-     * `--fields="name:string(12):notNull:unique"` produces a string column of size 12 which is not null and unique
-     * values.
-     *
-     * Note: primary key is added automatically and is named id by default. If you want to use another name you may
-     * specify it explicitly like `--fields="id_key:primaryKey,name:string(12):notNull:unique"`
-     *
-     * @param array $value
-     */
-    public function fields(array $value): void
-    {
-        $this->fields = $value;
-    }
-
-    /**
-     * Set maximum length of a migration name.
-     *
-     * @param int $value
-     */
-    public function maxNameLength(int $value): void
-    {
-        $this->maxNameLength = $value;
-    }
-
-    /**
      * List of namespaces containing the migration update classes.
      *
      * @param array $value
@@ -341,16 +198,6 @@ final class MigrationService
     }
 
     /**
-     * Set the name of the table for keeping applied migration information.
-     *
-     * @param string $value the name of the table for keeping applied migration information.
-     */
-    public function migrationTable(string $value): void
-    {
-        $this->migrationTable = $value;
-    }
-
-    /**
      * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
      *
      * For example, if the table name is `post` the generator wil return `{{%post}}`.
@@ -372,16 +219,6 @@ final class MigrationService
         $this->consoleHelper->output()->writeln(
             "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
         );
-    }
-
-    private function addMigrationHistory(string $version): void
-    {
-        $command = $this->db->createCommand();
-
-        $command->insert($this->migrationTable, [
-            'version' => $version,
-            'apply_time' => time(),
-        ])->execute();
     }
 
     /**
@@ -414,32 +251,6 @@ final class MigrationService
     public function createPath(string $value): void
     {
         $this->createPath = $value;
-    }
-
-    /**
-     * Creates the migration history table.
-     */
-    private function createMigrationHistoryTable(): void
-    {
-        $this->beforeMigrate();
-
-        $tableName = $this->db->getSchema()->getRawTableName($this->migrationTable);
-
-        $this->consoleHelper->io()->section("Creating migration history table \"$tableName\"...");
-
-        $this->db->createCommand()->createTable($this->migrationTable, [
-            'id' => 'pk',
-            'version' => 'varchar(' . $this->maxNameLength . ') NOT NULL',
-            'apply_time' => 'integer',
-        ])->execute();
-        $this->db->createCommand()->insert($this->migrationTable, [
-            'version' => self::BASE_MIGRATION,
-            'apply_time' => time(),
-        ])->execute();
-
-        $this->consoleHelper->output()->writeln("\t<fg=green>>>> [OK] - Done.</>\n");
-
-        $this->afterMigrate();
     }
 
     /**
@@ -504,23 +315,6 @@ final class MigrationService
     }
 
     /**
-     * Removes existing migration from the history.
-     *
-     * @param string $version migration version name.
-     *
-     * @throws Exception
-     * @throws InvalidConfigException
-     * @throws NotSupportedException
-     */
-    public function removeMigrationHistory(string $version): void
-    {
-        $command = $this->db->createCommand();
-        $command->delete($this->migrationTable, [
-            'version' => $version,
-        ])->execute();
-    }
-
-    /**
      * Set of template paths for generating migration code automatically.
      *
      * @param string $key
@@ -558,58 +352,6 @@ final class MigrationService
                 'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
             ];
         }
-    }
-
-    public function up(MigrationInterface $migration): void
-    {
-        $this->beforeMigrate();
-        $migration->up($this->createBuilder());
-        $this->afterMigrate();
-        $this->addMigrationHistory(get_class($migration));
-    }
-
-    public function down(RevertibleMigrationInterface $migration): void
-    {
-        $this->beforeMigrate();
-        $migration->down($this->createBuilder());
-        $this->afterMigrate();
-        $this->removeMigrationHistory(get_class($migration));
-    }
-
-    private function beforeMigrate(): void
-    {
-        $this->db->setEnableSlaves(false);
-
-        $this->queryCacheEnabled = $this->queryCache->isEnabled();
-        if ($this->queryCacheEnabled) {
-            $this->queryCache->setEnable(false);
-        }
-
-        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(false);
-        }
-    }
-
-    private function afterMigrate(): void
-    {
-        if ($this->queryCacheEnabled) {
-            $this->queryCache->setEnable(true);
-        }
-
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(true);
-        }
-
-        $this->db->getSchema()->refresh();
-    }
-
-    private function createBuilder(): MigrationBuilder
-    {
-        return new MigrationBuilder(
-            $this->db,
-            $this->compact
-        );
     }
 
     /**

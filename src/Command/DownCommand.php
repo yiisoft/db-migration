@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_keys;
 use function count;
 use Symfony\Component\Console\Command\Command;
@@ -33,17 +34,20 @@ final class DownCommand extends Command
     private ConsoleHelper $consoleHelper;
     private DownService $downService;
     private MigrationService $migrationService;
+    private Migrator $migrator;
 
     protected static $defaultName = 'migrate/down';
 
     public function __construct(
         ConsoleHelper $consoleHelper,
         DownService $downService,
-        MigrationService $migrationService
+        MigrationService $migrationService,
+        Migrator $migrator
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->downService = $downService;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
 
         parent::__construct();
     }
@@ -73,7 +77,7 @@ final class DownCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrations = $this->migrationService->getMigrationHistory($limit);
+        $migrations = $this->migrator->getHistory($limit);
 
         if (empty($migrations)) {
             $output->writeln("<fg=yellow> >>> Apply a new migration to run this command.</>\n");

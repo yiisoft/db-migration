@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
@@ -18,16 +19,17 @@ final class MigrationBuilder
     use SchemaBuilderTrait;
 
     private ConnectionInterface $db;
-    private bool $compact;
+    private LoggerInterface $logger;
+
     private int $maxSqlOutputLength;
 
     public function __construct(
         ConnectionInterface $db,
-        bool $compact = false,
+        LoggerInterface $logger,
         int $maxSqlOutputLength = 0
     ) {
         $this->db = $db;
-        $this->compact = $compact;
+        $this->logger = $logger;
         $this->maxSqlOutputLength = $maxSqlOutputLength;
     }
 
@@ -572,9 +574,7 @@ final class MigrationBuilder
      */
     protected function beginCommand(string $description): float
     {
-        if (!$this->compact) {
-            echo "    > $description ...";
-        }
+        $this->logger->info($description, ['type' => Migrator::BEGIN_COMMAND]);
         return microtime(true);
     }
 
@@ -585,8 +585,9 @@ final class MigrationBuilder
      */
     protected function endCommand(float $time): void
     {
-        if (!$this->compact) {
-            echo ' Done in ' . sprintf('%.3f', microtime(true) - $time) . "s.\n";
-        }
+        $this->logger->info(
+            'Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.',
+            ['type' => Migrator::END_COMMAND]
+        );
     }
 }

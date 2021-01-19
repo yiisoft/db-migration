@@ -24,7 +24,9 @@ use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
+use Yiisoft\Yii\Db\Migration\ConsoleLogger;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
@@ -92,6 +94,12 @@ abstract class BaseTest extends TestCase
                         'basePath' => '@root/resources/views',
                     ],
                 ],
+
+                Migrator::class => [
+                    '__construct()' => [
+                        'logger' => Reference::to(ConsoleLogger::class),
+                    ],
+                ],
             ]);
         }
         return $this->container;
@@ -110,6 +118,11 @@ abstract class BaseTest extends TestCase
     protected function getMigrationService(): MigrationService
     {
         return $this->getContainer()->get(MigrationService::class);
+    }
+
+    protected function getMigrator(): Migrator
+    {
+        return $this->getContainer()->get(Migrator::class);
     }
 
     protected function getListTablesService(): ListTablesService
