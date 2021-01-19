@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
-use Psr\Log\LoggerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
@@ -13,23 +12,25 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
+use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\InformerType;
 
 final class MigrationBuilder
 {
     use SchemaBuilderTrait;
 
     private ConnectionInterface $db;
-    private LoggerInterface $logger;
+    private InformerInterface $informer;
 
     private int $maxSqlOutputLength;
 
     public function __construct(
         ConnectionInterface $db,
-        LoggerInterface $logger,
+        InformerInterface $informer,
         int $maxSqlOutputLength = 0
     ) {
         $this->db = $db;
-        $this->logger = $logger;
+        $this->informer = $informer;
         $this->maxSqlOutputLength = $maxSqlOutputLength;
     }
 
@@ -574,7 +575,7 @@ final class MigrationBuilder
      */
     protected function beginCommand(string $description): float
     {
-        $this->logger->info($description, ['type' => Migrator::BEGIN_COMMAND]);
+        $this->informer->info(InformerType::BEGIN_COMMAND, $description);
         return microtime(true);
     }
 
@@ -585,9 +586,9 @@ final class MigrationBuilder
      */
     protected function endCommand(float $time): void
     {
-        $this->logger->info(
+        $this->informer->info(
+            InformerType::END_COMMAND,
             'Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.',
-            ['type' => Migrator::END_COMMAND]
         );
     }
 }

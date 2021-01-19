@@ -4,26 +4,21 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
+use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\InformerType;
+use Yiisoft\Yii\Db\Migration\Informer\NullInformer;
 
-final class Migrator implements LoggerAwareInterface
+final class Migrator
 {
-    public const BEGIN_CREATE_HISTORY_TABLE = 1;
-    public const END_CREATE_HISTORY_TABLE = 2;
-    public const BEGIN_COMMAND = 3;
-    public const END_COMMAND = 4;
-
     private ConnectionInterface $db;
     private SchemaCache $schemaCache;
     private QueryCache $queryCache;
-    private LoggerInterface $logger;
+    private InformerInterface $informer;
 
     private string $historyTable;
     private ?int $migrationNameLimit;
@@ -36,22 +31,22 @@ final class Migrator implements LoggerAwareInterface
         ConnectionInterface $db,
         SchemaCache $schemaCache,
         QueryCache $queryCache,
-        LoggerInterface $logger,
+        InformerInterface $informer,
         string $historyTable = '{{%migration}}',
         ?int $maxMigrationNameLength = 180
     ) {
         $this->db = $db;
         $this->schemaCache = $schemaCache;
         $this->queryCache = $queryCache;
-        $this->logger = $logger;
+        $this->informer = $informer;
 
         $this->historyTable = $historyTable;
         $this->migrationNameLimit = $maxMigrationNameLength;
     }
 
-    public function setLogger(LoggerInterface $logger): void
+    public function setInformer(InformerInterface $informer): void
     {
-        $this->logger = $logger;
+        $this->informer = $informer;
     }
 
     public function up(MigrationInterface $migration): void
@@ -157,14 +152,14 @@ final class Migrator implements LoggerAwareInterface
     private function createMigrationHistoryTable(): void
     {
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
-        $this->logger->info(
+        $this->informer->info(
+            InformerType::BEGIN_CREATE_HISTORY_TABLE,
             'Creating migration history table "' . $tableName . '"...',
-            ['type' => self::BEGIN_CREATE_HISTORY_TABLE]
         );
 
         $this->beforeMigrate();
 
-        $b = $this->createBuilder(new NullLogger());
+        $b = $this->createBuilder(new NullInformer());
         $b->createTable($this->historyTable, [
             'id' => $b->primaryKey(),
             'name' => $b->string($this->migrationNameLimit)->notNull(),
@@ -173,9 +168,9 @@ final class Migrator implements LoggerAwareInterface
 
         $this->afterMigrate();
 
-        $this->logger->info(
+        $this->informer->info(
+            InformerType::END_CREATE_HISTORY_TABLE,
             'Done.',
-            ['type' => self::END_CREATE_HISTORY_TABLE]
         );
     }
 
@@ -207,11 +202,11 @@ final class Migrator implements LoggerAwareInterface
         $this->db->getSchema()->refresh();
     }
 
-    private function createBuilder(?LoggerInterface $logger = null): MigrationBuilder
+    private function createBuilder(?InformerInterface $informer = null): MigrationBuilder
     {
         return new MigrationBuilder(
             $this->db,
-            $logger ?? $this->logger,
+            $informer ?? $this->informer,
         );
     }
 }

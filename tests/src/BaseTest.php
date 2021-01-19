@@ -24,8 +24,9 @@ use Yiisoft\Factory\Definitions\Reference;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
-use Yiisoft\Yii\Db\Migration\ConsoleLogger;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleInformer;
+use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
@@ -95,11 +96,7 @@ abstract class BaseTest extends TestCase
                     ],
                 ],
 
-                Migrator::class => [
-                    '__construct()' => [
-                        'logger' => Reference::to(ConsoleLogger::class),
-                    ],
-                ],
+                InformerInterface::class => ConsoleInformer::class,
             ]);
         }
         return $this->container;

@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration;
+namespace Yiisoft\Yii\Db\Migration\Informer;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
-final class ConsoleLogger implements LoggerInterface
+final class ConsoleInformer implements InformerInterface
 {
-    use LoggerTrait;
-
     private ConsoleHelper $helper;
 
     public function __construct(ConsoleHelper $helper)
@@ -20,22 +15,22 @@ final class ConsoleLogger implements LoggerInterface
         $this->helper = $helper;
     }
 
-    public function log($level, $message, array $context = array())
+    public function info(int $type, string $message): void
     {
-        switch (ArrayHelper::getValue($context, 'type')) {
-            case Migrator::BEGIN_CREATE_HISTORY_TABLE:
+        switch ($type) {
+            case InformerType::BEGIN_CREATE_HISTORY_TABLE:
                 $this->helper->io()->section($message);
                 break;
 
-            case Migrator::END_CREATE_HISTORY_TABLE:
+            case InformerType::END_CREATE_HISTORY_TABLE:
                 $this->helper->output()->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>\n");
                 break;
 
-            case Migrator::BEGIN_COMMAND:
+            case InformerType::BEGIN_COMMAND:
                 echo '    > ' . $message . ' ...';
                 break;
 
-            case Migrator::END_COMMAND:
+            case InformerType::END_COMMAND:
                 echo ' ' . $message . "\n";
                 break;
         }

@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Db\Migration\ConsoleLogger;
+use Yiisoft\Yii\Db\Migration\Informer\InformerInterface;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
 final class MigrationBuilderTest extends BaseTest
@@ -361,11 +359,11 @@ final class MigrationBuilderTest extends BaseTest
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
     }
 
-    private function getBuilder(?LoggerInterface $logger = null, int $maxSqlOutputLength = 0): MigrationBuilder
+    private function getBuilder(?InformerInterface $informer = null, int $maxSqlOutputLength = 0): MigrationBuilder
     {
         return new MigrationBuilder(
             $this->getDb(),
-            $logger ?? $this->getContainer()->get(ConsoleLogger::class),
+            $informer ?? $this->getContainer()->get(InformerInterface::class),
             $maxSqlOutputLength
         );
     }
