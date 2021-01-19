@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_keys;
 use function count;
@@ -42,12 +43,15 @@ final class DownCommand extends Command
         ConsoleHelper $consoleHelper,
         DownService $downService,
         MigrationService $migrationService,
-        Migrator $migrator
+        Migrator $migrator,
+        ConsoleMigrationInformer $informer
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->downService = $downService;
         $this->migrationService = $migrationService;
+
         $this->migrator = $migrator;
+        $this->migrator->setInformer($informer);
 
         parent::__construct();
     }

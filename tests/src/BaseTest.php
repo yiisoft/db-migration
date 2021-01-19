@@ -25,8 +25,8 @@ use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
@@ -96,7 +96,7 @@ abstract class BaseTest extends TestCase
                     ],
                 ],
 
-                MigrationInformerInterface::class => ConsoleMigrationInformer::class,
+                MigrationInformerInterface::class => NullMigrationInformer::class,
             ]);
         }
         return $this->container;

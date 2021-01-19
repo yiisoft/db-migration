@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_slice;
 use function count;
@@ -42,14 +43,17 @@ final class UpdateCommand extends Command
         ConsoleHelper $consoleHelper,
         UpdateService $updateService,
         MigrationService $migrationService,
-        Migrator $migrator
+        Migrator $migrator,
+        ConsoleMigrationInformer $informer
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->updateService = $updateService;
         $this->migrationService = $migrationService;
 
-        parent::__construct();
         $this->migrator = $migrator;
+        $this->migrator->setInformer($informer);
+
+        parent::__construct();
     }
 
     public function configure(): void

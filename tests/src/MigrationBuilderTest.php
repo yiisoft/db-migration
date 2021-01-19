@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
@@ -363,7 +364,7 @@ final class MigrationBuilderTest extends BaseTest
     {
         return new MigrationBuilder(
             $this->getDb(),
-            $informer ?? $this->getContainer()->get(MigrationInformerInterface::class),
+            $informer ?? $this->getContainer()->get(ConsoleMigrationInformer::class),
             $maxSqlOutputLength
         );
     }
