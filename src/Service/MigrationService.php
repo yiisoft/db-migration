@@ -6,6 +6,8 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 
 use ReflectionException;
 use Yiisoft\Arrays\ArrayHelper;
+use Yiisoft\Db\Cache\QueryCache;
+use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Exception\InvalidConfigException;
@@ -40,16 +42,24 @@ final class MigrationService
     private string $migrationTable = '{{%migration}}';
     private bool $useTablePrefix = true;
     private string $version = '1.0';
+    private bool $schemaCacheEnabled = false;
+    private bool $queryCacheEnabled = false;
     private ConnectionInterface $db;
+    private SchemaCache $schemaCache;
+    private QueryCache $queryCache;
     private ConsoleHelper $consoleHelper;
     private Injector $injector;
 
     public function __construct(
         ConnectionInterface $db,
+        SchemaCache $schemaCache,
+        QueryCache $queryCache,
         ConsoleHelper $consoleHelper,
         Injector $injector
     ) {
         $this->db = $db;
+        $this->schemaCache = $schemaCache;
+        $this->queryCache = $queryCache;
         $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
 
@@ -411,6 +421,8 @@ final class MigrationService
      */
     private function createMigrationHistoryTable(): void
     {
+        $this->beforeMigrate();
+
         $tableName = $this->db->getSchema()->getRawTableName($this->migrationTable);
 
         $this->consoleHelper->io()->section("Creating migration history table \"$tableName\"...");
@@ -426,6 +438,8 @@ final class MigrationService
         ])->execute();
 
         $this->consoleHelper->output()->writeln("\t<fg=green>>>> [OK] - Done.</>\n");
+
+        $this->afterMigrate();
     }
 
     /**
@@ -548,14 +562,46 @@ final class MigrationService
 
     public function up(MigrationInterface $migration): void
     {
+        $this->beforeMigrate();
         $migration->up($this->createBuilder());
+        $this->afterMigrate();
         $this->addMigrationHistory(get_class($migration));
     }
 
     public function down(RevertibleMigrationInterface $migration): void
     {
+        $this->beforeMigrate();
         $migration->down($this->createBuilder());
+        $this->afterMigrate();
         $this->removeMigrationHistory(get_class($migration));
+    }
+
+    private function beforeMigrate(): void
+    {
+        $this->db->setEnableSlaves(false);
+
+        $this->queryCacheEnabled = $this->queryCache->isEnabled();
+        if ($this->queryCacheEnabled) {
+            $this->queryCache->setEnable(false);
+        }
+
+        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
+        if ($this->schemaCacheEnabled) {
+            $this->schemaCache->setEnable(false);
+        }
+    }
+
+    private function afterMigrate(): void
+    {
+        if ($this->queryCacheEnabled) {
+            $this->queryCache->setEnable(true);
+        }
+
+        if ($this->schemaCacheEnabled) {
+            $this->schemaCache->setEnable(true);
+        }
+
+        $this->db->getSchema()->refresh();
     }
 
     private function createBuilder(): MigrationBuilder

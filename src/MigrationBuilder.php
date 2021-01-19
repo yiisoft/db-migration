@@ -27,9 +27,6 @@ final class MigrationBuilder
         int $maxSqlOutputLength = 0
     ) {
         $this->db = $db;
-        $this->db->getSchema()->refresh();
-        $this->db->setEnableSlaves(false);
-
         $this->compact = $compact;
         $this->maxSqlOutputLength = $maxSqlOutputLength;
     }
