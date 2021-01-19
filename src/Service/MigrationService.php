@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service;
 
 use ReflectionException;
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\Db\Query\Query;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
-
 use Yiisoft\Yii\Db\Migration\Migrator;
-use function array_slice;
 
 final class MigrationService
 {
