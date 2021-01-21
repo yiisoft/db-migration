@@ -113,17 +113,16 @@ final class UpdateCommandTest extends PathsCommandTest
         $this->assertNotExistsTables('user');
     }
 
-//    public function testNameLimit(): void
-//    {
-//        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
-//        $this->getMigrationService()->maxNameLength(5);
-//
-//        $command = $this->getCommand();
-//
-//        $exitCode = $command->execute([]);
-//
-//        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
-//    }
+    public function testNameLimit(): void
+    {
+        $this->createMigration('Create_Post_' . str_repeat('X', 200), 'table', 'post', ['name:string']);
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute([]);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+    }
 
     private function getCommand(): CommandTester
     {
