@@ -10,7 +10,6 @@ use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerType;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
 final class Migrator
@@ -151,10 +150,7 @@ final class Migrator
     private function createMigrationHistoryTable(): void
     {
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
-        $this->informer->info(
-            MigrationInformerType::BEGIN_CREATE_HISTORY_TABLE,
-            'Creating migration history table "' . $tableName . '"...',
-        );
+        $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
         $this->beforeMigrate();
 
@@ -167,10 +163,7 @@ final class Migrator
 
         $this->afterMigrate();
 
-        $this->informer->info(
-            MigrationInformerType::END_CREATE_HISTORY_TABLE,
-            'Done.',
-        );
+        $this->informer->endCreateHistoryTable('Done.');
     }
 
     private function beforeMigrate(): void

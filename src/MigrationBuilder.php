@@ -13,7 +13,6 @@ use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerType;
 
 final class MigrationBuilder
 {
@@ -575,7 +574,7 @@ final class MigrationBuilder
      */
     protected function beginCommand(string $description): float
     {
-        $this->informer->info(MigrationInformerType::BEGIN_COMMAND, $description);
+        $this->informer->beginCommand($description);
         return microtime(true);
     }
 
@@ -586,9 +585,6 @@ final class MigrationBuilder
      */
     protected function endCommand(float $time): void
     {
-        $this->informer->info(
-            MigrationInformerType::END_COMMAND,
-            'Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.',
-        );
+        $this->informer->endCommand('Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
     }
 }

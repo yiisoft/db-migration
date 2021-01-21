@@ -6,6 +6,9 @@ namespace Yiisoft\Yii\Db\Migration\Informer;
 
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
+/**
+ * Writes migration process informational messages into console.
+ */
 final class ConsoleMigrationInformer implements MigrationInformerInterface
 {
     private ConsoleHelper $helper;
@@ -15,24 +18,23 @@ final class ConsoleMigrationInformer implements MigrationInformerInterface
         $this->helper = $helper;
     }
 
-    public function info(int $type, string $message): void
+    public function beginCreateHistoryTable(string $message): void
     {
-        switch ($type) {
-            case MigrationInformerType::BEGIN_CREATE_HISTORY_TABLE:
-                $this->helper->io()->section($message);
-                break;
+        $this->helper->io()->section($message);
+    }
 
-            case MigrationInformerType::END_CREATE_HISTORY_TABLE:
-                $this->helper->output()->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>\n");
-                break;
+    public function endCreateHistoryTable(string $message): void
+    {
+        $this->helper->output()->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+    }
 
-            case MigrationInformerType::BEGIN_COMMAND:
-                echo '    > ' . $message . ' ...';
-                break;
+    public function beginCommand(string $message): void
+    {
+        $this->helper->output()->write('    > ' . $message . ' ...');
+    }
 
-            case MigrationInformerType::END_COMMAND:
-                echo ' ' . $message . "\n";
-                break;
-        }
+    public function endCommand(string $message): void
+    {
+        $this->helper->output()->writeln(' ' . $message);
     }
 }

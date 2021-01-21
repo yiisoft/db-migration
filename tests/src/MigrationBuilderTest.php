@@ -6,8 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use Yiisoft\Db\Exception\IntegrityException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 
 final class MigrationBuilderTest extends BaseTest
@@ -27,54 +25,50 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testExecute(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->execute('DROP TABLE test_table');
-        $output = ob_get_clean();
+        $builder->execute('DROP TABLE test_table');
 
         $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
-        $this->assertStringContainsString('    > Execute SQL: DROP TABLE test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Execute SQL: DROP TABLE test_table ... Done in ', $informer->getOutput());
     }
 
     public function testInsert(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->insert('test_table', ['id' => 1]);
-        $output = ob_get_clean();
+        $builder->insert('test_table', ['id' => 1]);
 
         $this->assertEquals(
             '1',
             $this->getDb()->createCommand('SELECT count(*) FROM test_table WHERE id = 1')->queryScalar()
         );
-        $this->assertStringContainsString('    > Insert into test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Insert into test_table ... Done in ', $informer->getOutput());
     }
 
     public function testBatchInsert(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->batchInsert('test_table', ['id'], [['id' => 1], ['id' => 2]]);
-        $output = ob_get_clean();
+        $builder->batchInsert('test_table', ['id'], [['id' => 1], ['id' => 2]]);
 
         $this->assertEquals(
             '2',
             $this->getDb()->createCommand('SELECT count(*) FROM test_table WHERE id IN (1, 2)')->queryScalar()
         );
-        $this->assertStringContainsString('    > Insert into test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Insert into test_table ... Done in ', $informer->getOutput());
     }
 
     public function testUpsert(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->insert('test_table', ['id' => 1]);
-        $b->upsert('test_table', ['id' => 1], false);
-        $output = ob_get_clean();
+        $builder->insert('test_table', ['id' => 1]);
+        $builder->upsert('test_table', ['id' => 1], false);
 
         $this->assertEquals(
             [
@@ -82,17 +76,16 @@ final class MigrationBuilderTest extends BaseTest
             ],
             $this->getDb()->createCommand('SELECT id FROM test_table')->queryAll()
         );
-        $this->assertStringContainsString('    > Upsert into test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Upsert into test_table ... Done in ', $informer->getOutput());
     }
 
     public function testUpdate(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->insert('test_table', ['id' => 1]);
-        $b->update('test_table', ['id' => 2], 'id=:id', ['id' => 1]);
-        $output = ob_get_clean();
+        $builder->insert('test_table', ['id' => 1]);
+        $builder->update('test_table', ['id' => 2], 'id=:id', ['id' => 1]);
 
         $this->assertEquals(
             [
@@ -100,153 +93,155 @@ final class MigrationBuilderTest extends BaseTest
             ],
             $this->getDb()->createCommand('SELECT id FROM test_table')->queryAll()
         );
-        $this->assertStringContainsString('    > Update test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Update test_table ... Done in ', $informer->getOutput());
     }
 
     public function testDelete(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->insert('test_table', ['id' => 1]);
-        $b->delete('test_table', 'id=:id', ['id' => 1]);
-        $output = ob_get_clean();
+        $builder->insert('test_table', ['id' => 1]);
+        $builder->delete('test_table', 'id=:id', ['id' => 1]);
 
         $this->assertEquals('0', $this->getDb()->createCommand('SELECT count(*) FROM test_table')->queryScalar());
-        $this->assertStringContainsString('    > Delete from test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Delete from test_table ... Done in ', $informer->getOutput());
     }
 
     public function testCreateTable(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createTable('test_create_table', ['id' => $b->primaryKey()]);
-        $output = ob_get_clean();
+        $builder->createTable('test_create_table', ['id' => $builder->primaryKey()]);
 
         $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
-        $this->assertStringContainsString('    > create table test_create_table ... Done in ', $output);
+        $this->assertStringContainsString('    > create table test_create_table ... Done in ', $informer->getOutput());
     }
 
     public function testCreateTableWithStringColumnDefinition(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createTable('test_create_table', ['name' => 'varchar(50)']);
-        $output = ob_get_clean();
+        $builder->createTable('test_create_table', ['name' => 'varchar(50)']);
 
         $this->assertNotEmpty($this->getDb()->getSchema()->getTableSchema('test_create_table'));
-        $this->assertStringContainsString('    > create table test_create_table ... Done in ', $output);
+        $this->assertStringContainsString('    > create table test_create_table ... Done in ', $informer->getOutput());
     }
 
     public function testRenameTable(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->renameTable('test_table', 'new_table');
-        $output = ob_get_clean();
+        $builder->renameTable('test_table', 'new_table');
 
         $this->assertExistsTables('new_table');
-        $this->assertStringContainsString('    > rename table test_table to new_table ... Done in ', $output);
+        $this->assertStringContainsString(
+            '    > rename table test_table to new_table ... Done in ',
+            $informer->getOutput()
+        );
     }
 
     public function testDropTable(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->dropTable('test_table');
-        $output = ob_get_clean();
+        $builder->dropTable('test_table');
 
         $this->assertEmpty($this->getDb()->getSchema()->getTableSchema('test_table'));
-        $this->assertStringContainsString('    > Drop table test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > Drop table test_table ... Done in ', $informer->getOutput());
     }
 
     public function testTruncateTable(): void
     {
-        $b = $this->getBuilder();
-        $b->insert('test_table', ['foreign_id' => 42]);
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
+        $builder->insert('test_table', ['foreign_id' => 42]);
 
-        ob_start();
-        $b->truncateTable('test_table');
-        $output = ob_get_clean();
+        $builder->truncateTable('test_table');
 
         $this->assertSame('0', $this->getDb()->createCommand('SELECT count(*) FROM test_table')->queryScalar());
-        $this->assertStringContainsString('    > truncate table test_table ... Done in ', $output);
+        $this->assertStringContainsString('    > truncate table test_table ... Done in ', $informer->getOutput());
     }
 
     public function testAddColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->addColumn('test_table', 'code', 'string(4)');
-        $output = ob_get_clean();
+        $builder->addColumn('test_table', 'code', 'string(4)');
 
         $this->assertContains('code', $this->getDb()->getSchema()->getTableSchema('test_table')->getColumnNames());
-        $this->assertStringContainsString('    > add column code string(4) to table test_table ... Done in ', $output);
+        $this->assertStringContainsString(
+            '    > add column code string(4) to table test_table ... Done in ',
+            $informer->getOutput()
+        );
     }
 
     public function testDropColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->dropColumn('test_table', 'code');
+        $builder->dropColumn('test_table', 'code');
     }
 
     public function testRenameColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->renameColumn('test_table', 'id', 'id_new');
+        $builder->renameColumn('test_table', 'id', 'id_new');
     }
 
     public function testAlterColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->alterColumn('test_table', 'id', $b->string());
+        $builder->alterColumn('test_table', 'id', $builder->string());
     }
 
     public function testAddPrimaryKey(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createTable('test_create_table', ['id2' => $b->integer()]);
-        $b->addPrimaryKey('id2', 'test_create_table', ['id2']);
-        $output = ob_get_clean();
+        $builder->createTable('test_create_table', ['id2' => $builder->integer()]);
+        $builder->addPrimaryKey('id2', 'test_create_table', ['id2']);
 
         $this->assertTrue(
             $this->getDb()->getSchema()->getTableSchema('test_create_table')->getColumn('id2')->isPrimaryKey()
         );
         $this->assertStringContainsString(
             '    > Add primary key id2 on test_create_table (id2) ... Done in ',
-            $output
+            $informer->getOutput()
         );
     }
 
     public function testDropPrimaryKey(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        $b->createTable('test_create_table', ['id' => $b->primaryKey()]);
+        $builder->createTable('test_create_table', ['id' => $builder->primaryKey()]);
         $this->expectException(NotSupportedException::class);
-        $b->dropPrimaryKey('id', 'test_create_table');
+        $builder->dropPrimaryKey('id', 'test_create_table');
     }
 
     public function testAddForeignKey(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createTable('target_table', ['id' => $b->primaryKey()]);
-        $b->addForeignKey(
+        $builder->createTable('target_table', ['id' => $builder->primaryKey()]);
+        $builder->addForeignKey(
             'fk',
             'test_table',
             'foreign_id',
@@ -255,21 +250,20 @@ final class MigrationBuilderTest extends BaseTest
             'CASCADE',
             'CASCADE'
         );
-        $output = ob_get_clean();
 
         $this->assertStringContainsString(
             '    > Add foreign key fk: test_table (foreign_id) references target_table (id) ... Done in',
-            $output
+            $informer->getOutput()
         );
     }
 
     public function testDropForeignKey(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createTable('target_table', ['id2' => $b->primaryKey()]);
-        $b->addForeignKey(
+        $builder->createTable('target_table', ['id2' => $builder->primaryKey()]);
+        $builder->addForeignKey(
             'fk2',
             'test_table',
             'foreign_id',
@@ -278,26 +272,24 @@ final class MigrationBuilderTest extends BaseTest
             'CASCADE',
             'CASCADE'
         );
-        $b->dropForeignKey('fk2', 'test_table');
-        $output = ob_get_clean();
+        $builder->dropForeignKey('fk2', 'test_table');
 
         $this->assertStringContainsString(
             '    > Drop foreign key fk2 from table test_table ... Done',
-            $output
+            $informer->getOutput()
         );
     }
 
     public function testCreateIndex(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createIndex('unique_index', 'test_table', 'foreign_id', true);
-        $output = ob_get_clean();
+        $builder->createIndex('unique_index', 'test_table', 'foreign_id', true);
 
         $this->assertStringContainsString(
             '    > Create unique index unique_index on test_table (foreign_id) ... Done in ',
-            $output
+            $informer->getOutput()
         );
 
         $this->getDb()->createCommand()->insert('test_table', ['id' => 1, 'foreign_id' => 1])->execute();
@@ -307,65 +299,61 @@ final class MigrationBuilderTest extends BaseTest
 
     public function testDropIndex(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
-        ob_start();
-        $b->createIndex('unique_index', 'test_table', 'foreign_id', true);
-        $b->dropIndex('unique_index', 'test_table');
-        $output = ob_get_clean();
+        $builder->createIndex('unique_index', 'test_table', 'foreign_id', true);
+        $builder->dropIndex('unique_index', 'test_table');
 
-        $this->assertStringContainsString('    > Drop index unique_index on test_table ... Done in ', $output);
+        $this->assertStringContainsString(
+            '    > Drop index unique_index on test_table ... Done in ',
+            $informer->getOutput()
+        );
     }
 
     public function testAddCommentOnColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->addCommentOnColumn('test_table', 'id', 'test comment');
+        $builder->addCommentOnColumn('test_table', 'id', 'test comment');
     }
 
     public function testAddCommentOnTable(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->addCommentOnTable('test_table', 'id');
+        $builder->addCommentOnTable('test_table', 'id');
     }
 
     public function testDropCommentFromColumn(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->dropCommentFromColumn('test_table', 'id');
+        $builder->dropCommentFromColumn('test_table', 'id');
     }
 
     public function testDropCommentFromTable(): void
     {
-        $b = $this->getBuilder();
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer);
 
         $this->expectException(NotSupportedException::class);
-        $b->dropCommentFromTable('test_table');
+        $builder->dropCommentFromTable('test_table');
     }
 
     public function testMaxSqlOutputLength(): void
     {
-        $b = $this->getBuilder(null, 15);
+        $informer = new StubMigrationInformer();
+        $builder = new MigrationBuilder($this->getDb(), $informer, 15);
 
-        ob_start();
-        $b->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
-        $output = ob_get_clean();
+        $builder->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
 
-        $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $output);
-    }
-
-    private function getBuilder(?MigrationInformerInterface $informer = null, int $maxSqlOutputLength = 0): MigrationBuilder
-    {
-        return new MigrationBuilder(
-            $this->getDb(),
-            $informer ?? $this->getContainer()->get(ConsoleMigrationInformer::class),
-            $maxSqlOutputLength
-        );
+        $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $informer->getOutput());
     }
 }
