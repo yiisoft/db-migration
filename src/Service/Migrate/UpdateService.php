@@ -9,16 +9,22 @@ use function sprintf;
 
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Migrator;
 
 final class UpdateService
 {
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
+    private Migrator $migrator;
 
-    public function __construct(ConsoleHelper $consoleHelper, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        MigrationService $migrationService,
+        Migrator $migrator
+    ) {
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
     }
 
     /**
@@ -30,10 +36,6 @@ final class UpdateService
      */
     public function run(string $class): bool
     {
-        if ($class === $this->migrationService::BASE_MIGRATION) {
-            return true;
-        }
-
         $this->consoleHelper->io()->title("\nApplying $class:");
         $start = microtime(true);
 
@@ -45,7 +47,7 @@ final class UpdateService
             return false;
         }
 
-        $this->migrationService->up($migration);
+        $this->migrator->up($migration);
 
         $time = microtime(true) - $start;
         $this->consoleHelper->output()->writeln(

@@ -8,40 +8,22 @@ use Yiisoft\Db\Exception\InvalidConfigException;
 
 final class MigrationServiceTest extends NamespaceMigrationServiceTest
 {
-    public function testComment(): void
-    {
-        $this->getMigrationService()->comment('test-comment');
-        $this->assertSame('test-comment', $this->getMigrationService()->getComment());
-    }
-
-    public function testFields(): void
-    {
-        $this->getMigrationService()->fields(['name:string(12)']);
-        $this->assertSame(['name:string(12)'], $this->getMigrationService()->getFields());
-    }
-
-    public function testCompact(): void
-    {
-        $service = $this->getMigrationService();
-
-        $className = $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
-
-        $service->compact(true);
-        $migration = $service->createMigration($className);
-        $service->getMigrationHistory();
-
-        ob_start();
-        $service->up($migration);
-        $output = ob_get_clean();
-
-        $this->assertEmpty($output);
-    }
-
-    public function testMigrationTable(): void
-    {
-        $this->getMigrationService()->migrationTable('fine');
-        $this->assertSame('fine', $this->getMigrationService()->getMigrationTable());
-    }
+//    public function testCompact(): void
+//    {
+//        $service = $this->getMigrationService();
+//
+//        $className = $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+//
+//        $service->compact(true);
+//        $migration = $service->createMigration($className);
+//        $service->getMigrationHistory();
+//
+//        ob_start();
+//        $service->up($migration);
+//        $output = ob_get_clean();
+//
+//        $this->assertEmpty($output);
+//    }
 
     public function testUseTablePrefix(): void
     {

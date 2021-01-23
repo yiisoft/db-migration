@@ -115,8 +115,7 @@ final class UpdateCommandTest extends NamespacesCommandTest
 
     public function testNameLimit(): void
     {
-        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
-        $this->getMigrationService()->maxNameLength(5);
+        $this->createMigration('Create_Post_' . str_repeat('X', 200), 'table', 'post', ['name:string']);
 
         $command = $this->getCommand();
 

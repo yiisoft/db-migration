@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_slice;
 use function count;
 use function strlen;
@@ -35,15 +37,21 @@ final class UpdateCommand extends Command
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/up';
+    private Migrator $migrator;
 
     public function __construct(
         ConsoleHelper $consoleHelper,
         UpdateService $updateService,
-        MigrationService $migrationService
+        MigrationService $migrationService,
+        Migrator $migrator,
+        ConsoleMigrationInformer $informer
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->updateService = $updateService;
         $this->migrationService = $migrationService;
+
+        $this->migrator = $migrator;
+        $this->migrator->setInformer($informer);
 
         parent::__construct();
     }
@@ -96,7 +104,7 @@ final class UpdateCommand extends Command
         }
 
         foreach ($migrations as $migration) {
-            $nameLimit = $this->migrationService->getMigrationNameLimit();
+            $nameLimit = $this->migrator->getMigrationNameLimit();
 
             if (strlen($migration) > $nameLimit) {
                 $output->writeln(

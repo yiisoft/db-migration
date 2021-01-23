@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function array_keys;
 use function array_reverse;
 use function count;
@@ -36,6 +38,7 @@ final class RedoCommand extends Command
     private ConsoleHelper $consoleHelper;
     private DownService $downService;
     private MigrationService $migrationService;
+    private Migrator $migrator;
     private UpdateService $updateService;
 
     protected static $defaultName = 'migrate/redo';
@@ -44,12 +47,17 @@ final class RedoCommand extends Command
         ConsoleHelper $consoleHelper,
         DownService $downService,
         MigrationService $migrationService,
+        Migrator $migrator,
+        ConsoleMigrationInformer $informer,
         UpdateService $updateService
     ) {
         $this->consoleHelper = $consoleHelper;
         $this->downService = $downService;
         $this->migrationService = $migrationService;
         $this->updateService = $updateService;
+
+        $this->migrator = $migrator;
+        $this->migrator->setInformer($informer);
 
         parent::__construct();
     }
@@ -76,7 +84,7 @@ final class RedoCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrations = $this->migrationService->getMigrationHistory($limit);
+        $migrations = $this->migrator->getHistory($limit);
 
         if (empty($migrations)) {
             $this->consoleHelper->io()->warning('No migration has been done before.');

@@ -10,16 +10,22 @@ use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Migrator;
 
 final class DownService
 {
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
+    private Migrator $migrator;
 
-    public function __construct(ConsoleHelper $consoleHelper, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        MigrationService $migrationService,
+        Migrator $migrator
+    ) {
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
     }
 
     /**
@@ -31,10 +37,6 @@ final class DownService
      */
     public function run(string $class): bool
     {
-        if ($class === $this->migrationService::BASE_MIGRATION) {
-            return true;
-        }
-
         $this->consoleHelper->io()->title("\nReverting $class");
 
         $start = microtime(true);
@@ -52,7 +54,7 @@ final class DownService
             return false;
         }
 
-        $this->migrationService->down($migration);
+        $this->migrator->down($migration);
 
         $time = microtime(true) - $start;
         $this->consoleHelper->output()->writeln(

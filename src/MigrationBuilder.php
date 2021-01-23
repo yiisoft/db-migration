@@ -12,22 +12,24 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
 use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
+use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 
 final class MigrationBuilder
 {
     use SchemaBuilderTrait;
 
     private ConnectionInterface $db;
-    private bool $compact;
+    private MigrationInformerInterface $informer;
+
     private int $maxSqlOutputLength;
 
     public function __construct(
         ConnectionInterface $db,
-        bool $compact = false,
+        MigrationInformerInterface $informer,
         int $maxSqlOutputLength = 0
     ) {
         $this->db = $db;
-        $this->compact = $compact;
+        $this->informer = $informer;
         $this->maxSqlOutputLength = $maxSqlOutputLength;
     }
 
@@ -572,9 +574,7 @@ final class MigrationBuilder
      */
     protected function beginCommand(string $description): float
     {
-        if (!$this->compact) {
-            echo "    > $description ...";
-        }
+        $this->informer->beginCommand($description);
         return microtime(true);
     }
 
@@ -585,8 +585,6 @@ final class MigrationBuilder
      */
     protected function endCommand(float $time): void
     {
-        if (!$this->compact) {
-            echo ' Done in ' . sprintf('%.3f', microtime(true) - $time) . "s.\n";
-        }
+        $this->informer->endCommand('Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
     }
 }

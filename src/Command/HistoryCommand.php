@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Yiisoft\Yii\Db\Migration\Migrator;
 use function count;
 use function date;
 use Symfony\Component\Console\Command\Command;
@@ -31,13 +32,18 @@ final class HistoryCommand extends Command
 {
     private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
+    private Migrator $migrator;
 
     protected static $defaultName = 'migrate/history';
 
-    public function __construct(ConsoleHelper $consoleHelper, MigrationService $migrationService)
-    {
+    public function __construct(
+        ConsoleHelper $consoleHelper,
+        MigrationService $migrationService,
+        Migrator $migrator
+    ) {
         $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
+        $this->migrator = $migrator;
 
         parent::__construct();
     }
@@ -64,7 +70,7 @@ final class HistoryCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrations = $this->migrationService->getMigrationHistory($limit);
+        $migrations = $this->migrator->getHistory($limit);
 
         if (empty($migrations)) {
             $this->consoleHelper->io()->warning('No migration has been done before.');
@@ -83,7 +89,7 @@ final class HistoryCommand extends Command
         }
 
         foreach ($migrations as $version => $time) {
-            $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int) $time) . ') ' . $version . '</info>');
+            $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int)$time) . ') ' . $version . '</info>');
         }
 
         $output->writeln("\n");
