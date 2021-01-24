@@ -231,7 +231,7 @@ final class CreateCommand extends Command
 
         switch ($command) {
             case 'create':
-                $result = 'Create_' . $name;
+                $result = $name;
                 break;
             case 'table':
                 $result = 'Create_' . $name . '_Table';
