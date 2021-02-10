@@ -25,7 +25,7 @@
         "yiisoft/db": "^3.0@dev",
         "yiisoft/files": "^3.0@dev",
         "yiisoft/injector": "^1.0",
-        "yiisoft/strings": "^1.1",
+        "yiisoft/strings": "^2.0",
         "yiisoft/view": "^3.0@dev",
         "yiisoft/yii-console": "^3.0@dev"
     },
