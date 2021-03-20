@@ -73,7 +73,7 @@ Execute `composer du` in console config its rebuild.
 
 Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
 
-View the list of available commands execute in console: `vendor/bin/yii list`
+View the list of available commands execute in console: `./yii list`
 
 ```
 Available commands:
@@ -89,7 +89,7 @@ Available commands:
   serve            Runs PHP built-in web server
 ```
 
-Help simple command execute in console `vendor/bin/yii generate/create --help`.
+Help simple command execute in console `./yii generate/create --help`.
 
 ```
 Description:
