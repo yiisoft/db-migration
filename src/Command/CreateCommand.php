@@ -67,7 +67,7 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  * migration logic.
  *
  * ```php
- * vendor/bin/yii migrate/create table --command=table
+ * ./yii migrate/create table --command=table
  * ```
  *
  * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
@@ -78,7 +78,7 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  * For example:
  *
  * ```php
- * vendor/bin/yii migrate/create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
+ * ./yii migrate/create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
