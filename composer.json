@@ -53,9 +53,12 @@
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         },
+        "config-plugin-options": {
+            "source-directory": "config"
+        },
         "config-plugin": {
-            "params": "config/params.php",
-            "console": "config/console.php"
+            "params": "params.php",
+            "console": "console.php"
         }
     },
     "config": {
