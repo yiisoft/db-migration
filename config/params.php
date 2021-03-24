@@ -19,7 +19,7 @@ return [
 
     'yiisoft/yii-console' => [
         'commands' => [
-            'generate/create' => CreateCommand::class,
+            'migrate/create' => CreateCommand::class,
             'database/list' => ListTablesCommand::class,
             'migrate/down' => DownCommand::class,
             'migrate/history' => HistoryCommand::class,
