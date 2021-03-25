@@ -89,7 +89,7 @@ final class CreateCommand extends Command
     private CreateService $createService;
     private MigrationService $migrationService;
 
-    protected static $defaultName = 'generate/create';
+    protected static $defaultName = 'migrate/create';
     private Migrator $migrator;
 
     public function __construct(

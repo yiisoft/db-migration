@@ -683,7 +683,7 @@ EOF;
     private function getCommand(): CommandTester
     {
         return new CommandTester(
-            $this->getApplication()->find('generate/create')
+            $this->getApplication()->find('migrate/create')
         );
     }
 }

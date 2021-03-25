@@ -78,7 +78,7 @@ View the list of available commands execute in console: `./yii list`
 ```
 Available commands:
   database/list    Lists all tables in the database.
-  generate/create  Generate migration template.
+  migrate/create  Generate migration template.
   help             Displays help for a command
   list             Lists commands
   migrate/down     Downgrades the application by reverting old migrations.
@@ -89,14 +89,14 @@ Available commands:
   serve            Runs PHP built-in web server
 ```
 
-Help simple command execute in console `./yii generate/create --help`.
+Help simple command execute in console `./yii migrate/create --help`.
 
 ```
 Description:
   Generate migration template.
 
 Usage:
-  generate/create [options] [--] <name>
+  migrate/create [options] [--] <name>
 
 Arguments:
   name                         Table name for generate migration.

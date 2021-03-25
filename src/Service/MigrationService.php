@@ -58,7 +58,7 @@ final class MigrationService
         $result = ExitCode::OK;
 
         switch ($defaultName) {
-            case 'generate/create':
+            case 'migrate/create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     $this->consoleHelper->io()->error(
                         'At least one of `createNamespace` or `createPath` should be specified.'
