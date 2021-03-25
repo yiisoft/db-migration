@@ -13,7 +13,7 @@ use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 return [
     'yiisoft/aliases' => [
         'aliases' => [
-            '@yiisoft/yii/db/migration' => dirname(__DIR__, 1),
+            '@yiisoft/yii/db/migration' => '@vendor/yiisoft/yii-db-migration',
         ],
     ],
 
