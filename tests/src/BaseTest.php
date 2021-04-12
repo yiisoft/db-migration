@@ -70,7 +70,7 @@ abstract class BaseTest extends TestCase
                 ],
 
                 CacheInterface::class => [
-                    '__class' => Cache::class,
+                    'class' => Cache::class,
                     '__construct()' => [Reference::to(ArrayCache::class)],
                 ],
 
@@ -83,14 +83,14 @@ abstract class BaseTest extends TestCase
                 ProfilerInterface::class => Profiler::class,
 
                 ConnectionInterface::class => [
-                    '__class' => SqlLiteConnection::class,
+                    'class' => SqlLiteConnection::class,
                     '__construct()' => [
                         'dsn' => 'sqlite:' . self::DB_FILE,
                     ],
                 ],
 
                 View::class => [
-                    '__class' => View::class,
+                    'class' => View::class,
                     '__construct()' => [
                         'basePath' => '@root/resources/views',
                     ],

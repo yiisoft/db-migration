@@ -10,7 +10,7 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 return [
     MigrationService::class => [
-        '__class' => MigrationService::class,
+        'class' => MigrationService::class,
         'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNamespace']],
         'updateNamespace()' => [
             fn () => $params['yiisoft/yii-db-migration']['updateNamespace'],
