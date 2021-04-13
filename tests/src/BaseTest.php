@@ -170,8 +170,7 @@ abstract class BaseTest extends TestCase
         string $table,
         array $fields = [],
         Closure $callback = null
-    ): string
-    {
+    ): string {
         $migrationService = $this->getMigrationService();
 
         [$namespace, $className] = $migrationService->generateClassName(null, $name);
