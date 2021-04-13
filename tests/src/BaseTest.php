@@ -64,9 +64,13 @@ abstract class BaseTest extends TestCase
         if ($this->container === null) {
             $this->container = new Container([
                 Aliases::class => [
-                    '@root' => dirname(__DIR__, 2),
-                    '@runtime' => dirname(__DIR__) . '/runtime',
-                    '@yiisoft/yii/db/migration' => '@root',
+                    '__construct()' => [
+                        [
+                            '@root' => dirname(__DIR__, 2),
+                            '@runtime' => dirname(__DIR__) . '/runtime',
+                            '@yiisoft/yii/db/migration' => '@root',
+                        ],
+                    ],
                 ],
 
                 CacheInterface::class => [
