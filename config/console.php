@@ -15,10 +15,8 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 return [
     MigrationService::class => [
         'class' => MigrationService::class,
-        'createNamespace()' => [fn () => $params['yiisoft/yii-db-migration']['createNamespace']],
-        'updateNamespace()' => [
-            fn () => $params['yiisoft/yii-db-migration']['updateNamespace'],
-        ],
+        'createNamespace()' => [$params['yiisoft/yii-db-migration']['createNamespace']],
+        'updateNamespace()' => [$params['yiisoft/yii-db-migration']['updateNamespace']],
         'createPath()' => [$params['yiisoft/yii-db-migration']['createPath']],
         'updatePath()' => [$params['yiisoft/yii-db-migration']['updatePath']],
     ],
@@ -31,13 +29,13 @@ return [
             'basePathMigration' => static fn (Aliases $aliases) => $aliases->get(
                 $params['yiisoft/yii-db-migration']['basePathMigration'],
             ),
-        ]
+        ],
     ],
 
     CreateService::class => [
         'class' => CreateService::class,
         '__construct()' => [
-            'view' => Reference::to('yii-db-migration-view')
+            'view' => Reference::to('yii-db-migration-view'),
         ],
     ],
 ];
