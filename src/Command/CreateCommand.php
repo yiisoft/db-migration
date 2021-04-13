@@ -4,18 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use function explode;
-use function file_exists;
-use function file_put_contents;
-use function in_array;
-use function preg_match;
-use function strlen;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Console\ExitCode;
@@ -23,6 +16,13 @@ use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function explode;
+use function file_exists;
+use function file_put_contents;
+use function in_array;
+use function preg_match;
+use function strlen;
 
 /**
  * Creates a new migration.
@@ -57,7 +57,7 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  *     $migration = new MigrationService($aliases, $db, $consoleHelper);
  *
  *     $migration->createNamespace($aliases->get('@migration'));
- *     $migration->updateNamespace(['Yiisoft\\Db\\Yii\Migration', 'App\\Migration')]);
+ *     $migration->updateNamespaces(['Yiisoft\\Db\\Yii\Migration', 'App\\Migration')]);
  *
  *    return $migration;
  * }

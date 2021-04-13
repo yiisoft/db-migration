@@ -17,7 +17,7 @@ final class MigrationService
 {
     private string $createNamespace = '';
     private string $createPath = '';
-    private array $updateNamespace = [];
+    private array $updateNamespaces = [];
     private array $updatePath = [];
     private array $generatorTemplateFiles = [];
     private bool $useTablePrefix = true;
@@ -45,9 +45,9 @@ final class MigrationService
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
      * It checks the existence of the {@see createPath}, {@see updatePath}, {@see createNamespace},
-     * {@see updateNamespace}.
+     * {@see updateNamespaces}.
      *
-     * {@see createNamespace}, {@see updateNamespace}.
+     * {@see createNamespace}, {@see updateNamespaces}.
      *
      * @param string $defaultName
      *
@@ -68,9 +68,9 @@ final class MigrationService
                 }
                 break;
             case 'migrate/up':
-                if (empty($this->updateNamespace) && empty($this->updatePath)) {
+                if (empty($this->updateNamespaces) && empty($this->updatePath)) {
                     $this->consoleHelper->io()->error(
-                        'At least one of `updateNamespace` or `updatePath` should be specified.'
+                        'At least one of `updateNamespaces` or `updatePath` should be specified.'
                     );
 
                     $result = ExitCode::DATAERR;
@@ -109,7 +109,7 @@ final class MigrationService
             $migrationPaths[] = [$path, ''];
         }
 
-        foreach ($this->updateNamespace as $namespace) {
+        foreach ($this->updateNamespaces as $namespace) {
             $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
         }
 
@@ -164,9 +164,9 @@ final class MigrationService
      *
      * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
      */
-    public function updateNamespace(array $value): void
+    public function updateNamespaces(array $value): void
     {
-        $this->updateNamespace = $value;
+        $this->updateNamespaces = $value;
     }
 
     /**

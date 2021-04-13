@@ -90,7 +90,7 @@ final class UpdateCommandTest extends NamespacesCommandTest
 
     public function testWithoutUpdateNamespaces(): void
     {
-        $this->getMigrationService()->updateNamespace([]);
+        $this->getMigrationService()->updateNamespaces([]);
 
         $command = $this->getCommand();
 

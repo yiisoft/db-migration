@@ -33,7 +33,7 @@ return [
         'viewsBasePath' => '@yiisoft/yii/db/migration/resources/view',
         'createNamespace' => '',
         'createPath' => '',
-        'updateNamespace' => [],
+        'updateNamespaces' => [],
         'updatePath' => [],
     ],
 ];
