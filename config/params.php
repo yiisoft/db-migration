@@ -30,7 +30,7 @@ return [
     ],
 
     'yiisoft/yii-db-migration' => [
-        'basePathMigration' => '@yiisoft/yii/db/migration/resources/view',
+        'viewsBasePath' => '@yiisoft/yii/db/migration/resources/view',
         'createNamespace' => '',
         'createPath' => '',
         'updateNamespace' => [],

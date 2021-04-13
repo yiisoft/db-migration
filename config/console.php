@@ -27,7 +27,7 @@ return [
         'class' => View::class,
         '__construct()' => [
             'basePath' => static fn (Aliases $aliases) => $aliases->get(
-                $params['yiisoft/yii-db-migration']['basePathMigration'],
+                $params['yiisoft/yii-db-migration']['viewsBasePath'],
             ),
         ],
     ],
