@@ -20,7 +20,7 @@ use Yiisoft\Db\Sqlite\Connection as SqlLiteConnection;
 use Yiisoft\Di\Container;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
-use Yiisoft\Factory\Definitions\Reference;
+use Yiisoft\Factory\Definition\Reference;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
@@ -70,7 +70,7 @@ abstract class BaseTest extends TestCase
                 ],
 
                 CacheInterface::class => [
-                    '__class' => Cache::class,
+                    'class' => Cache::class,
                     '__construct()' => [Reference::to(ArrayCache::class)],
                 ],
 
@@ -83,14 +83,14 @@ abstract class BaseTest extends TestCase
                 ProfilerInterface::class => Profiler::class,
 
                 ConnectionInterface::class => [
-                    '__class' => SqlLiteConnection::class,
+                    'class' => SqlLiteConnection::class,
                     '__construct()' => [
                         'dsn' => 'sqlite:' . self::DB_FILE,
                     ],
                 ],
 
                 View::class => [
-                    '__class' => View::class,
+                    'class' => View::class,
                     '__construct()' => [
                         'basePath' => '@root/resources/views',
                     ],

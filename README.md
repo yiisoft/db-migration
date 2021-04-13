@@ -49,7 +49,7 @@ use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
 
 return [
     ConnectionInterface::class => [
-        '__class' => SqliteConnection::class,
+        'class' => SqliteConnection::class,
         '__construct()' => [
             'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
         ]
