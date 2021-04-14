@@ -17,7 +17,7 @@ abstract class NamespaceMigrationServiceTest extends BaseTest
         parent::setUp();
 
         $this->getMigrationService()->createNamespace($this->namespace);
-        $this->getMigrationService()->updateNamespace([$this->namespace]);
+        $this->getMigrationService()->updateNamespaces([$this->namespace]);
         $this->path = $this->getConsoleHelper()->getPathFromNamespace('@' . str_replace('\\', '/', $this->namespace));
 
         if (file_exists($this->path)) {

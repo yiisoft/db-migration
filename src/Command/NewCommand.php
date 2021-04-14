@@ -46,7 +46,7 @@ final class NewCommand extends Command
     {
         $this
             ->setDescription('Displays the first 10 new migrations.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', 10)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10')
             ->setHelp('This command displays the first 10 new migrations.');
     }
 
@@ -55,7 +55,7 @@ final class NewCommand extends Command
         $this->migrationService->before(self::$defaultName);
 
         /** @var int|null */
-        $limit = $input->getOption('limit');
+        $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error('The step argument must be greater than 0.');

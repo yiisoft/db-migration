@@ -6,19 +6,19 @@ namespace Yiisoft\Yii\Db\Migration\Command;
 
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
-use function array_slice;
-use function count;
-use function strlen;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
-
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_slice;
+use function count;
+use function strlen;
 
 /**
  * Upgrades the application by applying new migrations.
@@ -60,7 +60,7 @@ final class UpdateCommand extends Command
     {
         $this
             ->setDescription('Upgrades the application by applying new migrations.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', 0)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
             ->setHelp('This command applying new migrations to database.');
     }
 
@@ -71,7 +71,7 @@ final class UpdateCommand extends Command
         }
 
         /** @var int|null */
-        $limit = $input->getOption('limit');
+        $limit = (int) $input->getOption('limit');
 
         $migrations = $this->migrationService->getNewMigrations();
 

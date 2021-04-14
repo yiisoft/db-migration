@@ -17,8 +17,8 @@ final class MigrationService
 {
     private string $createNamespace = '';
     private string $createPath = '';
-    private array $updateNamespace = [];
-    private array $updatePath = [];
+    private array $updateNamespaces = [];
+    private array $updatePaths = [];
     private array $generatorTemplateFiles = [];
     private bool $useTablePrefix = true;
     private string $version = '1.0';
@@ -44,10 +44,10 @@ final class MigrationService
     /**
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
-     * It checks the existence of the {@see createPath}, {@see updatePath}, {@see createNamespace},
-     * {@see updateNamespace}.
+     * It checks the existence of the {@see createPath}, {@see updatePaths}, {@see createNamespace},
+     * {@see updateNamespaces}.
      *
-     * {@see createNamespace}, {@see updateNamespace}.
+     * {@see createNamespace}, {@see updateNamespaces}.
      *
      * @param string $defaultName
      *
@@ -68,9 +68,9 @@ final class MigrationService
                 }
                 break;
             case 'migrate/up':
-                if (empty($this->updateNamespace) && empty($this->updatePath)) {
+                if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
                     $this->consoleHelper->io()->error(
-                        'At least one of `updateNamespace` or `updatePath` should be specified.'
+                        'At least one of `updateNamespaces` or `updatePaths` should be specified.'
                     );
 
                     $result = ExitCode::DATAERR;
@@ -105,30 +105,30 @@ final class MigrationService
 
         $migrationPaths = [];
 
-        foreach ($this->updatePath as $path) {
+        foreach ($this->updatePaths as $path) {
             $migrationPaths[] = [$path, ''];
         }
 
-        foreach ($this->updateNamespace as $namespace) {
+        foreach ($this->updateNamespaces as $namespace) {
             $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
         }
 
         $migrations = [];
         foreach ($migrationPaths as $item) {
-            [$updatePath, $namespace] = $item;
-            $updatePath = $this->consoleHelper->aliases()->get($updatePath);
+            [$updatePaths, $namespace] = $item;
+            $updatePaths = $this->consoleHelper->aliases()->get($updatePaths);
 
-            if (!file_exists($updatePath)) {
+            if (!file_exists($updatePaths)) {
                 continue;
             }
 
-            $handle = opendir($updatePath);
+            $handle = opendir($updatePaths);
             while (($file = readdir($handle)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
                 }
 
-                $path = $updatePath . DIRECTORY_SEPARATOR . $file;
+                $path = $updatePaths . DIRECTORY_SEPARATOR . $file;
 
                 if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
                     $class = $matches[1];
@@ -164,9 +164,9 @@ final class MigrationService
      *
      * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
      */
-    public function updateNamespace(array $value): void
+    public function updateNamespaces(array $value): void
     {
-        $this->updateNamespace = $value;
+        $this->updateNamespaces = $value;
     }
 
     /**
@@ -188,9 +188,9 @@ final class MigrationService
      *
      * {@see $createNamespace}
      */
-    public function updatePath(array $value): void
+    public function updatePaths(array $value): void
     {
-        $this->updatePath = $value;
+        $this->updatePaths = $value;
     }
 
     /**
@@ -230,6 +230,8 @@ final class MigrationService
     public function createMigration(string $class): ?MigrationInterface
     {
         $this->includeMigrationFile($class);
+
+        /** @var class-string $class */
         $class = '\\' . $class;
 
         try {
@@ -253,7 +255,7 @@ final class MigrationService
      * Includes the migration file for a given migration class name.
      *
      * This function will do nothing on namespaced migrations, which are loaded by autoloading automatically. It will
-     * include the migration file, by searching {@see updatePath} for classes without namespace.
+     * include the migration file, by searching {@see updatePaths} for classes without namespace.
      *
      * @param string $class the migration class name.
      */
@@ -261,7 +263,7 @@ final class MigrationService
     {
         $class = trim($class, '\\');
         if (strpos($class, '\\') === false) {
-            foreach ($this->updatePath as $path) {
+            foreach ($this->updatePaths as $path) {
                 $file = $this->consoleHelper->aliases()->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {

@@ -55,7 +55,7 @@ final class MigrationServiceTest extends NamespaceMigrationServiceTest
         $this->applyNewMigrations();
         $this->createMigration('Create_User', 'table', 'user', ['name:string']);
 
-        $this->getMigrationService()->updateNamespace([
+        $this->getMigrationService()->updateNamespaces([
             $this->getNamespace(),
             'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists',
         ]);

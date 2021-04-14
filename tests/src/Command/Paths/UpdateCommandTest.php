@@ -90,7 +90,7 @@ final class UpdateCommandTest extends PathsCommandTest
 
     public function testWithoutUpdatePath(): void
     {
-        $this->getMigrationService()->updatePath([]);
+        $this->getMigrationService()->updatePaths([]);
 
         $command = $this->getCommand();
 

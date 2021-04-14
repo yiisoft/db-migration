@@ -29,14 +29,11 @@ return [
         ],
     ],
 
-    'yiisoft/view' => [
-        'basePath' => '@yiisoft/yii/db/migration/resources/view',
-    ],
-
     'yiisoft/yii-db-migration' => [
+        'viewsBasePath' => '@yiisoft/yii/db/migration/resources/view',
         'createNamespace' => '',
         'createPath' => '',
-        'updateNamespace' => [],
-        'updatePath' => [],
+        'updateNamespaces' => [],
+        'updatePaths' => [],
     ],
 ];
