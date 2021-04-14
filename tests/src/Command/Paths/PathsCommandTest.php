@@ -17,7 +17,7 @@ abstract class PathsCommandTest extends CommandTest
         parent::setUp();
 
         $this->getMigrationService()->createPath($this->pathAlias);
-        $this->getMigrationService()->updatePath([$this->pathAlias]);
+        $this->getMigrationService()->updatePaths([$this->pathAlias]);
 
         $this->path = $this->getAliases()->get($this->pathAlias);
 

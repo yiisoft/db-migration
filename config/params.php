@@ -34,6 +34,6 @@ return [
         'createNamespace' => '',
         'createPath' => '',
         'updateNamespaces' => [],
-        'updatePath' => [],
+        'updatePaths' => [],
     ],
 ];

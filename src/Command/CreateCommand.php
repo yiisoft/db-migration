@@ -29,7 +29,7 @@ use function strlen;
  *
  * This command creates a new migration using the available migration template.
  *
- * Config in di-container console.php migrations paths `createPath` and `updatePath`:
+ * Config in di-container console.php migrations paths `createPath` and `updatePaths`:
  *
  * ```php
  * MigrationService::class => static function (ContainerInterface $container) {
@@ -40,13 +40,13 @@ use function strlen;
  *     $migration = new MigrationService($aliases, $db, $consoleHelper);
  *
  *     $migration->createPath($aliases->get('@migration'));
- *     $migration->updatePath([$aliases->get('@migration'), $aliases->get('@root/src/Build')]);
+ *     $migration->updatePaths([$aliases->get('@migration'), $aliases->get('@root/src/Build')]);
  *
  *    return $migration;
  * }
  * ```
  *
- * Config in di-container console.php namespace paths `createPath` and `updatePath`:
+ * Config in di-container console.php namespace paths `createPath` and `updatePaths`:
  *
  * ```php
  * MigrationService::class => static function (ContainerInterface $container) {

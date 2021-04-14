@@ -18,7 +18,7 @@ return [
         'createNamespace()' => [$params['yiisoft/yii-db-migration']['createNamespace']],
         'updateNamespaces()' => [$params['yiisoft/yii-db-migration']['updateNamespaces']],
         'createPath()' => [$params['yiisoft/yii-db-migration']['createPath']],
-        'updatePath()' => [$params['yiisoft/yii-db-migration']['updatePath']],
+        'updatePaths()' => [$params['yiisoft/yii-db-migration']['updatePaths']],
     ],
 
     MigrationInformerInterface::class => NullMigrationInformer::class,
