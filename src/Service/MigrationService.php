@@ -230,6 +230,8 @@ final class MigrationService
     public function createMigration(string $class): ?MigrationInterface
     {
         $this->includeMigrationFile($class);
+
+        /** @var class-string $class */
         $class = '\\' . $class;
 
         try {
