@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Factory\Definition\DynamicReference;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
@@ -26,9 +27,9 @@ return [
     'yii-db-migration-view' => [
         'class' => View::class,
         '__construct()' => [
-            'basePath' => static fn (Aliases $aliases) => $aliases->get(
+            'basePath' => DynamicReference::to(static fn (Aliases $aliases) => $aliases->get(
                 $params['yiisoft/yii-db-migration']['viewsBasePath'],
-            ),
+            )),
         ],
     ],
 
