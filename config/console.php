@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Factory\Definition\Reference;
-use Yiisoft\Factory\Definition\DynamicReference;
+use Yiisoft\Definitions\Reference;
+use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
