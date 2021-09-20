@@ -80,7 +80,7 @@ final class UpdateCommand extends Command
             $this->consoleHelper->io()->success('Your system is up-to-date.');
             $this->migrationService->dbVersion();
 
-            return ExitCode::UNSPECIFIED_ERROR;
+            return ExitCode::OK;
         }
 
         $total = count($migrations);
