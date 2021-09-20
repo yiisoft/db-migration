@@ -81,7 +81,7 @@ final class UpdateCommandTest extends NamespacesCommandTest
 
         $command->setInputs(['yes']);
 
-        $this->assertEquals(ExitCode::UNSPECIFIED_ERROR, $command->execute([]));
+        $this->assertEquals(ExitCode::OK, $command->execute([]));
 
         $output = $command->getDisplay(true);
 
