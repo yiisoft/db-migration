@@ -20,17 +20,22 @@ The package implementing migration for [yiisoft/db](https://github.com/yiisoft/d
 
 The package could be installed via composer:
 
-```php
-composer require yiisoft/yii-db-migration
+```shell
+composer require yiisoft/yii-db-migration --prefer-dist
 ```
 
 **Note: You must install the repository of the implementation to use.**
 
 Example:
 
-```php
-composer require yiisoft/db-sqlite
+```shell
+composer require yiisoft/db-sqlite --prefer-dist
 ```
+
+## Requirements
+
+- PHP 7.4 or higher.
+- `Filter` PHP extension.
 
 ## Configuration
 

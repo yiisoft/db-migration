@@ -41,6 +41,21 @@ final class DownCommandTest extends PathsCommandTest
         $this->assertStringContainsString('Apply a new migration to run this command.', $output);
     }
 
+    public function testLimit(): void
+    {
+        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => '1']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('[OK] 1 migration was reverted.', $output);
+    }
+
     public function testIncorrectLimit(): void
     {
         $command = $this->getCommand();
