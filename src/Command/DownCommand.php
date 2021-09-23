@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use function array_keys;
-use function count;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,9 +11,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_keys;
+use function count;
 
 /**
  * Downgrades the application by reverting old migrations.
@@ -60,7 +60,7 @@ final class DownCommand extends Command
     {
         $this
             ->setDescription('Downgrades the application by reverting old migrations.')
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', null)
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', 1)
             ->setHelp('This command downgrades the application by reverting old migrations.');
     }
 
@@ -71,9 +71,9 @@ final class DownCommand extends Command
     {
         $this->migrationService->before(self::$defaultName);
 
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+        $limit = (int)$input->getOption('limit');
 
-        if ($limit < 0) {
+        if ($limit <= 0) {
             $this->consoleHelper->io()->error('The step argument must be greater than 0.');
             $this->migrationService->dbVersion();
 
