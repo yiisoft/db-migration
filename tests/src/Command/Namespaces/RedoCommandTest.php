@@ -29,6 +29,22 @@ final class RedoCommandTest extends NamespacesCommandTest
         $this->assertExistsTables('post', 'user');
     }
 
+    public function testLimit(): void
+    {
+        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand()->setInputs(['yes']);
+
+        $exitCode = $command->execute(['-l' => '1']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('CreateUser', $output);
+        $this->assertStringContainsString(' 1 migration was redone.', $output);
+    }
+
     public function testIncorrectLimit(): void
     {
         $command = $this->getCommand();

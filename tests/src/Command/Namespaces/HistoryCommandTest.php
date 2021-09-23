@@ -32,9 +32,12 @@ final class HistoryCommandTest extends NamespacesCommandTest
 
         $command = $this->getCommand();
 
-        $exitCode = $command->execute(['-l' => 1]);
+        $exitCode = $command->execute(['-l' => '1']);
+        $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('CreateUser', $output);
+        $this->assertStringNotContainsString('CreatePost', $output);
     }
 
     public function testIncorrectLimit(): void

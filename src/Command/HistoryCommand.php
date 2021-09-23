@@ -60,8 +60,7 @@ final class HistoryCommand extends Command
     {
         $this->migrationService->before(self::$defaultName);
 
-        /** @var int|null */
-        $limit = $input->getOption('limit');
+        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
         if ($limit < 0) {
             $this->consoleHelper->io()->error('The step argument must be greater than 0.');

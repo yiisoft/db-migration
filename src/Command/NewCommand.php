@@ -54,7 +54,6 @@ final class NewCommand extends Command
     {
         $this->migrationService->before(self::$defaultName);
 
-        /** @var int|null */
         $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {

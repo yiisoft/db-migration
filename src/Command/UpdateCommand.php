@@ -70,7 +70,6 @@ final class UpdateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        /** @var int|null */
         $limit = (int) $input->getOption('limit');
 
         $migrations = $this->migrationService->getNewMigrations();
