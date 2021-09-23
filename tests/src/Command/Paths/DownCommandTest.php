@@ -42,6 +42,26 @@ final class DownCommandTest extends PathsCommandTest
         $this->assertStringContainsString('Apply a new migration to run this command.', $output);
     }
 
+    public function testDowngradeAll(): void
+    {
+        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $this->applyNewMigrations();
+
+        $this->assertExistsTables('post', 'user');
+
+        $command = $this->getCommand();
+        $command->setInputs(['yes']);
+
+        $this->assertEquals(ExitCode::OK, $command->execute(['--all' => true]));
+
+        $output = $command->getDisplay(true);
+
+        $this->assertStringContainsString(' 2 migrations were reverted.', $output);
+
+        $this->assertNotExistsTables('post', 'user');
+    }
+
     public function dataIncorrectLimit(): array
     {
         return [
