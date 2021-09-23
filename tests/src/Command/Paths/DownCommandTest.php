@@ -25,7 +25,7 @@ final class DownCommandTest extends PathsCommandTest
 
         $output = $command->getDisplay(true);
 
-        $this->assertStringContainsString(' 1 migration was reverted.', $output);
+        $this->assertStringContainsString('1 migration was reverted.', $output);
 
         $this->assertNotExistsTables('user');
         $this->assertExistsTables('post');
@@ -57,7 +57,7 @@ final class DownCommandTest extends PathsCommandTest
 
         $output = $command->getDisplay(true);
 
-        $this->assertStringContainsString(' 2 migrations were reverted.', $output);
+        $this->assertStringContainsString('2 migrations were reverted.', $output);
 
         $this->assertNotExistsTables('post', 'user');
     }
