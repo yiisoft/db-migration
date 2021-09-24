@@ -25,9 +25,10 @@ final class DownCommandTest extends PathsCommandTest
 
         $output = $command->getDisplay(true);
 
-        $this->assertStringContainsString('2 migrations were reverted.', $output);
+        $this->assertStringContainsString('1 migration was reverted.', $output);
 
-        $this->assertNotExistsTables('post', 'user');
+        $this->assertNotExistsTables('user');
+        $this->assertExistsTables('post');
     }
 
     public function testExecuteAgain(): void
@@ -41,28 +42,60 @@ final class DownCommandTest extends PathsCommandTest
         $this->assertStringContainsString('Apply a new migration to run this command.', $output);
     }
 
-    public function testLimit(): void
+    public function testDowngradeAll(): void
     {
         $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
         $this->createMigration('Create_User', 'table', 'user', ['name:string']);
         $this->applyNewMigrations();
 
-        $command = $this->getCommand();
+        $this->assertExistsTables('post', 'user');
 
-        $exitCode = $command->execute(['-l' => '1']);
+        $command = $this->getCommand();
+        $command->setInputs(['yes']);
+
+        $this->assertEquals(ExitCode::OK, $command->execute(['--all' => true]));
+
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
-        $this->assertStringContainsString('[OK] 1 migration was reverted.', $output);
+        $this->assertStringContainsString('2 migrations were reverted.', $output);
+
+        $this->assertNotExistsTables('post', 'user');
     }
 
-    public function testIncorrectLimit(): void
+    public function dataIncorrectLimit(): array
+    {
+        return [
+            'negative' => [-1],
+            'zero' => [0],
+        ];
+    }
+
+    /**
+     * @dataProvider dataIncorrectLimit
+     */
+    public function testIncorrectLimit(int $limit): void
     {
         $command = $this->getCommand();
 
-        $exitCode = $command->execute(['-l' => -1]);
+        $exitCode = $command->execute(['-l' => $limit]);
 
         $this->assertSame(ExitCode::DATAERR, $exitCode);
+    }
+
+    public function testLimit(): void
+    {
+        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
+        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $this->createMigration('Create_Tag', 'table', 'tag', ['name:string']);
+        $this->applyNewMigrations();
+
+        $command = $this->getCommand();
+
+        $exitCode = $command->execute(['-l' => '2']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('[OK] 2 migrations were reverted.', $output);
     }
 
     public function testFiled(): void
