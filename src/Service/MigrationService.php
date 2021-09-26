@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
+use Composer\Autoload\ClassLoader;
+use ReflectionClass;
 use ReflectionException;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -14,6 +16,8 @@ use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
+
+use function dirname;
 
 final class MigrationService
 {
@@ -369,6 +373,27 @@ final class MigrationService
     {
         $aliases = '@' . str_replace('\\', '/', $namespace);
 
-        return $this->consoleHelper->getPathFromNamespace($aliases);
+        return $this->getPathFromNamespace($aliases);
+    }
+
+    private function getPathFromNamespace(string $path): string
+    {
+        $namespacesPath = [];
+
+        /** @psalm-suppress UnresolvableInclude */
+        $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
+
+        foreach ($map as $namespace => $directorys) {
+            foreach ($directorys as $directory) {
+                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
+            }
+        }
+        return (new Aliases($namespacesPath))->get($path);
+    }
+
+    private function getVendorDir(): string
+    {
+        $class = new ReflectionClass(ClassLoader::class);
+        return dirname($class->getFileName(), 2);
     }
 }
