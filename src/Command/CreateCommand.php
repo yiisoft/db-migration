@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
@@ -85,6 +86,7 @@ use function strlen;
  */
 final class CreateCommand extends Command
 {
+    private Aliases $aliases;
     private ConsoleHelper $consoleHelper;
     private CreateService $createService;
     private MigrationService $migrationService;
@@ -93,11 +95,13 @@ final class CreateCommand extends Command
     private Migrator $migrator;
 
     public function __construct(
+        Aliases $aliases,
         ConsoleHelper $consoleHelper,
         CreateService $createService,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
+        $this->aliases = $aliases;
         $this->consoleHelper = $consoleHelper;
         $this->createService = $createService;
         $this->migrationService = $migrationService;
@@ -182,7 +186,7 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrationPath = $this->consoleHelper->aliases()->get(
+        $migrationPath = $this->aliases->get(
             FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
         );
 

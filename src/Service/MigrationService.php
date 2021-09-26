@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service;
 
 use ReflectionException;
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
@@ -22,17 +23,20 @@ final class MigrationService
     private array $generatorTemplateFiles = [];
     private bool $useTablePrefix = true;
     private string $version = '1.0';
+    private Aliases $aliases;
     private ConnectionInterface $db;
     private ConsoleHelper $consoleHelper;
     private Injector $injector;
     private Migrator $migrator;
 
     public function __construct(
+        Aliases $aliases,
         ConnectionInterface $db,
         ConsoleHelper $consoleHelper,
         Injector $injector,
         Migrator $migrator
     ) {
+        $this->aliases = $aliases;
         $this->db = $db;
         $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
@@ -116,7 +120,7 @@ final class MigrationService
         $migrations = [];
         foreach ($migrationPaths as $item) {
             [$updatePaths, $namespace] = $item;
-            $updatePaths = $this->consoleHelper->aliases()->get($updatePaths);
+            $updatePaths = $this->aliases->get($updatePaths);
 
             if (!file_exists($updatePaths)) {
                 continue;
@@ -264,7 +268,7 @@ final class MigrationService
         $class = trim($class, '\\');
         if (strpos($class, '\\') === false) {
             foreach ($this->updatePaths as $path) {
-                $file = $this->consoleHelper->aliases()->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
+                $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
                     /** @psalm-suppress UnresolvableInclude */
@@ -341,13 +345,14 @@ final class MigrationService
         $this->generatorTemplateFiles = $value;
 
         if ($value === [] && $this->generatorTemplateFiles === []) {
+            $baseDir = $this->aliases->get('@yiisoft/yii/db/migration');
             $this->generatorTemplateFiles = [
-                'create' => $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
-                'table' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
-                'dropTable' => $this->consoleHelper->getBaseDir() . '/resources/views/dropTableMigration.php',
-                'addColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/addColumnMigration.php',
-                'dropColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/dropColumnMigration.php',
-                'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
+                'create' => $baseDir . '/resources/views/migration.php',
+                'table' => $baseDir . '/resources/views/createTableMigration.php',
+                'dropTable' => $baseDir . '/resources/views/dropTableMigration.php',
+                'addColumn' => $baseDir . '/resources/views/addColumnMigration.php',
+                'dropColumn' => $baseDir . '/resources/views/dropColumnMigration.php',
+                'junction' => $baseDir . '/resources/views/createTableMigration.php',
             ];
         }
     }

@@ -21,13 +21,7 @@ final class ConsoleHelper
     private ?OutputInterface $output = null;
     private ?SymfonyStyle $io = null;
     private ?Table $table = null;
-    private Aliases $aliases;
     private ?Inflector $inflector = null;
-
-    public function __construct(Aliases $aliases)
-    {
-        $this->aliases = $aliases;
-    }
 
     public function input(): InputInterface
     {
@@ -92,20 +86,10 @@ final class ConsoleHelper
         return $this->inflector;
     }
 
-    public function aliases(): Aliases
-    {
-        return $this->aliases;
-    }
-
     public function getVendorDir(): string
     {
         $class = new ReflectionClass(ClassLoader::class);
 
         return dirname($class->getFileName(), 2);
-    }
-
-    public function getBaseDir(): string
-    {
-        return $this->aliases->get('@yiisoft/yii/db/migration');
     }
 }
