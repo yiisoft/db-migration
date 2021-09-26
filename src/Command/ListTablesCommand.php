@@ -36,6 +36,6 @@ final class ListTablesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        return $this->listTablesService->run($io);
+        return $this->listTablesService->withIO($io)->run();
     }
 }

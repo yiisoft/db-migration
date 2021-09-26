@@ -16,6 +16,7 @@ final class DownService
 {
     private MigrationService $migrationService;
     private Migrator $migrator;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         MigrationService $migrationService,
@@ -25,6 +26,14 @@ final class DownService
         $this->migrator = $migrator;
     }
 
+    public function withIO(?SymfonyStyle $io): self
+    {
+        $new = clone $this;
+        $new->io = $io;
+        $new->migrationService = $this->migrationService->withIO($io);
+        return $new;
+    }
+
     /**
      * Downgrades with the specified migration class.
      *
@@ -32,10 +41,10 @@ final class DownService
      *
      * @return bool whether the migration is successful
      */
-    public function run(string $class, ?SymfonyStyle $io = null): bool
+    public function run(string $class): bool
     {
-        if ($io) {
-            $io->title("\nReverting $class");
+        if ($this->io) {
+            $this->io->title("\nReverting $class");
         }
 
         $start = microtime(true);
@@ -43,16 +52,16 @@ final class DownService
 
         if ($migration === null) {
             $time = microtime(true) - $start;
-            if ($io) {
-                $io->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
+            if ($this->io) {
+                $this->io->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
             }
             return false;
         }
 
         if (!$migration instanceof RevertibleMigrationInterface) {
             $time = microtime(true) - $start;
-            if ($io) {
-                $io->error("Failed to revert $class. Migration does not implement RevertibleMigrationInterface (time: " . sprintf('%.3f', $time) . 's)');
+            if ($this->io) {
+                $this->io->error("Failed to revert $class. Migration does not implement RevertibleMigrationInterface (time: " . sprintf('%.3f', $time) . 's)');
             }
             return false;
         }
@@ -60,8 +69,8 @@ final class DownService
         $this->migrator->down($migration);
 
         $time = microtime(true) - $start;
-        if ($io) {
-            $io->writeln(
+        if ($this->io) {
+            $this->io->writeln(
                 "\n\t<info>>>> [OK] -  Reverted $class (time: " . sprintf('%.3f', $time) . 's)</info>'
             );
         }

@@ -7,13 +7,13 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 
@@ -30,24 +30,29 @@ final class MigrationService
     private string $version = '1.0';
     private Aliases $aliases;
     private ConnectionInterface $db;
-    private ConsoleHelper $consoleHelper;
     private Injector $injector;
     private Migrator $migrator;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         Aliases $aliases,
         ConnectionInterface $db,
-        ConsoleHelper $consoleHelper,
         Injector $injector,
         Migrator $migrator
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
-        $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
         $this->migrator = $migrator;
 
         $this->generatorTemplateFiles();
+    }
+
+    public function withIO(?SymfonyStyle $io): self
+    {
+        $new = clone $this;
+        $new->io = $io;
+        return $new;
     }
 
     /**
@@ -69,18 +74,22 @@ final class MigrationService
         switch ($defaultName) {
             case 'migrate/create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
-                    $this->consoleHelper->io()->error(
-                        'At least one of `createNamespace` or `createPath` should be specified.'
-                    );
+                    if ($this->io) {
+                        $this->io->error(
+                            'At least one of `createNamespace` or `createPath` should be specified.'
+                        );
+                    }
 
                     $result = ExitCode::DATAERR;
                 }
                 break;
             case 'migrate/up':
                 if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
-                    $this->consoleHelper->io()->error(
-                        'At least one of `updateNamespaces` or `updatePaths` should be specified.'
-                    );
+                    if ($this->io) {
+                        $this->io->error(
+                            'At least one of `updateNamespaces` or `updatePaths` should be specified.'
+                        );
+                    }
 
                     $result = ExitCode::DATAERR;
                 }
@@ -221,9 +230,11 @@ final class MigrationService
 
     public function dbVersion(): void
     {
-        $this->consoleHelper->output()->writeln(
-            "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
-        );
+        if ($this->io) {
+            $this->io->writeln(
+                "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
+            );
+        }
     }
 
     /**

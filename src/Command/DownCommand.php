@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
@@ -33,7 +32,6 @@ use function count;
  */
 final class DownCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
     private DownService $downService;
     private MigrationService $migrationService;
     private Migrator $migrator;
@@ -41,13 +39,11 @@ final class DownCommand extends Command
     protected static $defaultName = 'migrate/down';
 
     public function __construct(
-        ConsoleHelper $consoleHelper,
         DownService $downService,
         MigrationService $migrationService,
         Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->consoleHelper = $consoleHelper;
         $this->downService = $downService;
         $this->migrationService = $migrationService;
 
@@ -72,15 +68,16 @@ final class DownCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $migrationService = $this->migrationService->withIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $migrationService->before(self::$defaultName);
 
         $limit = null;
         if (!$input->getOption('all')) {
             $limit = (int)$input->getOption('limit');
             if ($limit <= 0) {
                 $io->error('The limit argument must be greater than 0.');
-                $this->migrationService->dbVersion();
+                $migrationService->dbVersion();
                 return ExitCode::DATAERR;
             }
         }
@@ -115,7 +112,7 @@ final class DownCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->downService->run($migration, $io)) {
+                if (!$this->downService->withIO($io)->run($migration)) {
                     $output->writeln(
                         "<fg=red>\n$reverted from $n " . ($reverted === 1 ? 'migration was' : 'migrations were') .
                         ' reverted.</>'
@@ -135,7 +132,7 @@ final class DownCommand extends Command
             $io->success('Migrated down successfully.');
         }
 
-        $this->migrationService->dbVersion();
+        $migrationService->dbVersion();
 
         return ExitCode::OK;
     }

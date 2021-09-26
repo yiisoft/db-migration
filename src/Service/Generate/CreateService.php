@@ -32,6 +32,7 @@ final class CreateService
     private ConnectionInterface $db;
     private MigrationService $migrationService;
     private View $view;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         Aliases $aliases,
@@ -45,6 +46,14 @@ final class CreateService
         $this->view = $view;
     }
 
+    public function withIO(?SymfonyStyle $io): self
+    {
+        $new = clone $this;
+        $new->io = $io;
+        $new->migrationService = $this->migrationService->withIO($io);
+        return $new;
+    }
+
     public function run(
         string $command,
         string $templateFile,
@@ -52,8 +61,7 @@ final class CreateService
         string $className,
         ?string $namespace = null,
         array $fields = [],
-        ?string $and = null,
-        ?SymfonyStyle $io = null
+        ?string $and = null
     ): string {
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
@@ -68,7 +76,7 @@ final class CreateService
             [$foreignKeys, $table, $fields] = $this->addJunction($table, $and, $fields);
         }
 
-        $foreignKeys = $this->addforeignKeys($table, $foreignKeys, $io);
+        $foreignKeys = $this->addforeignKeys($table, $foreignKeys);
 
         return $this->view->renderFile(
             $this->aliases->get($templateFile),
@@ -110,7 +118,7 @@ final class CreateService
      *
      * @return array
      */
-    private function addForeignKeys(string $table, array $foreignKeys, ?SymfonyStyle $io): array
+    private function addForeignKeys(string $table, array $foreignKeys): array
     {
         foreach ($foreignKeys as $column => $foreignKey) {
             $relatedColumn = $foreignKey['column'];
@@ -130,15 +138,15 @@ final class CreateService
                         if ($primaryKeyCount === 1) {
                             $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
                         } elseif ($primaryKeyCount > 1) {
-                            if ($io) {
-                                $io->writeln(
+                            if ($this->io) {
+                                $this->io->writeln(
                                     "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
                                     "composite. Default name \"id\" will be used for related field</>\n"
                                 );
                             }
                         } elseif ($primaryKeyCount === 0) {
-                            if ($io) {
-                                $io->writeln(
+                            if ($this->io) {
+                                $this->io->writeln(
                                     "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
                                     "primary key. Default name \"id\" will be used for related field.</>\n"
                                 );
@@ -146,8 +154,8 @@ final class CreateService
                         }
                     }
                 } catch (ReflectionException $e) {
-                    if ($io) {
-                        $io->writeln(
+                    if ($this->io) {
+                        $this->io->writeln(
                             '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
                             "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
                         );

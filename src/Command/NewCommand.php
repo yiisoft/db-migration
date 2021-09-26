@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-use function array_slice;
-use function count;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
-
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_slice;
+use function count;
 
 /**
  * Displays the un-applied new migrations.
@@ -30,14 +29,12 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  */
 final class NewCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/new';
 
-    public function __construct(ConsoleHelper $consoleHelper, MigrationService $migrationService)
+    public function __construct(MigrationService $migrationService)
     {
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
 
         parent::__construct();
@@ -54,23 +51,24 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $migrationService = $this->migrationService->withIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $migrationService->before(self::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $this->migrationService->dbVersion();
+            $migrationService->dbVersion();
 
             return ExitCode::DATAERR;
         }
 
-        $migrations = $this->migrationService->getNewMigrations();
+        $migrations = $migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $io->success('No new migrations found. Your system is up-to-date.');
-            $this->migrationService->dbVersion();
+            $migrationService->dbVersion();
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -90,7 +88,7 @@ final class NewCommand extends Command
             $output->writeln("<info>\t" . $migration . '</info>');
         }
 
-        $this->migrationService->dbVersion();
+        $migrationService->dbVersion();
 
         return ExitCode::OK;
     }

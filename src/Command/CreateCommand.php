@@ -125,11 +125,12 @@ final class CreateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
+        $io = new SymfonyStyle($input, $output);
+        $migrationService = $this->migrationService->withIO($io);
+
+        if ($migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
-
-        $io = new SymfonyStyle($input, $output);
 
         /** @var string */
         $name = $input->getArgument('name');
@@ -176,7 +177,7 @@ final class CreateCommand extends Command
 
         $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
 
-        [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
+        [$namespace, $className] = $migrationService->generateClassName($namespace, $name);
 
         $nameLimit = $this->migrator->getMigrationNameLimit();
 
@@ -187,7 +188,7 @@ final class CreateCommand extends Command
         }
 
         $migrationPath = $this->aliases->get(
-            FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
+            FileHelper::normalizePath($migrationService->findMigrationPath($namespace))
         );
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
@@ -207,15 +208,14 @@ final class CreateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            $content = $this->createService->run(
+            $content = $this->createService->withIO($io)->run(
                 $command,
-                $this->migrationService->getGeneratorTemplateFiles($command),
+                $migrationService->getGeneratorTemplateFiles($command),
                 $table,
                 $className,
                 $namespace,
                 $fields,
-                $and,
-                $io
+                $and
             );
 
             file_put_contents($file, $content, LOCK_EX);
@@ -225,7 +225,7 @@ final class CreateCommand extends Command
             $io->success('New migration created successfully.');
         }
 
-        $this->migrationService->dbVersion();
+        $migrationService->dbVersion();
 
         return ExitCode::OK;
     }

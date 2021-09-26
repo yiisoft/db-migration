@@ -15,6 +15,7 @@ final class UpdateService
 {
     private MigrationService $migrationService;
     private Migrator $migrator;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         MigrationService $migrationService,
@@ -24,6 +25,14 @@ final class UpdateService
         $this->migrator = $migrator;
     }
 
+    public function withIO(?SymfonyStyle $io): self
+    {
+        $new = clone $this;
+        $new->io = $io;
+        $new->migrationService = $this->migrationService->withIO($io);
+        return $new;
+    }
+
     /**
      * Upgrades with the specified migration class.
      *
@@ -31,10 +40,10 @@ final class UpdateService
      *
      * @return bool whether the migration is successful
      */
-    public function run(string $class, ?SymfonyStyle $io = null): bool
+    public function run(string $class): bool
     {
-        if ($io) {
-            $io->title("\nApplying $class:");
+        if ($this->io) {
+            $this->io->title("\nApplying $class:");
         }
         $start = microtime(true);
 
@@ -42,8 +51,8 @@ final class UpdateService
 
         if ($migration === null) {
             $time = microtime(true) - $start;
-            if ($io) {
-                $io->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
+            if ($this->io) {
+                $this->io->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
             }
             return false;
         }
@@ -51,8 +60,8 @@ final class UpdateService
         $this->migrator->up($migration);
 
         $time = microtime(true) - $start;
-        if ($io) {
-            $io->writeln(
+        if ($this->io) {
+            $this->io->writeln(
                 "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . 's)<info>'
             );
         }

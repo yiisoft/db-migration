@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use function count;
-use function date;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
-
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function count;
+use function date;
 
 /**
  * Displays the migration history.
@@ -31,18 +30,15 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  */
 final class HistoryCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private Migrator $migrator;
 
     protected static $defaultName = 'migrate/history';
 
     public function __construct(
-        ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
 
@@ -60,14 +56,15 @@ final class HistoryCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $migrationService = $this->migrationService->withIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $migrationService->before(self::$defaultName);
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $this->migrationService->dbVersion();
+            $migrationService->dbVersion();
 
             return ExitCode::DATAERR;
         }
@@ -96,7 +93,7 @@ final class HistoryCommand extends Command
 
         $output->writeln("\n");
         $io->success('Success.');
-        $this->migrationService->dbVersion();
+        $migrationService->dbVersion();
 
         return ExitCode::OK;
     }
