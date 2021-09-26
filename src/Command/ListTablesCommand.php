@@ -28,11 +28,11 @@ final class ListTablesCommand extends Command
     public function configure(): void
     {
         $this->setDescription('Lists all tables in the database.')
-             ->setHelp('This command Lists all tables in the database.');
+            ->setHelp('This command Lists all tables in the database.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return $this->listTablesService->run();
+        return $this->listTablesService->run($output);
     }
 }

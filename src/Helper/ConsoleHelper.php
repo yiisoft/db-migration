@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Helper;
 
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
-use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -20,7 +19,6 @@ final class ConsoleHelper
     private ?InputInterface $input = null;
     private ?OutputInterface $output = null;
     private ?SymfonyStyle $io = null;
-    private ?Table $table = null;
     private ?Inflector $inflector = null;
 
     public function input(): InputInterface
@@ -48,15 +46,6 @@ final class ConsoleHelper
         }
 
         return $this->io;
-    }
-
-    public function table(): Table
-    {
-        if ($this->table === null) {
-            $this->table = new Table($this->output());
-        }
-
-        return $this->table;
     }
 
     public function getPathFromNamespace(string $path): string

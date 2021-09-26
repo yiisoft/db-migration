@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\OutputInterface;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use function array_column;
 use function array_merge;
 use function implode;
 use function preg_match;
-use Yiisoft\Db\Connection\ConnectionInterface;
-
-use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class ListTablesService
 {
@@ -35,7 +37,7 @@ final class ListTablesService
         $this->migrator = $migrator;
     }
 
-    public function run(): int
+    public function run(OutputInterface $output): int
     {
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
@@ -53,16 +55,17 @@ final class ListTablesService
 
         $count = 0;
 
-        $this->consoleHelper->table()->setHeaders(['Nº', 'Table']);
+        $table = new Table($output);
+        $table->setHeaders(['Nº', 'Table']);
 
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
-                $this->consoleHelper->table()->addRow([(string)($count), (string)($value)]);
+                $table->addRow([(string) ($count), (string) ($value)]);
             }
         }
 
-        $this->consoleHelper->table()->render();
+        $table->render();
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;
