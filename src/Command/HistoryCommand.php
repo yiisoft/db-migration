@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use function count;
 use function date;
@@ -58,12 +59,14 @@ final class HistoryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $this->migrationService->before(self::$defaultName);
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
         if ($limit < 0) {
-            $this->consoleHelper->io()->error('The step argument must be greater than 0.');
+            $io->error('The step argument must be greater than 0.');
             $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
@@ -72,7 +75,7 @@ final class HistoryCommand extends Command
         $migrations = $this->migrator->getHistory($limit);
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->warning('No migration has been done before.');
+            $io->warning('No migration has been done before.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -80,19 +83,19 @@ final class HistoryCommand extends Command
         $n = count($migrations);
 
         if ($limit > 0) {
-            $this->consoleHelper->io()->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
+            $io->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
         } else {
-            $this->consoleHelper->io()->section(
+            $io->section(
                 "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:'
             );
         }
 
         foreach ($migrations as $version => $time) {
-            $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int)$time) . ') ' . $version . '</info>');
+            $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int) $time) . ') ' . $version . '</info>');
         }
 
         $output->writeln("\n");
-        $this->consoleHelper->io()->success('Success.');
+        $io->success('Success.');
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;

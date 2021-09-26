@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
@@ -70,13 +71,15 @@ final class DownCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         $this->migrationService->before(self::$defaultName);
 
         $limit = null;
         if (!$input->getOption('all')) {
             $limit = (int)$input->getOption('limit');
             if ($limit <= 0) {
-                $this->consoleHelper->io()->error('The limit argument must be greater than 0.');
+                $io->error('The limit argument must be greater than 0.');
                 $this->migrationService->dbVersion();
                 return ExitCode::DATAERR;
             }
@@ -86,7 +89,7 @@ final class DownCommand extends Command
 
         if (empty($migrations)) {
             $output->writeln("<fg=yellow> >>> Apply a new migration to run this command.</>\n");
-            $this->consoleHelper->io()->warning('No migration has been done before.');
+            $io->warning('No migration has been done before.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -129,7 +132,7 @@ final class DownCommand extends Command
             $output->writeln(
                 "\n<fg=green> >>> [OK] $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
             );
-            $this->consoleHelper->io()->success('Migrated down successfully.');
+            $io->success('Migrated down successfully.');
         }
 
         $this->migrationService->dbVersion();

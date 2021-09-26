@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Symfony\Component\Console\Command\Command;
@@ -66,6 +67,8 @@ final class UpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+
         if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
@@ -76,7 +79,7 @@ final class UpdateCommand extends Command
 
         if (empty($migrations)) {
             $output->writeln("<fg=green> >>> No new migrations found.</>\n");
-            $this->consoleHelper->io()->success('Your system is up-to-date.');
+            $io->success('Your system is up-to-date.');
             $this->migrationService->dbVersion();
 
             return ExitCode::OK;
@@ -140,7 +143,7 @@ final class UpdateCommand extends Command
             $output->writeln(
                 "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
             );
-            $this->consoleHelper->io()->success('Updated successfully.');
+            $io->success('Updated successfully.');
         }
 
         $this->migrationService->dbVersion();
