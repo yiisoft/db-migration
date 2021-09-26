@@ -15,22 +15,30 @@ final class ConsoleMigrationInformer implements MigrationInformerInterface
 
     public function beginCreateHistoryTable(string $message): void
     {
-        $this->io->section($message);
+        if ($this->io) {
+            $this->io->section($message);
+        }
     }
 
     public function endCreateHistoryTable(string $message): void
     {
-        $this->io->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+        if ($this->io) {
+            $this->io->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+        }
     }
 
     public function beginCommand(string $message): void
     {
-        $this->io->write('    > ' . $message . ' ...');
+        if ($this->io) {
+            $this->io->write('    > ' . $message . ' ...');
+        }
     }
 
     public function endCommand(string $message): void
     {
-        $this->io->writeln(' ' . $message);
+        if ($this->io) {
+            $this->io->writeln(' ' . $message);
+        }
     }
 
     public function setIO(?SymfonyStyle $io): void
