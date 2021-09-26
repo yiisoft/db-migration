@@ -15,7 +15,6 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -89,7 +88,6 @@ use function strlen;
 final class CreateCommand extends Command
 {
     private Aliases $aliases;
-    private ConsoleHelper $consoleHelper;
     private CreateService $createService;
     private MigrationService $migrationService;
 
@@ -98,13 +96,11 @@ final class CreateCommand extends Command
 
     public function __construct(
         Aliases $aliases,
-        ConsoleHelper $consoleHelper,
         CreateService $createService,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
         $this->aliases = $aliases;
-        $this->consoleHelper = $consoleHelper;
         $this->createService = $createService;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
