@@ -130,7 +130,7 @@ final class UpdateCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->updateService->run($migration)) {
+                if (!$this->updateService->run($migration, $io)) {
                     $output->writeln("\n<fg=red>$applied from $n " . ($applied === 1 ? 'migration was' :
                         'migrations were') . " applied.</>\n");
                     $output->writeln("\n<fg=red>Migration failed. The rest of the migrations are canceled.</>\n");

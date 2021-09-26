@@ -119,7 +119,7 @@ final class RedoCommand extends Command
                 }
             }
             foreach (array_reverse($migrations) as $migration) {
-                if (!$this->updateService->run($migration)) {
+                if (!$this->updateService->run($migration, $io)) {
                     $io->error('Migration failed. The rest of the migrations are canceled.');
 
                     return ExitCode::UNSPECIFIED_ERROR;

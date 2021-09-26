@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Migrate;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use function microtime;
 use function sprintf;
-
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Migrator;
 
 final class UpdateService
 {
@@ -34,7 +35,7 @@ final class UpdateService
      *
      * @return bool whether the migration is successful
      */
-    public function run(string $class): bool
+    public function run(string $class, ?SymfonyStyle $io = null): bool
     {
         $this->consoleHelper->io()->title("\nApplying $class:");
         $start = microtime(true);
@@ -50,9 +51,11 @@ final class UpdateService
         $this->migrator->up($migration);
 
         $time = microtime(true) - $start;
-        $this->consoleHelper->output()->writeln(
-            "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . 's)<info>'
-        );
+        if ($io) {
+            $io->writeln(
+                "\n\t<info>>>> [OK] - Applied $class (time: " . sprintf('%.3f', $time) . 's)<info>'
+            );
+        }
 
         return true;
     }
