@@ -5,26 +5,22 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service\Migrate;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
-use function microtime;
-use function sprintf;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
-
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Migrator;
+
+use function microtime;
+use function sprintf;
 
 final class DownService
 {
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private Migrator $migrator;
 
     public function __construct(
-        ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
     }
@@ -38,7 +34,9 @@ final class DownService
      */
     public function run(string $class, ?SymfonyStyle $io = null): bool
     {
-        $this->consoleHelper->io()->title("\nReverting $class");
+        if ($io) {
+            $io->title("\nReverting $class");
+        }
 
         $start = microtime(true);
         $migration = $this->migrationService->createMigration($class);
