@@ -115,7 +115,7 @@ final class DownCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->downService->run($migration)) {
+                if (!$this->downService->run($migration, $io)) {
                     $output->writeln(
                         "<fg=red>\n$reverted from $n " . ($reverted === 1 ? 'migration was' : 'migrations were') .
                         ' reverted.</>'

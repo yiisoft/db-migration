@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Migrate;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use function microtime;
 use function sprintf;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
@@ -35,7 +36,7 @@ final class DownService
      *
      * @return bool whether the migration is successful
      */
-    public function run(string $class): bool
+    public function run(string $class, ?SymfonyStyle $io = null): bool
     {
         $this->consoleHelper->io()->title("\nReverting $class");
 
@@ -44,22 +45,28 @@ final class DownService
 
         if ($migration === null) {
             $time = microtime(true) - $start;
-            $this->consoleHelper->io()->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
+            if ($io) {
+                $io->error("Failed to revert $class. Unable to get migration instance (time: " . sprintf('%.3f', $time) . 's)');
+            }
             return false;
         }
 
         if (!$migration instanceof RevertibleMigrationInterface) {
             $time = microtime(true) - $start;
-            $this->consoleHelper->io()->error("Failed to revert $class. Migration does not implement RevertibleMigrationInterface (time: " . sprintf('%.3f', $time) . 's)');
+            if ($io) {
+                $io->error("Failed to revert $class. Migration does not implement RevertibleMigrationInterface (time: " . sprintf('%.3f', $time) . 's)');
+            }
             return false;
         }
 
         $this->migrator->down($migration);
 
         $time = microtime(true) - $start;
-        $this->consoleHelper->output()->writeln(
-            "\n\t<info>>>> [OK] -  Reverted $class (time: " . sprintf('%.3f', $time) . 's)</info>'
-        );
+        if ($io) {
+            $io->writeln(
+                "\n\t<info>>>> [OK] -  Reverted $class (time: " . sprintf('%.3f', $time) . 's)</info>'
+            );
+        }
 
         return true;
     }
