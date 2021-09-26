@@ -9,6 +9,7 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
@@ -293,7 +294,7 @@ final class MigrationService
             $namespace = $this->createNamespace;
         }
 
-        $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->toPascalCase($name);
+        $class = 'M' . gmdate('ymdHis') . (new Inflector())->toPascalCase($name);
 
         return [$namespace, $class];
     }

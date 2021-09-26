@@ -66,15 +66,6 @@ final class ConsoleHelper
         return $aliases->get($path);
     }
 
-    public function inflector(): Inflector
-    {
-        if ($this->inflector === null) {
-            $this->inflector = new Inflector();
-        }
-
-        return $this->inflector;
-    }
-
     public function getVendorDir(): string
     {
         $class = new ReflectionClass(ClassLoader::class);

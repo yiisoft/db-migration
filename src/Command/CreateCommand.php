@@ -13,6 +13,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -177,7 +178,7 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $name = $this->generateName($command, $this->consoleHelper->inflector()->toPascalCase($name), $and);
+        $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
 
         [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
