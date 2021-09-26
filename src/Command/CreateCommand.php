@@ -219,7 +219,7 @@ final class CreateCommand extends Command
                 $namespace,
                 $fields,
                 $and,
-                $output
+                $io
             );
 
             file_put_contents($file, $content, LOCK_EX);

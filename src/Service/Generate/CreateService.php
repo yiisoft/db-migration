@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 use ReflectionException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\View\View;
@@ -53,7 +53,7 @@ final class CreateService
         ?string $namespace = null,
         array $fields = [],
         ?string $and = null,
-        ?OutputInterface $output = null
+        ?SymfonyStyle $io = null
     ): string {
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
@@ -68,7 +68,7 @@ final class CreateService
             [$foreignKeys, $table, $fields] = $this->addJunction($table, $and, $fields);
         }
 
-        $foreignKeys = $this->addforeignKeys($table, $foreignKeys, $output);
+        $foreignKeys = $this->addforeignKeys($table, $foreignKeys, $io);
 
         return $this->view->renderFile(
             $this->aliases->get($templateFile),
@@ -110,7 +110,7 @@ final class CreateService
      *
      * @return array
      */
-    private function addForeignKeys(string $table, array $foreignKeys, ?OutputInterface $output): array
+    private function addForeignKeys(string $table, array $foreignKeys, ?SymfonyStyle $io): array
     {
         foreach ($foreignKeys as $column => $foreignKey) {
             $relatedColumn = $foreignKey['column'];
@@ -130,15 +130,15 @@ final class CreateService
                         if ($primaryKeyCount === 1) {
                             $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
                         } elseif ($primaryKeyCount > 1) {
-                            if ($output) {
-                                $output->writeln(
+                            if ($io) {
+                                $io->writeln(
                                     "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
                                     "composite. Default name \"id\" will be used for related field</>\n"
                                 );
                             }
                         } elseif ($primaryKeyCount === 0) {
-                            if ($output) {
-                                $output->writeln(
+                            if ($io) {
+                                $io->writeln(
                                     "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
                                     "primary key. Default name \"id\" will be used for related field.</>\n"
                                 );
@@ -146,8 +146,8 @@ final class CreateService
                         }
                     }
                 } catch (ReflectionException $e) {
-                    if ($output) {
-                        $output->writeln(
+                    if ($io) {
+                        $io->writeln(
                             '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
                             "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
                         );
