@@ -71,15 +71,17 @@ final class RedoCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
+        $this->downService->setIO($io);
+        $this->updateService->setIO($io);
 
-        $migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $migrationService->dbVersion();
+            $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
         }
@@ -109,18 +111,15 @@ final class RedoCommand extends Command
 
 
         if ($helper->ask($input, $output, $question)) {
-            $downService = $this->downService->withIO($io);
             foreach ($migrations as $migration) {
-                if (!$downService->run($migration)) {
+                if (!$this->downService->run($migration)) {
                     $io->error('Migration failed. The rest of the migrations are canceled.');
 
                     return ExitCode::UNSPECIFIED_ERROR;
                 }
             }
-
-            $updateService = $this->updateService->withIO($io);
             foreach (array_reverse($migrations) as $migration) {
-                if (!$updateService->run($migration)) {
+                if (!$this->updateService->run($migration)) {
                     $io->error('Migration failed. The rest of the migrations are canceled.');
 
                     return ExitCode::UNSPECIFIED_ERROR;
@@ -133,7 +132,7 @@ final class RedoCommand extends Command
             $io->success('Migration redone successfully.');
         }
 
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

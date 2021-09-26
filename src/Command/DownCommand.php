@@ -69,16 +69,17 @@ final class DownCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
+        $this->downService->setIO($io);
 
-        $migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         $limit = null;
         if (!$input->getOption('all')) {
             $limit = (int)$input->getOption('limit');
             if ($limit <= 0) {
                 $io->error('The limit argument must be greater than 0.');
-                $migrationService->dbVersion();
+                $this->migrationService->dbVersion();
                 return ExitCode::DATAERR;
             }
         }
@@ -113,7 +114,7 @@ final class DownCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             foreach ($migrations as $migration) {
-                if (!$this->downService->withIO($io)->run($migration)) {
+                if (!$this->downService->run($migration)) {
                     $output->writeln(
                         "<fg=red>\n$reverted from $n " . ($reverted === 1 ? 'migration was' : 'migrations were') .
                         ' reverted.</>'
@@ -133,7 +134,7 @@ final class DownCommand extends Command
             $io->success('Migrated down successfully.');
         }
 
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

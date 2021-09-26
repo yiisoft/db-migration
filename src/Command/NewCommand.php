@@ -51,24 +51,24 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
 
-        $migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $migrationService->dbVersion();
+            $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
         }
 
-        $migrations = $migrationService->getNewMigrations();
+        $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $io->success('No new migrations found. Your system is up-to-date.');
-            $migrationService->dbVersion();
+            $this->migrationService->dbVersion();
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -88,7 +88,7 @@ final class NewCommand extends Command
             $output->writeln("<info>\t" . $migration . '</info>');
         }
 
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

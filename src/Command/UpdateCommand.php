@@ -65,20 +65,21 @@ final class UpdateCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
+        $this->updateService->setIO($io);
 
-        if ($migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
+        if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 
         $limit = (int) $input->getOption('limit');
 
-        $migrations = $migrationService->getNewMigrations();
+        $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $output->writeln("<fg=green> >>> No new migrations found.</>\n");
             $io->success('Your system is up-to-date.');
-            $migrationService->dbVersion();
+            $this->migrationService->dbVersion();
 
             return ExitCode::OK;
         }
@@ -127,11 +128,10 @@ final class UpdateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            $updateService = $this->updateService->withIO($io);
             foreach ($migrations as $migration) {
-                if (!$updateService->run($migration)) {
+                if (!$this->updateService->run($migration)) {
                     $output->writeln("\n<fg=red>$applied from $n " . ($applied === 1 ? 'migration was' :
-                        'migrations were') . " applied.</>\n");
+                            'migrations were') . " applied.</>\n");
                     $output->writeln("\n<fg=red>Migration failed. The rest of the migrations are canceled.</>\n");
 
                     return ExitCode::UNSPECIFIED_ERROR;
@@ -145,7 +145,7 @@ final class UpdateCommand extends Command
             $io->success('Updated successfully.');
         }
 
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

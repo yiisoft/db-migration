@@ -35,7 +35,8 @@ final class ListTablesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $this->listTablesService->setIO($io);
 
-        return $this->listTablesService->withIO($io)->run();
+        return $this->listTablesService->run();
     }
 }

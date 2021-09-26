@@ -48,12 +48,10 @@ final class MigrationService
         $this->generatorTemplateFiles();
     }
 
-    public function withIO(?SymfonyStyle $io): self
+    public function setIO(?SymfonyStyle $io): void
     {
-        $new = clone $this;
-        $new->io = $io;
-        $new->migrator->setIO($io);
-        return $new;
+        $this->io = $io;
+        $this->migrator->setIO($io);
     }
 
     /**

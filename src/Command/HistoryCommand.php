@@ -57,15 +57,15 @@ final class HistoryCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
 
-        $migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::$defaultName);
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $migrationService->dbVersion();
+            $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
         }
@@ -94,7 +94,7 @@ final class HistoryCommand extends Command
 
         $output->writeln("\n");
         $io->success('Success.');
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

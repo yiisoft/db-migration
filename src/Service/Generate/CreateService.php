@@ -46,12 +46,10 @@ final class CreateService
         $this->view = $view;
     }
 
-    public function withIO(?SymfonyStyle $io): self
+    public function setIO(?SymfonyStyle $io): void
     {
-        $new = clone $this;
-        $new->io = $io;
-        $new->migrationService = $this->migrationService->withIO($io);
-        return $new;
+        $this->io = $io;
+        $this->migrationService->setIO($io);
     }
 
     public function run(

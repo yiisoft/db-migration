@@ -127,9 +127,10 @@ final class CreateCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
-        $migrationService = $this->migrationService->withIO($io);
+        $this->migrationService->setIO($io);
+        $this->createService->setIO($io);
 
-        if ($migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
+        if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 
@@ -178,7 +179,7 @@ final class CreateCommand extends Command
 
         $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
 
-        [$namespace, $className] = $migrationService->generateClassName($namespace, $name);
+        [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
         $nameLimit = $this->migrator->getMigrationNameLimit();
 
@@ -189,7 +190,7 @@ final class CreateCommand extends Command
         }
 
         $migrationPath = $this->aliases->get(
-            FileHelper::normalizePath($migrationService->findMigrationPath($namespace))
+            FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
         );
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
@@ -209,9 +210,9 @@ final class CreateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            $content = $this->createService->withIO($io)->run(
+            $content = $this->createService->run(
                 $command,
-                $migrationService->getGeneratorTemplateFiles($command),
+                $this->migrationService->getGeneratorTemplateFiles($command),
                 $table,
                 $className,
                 $namespace,
@@ -226,7 +227,7 @@ final class CreateCommand extends Command
             $io->success('New migration created successfully.');
         }
 
-        $migrationService->dbVersion();
+        $this->migrationService->dbVersion();
 
         return ExitCode::OK;
     }

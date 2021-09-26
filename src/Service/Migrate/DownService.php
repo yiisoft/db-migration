@@ -26,13 +26,11 @@ final class DownService
         $this->migrator = $migrator;
     }
 
-    public function withIO(?SymfonyStyle $io): self
+    public function setIO(?SymfonyStyle $io): void
     {
-        $new = clone $this;
-        $new->io = $io;
-        $new->migrationService = $this->migrationService->withIO($io);
-        $new->migrator->setIO($io);
-        return $new;
+        $this->io = $io;
+        $this->migrationService->setIO($io);
+        $this->migrator->setIO($io);
     }
 
     /**
