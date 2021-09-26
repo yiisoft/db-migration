@@ -5,57 +5,54 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_column;
 use function array_merge;
+use function count;
 use function implode;
 use function preg_match;
 
 final class ListTablesService
 {
     private ConnectionInterface $db;
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private Migrator $migrator;
 
     public function __construct(
         ConnectionInterface $db,
-        ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
         $this->db = $db;
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
     }
 
-    public function run(OutputInterface $output): int
+    public function run(SymfonyStyle $io): int
     {
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
         $dsn = $this->db->getDSN();
 
         if (empty($tables) || implode(',', $tables) === $migrationTable) {
-            $this->consoleHelper->io()->error('Your database does not contain any tables yet.');
+            $io->error('Your database does not contain any tables yet.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $dbname = $this->getDsnAttribute('dbname', $dsn);
 
-        $this->consoleHelper->io()->section("List of tables for database: {$dbname}");
+        $io->section("List of tables for database: {$dbname}");
 
         $count = 0;
 
-        $table = new Table($output);
+        $table = new Table($io);
         $table->setHeaders(['Nº', 'Table']);
 
         foreach ($tables as $value) {
