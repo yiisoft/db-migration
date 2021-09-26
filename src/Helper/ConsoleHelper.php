@@ -9,14 +9,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Strings\Inflector;
 
 final class ConsoleHelper
 {
     private ?InputInterface $input = null;
     private ?OutputInterface $output = null;
     private ?SymfonyStyle $io = null;
-    private ?Inflector $inflector = null;
 
     public function input(): InputInterface
     {
