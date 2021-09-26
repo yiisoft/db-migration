@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 
 final class StubMigrationInformer implements MigrationInformerInterface
@@ -33,5 +34,10 @@ final class StubMigrationInformer implements MigrationInformerInterface
     public function getOutput(): string
     {
         return $this->output;
+    }
+
+    public function setIO(?SymfonyStyle $io): void
+    {
+        // do nothing
     }
 }

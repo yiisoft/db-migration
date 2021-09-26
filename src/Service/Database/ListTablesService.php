@@ -41,6 +41,7 @@ final class ListTablesService
         $new = clone $this;
         $new->io = $io;
         $new->migrationService = $this->migrationService->withIO($io);
+        $new->migrator->setIO($io);
         return $new;
     }
 

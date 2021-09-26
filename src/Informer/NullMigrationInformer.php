@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Informer;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
+
 /**
  * Ignores migration process informational messages.
  */
@@ -25,6 +27,11 @@ final class NullMigrationInformer implements MigrationInformerInterface
     }
 
     public function endCommand(string $message): void
+    {
+        // do nothing
+    }
+
+    public function setIO(?SymfonyStyle $io): void
     {
         // do nothing
     }

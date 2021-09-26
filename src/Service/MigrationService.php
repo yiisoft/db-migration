@@ -52,6 +52,7 @@ final class MigrationService
     {
         $new = clone $this;
         $new->io = $io;
+        $new->migrator->setIO($io);
         return $new;
     }
 
