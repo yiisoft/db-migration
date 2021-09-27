@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Symfony\Component\Console\Command\Command;
@@ -12,7 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -32,7 +32,6 @@ use function strlen;
  */
 final class UpdateCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
     private UpdateService $updateService;
     private MigrationService $migrationService;
 
@@ -40,13 +39,11 @@ final class UpdateCommand extends Command
     private Migrator $migrator;
 
     public function __construct(
-        ConsoleHelper $consoleHelper,
         UpdateService $updateService,
         MigrationService $migrationService,
         Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->consoleHelper = $consoleHelper;
         $this->updateService = $updateService;
         $this->migrationService = $migrationService;
 
@@ -66,6 +63,11 @@ final class UpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+        $this->migrator->setIO($io);
+        $this->migrationService->setIO($io);
+        $this->updateService->setIO($io);
+
         if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
@@ -76,7 +78,7 @@ final class UpdateCommand extends Command
 
         if (empty($migrations)) {
             $output->writeln("<fg=green> >>> No new migrations found.</>\n");
-            $this->consoleHelper->io()->success('Your system is up-to-date.');
+            $io->success('Your system is up-to-date.');
             $this->migrationService->dbVersion();
 
             return ExitCode::OK;
@@ -129,7 +131,7 @@ final class UpdateCommand extends Command
             foreach ($migrations as $migration) {
                 if (!$this->updateService->run($migration)) {
                     $output->writeln("\n<fg=red>$applied from $n " . ($applied === 1 ? 'migration was' :
-                        'migrations were') . " applied.</>\n");
+                            'migrations were') . " applied.</>\n");
                     $output->writeln("\n<fg=red>Migration failed. The rest of the migrations are canceled.</>\n");
 
                     return ExitCode::UNSPECIFIED_ERROR;
@@ -140,7 +142,7 @@ final class UpdateCommand extends Command
             $output->writeln(
                 "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
             );
-            $this->consoleHelper->io()->success('Updated successfully.');
+            $io->success('Updated successfully.');
         }
 
         $this->migrationService->dbVersion();

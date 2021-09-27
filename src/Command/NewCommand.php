@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use function array_slice;
-use function count;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
-
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_slice;
+use function count;
 
 /**
  * Displays the un-applied new migrations.
@@ -29,14 +29,12 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
  */
 final class NewCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/new';
 
-    public function __construct(ConsoleHelper $consoleHelper, MigrationService $migrationService)
+    public function __construct(MigrationService $migrationService)
     {
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
 
         parent::__construct();
@@ -52,12 +50,15 @@ final class NewCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+        $this->migrationService->setIO($io);
+
         $this->migrationService->before(self::$defaultName);
 
         $limit = (int) $input->getOption('limit');
 
         if ($limit < 0) {
-            $this->consoleHelper->io()->error('The step argument must be greater than 0.');
+            $io->error('The step argument must be greater than 0.');
             $this->migrationService->dbVersion();
 
             return ExitCode::DATAERR;
@@ -66,7 +67,7 @@ final class NewCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $this->consoleHelper->io()->success('No new migrations found. Your system is up-to-date.');
+            $io->success('No new migrations found. Your system is up-to-date.');
             $this->migrationService->dbVersion();
 
             return ExitCode::UNSPECIFIED_ERROR;
@@ -76,11 +77,11 @@ final class NewCommand extends Command
 
         if ($limit && $n > $limit) {
             $migrations = array_slice($migrations, 0, $limit);
-            $this->consoleHelper->io()->warning(
+            $io->warning(
                 "Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n"
             );
         } else {
-            $this->consoleHelper->io()->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ':');
+            $io->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ':');
         }
 
         foreach ($migrations as $migration) {

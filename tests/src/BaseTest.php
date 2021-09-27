@@ -10,7 +10,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
@@ -24,7 +23,6 @@ use Yiisoft\Definitions\Reference;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\View\View;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -39,13 +37,6 @@ abstract class BaseTest extends TestCase
     public const DB_FILE = __DIR__ . '/../runtime/yiitest.sq3';
 
     private ?Container $container = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->getConsoleHelper()->output()->setVerbosity(OutputInterface::VERBOSITY_QUIET);
-    }
 
     protected function tearDown(): void
     {
@@ -144,11 +135,6 @@ abstract class BaseTest extends TestCase
     protected function getUpdateService(): UpdateService
     {
         return $this->getContainer()->get(UpdateService::class);
-    }
-
-    protected function getConsoleHelper(): ConsoleHelper
-    {
-        return $this->getContainer()->get(ConsoleHelper::class);
     }
 
     protected function getParams(): array

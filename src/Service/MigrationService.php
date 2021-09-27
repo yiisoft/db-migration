@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service;
 
+use Composer\Autoload\ClassLoader;
+use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
+
+use function dirname;
 
 final class MigrationService
 {
@@ -22,23 +28,30 @@ final class MigrationService
     private array $generatorTemplateFiles = [];
     private bool $useTablePrefix = true;
     private string $version = '1.0';
+    private Aliases $aliases;
     private ConnectionInterface $db;
-    private ConsoleHelper $consoleHelper;
     private Injector $injector;
     private Migrator $migrator;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
+        Aliases $aliases,
         ConnectionInterface $db,
-        ConsoleHelper $consoleHelper,
         Injector $injector,
         Migrator $migrator
     ) {
+        $this->aliases = $aliases;
         $this->db = $db;
-        $this->consoleHelper = $consoleHelper;
         $this->injector = $injector;
         $this->migrator = $migrator;
 
         $this->generatorTemplateFiles();
+    }
+
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->io = $io;
+        $this->migrator->setIO($io);
     }
 
     /**
@@ -60,18 +73,22 @@ final class MigrationService
         switch ($defaultName) {
             case 'migrate/create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
-                    $this->consoleHelper->io()->error(
-                        'At least one of `createNamespace` or `createPath` should be specified.'
-                    );
+                    if ($this->io) {
+                        $this->io->error(
+                            'At least one of `createNamespace` or `createPath` should be specified.'
+                        );
+                    }
 
                     $result = ExitCode::DATAERR;
                 }
                 break;
             case 'migrate/up':
                 if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
-                    $this->consoleHelper->io()->error(
-                        'At least one of `updateNamespaces` or `updatePaths` should be specified.'
-                    );
+                    if ($this->io) {
+                        $this->io->error(
+                            'At least one of `updateNamespaces` or `updatePaths` should be specified.'
+                        );
+                    }
 
                     $result = ExitCode::DATAERR;
                 }
@@ -116,7 +133,7 @@ final class MigrationService
         $migrations = [];
         foreach ($migrationPaths as $item) {
             [$updatePaths, $namespace] = $item;
-            $updatePaths = $this->consoleHelper->aliases()->get($updatePaths);
+            $updatePaths = $this->aliases->get($updatePaths);
 
             if (!file_exists($updatePaths)) {
                 continue;
@@ -212,9 +229,11 @@ final class MigrationService
 
     public function dbVersion(): void
     {
-        $this->consoleHelper->output()->writeln(
-            "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
-        );
+        if ($this->io) {
+            $this->io->writeln(
+                "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
+            );
+        }
     }
 
     /**
@@ -264,7 +283,7 @@ final class MigrationService
         $class = trim($class, '\\');
         if (strpos($class, '\\') === false) {
             foreach ($this->updatePaths as $path) {
-                $file = $this->consoleHelper->aliases()->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
+                $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
                     /** @psalm-suppress UnresolvableInclude */
@@ -289,7 +308,7 @@ final class MigrationService
             $namespace = $this->createNamespace;
         }
 
-        $class = 'M' . gmdate('ymdHis') . $this->consoleHelper->inflector()->toPascalCase($name);
+        $class = 'M' . gmdate('ymdHis') . (new Inflector())->toPascalCase($name);
 
         return [$namespace, $class];
     }
@@ -341,13 +360,14 @@ final class MigrationService
         $this->generatorTemplateFiles = $value;
 
         if ($value === [] && $this->generatorTemplateFiles === []) {
+            $baseDir = $this->aliases->get('@yiisoft/yii/db/migration');
             $this->generatorTemplateFiles = [
-                'create' => $this->consoleHelper->getBaseDir() . '/resources/views/migration.php',
-                'table' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
-                'dropTable' => $this->consoleHelper->getBaseDir() . '/resources/views/dropTableMigration.php',
-                'addColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/addColumnMigration.php',
-                'dropColumn' => $this->consoleHelper->getBaseDir() . '/resources/views/dropColumnMigration.php',
-                'junction' => $this->consoleHelper->getBaseDir() . '/resources/views/createTableMigration.php',
+                'create' => $baseDir . '/resources/views/migration.php',
+                'table' => $baseDir . '/resources/views/createTableMigration.php',
+                'dropTable' => $baseDir . '/resources/views/dropTableMigration.php',
+                'addColumn' => $baseDir . '/resources/views/addColumnMigration.php',
+                'dropColumn' => $baseDir . '/resources/views/dropColumnMigration.php',
+                'junction' => $baseDir . '/resources/views/createTableMigration.php',
             ];
         }
     }
@@ -363,6 +383,27 @@ final class MigrationService
     {
         $aliases = '@' . str_replace('\\', '/', $namespace);
 
-        return $this->consoleHelper->getPathFromNamespace($aliases);
+        return $this->getPathFromNamespace($aliases);
+    }
+
+    private function getPathFromNamespace(string $path): string
+    {
+        $namespacesPath = [];
+
+        /** @psalm-suppress UnresolvableInclude */
+        $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
+
+        foreach ($map as $namespace => $directorys) {
+            foreach ($directorys as $directory) {
+                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
+            }
+        }
+        return (new Aliases($namespacesPath))->get($path);
+    }
+
+    private function getVendorDir(): string
+    {
+        $class = new ReflectionClass(ClassLoader::class);
+        return dirname($class->getFileName(), 2);
     }
 }

@@ -4,37 +4,45 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Informer;
 
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Writes migration process informational messages into console.
  */
 final class ConsoleMigrationInformer implements MigrationInformerInterface
 {
-    private ConsoleHelper $helper;
-
-    public function __construct(ConsoleHelper $helper)
-    {
-        $this->helper = $helper;
-    }
+    private ?SymfonyStyle $io = null;
 
     public function beginCreateHistoryTable(string $message): void
     {
-        $this->helper->io()->section($message);
+        if ($this->io) {
+            $this->io->section($message);
+        }
     }
 
     public function endCreateHistoryTable(string $message): void
     {
-        $this->helper->output()->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+        if ($this->io) {
+            $this->io->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+        }
     }
 
     public function beginCommand(string $message): void
     {
-        $this->helper->output()->write('    > ' . $message . ' ...');
+        if ($this->io) {
+            $this->io->write('    > ' . $message . ' ...');
+        }
     }
 
     public function endCommand(string $message): void
     {
-        $this->helper->output()->writeln(' ' . $message);
+        if ($this->io) {
+            $this->io->writeln(' ' . $message);
+        }
+    }
+
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->io = $io;
     }
 }

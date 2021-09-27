@@ -10,9 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
+use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -85,7 +87,7 @@ use function strlen;
  */
 final class CreateCommand extends Command
 {
-    private ConsoleHelper $consoleHelper;
+    private Aliases $aliases;
     private CreateService $createService;
     private MigrationService $migrationService;
 
@@ -93,12 +95,12 @@ final class CreateCommand extends Command
     private Migrator $migrator;
 
     public function __construct(
-        ConsoleHelper $consoleHelper,
+        Aliases $aliases,
         CreateService $createService,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
-        $this->consoleHelper = $consoleHelper;
+        $this->aliases = $aliases;
         $this->createService = $createService;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
@@ -123,6 +125,11 @@ final class CreateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $io = new SymfonyStyle($input, $output);
+        $this->migrator->setIO($io);
+        $this->migrationService->setIO($io);
+        $this->createService->setIO($io);
+
         if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
@@ -153,7 +160,7 @@ final class CreateCommand extends Command
         }
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
-            $this->consoleHelper->io()->error(
+            $io->error(
                 'The migration name should contain letters, digits, underscore and/or backslash characters only.'
             );
 
@@ -163,26 +170,26 @@ final class CreateCommand extends Command
         $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
 
         if (!in_array($command, $availableCommands, true)) {
-            $this->consoleHelper->io()->error(
+            $io->error(
                 "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'
             );
 
             return ExitCode::DATAERR;
         }
 
-        $name = $this->generateName($command, $this->consoleHelper->inflector()->toPascalCase($name), $and);
+        $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
 
         [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
         $nameLimit = $this->migrator->getMigrationNameLimit();
 
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
-            $this->consoleHelper->io()->error('The migration name is too long.');
+            $io->error('The migration name is too long.');
 
             return ExitCode::DATAERR;
         }
 
-        $migrationPath = $this->consoleHelper->aliases()->get(
+        $migrationPath = $this->aliases->get(
             FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
         );
 
@@ -191,7 +198,7 @@ final class CreateCommand extends Command
         $helper = $this->getHelper('question');
 
         if (!file_exists($migrationPath)) {
-            $this->consoleHelper->io()->error("Invalid path directory {$migrationPath}");
+            $io->error("Invalid path directory {$migrationPath}");
 
             return ExitCode::DATAERR;
         }
@@ -217,7 +224,7 @@ final class CreateCommand extends Command
 
             $output->writeln("\n\t<info>$className</info>");
             $output->writeln("\n");
-            $this->consoleHelper->io()->success('New migration created successfully.');
+            $io->success('New migration created successfully.');
         }
 
         $this->migrationService->dbVersion();

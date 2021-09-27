@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
@@ -46,6 +47,11 @@ final class Migrator
     public function setInformer(MigrationInformerInterface $informer): void
     {
         $this->informer = $informer;
+    }
+
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->informer->setIO($io);
     }
 
     public function up(MigrationInterface $migration): void

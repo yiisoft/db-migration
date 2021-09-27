@@ -7,6 +7,8 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Command\Namespaces;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Command\CommandTest;
 
+use function dirname;
+
 abstract class NamespacesCommandTest extends CommandTest
 {
     private string $namespace = 'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\MigrationNamespace';
@@ -18,7 +20,7 @@ abstract class NamespacesCommandTest extends CommandTest
 
         $this->getMigrationService()->createNamespace($this->namespace);
         $this->getMigrationService()->updateNamespaces([$this->namespace]);
-        $this->path = $this->getConsoleHelper()->getPathFromNamespace('@' . str_replace('\\', '/', $this->namespace));
+        $this->path = dirname(__DIR__, 3) . '/runtime/MigrationNamespace';
 
         if (file_exists($this->path)) {
             FileHelper::clearDirectory($this->path);

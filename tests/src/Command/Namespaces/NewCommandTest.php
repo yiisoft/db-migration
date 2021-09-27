@@ -16,14 +16,22 @@ final class NewCommandTest extends NamespacesCommandTest
 
         $command = $this->getCommand();
 
-        $this->assertEquals(ExitCode::OK, $command->execute([]));
-
+        $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $words = explode("\n", $output);
+        $classNames = [];
+        foreach (['CreatePost', 'CreateUser'] as $name) {
+            preg_match_all('~M\d+' . $name . '$~m', $output, $matches);
+            if (isset($matches[0][0])) {
+                $classNames[] = $matches[0][0];
+            }
+        }
 
-        $this->assertFileExists($this->getPath() . '/' . $this->getClassShortname($words[0]) . '.php');
-        $this->assertFileExists($this->getPath() . '/' . $this->getClassShortname($words[1]) . '.php');
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Found 2 new migrations:', $output);
+        $this->assertCount(2, $classNames);
+        $this->assertFileExists($this->getPath() . '/' . $classNames[0] . '.php');
+        $this->assertFileExists($this->getPath() . '/' . $classNames[1] . '.php');
     }
 
     public function testIncorrectLimit(): void
@@ -62,12 +70,5 @@ final class NewCommandTest extends NamespacesCommandTest
         return new CommandTester(
             $this->getApplication()->find('migrate/new')
         );
-    }
-
-    private function getClassShortname(string $name): string
-    {
-        $name = trim($name);
-        $chunks = explode('\\', $name);
-        return array_pop($chunks);
     }
 }

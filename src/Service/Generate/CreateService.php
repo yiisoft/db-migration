@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 use ReflectionException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\View\View;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_merge;
@@ -30,22 +30,26 @@ final class CreateService
 {
     private Aliases $aliases;
     private ConnectionInterface $db;
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private View $view;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         Aliases $aliases,
         ConnectionInterface $db,
-        ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         View $view
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
         $this->view = $view;
+    }
+
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->io = $io;
+        $this->migrationService->setIO($io);
     }
 
     public function run(
@@ -112,17 +116,17 @@ final class CreateService
      *
      * @return array
      */
-    private function addForeignKeys(string $table, array $foreignKeys = []): array
+    private function addForeignKeys(string $table, array $foreignKeys): array
     {
         foreach ($foreignKeys as $column => $foreignKey) {
             $relatedColumn = $foreignKey['column'];
             $relatedTable = $foreignKey['table'];
 
             /**
-            * We're trying to get it from table schema.
-            *
-            * {@see https://github.com/yiisoft/yii2/issues/12748}
-            */
+             * We're trying to get it from table schema.
+             *
+             * {@see https://github.com/yiisoft/yii2/issues/12748}
+             */
             if ($relatedColumn === null) {
                 $relatedColumn = 'id';
                 try {
@@ -132,22 +136,28 @@ final class CreateService
                         if ($primaryKeyCount === 1) {
                             $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
                         } elseif ($primaryKeyCount > 1) {
-                            $this->consoleHelper->output()->writeln(
-                                "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
-                                "composite. Default name \"id\" will be used for related field</>\n"
-                            );
+                            if ($this->io) {
+                                $this->io->writeln(
+                                    "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
+                                    "composite. Default name \"id\" will be used for related field</>\n"
+                                );
+                            }
                         } elseif ($primaryKeyCount === 0) {
-                            $this->consoleHelper->output()->writeln(
-                                "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
-                                "primary key. Default name \"id\" will be used for related field.</>\n"
-                            );
+                            if ($this->io) {
+                                $this->io->writeln(
+                                    "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
+                                    "primary key. Default name \"id\" will be used for related field.</>\n"
+                                );
+                            }
                         }
                     }
                 } catch (ReflectionException $e) {
-                    $this->consoleHelper->output()->writeln(
-                        '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
-                        "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
-                    );
+                    if ($this->io) {
+                        $this->io->writeln(
+                            '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
+                            "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
+                        );
+                    }
                 }
             }
 

@@ -4,65 +4,78 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Database;
 
-use Yiisoft\Yii\Db\Migration\Migrator;
-use function array_column;
-use function array_merge;
-use function implode;
-use function preg_match;
+use RuntimeException;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Connection\ConnectionInterface;
-
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Helper\ConsoleHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function array_column;
+use function array_merge;
+use function count;
+use function implode;
+use function preg_match;
 
 final class ListTablesService
 {
     private ConnectionInterface $db;
-    private ConsoleHelper $consoleHelper;
     private MigrationService $migrationService;
     private Migrator $migrator;
+    private ?SymfonyStyle $io = null;
 
     public function __construct(
         ConnectionInterface $db,
-        ConsoleHelper $consoleHelper,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
         $this->db = $db;
-        $this->consoleHelper = $consoleHelper;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
     }
 
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->io = $io;
+        $this->migrationService->setIO($io);
+        $this->migrator->setIO($io);
+    }
+
     public function run(): int
     {
+        if ($this->io === null) {
+            throw new RuntimeException('Need set output decorator via `withIO()`.');
+        }
+
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
         $dsn = $this->db->getDSN();
 
         if (empty($tables) || implode(',', $tables) === $migrationTable) {
-            $this->consoleHelper->io()->error('Your database does not contain any tables yet.');
+            $this->io->error('Your database does not contain any tables yet.');
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $dbname = $this->getDsnAttribute('dbname', $dsn);
 
-        $this->consoleHelper->io()->section("List of tables for database: {$dbname}");
+        $this->io->section("List of tables for database: {$dbname}");
 
         $count = 0;
 
-        $this->consoleHelper->table()->setHeaders(['Nº', 'Table']);
+        $table = new Table($this->io);
+        $table->setHeaders(['#', 'Table']);
 
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
-                $this->consoleHelper->table()->addRow([(string)($count), (string)($value)]);
+                $table->addRow([(string) ($count), (string) ($value)]);
             }
         }
 
-        $this->consoleHelper->table()->render();
+        $table->render();
         $this->migrationService->dbVersion();
 
         return ExitCode::OK;
