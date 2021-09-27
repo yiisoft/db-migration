@@ -66,7 +66,7 @@ final class ListTablesService
         $count = 0;
 
         $table = new Table($this->io);
-        $table->setHeaders(['Nº', 'Table']);
+        $table->setHeaders(['#', 'Table']);
 
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
