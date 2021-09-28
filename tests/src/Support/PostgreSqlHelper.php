@@ -43,7 +43,7 @@ final class PostgreSqlHelper
                         '@runtime' => dirname(__DIR__, 2) . '/runtime',
                         '@yiisoft/yii/db/migration' => '@root',
                     ],
-                )
+                ),
             ],
             static function (string $id) use (&$container): object {
                 switch ($id) {
