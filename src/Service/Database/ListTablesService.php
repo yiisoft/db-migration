@@ -13,8 +13,6 @@ use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
-use function array_column;
-use function array_merge;
 use function count;
 use function implode;
 use function preg_match;
@@ -83,26 +81,24 @@ final class ListTablesService
 
     private function getAllTableNames(): array
     {
-        $tables = [];
-        $schemaNames = [];
-
         try {
             $schemaNames = $this->db->getSchema()->getSchemaNames(true);
-        } catch (NotSupportedException $ex) {
+        } catch (NotSupportedException $e) {
+            $schemaNames = [];
         }
 
         if (count($schemaNames) < 2) {
-            $tables = $this->db->getSchema()->getTableNames();
-        } else {
-            $schemaTables = [];
-            foreach ($schemaNames as $schemaName) {
-                $schemaTables[] = array_column($this->db->getSchema()->getTableSchemas($schemaName), 'fullName');
-            }
-
-            $tables = array_merge($tables, $schemaTables);
+            return $this->db->getSchema()->getTableNames();
         }
 
-        return $tables;
+        $tableNames = [];
+        foreach ($schemaNames as $schemaName) {
+            foreach ($this->db->getSchema()->getTableSchemas($schemaName) as $tableName) {
+                $tableNames[] = $tableName->getFullName();
+            }
+        }
+
+        return $tableNames;
     }
 
     private function getDsnAttribute(string $name, string $dsn): ?string
