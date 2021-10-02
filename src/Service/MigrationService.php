@@ -360,14 +360,14 @@ final class MigrationService
         $this->generatorTemplateFiles = $value;
 
         if ($value === [] && $this->generatorTemplateFiles === []) {
-            $baseDir = $this->aliases->get('@yiisoft/yii/db/migration');
+            $baseDir = dirname(__DIR__, 2) . '/resources/views';
             $this->generatorTemplateFiles = [
-                'create' => $baseDir . '/resources/views/migration.php',
-                'table' => $baseDir . '/resources/views/createTableMigration.php',
-                'dropTable' => $baseDir . '/resources/views/dropTableMigration.php',
-                'addColumn' => $baseDir . '/resources/views/addColumnMigration.php',
-                'dropColumn' => $baseDir . '/resources/views/dropColumnMigration.php',
-                'junction' => $baseDir . '/resources/views/createTableMigration.php',
+                'create' => $baseDir . '/migration.php',
+                'table' => $baseDir . '/createTableMigration.php',
+                'dropTable' => $baseDir . '/dropTableMigration.php',
+                'addColumn' => $baseDir . '/addColumnMigration.php',
+                'dropColumn' => $baseDir . '/dropColumnMigration.php',
+                'junction' => $baseDir . '/createTableMigration.php',
             ];
         }
     }

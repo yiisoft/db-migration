@@ -22,7 +22,6 @@ use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
-use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -31,6 +30,8 @@ use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
+use function dirname;
 
 abstract class BaseTest extends TestCase
 {
@@ -57,9 +58,7 @@ abstract class BaseTest extends TestCase
                 Aliases::class => [
                     '__construct()' => [
                         [
-                            '@root' => dirname(__DIR__, 2),
                             '@runtime' => dirname(__DIR__) . '/runtime',
-                            '@yiisoft/yii/db/migration' => '@root',
                         ],
                     ],
                 ],
@@ -81,13 +80,6 @@ abstract class BaseTest extends TestCase
                     'class' => SqlLiteConnection::class,
                     '__construct()' => [
                         'dsn' => 'sqlite:' . self::DB_FILE,
-                    ],
-                ],
-
-                View::class => [
-                    'class' => View::class,
-                    '__construct()' => [
-                        'basePath' => '@root/resources/views',
                     ],
                 ],
 

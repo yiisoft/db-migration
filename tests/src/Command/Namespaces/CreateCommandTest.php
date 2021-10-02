@@ -62,7 +62,7 @@ EOF;
 
     public function testExecuteInputNamespaces(): void
     {
-        $this->getMigrationService()->createPath('@yiisoft/yii/db/migration/migration');
+        $this->getMigrationService()->createPath('@runtime/migration');
 
         $command = $this->getCommand();
 
