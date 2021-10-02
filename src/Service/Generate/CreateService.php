@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
 use ReflectionException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
@@ -15,6 +16,7 @@ use function array_merge;
 use function array_shift;
 use function array_unshift;
 use function count;
+use function dirname;
 use function implode;
 use function in_array;
 use function is_array;
@@ -38,12 +40,15 @@ final class CreateService
         Aliases $aliases,
         ConnectionInterface $db,
         MigrationService $migrationService,
-        View $view
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
         $this->migrationService = $migrationService;
-        $this->view = $view;
+        $this->view = new View(
+            dirname(__DIR__, 3) . '/resources/views',
+            $eventDispatcher,
+        );
     }
 
     public function setIO(?SymfonyStyle $io): void

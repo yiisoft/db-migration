@@ -11,12 +11,6 @@ use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 return [
-    'yiisoft/aliases' => [
-        'aliases' => [
-            '@yiisoft/yii/db/migration' => '@vendor/yiisoft/yii-db-migration',
-        ],
-    ],
-
     'yiisoft/yii-console' => [
         'commands' => [
             'migrate/create' => CreateCommand::class,
@@ -30,7 +24,6 @@ return [
     ],
 
     'yiisoft/yii-db-migration' => [
-        'viewsBasePath' => '@yiisoft/yii/db/migration/resources/view',
         'createNamespace' => '',
         'createPath' => '',
         'updateNamespaces' => [],
