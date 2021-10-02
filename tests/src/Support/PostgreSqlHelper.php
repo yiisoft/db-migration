@@ -39,9 +39,7 @@ final class PostgreSqlHelper
                 ProfilerInterface::class => new Profiler(new NullLogger()),
                 Aliases::class => new Aliases(
                     [
-                        '@root' => dirname(__DIR__, 3),
                         '@runtime' => dirname(__DIR__, 2) . '/runtime',
-                        '@yiisoft/yii/db/migration' => '@root',
                     ],
                 ),
             ],
