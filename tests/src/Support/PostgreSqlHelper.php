@@ -15,7 +15,6 @@ use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Connection\LazyConnectionDependencies;
 use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Profiler\Profiler;
@@ -45,13 +44,11 @@ final class PostgreSqlHelper
             ],
             static function (string $id) use (&$container): object {
                 switch ($id) {
-                    case LazyConnectionDependencies::class:
-                        return new LazyConnectionDependencies($container);
-
                     case ConnectionInterface::class:
                         return new PgSqlConnection(
                             'pgsql:host=127.0.0.1;port=5432;dbname=testdb;user=postgres;password=postgres',
-                            $container->get(LazyConnectionDependencies::class),
+                            $container->get(QueryCache::class),
+                            $container->get(SchemaCache::class),
                         );
 
                     case PgSqlConnection::class:
