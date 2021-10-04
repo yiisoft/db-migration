@@ -18,9 +18,11 @@ use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
+use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class ContainerHelper
@@ -50,7 +52,7 @@ final class ContainerHelper
                     $container->get(ConnectionInterface::class),
                     $container->get(SchemaCache::class),
                     $container->get(QueryCache::class),
-                    new ConsoleMigrationInformer(),
+                    $container->get(ConsoleMigrationInformer::class),
                 );
 
             case MigrationService::class:
@@ -69,12 +71,29 @@ final class ContainerHelper
                     $container->get(EventDispatcherInterface::class),
                 );
 
+            case UpdateService::class:
+                return new UpdateService(
+                    $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
+                );
+
+            case ConsoleMigrationInformer::class:
+                return new ConsoleMigrationInformer();
+
             case CreateCommand::class:
                 return new CreateCommand(
                     $container->get(Aliases::class),
                     $container->get(CreateService::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
+                );
+
+            case UpdateCommand::class:
+                return new UpdateCommand(
+                    $container->get(UpdateService::class),
+                    $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
+                    $container->get(ConsoleMigrationInformer::class),
                 );
 
             default:

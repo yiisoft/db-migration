@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Support;
 
+use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
+use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function dirname;
@@ -61,6 +63,41 @@ final class MigrationHelper
         }
 
         return '';
+    }
+
+    public static function createMigration(
+        ContainerInterface $container,
+        string $name,
+        string $command,
+        string $table,
+        array $fields = [],
+        Closure $callback = null
+    ): string {
+        $migrationService = $container->get(MigrationService::class);
+        $createService = $container->get(CreateService::class);
+        $aliases = $container->get(Aliases::class);
+
+        [$namespace, $className] = $migrationService->generateClassName(null, $name);
+
+        $content = $createService->run(
+            $command,
+            $migrationService->getGeneratorTemplateFiles($command),
+            $table,
+            $className,
+            $namespace,
+            $fields
+        );
+
+        if ($callback) {
+            $content = $callback($content);
+        }
+
+        file_put_contents(
+            $aliases->get($migrationService->findMigrationPath($namespace)) . '/' . $className . '.php',
+            $content
+        );
+
+        return $namespace . '\\' . $className;
     }
 
     private static function preparePath(string $path): void
