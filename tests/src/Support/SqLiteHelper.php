@@ -19,7 +19,7 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function dirname;
 
-final class SqlLiteHelper
+final class SqLiteHelper
 {
     public static function createContainer(): ContainerInterface
     {

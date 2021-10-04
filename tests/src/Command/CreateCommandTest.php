@@ -12,7 +12,7 @@ use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqlLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
 
 final class CreateCommandTest extends TestCase
 {
@@ -20,9 +20,9 @@ final class CreateCommandTest extends TestCase
 
     public function testCreateTableWithPath(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
         $migrationsPath = MigrationHelper::useMigrationsPath($container);
-        SqlLiteHelper::clearDatabase($container);
+        SqLiteHelper::clearDatabase($container);
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);
@@ -71,9 +71,9 @@ EOF;
 
     public function testCreateTableWithNamespace(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
         $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
-        SqlLiteHelper::clearDatabase($container);
+        SqLiteHelper::clearDatabase($container);
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);

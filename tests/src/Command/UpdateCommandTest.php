@@ -14,15 +14,15 @@ use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqlLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
 
 final class UpdateCommandTest extends TestCase
 {
     public function testExecuteWithPath(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
         MigrationHelper::useMigrationsPath($container);
-        SqlLiteHelper::clearDatabase($container);
+        SqLiteHelper::clearDatabase($container);
 
         MigrationHelper::createMigration(
             $container,
@@ -60,9 +60,9 @@ final class UpdateCommandTest extends TestCase
 
     public function testExecuteWithNamespace(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
         MigrationHelper::useMigrationsNamespace($container);
-        SqlLiteHelper::clearDatabase($container);
+        SqLiteHelper::clearDatabase($container);
 
         MigrationHelper::createMigration(
             $container,
@@ -183,9 +183,9 @@ final class UpdateCommandTest extends TestCase
 
     public function testExecuteAgain(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
         MigrationHelper::useMigrationsNamespace($container);
-        SqlLiteHelper::clearDatabase($container);
+        SqLiteHelper::clearDatabase($container);
 
         MigrationHelper::createMigration(
             $container,

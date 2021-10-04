@@ -10,13 +10,13 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqlLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
 
 final class ListTablesServiceTest extends TestCase
 {
     public function testWithoutIO(): void
     {
-        $container = SqlLiteHelper::createContainer();
+        $container = SqLiteHelper::createContainer();
 
         $service = new ListTablesService(
             $container->get(ConnectionInterface::class),
