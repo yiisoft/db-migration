@@ -14,6 +14,7 @@ use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\SqlLiteHelper;
 
 final class ListTablesCommandTest extends TestCase
 {
@@ -35,6 +36,20 @@ final class ListTablesCommandTest extends TestCase
         $this->assertStringContainsString('List of tables for database: testdb', $output);
         $this->assertStringContainsString(' backup.test2 ', $output);
         $this->assertStringContainsString(' test1 ', $output);
+    }
+
+    public function testWithoutTables(): void
+    {
+        $container = SqlLiteHelper::createContainer();
+        SqlLiteHelper::clearDatabase($container);
+
+        $command = $this->getCommand($container);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+        $this->assertStringContainsString('Your database does not contain any tables yet.', $output);
     }
 
     private function getCommand(ContainerInterface $container): CommandTester
