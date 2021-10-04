@@ -431,58 +431,6 @@ EOF;
         $this->assertEqualsWithoutLE($generated, $expectedPhp);
     }
 
-    public function testTable(): void
-    {
-        $command = $this->getCommand();
-
-        $command->setInputs(['yes']);
-
-        $this->assertEquals(
-            ExitCode::OK,
-            $command->execute([
-                'name' => 'post',
-                '--command' => 'table',
-            ])
-        );
-
-        $output = $command->getDisplay(true);
-        $className = $this->findMigrationClassNameInOutput($output);
-
-        $this->assertStringContainsString('Create new migration y/n:', $output);
-
-        $expectedPhp = <<<EOF
-<?php
-
-declare(strict_types=1);
-
-namespace {$this->getNamespace()};
-
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-
-/**
- * Handles the creation of table `post`.
- */
-final class $className implements RevertibleMigrationInterface
-{
-    public function up(MigrationBuilder \$b): void
-    {
-        \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-        ]);
-    }
-
-    public function down(MigrationBuilder \$b): void
-    {
-        \$b->dropTable('post');
-    }
-}
-
-EOF;
-        $generated = file_get_contents($this->getPath() . '/' . $className . '.php');
-        $this->assertEqualsWithoutLE($generated, $expectedPhp);
-    }
-
     public function testTableWithFields(): void
     {
         $command = $this->getCommand();
