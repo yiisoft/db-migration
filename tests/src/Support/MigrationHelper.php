@@ -54,15 +54,8 @@ final class MigrationHelper
 
     public static function findMigrationClassNameInOutput(string $output): string
     {
-        $words = explode(' ', $output);
-
-        foreach ($words as $word) {
-            if (preg_match('/^\s*M\d{12}\D.*/', $word)) {
-                return trim($word);
-            }
-        }
-
-        return '';
+        preg_match('/.*\s+(M\d{12}\D\S*)\s+.*/m', $output, $matches);
+        return $matches[1] ?? '';
     }
 
     public static function createMigration(

@@ -12,6 +12,7 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Sqlite\ColumnSchemaBuilder;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
+use Yiisoft\Yii\Db\Migration\Tests\Support\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\StubMigrationInformer;
@@ -506,18 +507,12 @@ final class MigrationBuilderTest extends TestCase
 
     private function createTable(string $name, array $fields): void
     {
-        $this->container->get(ConnectionInterface::class)
-            ->createCommand()
-            ->createTable($name, $fields)
-            ->execute();
+        DbHelper::createTable($this->container, $name, $fields);
     }
 
     private function insert(string $table, array $columns): void
     {
-        $this->container->get(ConnectionInterface::class)
-            ->createCommand()
-            ->insert($table, $columns)
-            ->execute();
+        DbHelper::insert($this->container, $table, $columns);
     }
 
     private function assertInformerOutputContains(string $string): void
