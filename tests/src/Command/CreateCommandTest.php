@@ -140,9 +140,11 @@ EOF;
         $exitCode = $command->execute([
             'name' => 'post',
             '--command' => 'table',
-            '--fields' => 'user_id:integer:foreignKey,' .
+            '--fields' => 'name:string:defaultValue("test:name"),' .
+                'user_id:integer:foreignKey,' .
                 'tag_id:integer:foreignKey,' .
-                'category_id:integer:foreignKey',
+                'category_id:integer:foreignKey,' .
+                'category_id2:integer:foreignKey(category id2)',
         ]);
         $output = $command->getDisplay(true);
 
@@ -166,6 +168,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%user}}`
  * - `{{%tag}}`
  * - `{{%category}}`
+ * - `{{%category}}`
  */
 final class $className implements RevertibleMigrationInterface
 {
@@ -173,9 +176,11 @@ final class $className implements RevertibleMigrationInterface
     {
         \$b->createTable('post', [
             'id' => \$b->primaryKey(),
+            'name' => \$b->string()->defaultValue("test:name"),
             'user_id' => \$b->integer(),
             'tag_id' => \$b->integer(),
             'category_id' => \$b->integer(),
+            'category_id2' => \$b->integer(),
         ]);
 
         // creates index for column `user_id`
@@ -228,6 +233,23 @@ final class $className implements RevertibleMigrationInterface
             'id',
             'CASCADE'
         );
+
+        // creates index for column `category_id2`
+        \$b->createIndex(
+            'idx-post-category_id2',
+            'post',
+            'category_id2'
+        );
+
+        // add foreign key for table `{{%category}}`
+        \$b->addForeignKey(
+            'fk-post-category_id2',
+            'post',
+            'category_id2',
+            '{{%category}}',
+            'id2',
+            'CASCADE'
+        );
     }
 
     public function down(MigrationBuilder \$b): void
@@ -265,6 +287,18 @@ final class $className implements RevertibleMigrationInterface
         // drops index for column `category_id`
         \$b->dropIndex(
             'idx-post-category_id',
+            'post'
+        );
+
+        // drops foreign key for table `{{%category}}`
+        \$b->dropForeignKey(
+            'fk-post-category_id2',
+            'post'
+        );
+
+        // drops index for column `category_id2`
+        \$b->dropIndex(
+            'idx-post-category_id2',
             'post'
         );
 
