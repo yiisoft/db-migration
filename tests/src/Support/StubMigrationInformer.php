@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests;
+namespace Yiisoft\Yii\Db\Migration\Tests\Support;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
