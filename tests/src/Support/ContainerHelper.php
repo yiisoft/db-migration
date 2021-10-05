@@ -17,10 +17,12 @@ use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
+use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
 use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -76,6 +78,12 @@ final class ContainerHelper
                     $container->get(Migrator::class),
                 );
 
+            case DownService::class:
+                return new DownService(
+                    $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
+                );
+
             case ConsoleMigrationInformer::class:
                 return new ConsoleMigrationInformer();
 
@@ -90,6 +98,14 @@ final class ContainerHelper
             case UpdateCommand::class:
                 return new UpdateCommand(
                     $container->get(UpdateService::class),
+                    $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
+                    $container->get(ConsoleMigrationInformer::class),
+                );
+
+            case DownCommand::class:
+                return new DownCommand(
+                    $container->get(DownService::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
                     $container->get(ConsoleMigrationInformer::class),
