@@ -183,7 +183,7 @@ final class MigrationBuilderTest extends TestCase
             'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
             'builder-type-with-comment' => [
                 (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
-                'test comment'
+                'test comment',
             ],
         ];
     }
@@ -256,7 +256,7 @@ final class MigrationBuilderTest extends TestCase
             'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
             'builder-type-with-comment' => [
                 (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
-                'test comment'
+                'test comment',
             ],
         ];
     }
