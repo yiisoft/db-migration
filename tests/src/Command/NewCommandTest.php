@@ -13,7 +13,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
-final class NewCommandTest1 extends TestCase
+final class NewCommandTest extends TestCase
 {
     public function testExecuteWithNamespace(): void
     {

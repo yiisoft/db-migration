@@ -33,7 +33,7 @@ final class PostgreSqlHelper
                 ProfilerInterface::class => new Profiler(new NullLogger()),
                 Aliases::class => new Aliases(
                     [
-                        '@runtime' => dirname(__DIR__, 2) . '/runtime',
+                        '@runtime' => dirname(__DIR__, 3) . '/runtime',
                     ],
                 ),
             ],
@@ -75,12 +75,5 @@ final class PostgreSqlHelper
 
         $connection->createCommand('drop schema if exists ' . $quotedName)->execute();
         $connection->createCommand('create schema ' . $quotedName)->execute();
-    }
-
-    public static function createTable(ContainerInterface $container, string $table, array $columns): void
-    {
-        $connection = $container->get(PgSqlConnection::class);
-        $connection->createCommand('drop table if exists ' . $connection->quoteTableName($table))->execute();
-        $connection->createCommand()->createTable($table, $columns)->execute();
     }
 }

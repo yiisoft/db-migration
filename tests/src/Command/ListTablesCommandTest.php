@@ -13,6 +13,7 @@ use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
@@ -23,8 +24,8 @@ final class ListTablesCommandTest extends TestCase
         $container = SqLiteHelper::createContainer();
 
         SqLiteHelper::clearDatabase($container);
-        SqLiteHelper::createTable($container, 'the_post', ['name' => 'string']);
-        SqLiteHelper::createTable($container, 'the_user', ['name' => 'string']);
+        DbHelper::createTable($container, 'the_post', ['name' => 'string']);
+        DbHelper::createTable($container, 'the_user', ['name' => 'string']);
 
         $command = $this->getCommand($container);
 
@@ -42,9 +43,9 @@ final class ListTablesCommandTest extends TestCase
         $container = PostgreSqlHelper::createContainer();
 
         PostgreSqlHelper::clearDatabase($container);
-        PostgreSqlHelper::createTable($container, 'public.test1', ['name' => 'string']);
         PostgreSqlHelper::createSchema($container, 'backup');
-        PostgreSqlHelper::createTable($container, 'backup.test2', ['name' => 'string']);
+        DbHelper::createTable($container, 'public.test1', ['name' => 'string']);
+        DbHelper::createTable($container, 'backup.test2', ['name' => 'string']);
 
         $command = $this->getCommand($container);
 

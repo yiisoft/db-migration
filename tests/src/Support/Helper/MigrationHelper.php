@@ -110,7 +110,7 @@ final class MigrationHelper
 
     private static function getPathForMigrationNamespace(): string
     {
-        return dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
+        return dirname(__DIR__, 3) . '/runtime/MigrationNamespace';
     }
 
     private static function getPathForMigrationPath(ContainerInterface $container): string

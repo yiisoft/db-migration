@@ -29,7 +29,7 @@ final class SqLiteHelper
                 CacheInterface::class => new Cache(new ArrayCache()),
                 Aliases::class => new Aliases(
                     [
-                        '@runtime' => dirname(__DIR__, 2) . '/runtime',
+                        '@runtime' => dirname(__DIR__, 3) . '/runtime',
                     ],
                 ),
             ],
@@ -37,7 +37,7 @@ final class SqLiteHelper
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new SqlLiteConnection(
-                            'sqlite:' . dirname(__DIR__, 2) . '/runtime/testdb.sq3',
+                            'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3',
                             $container->get(QueryCache::class),
                             $container->get(SchemaCache::class),
                         );
@@ -59,12 +59,5 @@ final class SqLiteHelper
         foreach ($db->getSchema()->getTableNames() as $tableName) {
             $db->createCommand()->dropTable($tableName)->execute();
         }
-    }
-
-    public static function createTable(ContainerInterface $container, string $table, array $columns): void
-    {
-        $connection = $container->get(SqlLiteConnection::class);
-        $connection->createCommand('drop table if exists ' . $connection->quoteTableName($table))->execute();
-        $connection->createCommand()->createTable($table, $columns)->execute();
     }
 }
