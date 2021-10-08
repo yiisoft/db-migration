@@ -11,8 +11,8 @@ use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class MigrationServiceTest extends TestCase
 {

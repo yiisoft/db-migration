@@ -10,7 +10,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class ListTablesServiceTest extends TestCase
 {

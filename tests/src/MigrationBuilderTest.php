@@ -12,10 +12,10 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Sqlite\ColumnSchemaBuilder;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\DbHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\StubMigrationInformer;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 final class MigrationBuilderTest extends TestCase
 {

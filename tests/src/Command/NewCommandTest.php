@@ -9,9 +9,9 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class NewCommandTest1 extends TestCase
 {

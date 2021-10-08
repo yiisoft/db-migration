@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\StubMigration;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
 
 final class UpRunnerTest extends TestCase
 {

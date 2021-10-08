@@ -10,9 +10,9 @@ use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\StubMigration;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
 
 final class MigratorTest extends TestCase
 {

@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\StubRevertibleMigration;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubRevertibleMigration;
 
 final class DownRunnerTest extends TestCase
 {

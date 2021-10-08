@@ -11,10 +11,10 @@ use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\DbHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class CreateCommandTest extends TestCase
 {

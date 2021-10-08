@@ -12,10 +12,10 @@ use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\PostgreSqlHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class UpdateCommandTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support;
+namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
 
 use Closure;
 use Psr\Container\ContainerInterface;
