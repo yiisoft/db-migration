@@ -13,8 +13,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
+use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
+use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_keys;
@@ -35,23 +35,23 @@ use function count;
  */
 final class RedoCommand extends Command
 {
-    private DownService $downService;
     private MigrationService $migrationService;
     private Migrator $migrator;
-    private UpdateService $updateService;
+    private DownRunner $downRunner;
+    private UpdateRunner $updateRunner;
 
     protected static $defaultName = 'migrate/redo';
 
     public function __construct(
-        DownService $downService,
         MigrationService $migrationService,
         Migrator $migrator,
         ConsoleMigrationInformer $informer,
-        UpdateService $updateService
+        DownRunner $downRunner,
+        UpdateRunner $updateRunner
     ) {
-        $this->downService = $downService;
+        $this->downRunner = $downRunner;
         $this->migrationService = $migrationService;
-        $this->updateService = $updateService;
+        $this->updateRunner = $updateRunner;
 
         $this->migrator = $migrator;
         $this->migrator->setInformer($informer);
@@ -72,8 +72,8 @@ final class RedoCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
-        $this->downService->setIO($io);
-        $this->updateService->setIO($io);
+        $this->downRunner->setIO($io);
+        $this->updateRunner->setIO($io);
 
         $this->migrationService->before(self::$defaultName);
 
@@ -111,19 +111,12 @@ final class RedoCommand extends Command
 
 
         if ($helper->ask($input, $output, $question)) {
-            foreach ($migrations as $migration) {
-                if (!$this->downService->run($migration)) {
-                    $io->error('Migration failed. The rest of the migrations are canceled.');
-
-                    return ExitCode::UNSPECIFIED_ERROR;
-                }
+            $instances = $this->migrationService->makeRevertibleMigrations($migrations);
+            foreach ($instances as $instance) {
+                $this->downRunner->run($instance);
             }
-            foreach (array_reverse($migrations) as $migration) {
-                if (!$this->updateService->run($migration)) {
-                    $io->error('Migration failed. The rest of the migrations are canceled.');
-
-                    return ExitCode::UNSPECIFIED_ERROR;
-                }
+            foreach (array_reverse($instances) as $instance) {
+                $this->updateRunner->run($instance);
             }
 
             $output->writeln(

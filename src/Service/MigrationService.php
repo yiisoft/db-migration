@@ -6,7 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
-use ReflectionException;
+use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -16,6 +16,7 @@ use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
 use function dirname;
 
@@ -244,20 +245,84 @@ final class MigrationService
      *
      * @param string $class the migration class name
      *
-     * @return MigrationInterface|null the migration instance
+     * @return object The migration instance
      */
-    public function createMigration(string $class): ?MigrationInterface
+    private function makeMigrationInstance(string $class): object
     {
-        $this->includeMigrationFile($class);
+        $class = trim($class, '\\');
+        if (strpos($class, '\\') === false) {
+            $isIncluded = false;
+            foreach ($this->updatePaths as $path) {
+                $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
+
+                if (is_file($file)) {
+                    /** @psalm-suppress UnresolvableInclude */
+                    require_once $file;
+                    $isIncluded = true;
+                    break;
+                }
+            }
+            if (!$isIncluded) {
+                throw new RuntimeException('Migration file not found.');
+            }
+        }
 
         /** @var class-string $class */
         $class = '\\' . $class;
 
-        try {
-            return $this->injector->make($class);
-        } catch (ReflectionException $e) {
-            return null;
+        return $this->injector->make($class);
+    }
+
+    public function makeMigration(string $class): MigrationInterface
+    {
+        $migration = $this->makeMigrationInstance($class);
+
+        if (!$migration instanceof MigrationInterface) {
+            throw new RuntimeException("Migration $class does not implement MigrationInterface.");
         }
+
+        return $migration;
+    }
+
+    /**
+     * @param string[] $classes
+     *
+     * @psalm-param class-string[] $classes
+     *
+     * @return MigrationInterface[]
+     */
+    public function makeMigrations(array $classes): array
+    {
+        return array_map(
+            fn (string $class) => $this->makeMigration($class),
+            $classes
+        );
+    }
+
+    public function makeRevertibleMigration(string $class): RevertibleMigrationInterface
+    {
+        $migration = $this->makeMigrationInstance($class);
+
+        if (!$migration instanceof RevertibleMigrationInterface) {
+            throw new RuntimeException("Migration $class does not implement RevertibleMigrationInterface.");
+        }
+
+        return $migration;
+    }
+
+    /**
+     * @param string[] $classes
+     *
+     * @psalm-param class-string[] $classes
+     *
+     * @return RevertibleMigrationInterface[]
+     */
+    public function makeRevertibleMigrations(array $classes): array
+    {
+        return array_map(
+            fn (string $class) => $this->makeRevertibleMigration($class),
+            $classes
+        );
     }
 
     public function createNamespace(string $value): void
@@ -268,30 +333,6 @@ final class MigrationService
     public function createPath(string $value): void
     {
         $this->createPath = $value;
-    }
-
-    /**
-     * Includes the migration file for a given migration class name.
-     *
-     * This function will do nothing on namespaced migrations, which are loaded by autoloading automatically. It will
-     * include the migration file, by searching {@see updatePaths} for classes without namespace.
-     *
-     * @param string $class the migration class name.
-     */
-    private function includeMigrationFile(string $class): void
-    {
-        $class = trim($class, '\\');
-        if (strpos($class, '\\') === false) {
-            foreach ($this->updatePaths as $path) {
-                $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
-
-                if (is_file($file)) {
-                    /** @psalm-suppress UnresolvableInclude */
-                    require_once $file;
-                    break;
-                }
-            }
-        }
     }
 
     /**

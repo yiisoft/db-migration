@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\Yii\Console\ExitCode;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
+use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_slice;
@@ -32,19 +32,19 @@ use function strlen;
  */
 final class UpdateCommand extends Command
 {
-    private UpdateService $updateService;
+    private UpdateRunner $updateRunner;
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/up';
     private Migrator $migrator;
 
     public function __construct(
-        UpdateService $updateService,
+        UpdateRunner $updateRunner,
         MigrationService $migrationService,
         Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->updateService = $updateService;
+        $this->updateRunner = $updateRunner;
         $this->migrationService = $migrationService;
 
         $this->migrator = $migrator;
@@ -66,7 +66,7 @@ final class UpdateCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
-        $this->updateService->setIO($io);
+        $this->updateRunner->setIO($io);
 
         if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
@@ -119,7 +119,6 @@ final class UpdateCommand extends Command
             $output->writeln("\t<fg=yellow>$migration</>");
         }
 
-        $applied = 0;
         $helper = $this->getHelper('question');
 
         $question = new ConfirmationQuestion(
@@ -128,15 +127,9 @@ final class UpdateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            foreach ($migrations as $migration) {
-                if (!$this->updateService->run($migration)) {
-                    $output->writeln("\n<fg=red>$applied from $n " . ($applied === 1 ? 'migration was' :
-                            'migrations were') . " applied.</>\n");
-                    $output->writeln("\n<fg=red>Migration failed. The rest of the migrations are canceled.</>\n");
-
-                    return ExitCode::UNSPECIFIED_ERROR;
-                }
-                $applied++;
+            $instances = $this->migrationService->makeMigrations($migrations);
+            foreach ($instances as $instance) {
+                $this->updateRunner->run($instance);
             }
 
             $output->writeln(
