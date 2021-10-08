@@ -329,7 +329,7 @@ EOF;
         $command->execute([
             'name' => 'post',
             '--command' => 'table',
-            '--fields' => 'name:string,user_id:integer:foreignKey'
+            '--fields' => 'name:string,user_id:integer:foreignKey',
         ]);
         $output = $command->getDisplay(true);
 
