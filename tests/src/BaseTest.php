@@ -27,8 +27,6 @@ use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function dirname;
@@ -119,16 +117,6 @@ abstract class BaseTest extends TestCase
         return $this->getContainer()->get(CreateService::class);
     }
 
-    protected function getDownService(): DownService
-    {
-        return $this->getContainer()->get(DownService::class);
-    }
-
-    protected function getUpdateService(): UpdateService
-    {
-        return $this->getContainer()->get(UpdateService::class);
-    }
-
     protected function getParams(): array
     {
         return include dirname(__DIR__, 2) . '/config/params.php';
@@ -176,8 +164,11 @@ abstract class BaseTest extends TestCase
 
     protected function applyNewMigrations(): void
     {
-        foreach ($this->getMigrationService()->getNewMigrations() as $migration) {
-            $this->getUpdateService()->run($migration);
+        $instances = $this->getMigrationService()->makeMigrations(
+            $this->getMigrationService()->getNewMigrations()
+        );
+        foreach ($instances as $instance) {
+            $this->getMigrator()->up($instance);
         }
     }
 
