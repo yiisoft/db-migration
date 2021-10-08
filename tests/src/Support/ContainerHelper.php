@@ -21,9 +21,9 @@ use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
+use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 final class ContainerHelper
@@ -46,6 +46,16 @@ final class ContainerHelper
             case EventDispatcherInterface::class:
                 return new Dispatcher(
                     new Provider(new ListenerCollection())
+                );
+
+            case UpdateRunner::class:
+                return new UpdateRunner(
+                    $container->get(Migrator::class),
+                );
+
+            case DownRunner::class:
+                return new DownRunner(
+                    $container->get(Migrator::class),
                 );
 
             case Migrator::class:
@@ -72,18 +82,6 @@ final class ContainerHelper
                     $container->get(EventDispatcherInterface::class),
                 );
 
-            case UpdateService::class:
-                return new UpdateService(
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case DownService::class:
-                return new DownService(
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
             case ConsoleMigrationInformer::class:
                 return new ConsoleMigrationInformer();
 
@@ -97,7 +95,7 @@ final class ContainerHelper
 
             case UpdateCommand::class:
                 return new UpdateCommand(
-                    $container->get(UpdateService::class),
+                    $container->get(UpdateRunner::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
                     $container->get(ConsoleMigrationInformer::class),
@@ -105,7 +103,7 @@ final class ContainerHelper
 
             case DownCommand::class:
                 return new DownCommand(
-                    $container->get(DownService::class),
+                    $container->get(DownRunner::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
                     $container->get(ConsoleMigrationInformer::class),

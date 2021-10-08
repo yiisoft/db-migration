@@ -6,9 +6,9 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use ReflectionException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
@@ -35,20 +35,15 @@ final class DownCommandTest extends TestCase
             ->createCommand()
             ->insert(
                 $migrator->getHistoryTable(),
-                ['name' => 'FakeMigration', 'apply_time' => time() + 100],
+                ['name' => 'Migration\FakeMigration', 'apply_time' => time() + 100],
             )
             ->execute();
 
         $command = $this->createCommand($container);
 
-        $exitCode = $command->execute(['']);
-        $output = $command->getDisplay(true);
-
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
-        $this->assertStringContainsString(
-            'Failed to revert FakeMigration. Unable to get migration instance (time: ',
-            $output
-        );
+        $this->expectException(ReflectionException::class);
+        $this->expectExceptionMessage('Class "\Migration\FakeMigration" does not exist');
+        $command->execute(['']);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

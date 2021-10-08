@@ -45,30 +45,6 @@ final class UpdateCommandTest extends NamespacesCommandTest
         $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
     }
 
-    public function testFailMigrate(): void
-    {
-        $this->createMigration(
-            'Create_Fail_Post',
-            'table',
-            'post',
-            ['name:string'],
-            static fn (string $content): string => str_replace(
-                'CreateFailPost implements',
-                'CreateFailPost2 implements',
-                $content
-            )
-        );
-
-        $command = $this->getCommand();
-
-        $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
-
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
-        $this->assertStringContainsString('0 from 1 migrations were applied.', $output);
-        $this->assertStringContainsString('Migration failed. The rest of the migrations are canceled.', $output);
-    }
-
     private function getCommand(): CommandTester
     {
         return new CommandTester(
