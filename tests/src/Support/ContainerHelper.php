@@ -18,6 +18,7 @@ use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
+use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -107,6 +108,11 @@ final class ContainerHelper
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
                     $container->get(ConsoleMigrationInformer::class),
+                );
+
+            case NewCommand::class:
+                return new NewCommand(
+                    $container->get(MigrationService::class),
                 );
 
             default:

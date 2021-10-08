@@ -8,6 +8,7 @@ use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -60,7 +61,7 @@ final class MigrationHelper
         string $command,
         string $table,
         array $fields = [],
-        Closure $callback = null
+        ?Closure $callback = null
     ): string {
         $migrationService = $container->get(MigrationService::class);
         $createService = $container->get(CreateService::class);
@@ -89,6 +90,22 @@ final class MigrationHelper
         return $namespace === null
             ? $className
             : ($namespace . '\\' . $className);
+    }
+
+    public static function createAndApplyMigration(
+        ContainerInterface $container,
+        string $name,
+        string $command,
+        string $table,
+        array $fields = [],
+        ?Closure $callback = null
+    ): string {
+        $className = self::createMigration($container, $name, $command, $table, $fields, $callback);
+
+        $migration = $container->get(MigrationService::class)->makeMigration($className);
+        $container->get(Migrator::class)->up($migration);
+
+        return $className;
     }
 
     private static function getPathForMigrationNamespace(): string
