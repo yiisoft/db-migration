@@ -9,6 +9,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\DbHelper;
@@ -311,6 +312,95 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testWithoutTablePrefix(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $container->get(MigrationService::class)->useTablePrefix(false);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $command->execute([
+            'name' => 'post',
+            '--command' => 'table',
+            '--fields' => 'name:string,user_id:integer:foreignKey'
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles the creation of table `post`.
+ * Has foreign keys to the tables:
+ *
+ * - `user`
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'name' => \$b->string(),
+            'user_id' => \$b->integer(),
+        ]);
+
+        // creates index for column `user_id`
+        \$b->createIndex(
+            'idx-post-user_id',
+            'post',
+            'user_id'
+        );
+
+        // add foreign key for table `user`
+        \$b->addForeignKey(
+            'fk-post-user_id',
+            'post',
+            'user_id',
+            'user',
+            'id',
+            'CASCADE'
+        );
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        // drops foreign key for table `user`
+        \$b->dropForeignKey(
+            'fk-post-user_id',
+            'post'
+        );
+
+        // drops index for column `user_id`
+        \$b->dropIndex(
+            'idx-post-user_id',
+            'post'
+        );
+
+        \$b->dropTable('post');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
         $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
     }
 
