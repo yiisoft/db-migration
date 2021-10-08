@@ -28,11 +28,9 @@ final class MigrationHelper
         $service->createPath(self::PATH_ALIAS);
         $service->updatePaths([self::PATH_ALIAS]);
 
-        $path = $container->get(Aliases::class)->get(self::PATH_ALIAS);
+        self::preparePaths($container);
 
-        self::preparePath($path);
-
-        return $path;
+        return self::getPathForMigrationPath($container);
     }
 
     /**
@@ -45,11 +43,9 @@ final class MigrationHelper
         $service->createNamespace(self::NAMESPACE);
         $service->updateNamespaces([self::NAMESPACE]);
 
-        $path = dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
+        self::preparePaths($container);
 
-        self::preparePath($path);
-
-        return $path;
+        return self::getPathForMigrationNamespace();
     }
 
     public static function findMigrationClassNameInOutput(string $output): string
@@ -90,13 +86,32 @@ final class MigrationHelper
             $content
         );
 
-        return $namespace . '\\' . $className;
+        return $namespace === null
+            ? $className
+            : ($namespace . '\\' . $className);
     }
 
-    private static function preparePath(string $path): void
+    private static function getPathForMigrationNamespace(): string
     {
-        file_exists($path)
-            ? FileHelper::clearDirectory($path)
-            : mkdir($path);
+        return dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
+    }
+
+    private static function getPathForMigrationPath(ContainerInterface $container): string
+    {
+        return $container->get(Aliases::class)->get(self::PATH_ALIAS);
+    }
+
+    private static function preparePaths(ContainerInterface $container): void
+    {
+        $paths = [
+            self::getPathForMigrationNamespace(),
+            self::getPathForMigrationPath($container),
+        ];
+
+        foreach ($paths as $path) {
+            file_exists($path)
+                ? FileHelper::clearDirectory($path)
+                : mkdir($path);
+        }
     }
 }

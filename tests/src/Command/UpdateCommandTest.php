@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
@@ -212,6 +213,33 @@ final class UpdateCommandTest extends TestCase
 
         $this->assertSame(ExitCode::OK, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
+    }
+
+    public function testNotMigrationInterface(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        SqLiteHelper::clearDatabase($container);
+        MigrationHelper::useMigrationsPath($container);
+
+        $className = MigrationHelper::createMigration(
+            $container,
+            'Test_Not_Migration_Interface',
+            'table',
+            'department',
+            ['name:string(50)'],
+            static fn (string $content) => str_replace(
+                'implements RevertibleMigrationInterface',
+                '',
+                $content
+            ),
+        );
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Migration $className does not implement MigrationInterface.");
+        $command->execute([]);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
