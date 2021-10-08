@@ -60,4 +60,11 @@ final class SqLiteHelper
             $db->createCommand()->dropTable($tableName)->execute();
         }
     }
+
+    public static function createTable(ContainerInterface $container, string $table, array $columns): void
+    {
+        $connection = $container->get(SqlLiteConnection::class);
+        $connection->createCommand('drop table if exists ' . $connection->quoteTableName($table))->execute();
+        $connection->createCommand()->createTable($table, $columns)->execute();
+    }
 }

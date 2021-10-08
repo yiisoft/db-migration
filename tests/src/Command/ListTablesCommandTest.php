@@ -18,6 +18,25 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\SqLiteHelper;
 
 final class ListTablesCommandTest extends TestCase
 {
+    public function testExecute(): void
+    {
+        $container = SqLiteHelper::createContainer();
+
+        SqLiteHelper::clearDatabase($container);
+        SqLiteHelper::createTable($container, 'the_post', ['name' => 'string']);
+        SqLiteHelper::createTable($container, 'the_user', ['name' => 'string']);
+
+        $command = $this->getCommand($container);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('List of tables for database: testdb', $output);
+        $this->assertStringContainsString('the_post', $output);
+        $this->assertStringContainsString('the_user', $output);
+    }
+
     public function testSeveralSchemas(): void
     {
         $container = PostgreSqlHelper::createContainer();
