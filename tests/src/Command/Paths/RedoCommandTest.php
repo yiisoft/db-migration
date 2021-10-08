@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Command\Paths;
 
+use RuntimeException;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
 
@@ -72,9 +73,11 @@ final class RedoCommandTest extends PathsCommandTest
 
         $command = $this->getCommand();
 
-        $exitCode = $command->execute([]);
-
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches(
+            '/Migration M\d+CreateChunk does not implement RevertibleMigrationInterface\./'
+        );
+        $command->execute([]);
     }
 
     private function getCommand(): CommandTester

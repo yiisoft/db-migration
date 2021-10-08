@@ -28,10 +28,10 @@ use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
+use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\DownService;
-use Yiisoft\Yii\Db\Migration\Service\Migrate\UpdateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function dirname;
@@ -56,11 +56,13 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(NullMigrationInformer::class, $container->get(NullMigrationInformer::class));
         $this->assertInstanceOf(ConsoleMigrationInformer::class, $container->get(ConsoleMigrationInformer::class));
 
+        // Runners
+        $this->assertInstanceOf(DownRunner::class, $container->get(DownRunner::class));
+        $this->assertInstanceOf(UpdateRunner::class, $container->get(UpdateRunner::class));
+
         // Services
         $this->assertInstanceOf(ListTablesService::class, $container->get(ListTablesService::class));
         $this->assertInstanceOf(CreateService::class, $container->get(CreateService::class));
-        $this->assertInstanceOf(DownService::class, $container->get(DownService::class));
-        $this->assertInstanceOf(UpdateService::class, $container->get(UpdateService::class));
         $this->assertInstanceOf(MigrationService::class, $container->get(MigrationService::class));
 
         // Other
