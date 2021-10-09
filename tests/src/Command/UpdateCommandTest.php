@@ -12,6 +12,8 @@ use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
@@ -19,6 +21,8 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class UpdateCommandTest extends TestCase
 {
+    use AssertTrait;
+
     public function testExecuteWithPath(): void
     {
         $container = SqLiteHelper::createContainer();
@@ -240,6 +244,104 @@ final class UpdateCommandTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Migration $className does not implement MigrationInterface.");
         $command->execute([]);
+    }
+
+    public function testWithoutUpdatePath(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        SqLiteHelper::clearDatabase($container);
+        MigrationHelper::useMigrationsPath($container);
+
+        $container->get(MigrationService::class)->updatePaths([]);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString('At least one of `updateNamespaces` or `updatePaths` should be specified.', $output);
+    }
+
+    public function testWithoutUpdateNamespaces(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        SqLiteHelper::clearDatabase($container);
+        MigrationHelper::useMigrationsNamespace($container);
+
+        $container->get(MigrationService::class)->updateNamespaces([]);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString('At least one of `updateNamespaces` or `updatePaths` should be specified.', $output);
+    }
+
+    public function testLimit(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        MigrationHelper::createMigration(
+            $container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)']
+        );
+        sleep(1);
+        MigrationHelper::createMigration(
+            $container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)']
+        );
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['-l' => 1]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Total 1 out of 2 new migrations to be applied:', $output);
+        $this->assertStringContainsString('create table post', $output);
+        $this->assertExistsTables($container, 'post');
+        $this->assertNotExistsTables($container, 'user');
+    }
+
+    public function testNameLimit(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        MigrationHelper::createMigration(
+            $container,
+            'Create_Post' . str_repeat('X', 200),
+            'table',
+            'post',
+            ['name:string(50)']
+        );
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+        $this->assertStringContainsString(
+            'is too long. Its not possible to apply this migration.',
+            $output
+        );
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
