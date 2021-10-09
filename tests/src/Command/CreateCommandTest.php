@@ -1037,7 +1037,8 @@ EOF;
     }
 
     public function testWithoutCreateNamespace(): void
-    { $container = SqLiteHelper::createContainer();
+    {
+        $container = SqLiteHelper::createContainer();
         MigrationHelper::useMigrationsNamespace($container);
         SqLiteHelper::clearDatabase($container);
 
