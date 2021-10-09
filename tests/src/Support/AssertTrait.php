@@ -42,6 +42,26 @@ trait AssertTrait
         static::assertThat($haystack, new StringContains($needle, false), $message);
     }
 
+    /**
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
+     * @throws ExpectationFailedException
+     */
+    public function assertStringContainsStringCollapsingSpaces(
+        string $needle,
+        string $haystack,
+        string $message = ''
+    ): void {
+        $needle = $this->collapseSpaces($needle);
+        $haystack = $this->collapseSpaces($haystack);
+
+        static::assertThat($haystack, new StringContains($needle, false), $message);
+    }
+
+    private function collapseSpaces(string $value): string
+    {
+        return preg_replace('/\s\s+/', ' ', $value);
+    }
+
     private function normalizeLineEndings(string $value): string
     {
         return strtr($value, [

@@ -261,7 +261,10 @@ final class UpdateCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::DATAERR, $exitCode);
-        $this->assertStringContainsString('At least one of `updateNamespaces` or `updatePaths` should be specified.', $output);
+        $this->assertStringContainsStringCollapsingSpaces(
+            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            $output
+        );
     }
 
     public function testWithoutUpdateNamespaces(): void
@@ -279,7 +282,10 @@ final class UpdateCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::DATAERR, $exitCode);
-        $this->assertStringContainsString('At least one of `updateNamespaces` or `updatePaths` should be specified.', $output);
+        $this->assertStringContainsStringCollapsingSpaces(
+            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            $output
+        );
     }
 
     public function testLimit(): void

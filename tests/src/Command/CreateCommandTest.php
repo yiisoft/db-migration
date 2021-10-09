@@ -470,7 +470,7 @@ EOF;
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::DATAERR, $exitCode);
-        $this->assertStringContainsString(
+        $this->assertStringContainsStringCollapsingSpaces(
             'The migration name should contain letters, digits, underscore and/or backslash characters only.',
             $output
         );
@@ -491,7 +491,7 @@ EOF;
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::DATAERR, $exitCode);
-        $this->assertStringContainsString(
+        $this->assertStringContainsStringCollapsingSpaces(
             'Command not found "noExist". Available commands: ' .
             'create, table, dropTable, addColumn, dropColumn, junction.',
             $output
