@@ -134,34 +134,25 @@ final class CreateService
              */
             if ($relatedColumn === null) {
                 $relatedColumn = 'id';
-                try {
-                    $relatedTableSchema = $this->db->getTableSchema($relatedTable);
-                    if ($relatedTableSchema !== null) {
-                        $primaryKeyCount = count($relatedTableSchema->getPrimaryKey());
-                        if ($primaryKeyCount === 1) {
-                            $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
-                        } elseif ($primaryKeyCount > 1) {
-                            if ($this->io) {
-                                $this->io->writeln(
-                                    "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
-                                    "composite. Default name \"id\" will be used for related field</>\n"
-                                );
-                            }
-                        } elseif ($primaryKeyCount === 0) {
-                            if ($this->io) {
-                                $this->io->writeln(
-                                    "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
-                                    "primary key. Default name \"id\" will be used for related field.</>\n"
-                                );
-                            }
+                $relatedTableSchema = $this->db->getTableSchema($relatedTable);
+                if ($relatedTableSchema !== null) {
+                    $primaryKeyCount = count($relatedTableSchema->getPrimaryKey());
+                    if ($primaryKeyCount === 1) {
+                        $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
+                    } elseif ($primaryKeyCount > 1) {
+                        if ($this->io) {
+                            $this->io->writeln(
+                                "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
+                                "composite. Default name \"id\" will be used for related field</>\n"
+                            );
                         }
-                    }
-                } catch (ReflectionException $e) {
-                    if ($this->io) {
-                        $this->io->writeln(
-                            '<fg=yellow>Cannot initialize database component to try reading referenced table schema for' .
-                            "field \"{$column}\". Default name \"id\" will be used for related field.</>\n"
-                        );
+                    } elseif ($primaryKeyCount === 0) {
+                        if ($this->io) {
+                            $this->io->writeln(
+                                "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
+                                "primary key. Default name \"id\" will be used for related field.</>\n"
+                            );
+                        }
                     }
                 }
             }
