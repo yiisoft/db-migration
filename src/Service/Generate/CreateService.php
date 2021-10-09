@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use ReflectionException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
