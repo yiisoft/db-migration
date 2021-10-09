@@ -9,5 +9,6 @@ declare(strict_types=1);
  * @var $table string the name table
  * @var $tableComment string the comment table
  */
+?>
 
-echo "        \$b->addCommentOnTable('$table', '$tableComment');";
+        $b->addCommentOnTable('<?= $table ?>', '<?= str_replace('\'', '\\\'', $tableComment) ?>');

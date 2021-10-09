@@ -64,7 +64,8 @@ final class CreateService
         string $className,
         ?string $namespace = null,
         array $fields = [],
-        ?string $and = null
+        ?string $and = null,
+        ?string $tableComment = null
     ): string {
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
@@ -89,6 +90,7 @@ final class CreateService
                 'namespace' => $namespace,
                 'fields' => $fields,
                 'foreignKeys' => $foreignKeys,
+                'tableComment' => $tableComment,
             ]
         );
     }

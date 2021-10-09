@@ -141,6 +141,7 @@ EOF;
         $exitCode = $command->execute([
             'name' => 'post',
             '--command' => 'table',
+            '--table-comment' => "test 'comment'",
             '--fields' => 'uid:primaryKey,' .
                 'name:string:defaultValue("test:name"),' .
                 'user_id:integer:foreignKey,' .
@@ -252,6 +253,8 @@ final class $className implements RevertibleMigrationInterface
             'id2',
             'CASCADE'
         );
+
+        \$b->addCommentOnTable('post', 'test \'comment\'');
     }
 
     public function down(MigrationBuilder \$b): void
