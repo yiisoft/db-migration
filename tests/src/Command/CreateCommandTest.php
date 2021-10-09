@@ -141,7 +141,8 @@ EOF;
         $exitCode = $command->execute([
             'name' => 'post',
             '--command' => 'table',
-            '--fields' => 'name:string:defaultValue("test:name"),' .
+            '--fields' => 'uid:primaryKey,' .
+                'name:string:defaultValue("test:name"),' .
                 'user_id:integer:foreignKey,' .
                 'tag_id:integer:foreignKey,' .
                 'category_id:integer:foreignKey,' .
@@ -176,7 +177,7 @@ final class $className implements RevertibleMigrationInterface
     public function up(MigrationBuilder \$b): void
     {
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
+            'uid' => \$b->primaryKey(),
             'name' => \$b->string()->defaultValue("test:name"),
             'user_id' => \$b->integer(),
             'tag_id' => \$b->integer(),

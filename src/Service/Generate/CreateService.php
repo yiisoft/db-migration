@@ -104,7 +104,7 @@ final class CreateService
     {
         foreach ($fields as $field) {
             if (false !== strripos($field['decorators'], 'primaryKey()')) {
-                return [];
+                return $fields;
             }
         }
 
