@@ -178,7 +178,7 @@ final class DownCommandTest extends TestCase
         $command = $this->createCommand($container);
 
         $this->expectException(ReflectionException::class);
-        $this->expectExceptionMessage('Class "\Migration\FakeMigration" does not exist');
+        $this->expectExceptionMessageMatches('/Class ("|)\\\\Migration\\\\FakeMigration("|) does not exist$/');
         $command->execute(['']);
     }
 
