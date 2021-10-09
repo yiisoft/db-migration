@@ -404,6 +404,658 @@ EOF;
         $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
     }
 
+    public function testExecuteInputNamespaces(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsPath($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--namespace' => MigrationHelper::NAMESPACE,
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Class $className
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents(MigrationHelper::getPathForMigrationNamespace() . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testExecuteNameException(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post?',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString(
+            'The migration name should contain letters, digits, underscore and/or backslash characters only.',
+            $output
+        );
+    }
+
+    public function testExecuteCommandException(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'noExist',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString(
+            'Command not found "noExist". Available commands: ' .
+            'create, table, dropTable, addColumn, dropColumn, junction.',
+            $output
+        );
+    }
+
+    public function testExecuteNameToLongException(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => str_repeat('x', 200),
+        ]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString('The migration name is too long.', $output);
+    }
+
+    public function testAddColumn(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'addColumn',
+            '--fields' => 'position:integer',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles adding columns to table `post`.
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->addColumn('post', 'position', \$b->integer());
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        \$b->dropColumn('post', 'position');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testDropColumn(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'dropColumn',
+            '--fields' => 'position:integer',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles dropping columns from table `post`.
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->dropColumn('post', 'position');
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        \$b->addColumn('post', 'position', \$b->integer());
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testDropTable(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'dropTable',
+            '--fields' => 'title:string(12):notNull:unique,body:text',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles the dropping of table `post`.
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->dropTable('post');
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'title' => \$b->string(12)->notNull()->unique(),
+            'body' => \$b->text(),
+        ]);
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testCreateTableWithFields(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'table',
+            '--fields' => 'title:string,body:text',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles the creation of table `post`.
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'title' => \$b->string(),
+            'body' => \$b->text(),
+        ]);
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        \$b->dropTable('post');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testCreateTableWithFieldsForeignKey(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'table',
+            '--fields' => 'author_id:integer:notNull:foreignKey(user),' .
+                'category_id:integer:defaultValue(1):foreignKey,title:string,body:text',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles the creation of table `post`.
+ * Has foreign keys to the tables:
+ *
+ * - `{{%user}}`
+ * - `{{%category}}`
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+            'author_id' => \$b->integer()->notNull(),
+            'category_id' => \$b->integer()->defaultValue(1),
+            'title' => \$b->string(),
+            'body' => \$b->text(),
+        ]);
+
+        // creates index for column `author_id`
+        \$b->createIndex(
+            'idx-post-author_id',
+            'post',
+            'author_id'
+        );
+
+        // add foreign key for table `{{%user}}`
+        \$b->addForeignKey(
+            'fk-post-author_id',
+            'post',
+            'author_id',
+            '{{%user}}',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `category_id`
+        \$b->createIndex(
+            'idx-post-category_id',
+            'post',
+            'category_id'
+        );
+
+        // add foreign key for table `{{%category}}`
+        \$b->addForeignKey(
+            'fk-post-category_id',
+            'post',
+            'category_id',
+            '{{%category}}',
+            'id',
+            'CASCADE'
+        );
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        // drops foreign key for table `{{%user}}`
+        \$b->dropForeignKey(
+            'fk-post-author_id',
+            'post'
+        );
+
+        // drops index for column `author_id`
+        \$b->dropIndex(
+            'idx-post-author_id',
+            'post'
+        );
+
+        // drops foreign key for table `{{%category}}`
+        \$b->dropForeignKey(
+            'fk-post-category_id',
+            'post'
+        );
+
+        // drops index for column `category_id`
+        \$b->dropIndex(
+            'idx-post-category_id',
+            'post'
+        );
+
+        \$b->dropTable('post');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testJunction(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--command' => 'junction',
+            '--and' => 'tag',
+            '--fields' => 'created_at:dateTime',
+        ]);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $namespace = MigrationHelper::NAMESPACE;
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+namespace $namespace;
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+
+/**
+ * Handles the creation of table `post_tag`.
+ * Has foreign keys to the tables:
+ *
+ * - `{{%post}}`
+ * - `{{%tag}}`
+ */
+final class $className implements RevertibleMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post_tag', [
+            'post_id' => \$b->integer(),
+            'tag_id' => \$b->integer(),
+            'created_at' => \$b->dateTime(),
+            'PRIMARY KEY(post_id, tag_id)',
+        ]);
+
+        // creates index for column `post_id`
+        \$b->createIndex(
+            'idx-post_tag-post_id',
+            'post_tag',
+            'post_id'
+        );
+
+        // add foreign key for table `{{%post}}`
+        \$b->addForeignKey(
+            'fk-post_tag-post_id',
+            'post_tag',
+            'post_id',
+            '{{%post}}',
+            'id',
+            'CASCADE'
+        );
+
+        // creates index for column `tag_id`
+        \$b->createIndex(
+            'idx-post_tag-tag_id',
+            'post_tag',
+            'tag_id'
+        );
+
+        // add foreign key for table `{{%tag}}`
+        \$b->addForeignKey(
+            'fk-post_tag-tag_id',
+            'post_tag',
+            'tag_id',
+            '{{%tag}}',
+            'id',
+            'CASCADE'
+        );
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        // drops foreign key for table `{{%post}}`
+        \$b->dropForeignKey(
+            'fk-post_tag-post_id',
+            'post_tag'
+        );
+
+        // drops index for column `post_id`
+        \$b->dropIndex(
+            'idx-post_tag-post_id',
+            'post_tag'
+        );
+
+        // drops foreign key for table `{{%tag}}`
+        \$b->dropForeignKey(
+            'fk-post_tag-tag_id',
+            'post_tag'
+        );
+
+        // drops index for column `tag_id`
+        \$b->dropIndex(
+            'idx-post_tag-tag_id',
+            'post_tag'
+        );
+
+        \$b->dropTable('post_tag');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+    }
+
+    public function testIncorrectCreatePath(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsPath($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $container->get(MigrationService::class)->createPath(__DIR__ . '/not-exists');
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString('Invalid path directory', $output);
+    }
+
+    public function testWithoutCreatePath(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsPath($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $container->get(MigrationService::class)->createPath('');
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString(
+            'At least one of `createNamespace` or `createPath` should be specified.',
+            $output
+        );
+    }
+
+    public function testIncorrectCreateNamespace(): void
+    {
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $container->get(MigrationService::class)
+            ->createNamespace('Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists');
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString('Invalid path directory', $output);
+    }
+
+    public function testWithoutCreateNamespace(): void
+    { $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
+
+        $container->get(MigrationService::class)->createNamespace('');
+
+        $command = $this->createCommand($container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertStringContainsString(
+            'At least one of `createNamespace` or `createPath` should be specified.',
+            $output
+        );
+    }
+
     public function createCommand(ContainerInterface $container): CommandTester
     {
         return CommandHelper::getCommandTester($container, CreateCommand::class);

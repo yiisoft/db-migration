@@ -108,7 +108,7 @@ final class MigrationHelper
         return $className;
     }
 
-    private static function getPathForMigrationNamespace(): string
+    public static function getPathForMigrationNamespace(): string
     {
         return dirname(__DIR__, 3) . '/runtime/MigrationNamespace';
     }
