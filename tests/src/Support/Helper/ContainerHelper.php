@@ -20,6 +20,7 @@ use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
+use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -120,6 +121,15 @@ final class ContainerHelper
                 return new HistoryCommand(
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
+                );
+
+            case RedoCommand::class:
+                return new RedoCommand(
+                    $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
+                    $container->get(ConsoleMigrationInformer::class),
+                    $container->get(DownRunner::class),
+                    $container->get(UpdateRunner::class),
                 );
 
             default:
