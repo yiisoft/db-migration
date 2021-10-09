@@ -4,64 +4,93 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Service;
 
+use PHPUnit\Framework\TestCase;
+use Yiisoft\Aliases\Aliases;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
+use Yiisoft\Injector\Injector;
+use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
-final class MigrationServiceTest extends NamespaceMigrationServiceTest
+final class MigrationServiceTest extends TestCase
 {
-//    public function testCompact(): void
-//    {
-//        $service = $this->getMigrationService();
-//
-//        $className = $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
-//
-//        $service->compact(true);
-//        $migration = $service->createMigration($className);
-//        $service->getMigrationHistory();
-//
-//        ob_start();
-//        $service->up($migration);
-//        $output = ob_get_clean();
-//
-//        $this->assertEmpty($output);
-//    }
-
     public function testUseTablePrefix(): void
     {
-        $this->getMigrationService()->useTablePrefix(false);
-        $this->assertFalse($this->getMigrationService()->getUseTablePrefix());
+        $container = SqLiteHelper::createContainer();
+
+        $service = new MigrationService(
+            $container->get(Aliases::class),
+            $container->get(ConnectionInterface::class),
+            $container->get(Injector::class),
+            $container->get(Migrator::class),
+        );
+
+        $this->assertTrue($service->getUseTablePrefix());
+
+        $service->useTablePrefix(false);
+
+        $this->assertFalse($service->getUseTablePrefix());
     }
 
     public function testVersion(): void
     {
-        $this->assertSame('1.0', $this->getMigrationService()->version());
+        $service = SqLiteHelper::createContainer()->get(MigrationService::class);
+
+        $this->assertSame('1.0', $service->version());
     }
 
     public function testGeneratorTemplateFile(): void
     {
-        $this->getMigrationService()->generatorTemplateFile('hello', 'world');
-        $this->assertSame('world', $this->getMigrationService()->getGeneratorTemplateFiles('hello'));
+        $service = SqLiteHelper::createContainer()->get(MigrationService::class);
+
+        $service->generatorTemplateFile('hello', '/templates/hello.php');
+
+        $this->assertSame('/templates/hello.php', $service->getGeneratorTemplateFiles('hello'));
     }
 
     public function testNotExistsGeneratorTemplateFile(): void
     {
+        $service = SqLiteHelper::createContainer()->get(MigrationService::class);
+
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('You must define a template to generate the migration.');
-        $this->getMigrationService()->getGeneratorTemplateFiles('not-exists');
+        $service->getGeneratorTemplateFiles('not-exists');
     }
 
-    public function testGetNewMigrations(): void
+    public function testGetNewMigrationsWithNotExistNamespace(): void
     {
-        $this->createMigration('Create_Post', 'table', 'post', ['name:string']);
-        $this->applyNewMigrations();
-        $this->createMigration('Create_User', 'table', 'user', ['name:string']);
+        $container = SqLiteHelper::createContainer();
+        MigrationHelper::useMigrationsNamespace($container);
+        SqLiteHelper::clearDatabase($container);
 
-        $this->getMigrationService()->updateNamespaces([
-            $this->getNamespace(),
+        $className = MigrationHelper::createMigration(
+            $container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        $container->get(Migrator::class)->up(new $className());
+
+        $className = MigrationHelper::createMigration(
+            $container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(32)'],
+        );
+
+        $service = $container->get(MigrationService::class);
+
+        $service->updateNamespaces([
+            MigrationHelper::NAMESPACE,
             'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists',
         ]);
 
-        $migrations = $this->getMigrationService()->getNewMigrations();
+        $migrations = $service->getNewMigrations();
 
-        $this->assertCount(1, $migrations);
+        $this->assertSame([$className], $migrations);
     }
 }
