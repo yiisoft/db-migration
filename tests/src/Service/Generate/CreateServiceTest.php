@@ -11,13 +11,22 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 
 final class CreateServiceTest extends TestCase
 {
-    public function testGeneratorTemplateFile(): void
+    public function testSetTemplate(): void
     {
         $service = SqLiteHelper::createContainer()->get(CreateService::class);
 
-        $service->generatorTemplateFile('hello', '/templates/hello.php');
+        $service->setTemplate('hello', '/templates/hello.php');
 
-        $this->assertSame('/templates/hello.php', $service->getGeneratorTemplateFiles('hello'));
+        $this->assertSame('/templates/hello.php', $service->getTemplate('hello'));
+    }
+
+    public function testSetTemplates(): void
+    {
+        $service = SqLiteHelper::createContainer()->get(CreateService::class);
+
+        $service->setTemplates(['hello' => '/templates/hello.php']);
+
+        $this->assertSame('/templates/hello.php', $service->getTemplate('hello'));
     }
 
     public function testNotExistsCommand(): void
@@ -26,6 +35,6 @@ final class CreateServiceTest extends TestCase
 
         $this->expectException(InvalidConfigException::class);
         $this->expectExceptionMessage('You must define a template to generate the migration.');
-        $service->getGeneratorTemplateFiles('not-exists');
+        $service->getTemplate('not-exists');
     }
 }

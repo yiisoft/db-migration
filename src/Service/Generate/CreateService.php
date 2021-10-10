@@ -35,7 +35,11 @@ final class CreateService
     private MigrationService $migrationService;
     private View $view;
     private ?SymfonyStyle $io = null;
-    private array $generatorTemplateFiles = [];
+
+    /**
+     * @psalm-var array<string,string>|null
+     */
+    private ?array $templates = null;
 
     public function __construct(
         Aliases $aliases,
@@ -50,14 +54,6 @@ final class CreateService
             dirname(__DIR__, 3) . '/resources/views',
             $eventDispatcher,
         );
-
-        $this->generatorTemplateFiles();
-    }
-
-    public function setIO(?SymfonyStyle $io): void
-    {
-        $this->io = $io;
-        $this->migrationService->setIO($io);
     }
 
     public function run(
@@ -69,7 +65,7 @@ final class CreateService
         ?string $and = null,
         ?string $tableComment = null
     ): string {
-        $templateFile = $this->getGeneratorTemplateFiles($command);
+        $templateFile = $this->getTemplate($command);
 
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
@@ -99,13 +95,17 @@ final class CreateService
         );
     }
 
-    public function getGeneratorTemplateFiles(?string $key): string
+    public function getTemplate(?string $key): string
     {
-        if (!isset($this->generatorTemplateFiles[$key])) {
+        if ($this->templates === null) {
+            $this->setDefaultTemplates();
+        }
+
+        if (!isset($this->templates[$key])) {
             throw new InvalidConfigException('You must define a template to generate the migration.');
         }
 
-        return $this->generatorTemplateFiles[$key];
+        return $this->templates[$key];
     }
 
     /**
@@ -127,26 +127,23 @@ final class CreateService
      *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
      *```
      */
-    public function generatorTemplateFile(string $key, string $value): void
+    public function setTemplate(string $key, string $value): void
     {
-        $this->generatorTemplateFiles[$key] = $value;
+        $this->templates[$key] = $value;
     }
 
-    public function generatorTemplateFiles(array $value = []): void
+    /**
+     * @psalm-param array<string,string> $value
+     */
+    public function setTemplates(array $value = []): void
     {
-        $this->generatorTemplateFiles = $value;
+        $this->templates = $value;
+    }
 
-        if ($value === [] && $this->generatorTemplateFiles === []) {
-            $baseDir = dirname(__DIR__, 3) . '/resources/views';
-            $this->generatorTemplateFiles = [
-                'create' => $baseDir . '/migration.php',
-                'table' => $baseDir . '/createTableMigration.php',
-                'dropTable' => $baseDir . '/dropTableMigration.php',
-                'addColumn' => $baseDir . '/addColumnMigration.php',
-                'dropColumn' => $baseDir . '/dropColumnMigration.php',
-                'junction' => $baseDir . '/createTableMigration.php',
-            ];
-        }
+    public function setIO(?SymfonyStyle $io): void
+    {
+        $this->io = $io;
+        $this->migrationService->setIO($io);
     }
 
     /**
@@ -355,5 +352,21 @@ final class CreateService
         }
 
         return (array) $chunks;
+    }
+
+    /**
+     * @psalm-assert array<string,string> $this->templates
+     */
+    private function setDefaultTemplates(): void
+    {
+        $baseDir = dirname(__DIR__, 3) . '/resources/views';
+        $this->templates = [
+            'create' => $baseDir . '/migration.php',
+            'table' => $baseDir . '/createTableMigration.php',
+            'dropTable' => $baseDir . '/dropTableMigration.php',
+            'addColumn' => $baseDir . '/addColumnMigration.php',
+            'dropColumn' => $baseDir . '/dropColumnMigration.php',
+            'junction' => $baseDir . '/createTableMigration.php',
+        ];
     }
 }
