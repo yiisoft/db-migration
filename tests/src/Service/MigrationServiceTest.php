@@ -7,7 +7,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Service;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
