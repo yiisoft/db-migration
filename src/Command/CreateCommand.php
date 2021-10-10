@@ -115,6 +115,7 @@ final class CreateCommand extends Command
             ->addArgument('name', InputArgument::REQUIRED, 'Table name for generate migration.')
             ->addOption('command', 'c', InputOption::VALUE_OPTIONAL, 'Command to execute.', 'create')
             ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'To create table fields right away')
+            ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction')
             ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace migration')
             ->setHelp('This command Generate migration template.');
@@ -148,6 +149,8 @@ final class CreateCommand extends Command
 
         /** @var string */
         $field = $input->getOption('fields');
+
+        $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
 
         /** @var string */
         $and = $input->getOption('and');
@@ -217,7 +220,8 @@ final class CreateCommand extends Command
                 $className,
                 $namespace,
                 $fields,
-                $and
+                $and,
+                $tableComment,
             );
 
             file_put_contents($file, $content, LOCK_EX);
