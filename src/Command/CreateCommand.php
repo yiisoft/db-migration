@@ -215,7 +215,6 @@ final class CreateCommand extends Command
         if ($helper->ask($input, $output, $question)) {
             $content = $this->createService->run(
                 $command,
-                $this->migrationService->getGeneratorTemplateFiles($command),
                 $table,
                 $className,
                 $namespace,

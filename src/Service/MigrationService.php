@@ -10,7 +10,6 @@ use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
@@ -26,7 +25,6 @@ final class MigrationService
     private string $createPath = '';
     private array $updateNamespaces = [];
     private array $updatePaths = [];
-    private array $generatorTemplateFiles = [];
     private bool $useTablePrefix = true;
     private string $version = '1.0';
     private Aliases $aliases;
@@ -45,8 +43,6 @@ final class MigrationService
         $this->db = $db;
         $this->injector = $injector;
         $this->migrator = $migrator;
-
-        $this->generatorTemplateFiles();
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -97,15 +93,6 @@ final class MigrationService
         }
 
         return $result;
-    }
-
-    public function getGeneratorTemplateFiles(?string $key): string
-    {
-        if (!isset($this->generatorTemplateFiles[$key])) {
-            throw new InvalidConfigException('You must define a template to generate the migration.');
-        }
-
-        return $this->generatorTemplateFiles[$key];
     }
 
     /**
@@ -370,47 +357,6 @@ final class MigrationService
         }
 
         return $this->getNamespacePath($namespace);
-    }
-
-    /**
-     * Set of template paths for generating migration code automatically.
-     *
-     * @param string $key
-     * @param string $value
-     *
-     * The key is the template type, the value is a path or the alias.
-     *
-     * Supported types are:
-     *
-     * ```php
-     *   'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
-     *   'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
-     *   'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
-     *   'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
-     *   'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
-     *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
-     *```
-     */
-    public function generatorTemplateFile(string $key, string $value): void
-    {
-        $this->generatorTemplateFiles[$key] = $value;
-    }
-
-    public function generatorTemplateFiles(array $value = []): void
-    {
-        $this->generatorTemplateFiles = $value;
-
-        if ($value === [] && $this->generatorTemplateFiles === []) {
-            $baseDir = dirname(__DIR__, 2) . '/resources/views';
-            $this->generatorTemplateFiles = [
-                'create' => $baseDir . '/migration.php',
-                'table' => $baseDir . '/createTableMigration.php',
-                'dropTable' => $baseDir . '/dropTableMigration.php',
-                'addColumn' => $baseDir . '/addColumnMigration.php',
-                'dropColumn' => $baseDir . '/dropColumnMigration.php',
-                'junction' => $baseDir . '/createTableMigration.php',
-            ];
-        }
     }
 
     /**

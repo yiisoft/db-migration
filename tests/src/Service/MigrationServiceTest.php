@@ -41,24 +41,6 @@ final class MigrationServiceTest extends TestCase
         $this->assertSame('1.0', $service->version());
     }
 
-    public function testGeneratorTemplateFile(): void
-    {
-        $service = SqLiteHelper::createContainer()->get(MigrationService::class);
-
-        $service->generatorTemplateFile('hello', '/templates/hello.php');
-
-        $this->assertSame('/templates/hello.php', $service->getGeneratorTemplateFiles('hello'));
-    }
-
-    public function testNotExistsGeneratorTemplateFile(): void
-    {
-        $service = SqLiteHelper::createContainer()->get(MigrationService::class);
-
-        $this->expectException(InvalidConfigException::class);
-        $this->expectExceptionMessage('You must define a template to generate the migration.');
-        $service->getGeneratorTemplateFiles('not-exists');
-    }
-
     public function testGetNewMigrationsWithNotExistNamespace(): void
     {
         $container = SqLiteHelper::createContainer();

@@ -8,6 +8,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\View\View;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -34,6 +35,7 @@ final class CreateService
     private MigrationService $migrationService;
     private View $view;
     private ?SymfonyStyle $io = null;
+    private array $generatorTemplateFiles = [];
 
     public function __construct(
         Aliases $aliases,
@@ -48,6 +50,8 @@ final class CreateService
             dirname(__DIR__, 3) . '/resources/views',
             $eventDispatcher,
         );
+
+        $this->generatorTemplateFiles();
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -58,7 +62,6 @@ final class CreateService
 
     public function run(
         string $command,
-        string $templateFile,
         string $table,
         string $className,
         ?string $namespace = null,
@@ -66,6 +69,8 @@ final class CreateService
         ?string $and = null,
         ?string $tableComment = null
     ): string {
+        $templateFile = $this->getGeneratorTemplateFiles($command);
+
         $parsedFields = $this->parseFields($fields);
         $fields = $parsedFields['fields'];
 
@@ -92,6 +97,56 @@ final class CreateService
                 'tableComment' => $tableComment,
             ]
         );
+    }
+
+    public function getGeneratorTemplateFiles(?string $key): string
+    {
+        if (!isset($this->generatorTemplateFiles[$key])) {
+            throw new InvalidConfigException('You must define a template to generate the migration.');
+        }
+
+        return $this->generatorTemplateFiles[$key];
+    }
+
+    /**
+     * Set of template paths for generating migration code automatically.
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * The key is the template type, the value is a path or the alias.
+     *
+     * Supported types are:
+     *
+     * ```php
+     *   'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
+     *   'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
+     *   'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
+     *   'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
+     *   'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
+     *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
+     *```
+     */
+    public function generatorTemplateFile(string $key, string $value): void
+    {
+        $this->generatorTemplateFiles[$key] = $value;
+    }
+
+    public function generatorTemplateFiles(array $value = []): void
+    {
+        $this->generatorTemplateFiles = $value;
+
+        if ($value === [] && $this->generatorTemplateFiles === []) {
+            $baseDir = dirname(__DIR__, 3) . '/resources/views';
+            $this->generatorTemplateFiles = [
+                'create' => $baseDir . '/migration.php',
+                'table' => $baseDir . '/createTableMigration.php',
+                'dropTable' => $baseDir . '/dropTableMigration.php',
+                'addColumn' => $baseDir . '/addColumnMigration.php',
+                'dropColumn' => $baseDir . '/dropColumnMigration.php',
+                'junction' => $baseDir . '/createTableMigration.php',
+            ];
+        }
     }
 
     /**
