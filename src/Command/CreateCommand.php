@@ -19,7 +19,6 @@ use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
-use function explode;
 use function file_exists;
 use function file_put_contents;
 use function in_array;
