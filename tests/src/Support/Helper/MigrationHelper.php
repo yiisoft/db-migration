@@ -71,7 +71,6 @@ final class MigrationHelper
 
         $content = $createService->run(
             $command,
-            $migrationService->getGeneratorTemplateFiles($command),
             $table,
             $className,
             $namespace,
