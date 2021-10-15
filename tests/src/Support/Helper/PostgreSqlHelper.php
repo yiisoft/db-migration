@@ -24,7 +24,7 @@ use function dirname;
 
 final class PostgreSqlHelper
 {
-    public static function createContainer(): ContainerInterface
+    public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
         $container = new SimpleContainer(
             [
@@ -37,7 +37,7 @@ final class PostgreSqlHelper
                     ],
                 ),
             ],
-            static function (string $id) use (&$container): object {
+            static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new PgSqlConnection(
@@ -50,7 +50,7 @@ final class PostgreSqlHelper
                         return $container->get(ConnectionInterface::class);
 
                     default:
-                        return ContainerHelper::get($container, $id);
+                        return ContainerHelper::get($container, $id, $config ?? new ContainerConfig());
                 }
             }
         );

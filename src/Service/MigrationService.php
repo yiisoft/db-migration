@@ -25,7 +25,6 @@ final class MigrationService
     private string $createPath = '';
     private array $updateNamespaces = [];
     private array $updatePaths = [];
-    private bool $useTablePrefix = true;
     private string $version = '1.0';
     private Aliases $aliases;
     private ConnectionInterface $db;
@@ -153,11 +152,6 @@ final class MigrationService
         return array_values($migrations);
     }
 
-    public function getUseTablePrefix(): bool
-    {
-        return $this->useTablePrefix;
-    }
-
     /**
      * List of namespaces containing the migration update classes.
      *
@@ -196,18 +190,6 @@ final class MigrationService
     public function updatePaths(array $value): void
     {
         $this->updatePaths = $value;
-    }
-
-    /**
-     * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
-     *
-     * For example, if the table name is `post` the generator wil return `{{%post}}`.
-     *
-     * @param bool $value
-     */
-    public function useTablePrefix(bool $value): void
-    {
-        $this->useTablePrefix = $value;
     }
 
     public function version(): string

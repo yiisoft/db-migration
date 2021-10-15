@@ -10,7 +10,6 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\View\View;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function dirname;
 use function in_array;
@@ -19,9 +18,17 @@ final class CreateService
 {
     private Aliases $aliases;
     private ConnectionInterface $db;
-    private MigrationService $migrationService;
     private View $view;
     private ?SymfonyStyle $io = null;
+
+    /**
+     * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
+     *
+     * For example, if the table name is `post` the generator will return `{{%post}}`.
+     *
+     * @param bool $value
+     */
+    private bool $useTablePrefix;
 
     /**
      * @psalm-var array<string,string>|null
@@ -31,16 +38,16 @@ final class CreateService
     public function __construct(
         Aliases $aliases,
         ConnectionInterface $db,
-        MigrationService $migrationService,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        bool $useTablePrefix = true
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
-        $this->migrationService = $migrationService;
         $this->view = new View(
             dirname(__DIR__, 3) . '/resources/views',
             $eventDispatcher,
         );
+        $this->useTablePrefix = $useTablePrefix;
     }
 
     public function run(
@@ -57,7 +64,7 @@ final class CreateService
         $foreignKeyFactory = new ForeignKeyFactory(
             $this->db,
             $this->io,
-            $this->migrationService->getUseTablePrefix()
+            $this->useTablePrefix,
         );
 
         [$columns, $foreignKeys] = (new FieldsParser($foreignKeyFactory))->parse(
@@ -146,7 +153,6 @@ final class CreateService
     public function setIO(?SymfonyStyle $io): void
     {
         $this->io = $io;
-        $this->migrationService->setIO($io);
     }
 
     /**
