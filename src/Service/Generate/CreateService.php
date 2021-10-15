@@ -54,22 +54,35 @@ final class CreateService
     ): string {
         $templateFile = $this->getTemplate($command);
 
-        $fieldsParser = new FieldsParser(
+        $foreignKeyFactory = new ForeignKeyFactory(
             $this->db,
             $this->io,
             $this->migrationService->getUseTablePrefix()
         );
 
-        [$columns, $foreignKeys] = $fieldsParser->parse(
+        [$columns, $foreignKeys] = (new FieldsParser($foreignKeyFactory))->parse(
             $table,
             $fields,
-            in_array($command, ['table', 'dropTable'], true),
-            $command === 'junction',
-            $and
+            in_array($command, ['table', 'dropTable'], true)
         );
 
         if ($command === 'junction') {
-            $table = $table . '_' . $and;
+            $and = (string) $and;
+            $columns = array_merge(
+                [
+                    new Column($table . '_id', ['integer()']),
+                    new Column($and . '_id', ['integer()']),
+                ],
+                $columns,
+                [
+                    new Column('PRIMARY KEY(' . $table . '_id, ' . $and . '_id)'),
+                ],
+            );
+
+            $foreignKeys[] = $foreignKeyFactory->create($table . '_' . $and, $table . '_id', $table, null);
+            $foreignKeys[] = $foreignKeyFactory->create($table . '_' . $and, $and . '_id', $and, null);
+
+            $table .= '_' . $and;
         }
 
         return $this->view->renderFile(

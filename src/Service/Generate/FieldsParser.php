@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-
-use Yiisoft\Db\Connection\ConnectionInterface;
-
-use function count;
 use function in_array;
 
 /**
@@ -16,18 +11,11 @@ use function in_array;
  */
 final class FieldsParser
 {
-    private ConnectionInterface $db;
-    private ?SymfonyStyle $io;
-    private bool $useTablePrefix;
+    private ForeignKeyFactory $foreignKeyFactory;
 
-    public function __construct(
-        ConnectionInterface $db,
-        ?SymfonyStyle $io,
-        bool $useTablePrefix
-    ) {
-        $this->db = $db;
-        $this->io = $io;
-        $this->useTablePrefix = $useTablePrefix;
+    public function __construct(ForeignKeyFactory $foreignKeyFactory)
+    {
+        $this->foreignKeyFactory = $foreignKeyFactory;
     }
 
     /**
@@ -37,9 +25,7 @@ final class FieldsParser
     public function parse(
         string $table,
         ?string $value,
-        bool $addDefaultPrimaryKey,
-        bool $addJunction,
-        ?string $and
+        bool $addDefaultPrimaryKey
     ): array {
         $columns = [];
         $foreignKeys = [];
@@ -53,10 +39,10 @@ final class FieldsParser
                 foreach ($chunks as $i => $chunk) {
                     if (strncmp($chunk, 'foreignKey', 10) === 0) {
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
-                        $foreignKeys[] = $this->createForeignKey(
+                        $foreignKeys[] = $this->foreignKeyFactory->create(
                             $table,
-                            $matches[1] ?? preg_replace('/_id$/', '', $property),
                             $property,
+                            $matches[1] ?? preg_replace('/_id$/', '', $property),
                             empty($matches[2]) ? null : $matches[2]
                         );
 
@@ -75,10 +61,6 @@ final class FieldsParser
 
         if ($addDefaultPrimaryKey) {
             $this->addDefaultPrimaryKey($columns);
-        }
-
-        if ($addJunction) {
-            $this->addJunction($table, (string) $and, $columns, $foreignKeys);
         }
 
         return [$columns, $foreignKeys];
@@ -127,72 +109,6 @@ final class FieldsParser
         array_unshift(
             $columns,
             new Column('id', ['primaryKey()']),
-        );
-    }
-
-    /**
-     * @param Column[] $columns
-     * @param ForeignKey[] $foreignKeys
-     */
-    private function addJunction(string $table, string $and, array &$columns, array &$foreignKeys): void
-    {
-        $columns = array_merge(
-            [
-                new Column($table . '_id', ['integer()']),
-                new Column($and . '_id', ['integer()']),
-            ],
-            $columns,
-            [
-                new Column('PRIMARY KEY(' . $table . '_id, ' . $and . '_id)'),
-            ],
-        );
-
-        $foreignKeys[] = $this->createForeignKey($table . '_' . $and, $table, $table . '_id', null);
-        $foreignKeys[] = $this->createForeignKey($table . '_' . $and, $and, $and . '_id', null);
-    }
-
-    private function createForeignKey(
-        string $table,
-        string $relatedTable,
-        string $column,
-        ?string $relatedColumn
-    ): ForeignKey {
-        /**
-         * We're trying to get it from table schema.
-         *
-         * {@see https://github.com/yiisoft/yii2/issues/12748}
-         */
-        if ($relatedColumn === null) {
-            $relatedColumn = 'id';
-            $relatedTableSchema = $this->db->getTableSchema($relatedTable);
-            if ($relatedTableSchema !== null) {
-                $primaryKeyCount = count($relatedTableSchema->getPrimaryKey());
-                if ($primaryKeyCount === 1) {
-                    $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
-                } elseif ($primaryKeyCount > 1) {
-                    if ($this->io) {
-                        $this->io->writeln(
-                            "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is" .
-                            "composite. Default name \"id\" will be used for related field</>\n"
-                        );
-                    }
-                } elseif ($primaryKeyCount === 0) {
-                    if ($this->io) {
-                        $this->io->writeln(
-                            "<fg=yellow>Related table for field \"{$column}\" exists, but does not have a " .
-                            "primary key. Default name \"id\" will be used for related field.</>\n"
-                        );
-                    }
-                }
-            }
-        }
-
-        return new ForeignKey(
-            "idx-$table-$column",
-            "fk-$table-$column",
-            $column,
-            $this->useTablePrefix ? '{{%' . $relatedTable . '}}' : $relatedTable,
-            $relatedColumn,
         );
     }
 }
