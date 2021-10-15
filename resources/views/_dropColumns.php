@@ -5,8 +5,8 @@ declare(strict_types=1);
 /**
  * @var $this \Yiisoft\View\WebView
  * @var $table string the name table
- * @var $fields array the fields
- * @var $foreignKeys array the foreign keys
+ * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
+ * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
  */
 
 echo $this->render('_dropForeignKeys', [
@@ -14,6 +14,6 @@ echo $this->render('_dropForeignKeys', [
     'foreignKeys' => $foreignKeys,
 ]);
 
-foreach ($fields as $field) {
-    echo "        \$b->dropColumn('$table', '{$field['property']}');\n";
+foreach ($columns as $column) {
+    echo "        \$b->dropColumn('$table', '{$column->getProperty()}');\n";
 }

@@ -144,12 +144,7 @@ final class CreateCommand extends Command
         /** @var string */
         $command = $input->getOption('command');
 
-        /** @var array */
-        $fields = [];
-
-        /** @var string */
-        $field = $input->getOption('fields');
-
+        $fields = $input->hasOption('fields') ? (string) $input->getOption('fields') : null;
         $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
 
         /** @var string */
@@ -157,10 +152,6 @@ final class CreateCommand extends Command
 
         /** @var string */
         $namespace = $input->getOption('namespace');
-
-        if (!empty($field)) {
-            $fields = explode(',', $field);
-        }
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
             $io->error(

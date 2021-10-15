@@ -5,12 +5,12 @@ declare(strict_types=1);
 /**
  * @var $this \Yiisoft\View\WebView
  * @var $table string
- * @var $fields array[]
- * @var $foreignKeys array
+ * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
+ * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
  */
 
-foreach ($fields as $field) {
-    echo "        \$b->addColumn('$table', '{$field['property']}', \$b->{$field['decorators']});\n";
+foreach ($columns as $column) {
+    echo "        \$b->addColumn('$table', '{$column->getProperty()}', \$b->{$column->getDecoratorsString()});\n";
 }
 
 echo $this->render('_addForeignKeys', [

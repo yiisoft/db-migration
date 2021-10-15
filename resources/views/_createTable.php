@@ -7,16 +7,16 @@ declare(strict_types=1);
  *
  * @var $this \Yiisoft\View\WebView
  * @var $table string the name table
- * @var $fields array the fields
+ * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
  * @var $foreignKeys array the foreign keys
  */
 
 echo "        \$b->createTable('$table', [\n";
-foreach ($fields as $field) {
-    if (empty($field['decorators'])) {
-        echo "            '{$field['property']}',\n";
+foreach ($columns as $column) {
+    if (!$column->hasDecorators()) {
+        echo "            '{$column->getProperty()}',\n";
     } else {
-        echo "            '{$field['property']}' => \$b->{$field['decorators']},\n";
+        echo "            '{$column->getProperty()}' => \$b->{$column->getDecoratorsString()},\n";
     }
 }
 echo "        ]);\n";
