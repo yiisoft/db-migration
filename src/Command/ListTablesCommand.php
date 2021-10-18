@@ -18,6 +18,7 @@ final class ListTablesCommand extends Command
     private ListTablesService $listTablesService;
 
     protected static $defaultName = 'database/list';
+    protected static $defaultDescription = 'Lists all tables in the database.';
 
     public function __construct(ListTablesService $listTablesService)
     {
@@ -28,8 +29,7 @@ final class ListTablesCommand extends Command
 
     public function configure(): void
     {
-        $this->setDescription('Lists all tables in the database.')
-            ->setHelp('This command Lists all tables in the database.');
+        $this->setHelp('This command Lists all tables in the database.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

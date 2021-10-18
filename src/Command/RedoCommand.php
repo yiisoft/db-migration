@@ -41,6 +41,7 @@ final class RedoCommand extends Command
     private UpdateRunner $updateRunner;
 
     protected static $defaultName = 'migrate/redo';
+    protected static $defaultDescription = 'Redoes the last few migrations.';
 
     public function __construct(
         MigrationService $migrationService,
@@ -62,7 +63,6 @@ final class RedoCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Redoes the last few migrations.')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', null)
             ->setHelp('This command redoes the last few migrations.');
     }

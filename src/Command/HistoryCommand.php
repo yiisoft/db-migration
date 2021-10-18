@@ -34,6 +34,7 @@ final class HistoryCommand extends Command
     private Migrator $migrator;
 
     protected static $defaultName = 'migrate/history';
+    protected static $defaultDescription = 'Displays the migration history.';
 
     public function __construct(
         MigrationService $migrationService,
@@ -48,7 +49,6 @@ final class HistoryCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Displays the migration history.')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', null)
             ->setHelp('This command displays the migration history.');
     }

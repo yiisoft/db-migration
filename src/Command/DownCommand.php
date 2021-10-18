@@ -37,6 +37,7 @@ final class DownCommand extends Command
     private Migrator $migrator;
 
     protected static $defaultName = 'migrate/down';
+    protected static $defaultDescription = 'Downgrades the application by reverting old migrations.';
 
     public function __construct(
         DownRunner $downRunner,
@@ -56,7 +57,6 @@ final class DownCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Downgrades the application by reverting old migrations.')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', 1)
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Downgrade all migrations.')
             ->setHelp('This command downgrades the application by reverting old migrations.');

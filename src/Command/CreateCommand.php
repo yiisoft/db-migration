@@ -92,6 +92,7 @@ final class CreateCommand extends Command
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/create';
+    protected static $defaultDescription = 'Generate migration template.';
     private Migrator $migrator;
 
     public function __construct(
@@ -111,7 +112,6 @@ final class CreateCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Generate migration template.')
             ->addArgument('name', InputArgument::REQUIRED, 'Table name for generate migration.')
             ->addOption('command', 'c', InputOption::VALUE_OPTIONAL, 'Command to execute.', 'create')
             ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'To create table fields right away')
