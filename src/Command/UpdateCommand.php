@@ -36,6 +36,8 @@ final class UpdateCommand extends Command
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/up';
+    protected static $defaultDescription = 'Upgrades the application by applying new migrations.';
+
     private Migrator $migrator;
 
     public function __construct(
@@ -56,7 +58,6 @@ final class UpdateCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Upgrades the application by applying new migrations.')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
             ->setHelp('This command applying new migrations to database.');
     }

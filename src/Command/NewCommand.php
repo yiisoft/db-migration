@@ -32,6 +32,7 @@ final class NewCommand extends Command
     private MigrationService $migrationService;
 
     protected static $defaultName = 'migrate/new';
+    protected static $defaultDescription = 'Displays the first 10 new migrations.';
 
     public function __construct(MigrationService $migrationService)
     {
@@ -43,7 +44,6 @@ final class NewCommand extends Command
     public function configure(): void
     {
         $this
-            ->setDescription('Displays the first 10 new migrations.')
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10')
             ->setHelp('This command displays the first 10 new migrations.');
     }
