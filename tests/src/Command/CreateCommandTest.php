@@ -12,6 +12,7 @@ use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
@@ -321,11 +322,12 @@ EOF;
 
     public function testWithoutTablePrefix(): void
     {
-        $container = SqLiteHelper::createContainer();
+        $containerConfig = new ContainerConfig();
+        $containerConfig->useTablePrefix = false;
+        $container = SqLiteHelper::createContainer($containerConfig);
+
         $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
         SqLiteHelper::clearDatabase($container);
-
-        $container->get(MigrationService::class)->useTablePrefix(false);
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);

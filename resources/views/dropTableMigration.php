@@ -7,7 +7,8 @@
 /* @var $className string the new migration class name without namespace */
 /* @var $namespace string the new migration class namespace */
 /* @var $table string the name table */
-/* @var $fields array the fields */
+/* @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields */
+/* @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys */
 
 echo "<?php\n";
 
@@ -42,7 +43,7 @@ final class <?= $className ?> implements RevertibleMigrationInterface
     {
 <?= $this->render('_createTable', [
     'table' => $table,
-    'fields' => $fields,
+    'columns' => $columns,
     'foreignKeys' => $foreignKeys,
 ])
 ?>

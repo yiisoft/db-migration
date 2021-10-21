@@ -34,7 +34,7 @@ final class ContainerHelper
     /**
      * @throws NotFoundException
      */
-    public static function get(ContainerInterface $container, string $id): object
+    public static function get(ContainerInterface $container, string $id, ContainerConfig $config): object
     {
         switch ($id) {
             case SchemaCache::class:
@@ -81,8 +81,8 @@ final class ContainerHelper
                 return new CreateService(
                     $container->get(Aliases::class),
                     $container->get(ConnectionInterface::class),
-                    $container->get(MigrationService::class),
                     $container->get(EventDispatcherInterface::class),
+                    $config->useTablePrefix,
                 );
 
             case ConsoleMigrationInformer::class:

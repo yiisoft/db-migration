@@ -74,7 +74,7 @@ final class MigrationHelper
             $table,
             $className,
             $namespace,
-            $fields
+            implode(',', $fields),
         );
 
         if ($callback) {

@@ -21,7 +21,7 @@ use function dirname;
 
 final class SqLiteHelper
 {
-    public static function createContainer(): ContainerInterface
+    public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
         $container = new SimpleContainer(
             [
@@ -33,7 +33,7 @@ final class SqLiteHelper
                     ],
                 ),
             ],
-            static function (string $id) use (&$container): object {
+            static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new SqlLiteConnection(
@@ -46,7 +46,7 @@ final class SqLiteHelper
                         return $container->get(ConnectionInterface::class);
 
                     default:
-                        return ContainerHelper::get($container, $id);
+                        return ContainerHelper::get($container, $id, $config ?? new ContainerConfig());
                 }
             }
         );
