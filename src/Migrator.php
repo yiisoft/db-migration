@@ -13,6 +13,8 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
+use function get_class;
+
 final class Migrator
 {
     private ConnectionInterface $db;
@@ -108,7 +110,10 @@ final class Migrator
             $query->limit($limit);
         }
 
-        return ArrayHelper::map($query->all(), 'name', 'apply_time');
+        /** @psalm-var array<int,array<string,string|null>> $rows */
+        $rows = $query->all();
+
+        return ArrayHelper::map($rows, 'name', 'apply_time');
     }
 
     public function getHistoryTable(): string
