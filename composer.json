@@ -22,12 +22,12 @@
         "php": "^7.4|^8.0",
         "ext-filter": "*",
         "yiisoft/aliases": "^1.1|^2.0",
-        "yiisoft/arrays": "^1.0",
-        "yiisoft/db": "^3.0@dev",
+        "yiisoft/arrays": "^2.0",
+        "yiisoft/db": "3.0.x-dev",
         "yiisoft/files": "^1.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0",
-        "yiisoft/view": "^3.0",
+        "yiisoft/view": "^4.0",
         "yiisoft/yii-console": "^3.0@dev"
     },
     "require-dev": {
