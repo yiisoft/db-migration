@@ -90,7 +90,6 @@ final class ContainerHelper
 
             case CreateCommand::class:
                 return new CreateCommand(
-                    $container->get(Aliases::class),
                     $container->get(CreateService::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),

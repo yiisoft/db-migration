@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\Yii\Console\ExitCode;
@@ -86,7 +85,6 @@ use function strlen;
  */
 final class CreateCommand extends Command
 {
-    private Aliases $aliases;
     private CreateService $createService;
     private MigrationService $migrationService;
 
@@ -95,12 +93,10 @@ final class CreateCommand extends Command
     private Migrator $migrator;
 
     public function __construct(
-        Aliases $aliases,
         CreateService $createService,
         MigrationService $migrationService,
         Migrator $migrator
     ) {
-        $this->aliases = $aliases;
         $this->createService = $createService;
         $this->migrationService = $migrationService;
         $this->migrator = $migrator;
@@ -182,9 +178,7 @@ final class CreateCommand extends Command
             return ExitCode::DATAERR;
         }
 
-        $migrationPath = $this->aliases->get(
-            FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace))
-        );
+        $migrationPath = FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace));
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
 
