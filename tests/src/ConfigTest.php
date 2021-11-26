@@ -14,6 +14,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqlLiteConnection;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Di\Container;
+use Yiisoft\Di\ContainerConfig;
 use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
 use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
@@ -73,8 +74,9 @@ final class ConfigTest extends TestCase
     private function createConsoleContainer(): Container
     {
         $params = $this->getParams();
-        return new Container(
-            array_merge(
+
+        $config = ContainerConfig::create()
+            ->withDefinitions(array_merge(
                 [
                     CacheInterface::class => [
                         'class' => Cache::class,
@@ -92,8 +94,8 @@ final class ConfigTest extends TestCase
                     ],
                 ],
                 $this->getConsoleDefinitions()
-            )
-        );
+            ));
+        return new Container($config);
     }
 
     private function getConsoleDefinitions(): array
