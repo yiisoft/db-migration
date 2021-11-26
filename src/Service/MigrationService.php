@@ -326,19 +326,17 @@ final class MigrationService
     /**
      * Finds the file path for the specified migration namespace.
      *
-     * @param string|null $namespace migration namespace.
+     * @param string|null $namespace The migration namespace.
      *
-     * @return string migration file path.
+     * @return string The migration file path.
      */
     public function findMigrationPath(?string $namespace): string
     {
         $namespace = $namespace ?? $this->createNamespace;
 
-        if (empty($namespace)) {
-            return $this->createPath;
-        }
-
-        return $this->getNamespacePath($namespace);
+        return empty($namespace)
+            ? $this->aliases->get($this->createPath)
+            : $this->getNamespacePath($namespace);
     }
 
     /**
