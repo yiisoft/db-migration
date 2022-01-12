@@ -1,20 +1,20 @@
 checks:
-    php: true
+  php: true
 
 filter:
-    paths:
-        - "src/*"
+  paths:
+    - "src/*"
 
 tools:
-    php_code_coverage:
-        enabled: true
+  php_code_coverage:
+    enabled: true
 
 build:
-    nodes:
-        analysis:
-            environment:
-                php: 7.4.12
+  nodes:
+    analysis:
+      environment:
+        php: 8.0.11
 
-            tests:
-                override:
-                    - php-scrutinizer-run
+      tests:
+        override:
+          - php-scrutinizer-run
