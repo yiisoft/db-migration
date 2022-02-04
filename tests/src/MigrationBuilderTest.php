@@ -46,7 +46,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             '1',
-            $this->db->createCommand('SELECT count(*) FROM test WHERE id = 1')->queryScalar()
+            (string) $this->db->createCommand('SELECT count(*) FROM test WHERE id = 1')->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
     }
@@ -60,7 +60,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             '2',
-            $this->db->createCommand('SELECT count(*) FROM test WHERE id IN (1, 2)')->queryScalar()
+            (string) $this->db->createCommand('SELECT count(*) FROM test WHERE id IN (1, 2)')->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
     }
@@ -73,7 +73,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->upsert('test', ['id' => 1, 'name' => 'Petr'], false);
 
-        $this->assertSame(
+        $this->assertEquals(
             [
                 ['id' => '1', 'name' => 'Ivan'],
             ],
@@ -90,7 +90,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->update('test', ['name' => 'Petr'], 'id=:id', ['id' => 1]);
 
-        $this->assertSame(
+        $this->assertEquals(
             [
                 ['id' => '1', 'name' => 'Petr'],
             ],
@@ -107,7 +107,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->delete('test', 'id=:id', ['id' => 1]);
 
-        $this->assertSame('0', $this->db->createCommand('SELECT count(*) FROM test')->queryScalar());
+        $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM test')->queryScalar());
         $this->assertInformerOutputContains('    > Delete from test ... Done in ');
     }
 
@@ -173,7 +173,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->truncateTable('test_table');
 
-        $this->assertSame('0', $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
         $this->assertInformerOutputContains('    > truncate table test_table ... Done in ');
     }
 

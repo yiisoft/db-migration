@@ -28,7 +28,7 @@
         "yiisoft/files": "^1.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0",
-        "yiisoft/view": "^4.0",
+        "yiisoft/view": "^4.0|^5.0",
         "yiisoft/yii-console": "^1.0"
     },
     "require-dev": {
