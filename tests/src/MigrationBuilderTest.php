@@ -46,7 +46,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             '1',
-            $this->db->createCommand('SELECT count(*) FROM test WHERE id = 1')->queryScalar()
+            (string) $this->db->createCommand('SELECT count(*) FROM test WHERE id = 1')->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
     }
