@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This view is used by Yiisoft\Db\Yii\Migration\Command.
  *

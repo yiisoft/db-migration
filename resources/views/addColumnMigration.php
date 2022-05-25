@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * This view is used by Yiisoft\Db\Yii\Migration\Command.
  *
@@ -25,8 +25,8 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 /**
  * Handles adding columns to table `<?= $table ?>`.
 <?= $this->render('_foreignTables', [
-     'foreignKeys' => $foreignKeys,
- ]) ?>
+    'foreignKeys' => $foreignKeys,
+]) ?>
  */
 final class <?= $className ?> implements RevertibleMigrationInterface
 {
