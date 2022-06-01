@@ -56,8 +56,13 @@ final class SqLiteHelper
     public static function clearDatabase(ContainerInterface $container): void
     {
         $db = $container->get(SqlLiteConnection::class);
-        foreach ($db->getSchema()->getTableNames() as $tableName) {
-            $db->createCommand()->dropTable($tableName)->execute();
+        foreach ($db
+                     ->getSchema()
+                     ->getTableNames() as $tableName) {
+            $db
+                ->createCommand()
+                ->dropTable($tableName)
+                ->execute();
         }
     }
 }

@@ -60,7 +60,10 @@ final class MigrationBuilder
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
-        $this->db->createCommand($sql)->bindValues($params)->execute();
+        $this->db
+            ->createCommand($sql)
+            ->bindValues($params)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -79,7 +82,10 @@ final class MigrationBuilder
     public function insert(string $table, array $columns): void
     {
         $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->insert($table, $columns)->execute();
+        $this->db
+            ->createCommand()
+            ->insert($table, $columns)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -99,7 +105,10 @@ final class MigrationBuilder
     public function batchInsert(string $table, array $columns, array $rows): void
     {
         $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->batchInsert($table, $columns, $rows)->execute();
+        $this->db
+            ->createCommand()
+            ->batchInsert($table, $columns, $rows)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -124,7 +133,10 @@ final class MigrationBuilder
     public function upsert(string $table, $insertColumns, $updateColumns = true, array $params = []): void
     {
         $time = $this->beginCommand("Upsert into $table");
-        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
+        $this->db
+            ->createCommand()
+            ->upsert($table, $insertColumns, $updateColumns, $params)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -146,7 +158,10 @@ final class MigrationBuilder
     public function update(string $table, array $columns, $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Update $table");
-        $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
+        $this->db
+            ->createCommand()
+            ->update($table, $columns, $condition, $params)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -165,7 +180,10 @@ final class MigrationBuilder
     public function delete(string $table, $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Delete from $table");
-        $this->db->createCommand()->delete($table, $condition, $params)->execute();
+        $this->db
+            ->createCommand()
+            ->delete($table, $condition, $params)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -194,13 +212,19 @@ final class MigrationBuilder
     {
         $time = $this->beginCommand("create table $table");
 
-        $this->db->createCommand()->createTable($table, $columns, $options)->execute();
+        $this->db
+            ->createCommand()
+            ->createTable($table, $columns, $options)
+            ->execute();
 
         foreach ($columns as $column => $type) {
             if ($type instanceof ColumnSchemaBuilder) {
                 $comment = $type->getComment();
                 if ($comment !== null) {
-                    $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+                    $this->db
+                        ->createCommand()
+                        ->addCommentOnColumn($table, $column, $comment)
+                        ->execute();
                 }
             }
         }
@@ -217,7 +241,10 @@ final class MigrationBuilder
     public function renameTable(string $table, string $newName): void
     {
         $time = $this->beginCommand("rename table $table to $newName");
-        $this->db->createCommand()->renameTable($table, $newName)->execute();
+        $this->db
+            ->createCommand()
+            ->renameTable($table, $newName)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -233,7 +260,10 @@ final class MigrationBuilder
     public function dropTable(string $table): void
     {
         $time = $this->beginCommand("Drop table $table");
-        $this->db->createCommand()->dropTable($table)->execute();
+        $this->db
+            ->createCommand()
+            ->dropTable($table)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -245,7 +275,10 @@ final class MigrationBuilder
     public function truncateTable(string $table): void
     {
         $time = $this->beginCommand("truncate table $table");
-        $this->db->createCommand()->truncateTable($table)->execute();
+        $this->db
+            ->createCommand()
+            ->truncateTable($table)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -269,9 +302,15 @@ final class MigrationBuilder
         }
 
         $time = $this->beginCommand("add column $column $type to table $table");
-        $this->db->createCommand()->addColumn($table, $column, $type)->execute();
+        $this->db
+            ->createCommand()
+            ->addColumn($table, $column, $type)
+            ->execute();
         if ($comment !== null) {
-            $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+            $this->db
+                ->createCommand()
+                ->addCommentOnColumn($table, $column, $comment)
+                ->execute();
         }
         $this->endCommand($time);
     }
@@ -285,7 +324,10 @@ final class MigrationBuilder
     public function dropColumn(string $table, string $column): void
     {
         $time = $this->beginCommand("drop column $column from table $table");
-        $this->db->createCommand()->dropColumn($table, $column)->execute();
+        $this->db
+            ->createCommand()
+            ->dropColumn($table, $column)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -303,7 +345,10 @@ final class MigrationBuilder
     public function renameColumn(string $table, string $name, string $newName): void
     {
         $time = $this->beginCommand("Rename column $name in table $table to $newName");
-        $this->db->createCommand()->renameColumn($table, $name, $newName)->execute();
+        $this->db
+            ->createCommand()
+            ->renameColumn($table, $name, $newName)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -334,10 +379,16 @@ final class MigrationBuilder
 
         $time = $this->beginCommand("Alter column $column in table $table to $type");
 
-        $this->db->createCommand()->alterColumn($table, $column, $type)->execute();
+        $this->db
+            ->createCommand()
+            ->alterColumn($table, $column, $type)
+            ->execute();
 
         if ($comment !== null) {
-            $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+            $this->db
+                ->createCommand()
+                ->addCommentOnColumn($table, $column, $comment)
+                ->execute();
         }
 
         $this->endCommand($time);
@@ -361,7 +412,10 @@ final class MigrationBuilder
         $time = $this->beginCommand(
             "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
         );
-        $this->db->createCommand()->addPrimaryKey($name, $table, $columns)->execute();
+        $this->db
+            ->createCommand()
+            ->addPrimaryKey($name, $table, $columns)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -378,7 +432,10 @@ final class MigrationBuilder
     public function dropPrimaryKey(string $name, string $table): void
     {
         $time = $this->beginCommand("Drop primary key $name");
-        $this->db->createCommand()->dropPrimaryKey($name, $table)->execute();
+        $this->db
+            ->createCommand()
+            ->dropPrimaryKey($name, $table)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -406,9 +463,9 @@ final class MigrationBuilder
     public function addForeignKey(
         string $name,
         string $table,
-        $columns,
+               $columns,
         string $refTable,
-        $refColumns,
+               $refColumns,
         ?string $delete = null,
         ?string $update = null
     ): void {
@@ -421,15 +478,18 @@ final class MigrationBuilder
                 (array)$refColumns
             ) . ')'
         );
-        $this->db->createCommand()->addForeignKey(
-            $name,
-            $table,
-            $columns,
-            $refTable,
-            $refColumns,
-            $delete,
-            $update
-        )->execute();
+        $this->db
+            ->createCommand()
+            ->addForeignKey(
+                $name,
+                $table,
+                $columns,
+                $refTable,
+                $refColumns,
+                $delete,
+                $update
+            )
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -447,7 +507,10 @@ final class MigrationBuilder
     public function dropForeignKey(string $name, string $table): void
     {
         $time = $this->beginCommand("Drop foreign key $name from table $table");
-        $this->db->createCommand()->dropForeignKey($name, $table)->execute();
+        $this->db
+            ->createCommand()
+            ->dropForeignKey($name, $table)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -471,7 +534,10 @@ final class MigrationBuilder
         $time = $this->beginCommand(
             'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array)$columns) . ')'
         );
-        $this->db->createCommand()->createIndex($name, $table, $columns, $unique)->execute();
+        $this->db
+            ->createCommand()
+            ->createIndex($name, $table, $columns, $unique)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -488,7 +554,10 @@ final class MigrationBuilder
     public function dropIndex(string $name, string $table): void
     {
         $time = $this->beginCommand("Drop index $name on $table");
-        $this->db->createCommand()->dropIndex($name, $table)->execute();
+        $this->db
+            ->createCommand()
+            ->dropIndex($name, $table)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -508,7 +577,10 @@ final class MigrationBuilder
     public function addCommentOnColumn(string $table, string $column, string $comment): void
     {
         $time = $this->beginCommand("Add comment on column $column");
-        $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
+        $this->db
+            ->createCommand()
+            ->addCommentOnColumn($table, $column, $comment)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -525,7 +597,10 @@ final class MigrationBuilder
     public function addCommentOnTable(string $table, string $comment): void
     {
         $time = $this->beginCommand("Add comment on table $table");
-        $this->db->createCommand()->addCommentOnTable($table, $comment)->execute();
+        $this->db
+            ->createCommand()
+            ->addCommentOnTable($table, $comment)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -544,7 +619,10 @@ final class MigrationBuilder
     public function dropCommentFromColumn(string $table, string $column): void
     {
         $time = $this->beginCommand("Drop comment from column $column");
-        $this->db->createCommand()->dropCommentFromColumn($table, $column)->execute();
+        $this->db
+            ->createCommand()
+            ->dropCommentFromColumn($table, $column)
+            ->execute();
         $this->endCommand($time);
     }
 
@@ -561,7 +639,10 @@ final class MigrationBuilder
     public function dropCommentFromTable(string $table): void
     {
         $time = $this->beginCommand("drop comment from table $table");
-        $this->db->createCommand()->dropCommentFromTable($table)->execute();
+        $this->db
+            ->createCommand()
+            ->dropCommentFromTable($table)
+            ->execute();
         $this->endCommand($time);
     }
 

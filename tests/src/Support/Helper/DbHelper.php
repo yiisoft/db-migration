@@ -11,7 +11,8 @@ final class DbHelper
 {
     public static function createTable(ContainerInterface $container, string $name, array $fields): void
     {
-        $container->get(ConnectionInterface::class)
+        $container
+            ->get(ConnectionInterface::class)
             ->createCommand()
             ->createTable($name, $fields)
             ->execute();
@@ -19,7 +20,8 @@ final class DbHelper
 
     public static function insert(ContainerInterface $container, string $table, array $columns): void
     {
-        $container->get(ConnectionInterface::class)
+        $container
+            ->get(ConnectionInterface::class)
             ->createCommand()
             ->insert($table, $columns)
             ->execute();

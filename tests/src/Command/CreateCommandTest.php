@@ -180,7 +180,9 @@ final class $className implements RevertibleMigrationInterface
     {
         \$b->createTable('post', [
             'uid' => \$b->primaryKey(),
-            'name' => \$b->string()->defaultValue("test:name"),
+            'name' => \$b
+                ->string()
+                ->defaultValue("test:name"),
             'user_id' => \$b->integer(),
             'tag_id' => \$b->integer(),
             'category_id' => \$b->integer(),
@@ -670,7 +672,10 @@ final class $className implements RevertibleMigrationInterface
     {
         \$b->createTable('post', [
             'id' => \$b->primaryKey(),
-            'title' => \$b->string(12)->notNull()->unique(),
+            'title' => \$b
+                ->string(12)
+                ->notNull()
+                ->unique(),
             'body' => \$b->text(),
         ]);
     }
@@ -784,8 +789,12 @@ final class $className implements RevertibleMigrationInterface
     {
         \$b->createTable('post', [
             'id' => \$b->primaryKey(),
-            'author_id' => \$b->integer()->notNull(),
-            'category_id' => \$b->integer()->defaultValue(1),
+            'author_id' => \$b
+                ->integer()
+                ->notNull(),
+            'category_id' => \$b
+                ->integer()
+                ->defaultValue(1),
             'title' => \$b->string(),
             'body' => \$b->text(),
         ]);
@@ -990,7 +999,9 @@ EOF;
         MigrationHelper::useMigrationsPath($container);
         SqLiteHelper::clearDatabase($container);
 
-        $container->get(MigrationService::class)->createPath(__DIR__ . '/not-exists');
+        $container
+            ->get(MigrationService::class)
+            ->createPath(__DIR__ . '/not-exists');
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);
@@ -1008,7 +1019,9 @@ EOF;
         MigrationHelper::useMigrationsPath($container);
         SqLiteHelper::clearDatabase($container);
 
-        $container->get(MigrationService::class)->createPath('');
+        $container
+            ->get(MigrationService::class)
+            ->createPath('');
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);
@@ -1029,7 +1042,8 @@ EOF;
         MigrationHelper::useMigrationsNamespace($container);
         SqLiteHelper::clearDatabase($container);
 
-        $container->get(MigrationService::class)
+        $container
+            ->get(MigrationService::class)
             ->createNamespace('Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($container);
@@ -1048,7 +1062,9 @@ EOF;
         MigrationHelper::useMigrationsNamespace($container);
         SqLiteHelper::clearDatabase($container);
 
-        $container->get(MigrationService::class)->createNamespace('');
+        $container
+            ->get(MigrationService::class)
+            ->createNamespace('');
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);

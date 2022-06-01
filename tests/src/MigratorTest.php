@@ -70,11 +70,14 @@ final class MigratorTest extends TestCase
         $migrator->up(new StubMigration());
 
         // Change column "name"
-        $db->createCommand()->alterColumn(
-            $migrator->getHistoryTable(),
-            'name',
-            'text'
-        )->execute();
+        $db
+            ->createCommand()
+            ->alterColumn(
+                $migrator->getHistoryTable(),
+                'name',
+                'text'
+            )
+            ->execute();
 
         $this->assertNull($migrator->getMigrationNameLimit());
     }

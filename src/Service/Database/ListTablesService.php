@@ -48,7 +48,9 @@ final class ListTablesService
         }
 
         $tables = $this->getAllTableNames();
-        $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
+        $migrationTable = $this->db
+            ->getSchema()
+            ->getRawTableName($this->migrator->getHistoryTable());
         $dsn = $this->db->getDSN();
 
         if (empty($tables) || implode(',', $tables) === $migrationTable) {
@@ -82,18 +84,24 @@ final class ListTablesService
     private function getAllTableNames(): array
     {
         try {
-            $schemaNames = $this->db->getSchema()->getSchemaNames(true);
+            $schemaNames = $this->db
+                ->getSchema()
+                ->getSchemaNames(true);
         } catch (NotSupportedException $e) {
             $schemaNames = [];
         }
 
         if (count($schemaNames) < 2) {
-            return $this->db->getSchema()->getTableNames();
+            return $this->db
+                ->getSchema()
+                ->getTableNames();
         }
 
         $tableNames = [];
         foreach ($schemaNames as $schemaName) {
-            foreach ($this->db->getSchema()->getTableSchemas($schemaName) as $tableName) {
+            foreach ($this->db
+                         ->getSchema()
+                         ->getTableSchemas($schemaName) as $tableName) {
                 $tableNames[] = $tableName->getFullName();
             }
         }

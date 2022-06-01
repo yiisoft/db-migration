@@ -13,7 +13,10 @@ trait AssertTrait
 {
     protected function assertExistsTables(ContainerInterface $container, string ...$tables): void
     {
-        $existsTables = $container->get(ConnectionInterface::class)->getSchema()->getTableNames();
+        $existsTables = $container
+            ->get(ConnectionInterface::class)
+            ->getSchema()
+            ->getTableNames();
         foreach ($tables as $table) {
             $this->assertContains($table, $existsTables);
         }
@@ -21,7 +24,10 @@ trait AssertTrait
 
     protected function assertNotExistsTables(ContainerInterface $container, string ...$tables): void
     {
-        $existsTables = $container->get(ConnectionInterface::class)->getSchema()->getTableNames();
+        $existsTables = $container
+            ->get(ConnectionInterface::class)
+            ->getSchema()
+            ->getTableNames();
         foreach ($tables as $table) {
             $this->assertNotContains($table, $existsTables);
         }

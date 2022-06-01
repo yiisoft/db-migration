@@ -33,7 +33,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->execute('DROP TABLE test');
 
-        $this->assertEmpty($this->db->getSchema()->getTableSchema('test_table'));
+        $this->assertEmpty($this->db
+            ->getSchema()
+            ->getTableSchema('test_table'));
         $this->assertInformerOutputContains('    > Execute SQL: DROP TABLE test ... Done in ');
     }
 
@@ -46,7 +48,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             '1',
-            (string) $this->db->createCommand('SELECT count(*) FROM test WHERE id = 1')->queryScalar()
+            (string) $this->db
+                ->createCommand('SELECT count(*) FROM test WHERE id = 1')
+                ->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
     }
@@ -60,7 +64,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             '2',
-            (string) $this->db->createCommand('SELECT count(*) FROM test WHERE id IN (1, 2)')->queryScalar()
+            (string) $this->db
+                ->createCommand('SELECT count(*) FROM test WHERE id IN (1, 2)')
+                ->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
     }
@@ -77,7 +83,9 @@ final class MigrationBuilderTest extends TestCase
             [
                 ['id' => '1', 'name' => 'Ivan'],
             ],
-            $this->db->createCommand('SELECT * FROM test')->queryAll()
+            $this->db
+                ->createCommand('SELECT * FROM test')
+                ->queryAll()
         );
         $this->assertInformerOutputContains('    > Upsert into test ... Done in ');
     }
@@ -94,7 +102,9 @@ final class MigrationBuilderTest extends TestCase
             [
                 ['id' => '1', 'name' => 'Petr'],
             ],
-            $this->db->createCommand('SELECT * FROM test')->queryAll()
+            $this->db
+                ->createCommand('SELECT * FROM test')
+                ->queryAll()
         );
         $this->assertInformerOutputContains('    > Update test ... Done in ');
     }
@@ -107,7 +117,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->delete('test', 'id=:id', ['id' => 1]);
 
-        $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM test')->queryScalar());
+        $this->assertSame('0', (string) $this->db
+            ->createCommand('SELECT count(*) FROM test')
+            ->queryScalar());
         $this->assertInformerOutputContains('    > Delete from test ... Done in ');
     }
 
@@ -117,12 +129,22 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->createTable('test', ['id' => $this->builder->primaryKey()]);
 
-        $schema = $this->db->getSchema()->getTableSchema('test');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test');
         $this->assertNotEmpty($schema);
-        $this->assertSame('id', $schema->getColumn('id')->getName());
-        $this->assertSame('integer', $schema->getColumn('id')->getType());
-        $this->assertTrue($schema->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($schema->getColumn('id')->isAutoIncrement());
+        $this->assertSame('id', $schema
+            ->getColumn('id')
+            ->getName());
+        $this->assertSame('integer', $schema
+            ->getColumn('id')
+            ->getType());
+        $this->assertTrue($schema
+            ->getColumn('id')
+            ->isPrimaryKey());
+        $this->assertTrue($schema
+            ->getColumn('id')
+            ->isAutoIncrement());
 
         $this->assertInformerOutputContains('    > create table test ... Done in ');
     }
@@ -133,11 +155,19 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->createTable('test', ['name' => 'varchar(50)']);
 
-        $schema = $this->db->getSchema()->getTableSchema('test');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test');
         $this->assertNotEmpty($schema);
-        $this->assertSame('name', $schema->getColumn('name')->getName());
-        $this->assertSame('string', $schema->getColumn('name')->getType());
-        $this->assertSame(50, $schema->getColumn('name')->getSize());
+        $this->assertSame('name', $schema
+            ->getColumn('name')
+            ->getName());
+        $this->assertSame('string', $schema
+            ->getColumn('name')
+            ->getType());
+        $this->assertSame(50, $schema
+            ->getColumn('name')
+            ->getSize());
 
         $this->assertInformerOutputContains('    > create table test ... Done in ');
     }
@@ -173,7 +203,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->truncateTable('test_table');
 
-        $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM test_table')->queryScalar());
+        $this->assertSame('0', (string) $this->db
+            ->createCommand('SELECT count(*) FROM test_table')
+            ->queryScalar());
         $this->assertInformerOutputContains('    > truncate table test_table ... Done in ');
     }
 
@@ -199,7 +231,10 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addColumn('test_table', 'code', $type);
 
-        $schema = $this->db->getSchema()->getTableSchema('test_table')->getColumn('code');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test_table')
+            ->getColumn('code');
         $this->assertNotEmpty($schema);
         $this->assertSame('code', $schema->getName());
         $this->assertSame('string', $schema->getType());
@@ -215,7 +250,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->dropColumn('test', 'name');
 
-        $schema = $this->db->getSchema()->getTableSchema('test');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test');
         $this->assertSame(['id'], $schema->getColumnNames());
         $this->assertInformerOutputContains('    > drop column name from table test ... Done in');
     }
@@ -236,7 +273,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->renameColumn('test', 'id', 'id_new');
 
-        $schema = $this->db->getSchema()->getTableSchema('test');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test');
         $this->assertSame(['id_new'], $schema->getColumnNames());
         $this->assertInformerOutputContains('    > Rename column id in table test to id_new ... Done in');
     }
@@ -272,7 +311,10 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->alterColumn('test', 'id', $type);
 
-        $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test')
+            ->getColumn('id');
         $this->assertNotEmpty($schema);
         $this->assertSame('id', $schema->getName());
         $this->assertSame('string', $schema->getType());
@@ -297,7 +339,10 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addPrimaryKey('id', 'test', ['id']);
 
-        $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test')
+            ->getColumn('id');
         $this->assertNotEmpty($schema);
         $this->assertTrue($schema->isPrimaryKey());
         $this->assertInformerOutputContains('    > Add primary key id on test (id) ... Done in ');
@@ -310,7 +355,10 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->dropPrimaryKey('test_pk', 'test');
 
-        $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test')
+            ->getColumn('id');
         $this->assertNotEmpty($schema);
         $this->assertFalse($schema->isPrimaryKey());
         $this->assertInformerOutputContains('    > Drop primary key test_pk ... Done in ');
@@ -341,7 +389,10 @@ final class MigrationBuilderTest extends TestCase
             'CASCADE'
         );
 
-        $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
+        $keys = $this->db
+            ->getSchema()
+            ->getTableSchema('test_table')
+            ->getForeignKeys();
 
         $this->assertSame(
             [
@@ -359,11 +410,17 @@ final class MigrationBuilderTest extends TestCase
         $this->prepareSqLite();
         $this->createTable('target_table', ['id' => 'int']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
-        $this->db->createCommand()->addForeignKey('fk', 'test_table', 'foreign_id', 'target_table', 'id')->execute();
+        $this->db
+            ->createCommand()
+            ->addForeignKey('fk', 'test_table', 'foreign_id', 'target_table', 'id')
+            ->execute();
 
         $this->builder->dropForeignKey('fk', 'test_table');
 
-        $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
+        $keys = $this->db
+            ->getSchema()
+            ->getTableSchema('test_table')
+            ->getForeignKeys();
 
         $this->assertEmpty($keys);
         $this->assertInformerOutputContains('    > Drop foreign key fk from table test_table ... Done');
@@ -376,7 +433,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->createIndex('unique_index', 'test_table', 'id', true);
 
-        $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
+        $indexes = $this->db
+            ->getSchema()
+            ->getTableIndexes('test_table', true);
         $this->assertCount(1, $indexes);
 
         /** @var IndexConstraint $index */
@@ -395,11 +454,16 @@ final class MigrationBuilderTest extends TestCase
     {
         $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->createIndex('test_index', 'test_table', 'id')->execute();
+        $this->db
+            ->createCommand()
+            ->createIndex('test_index', 'test_table', 'id')
+            ->execute();
 
         $this->builder->dropIndex('test_index', 'test_table');
 
-        $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
+        $indexes = $this->db
+            ->getSchema()
+            ->getTableIndexes('test_table', true);
 
         $this->assertCount(0, $indexes);
         $this->assertInformerOutputContains('    > Drop index test_index on test_table ... Done in ');
@@ -412,7 +476,10 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addCommentOnColumn('test_table', 'id', 'test comment');
 
-        $schema = $this->db->getSchema()->getTableSchema('test_table')->getColumn('id');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test_table')
+            ->getColumn('id');
 
         $this->assertSame('test comment', $schema->getComment());
     }
@@ -433,9 +500,11 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addCommentOnTable('test_table', 'test comment');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $comment = $this->db
+            ->createCommand(
+                "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
+            )
+            ->queryScalar();
 
         $this->assertSame('test comment', $comment);
     }
@@ -453,11 +522,17 @@ final class MigrationBuilderTest extends TestCase
     {
         $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->addCommentOnColumn('test_table', 'id', 'comment')->execute();
+        $this->db
+            ->createCommand()
+            ->addCommentOnColumn('test_table', 'id', 'comment')
+            ->execute();
 
         $this->builder->dropCommentFromColumn('test_table', 'id');
 
-        $schema = $this->db->getSchema()->getTableSchema('test_table')->getColumn('id');
+        $schema = $this->db
+            ->getSchema()
+            ->getTableSchema('test_table')
+            ->getColumn('id');
 
         $this->assertNull($schema->getComment());
     }
@@ -475,13 +550,18 @@ final class MigrationBuilderTest extends TestCase
     {
         $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->addCommentOnTable('test_table', 'comment')->execute();
+        $this->db
+            ->createCommand()
+            ->addCommentOnTable('test_table', 'comment')
+            ->execute();
 
         $this->builder->dropCommentFromTable('test_table');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $comment = $this->db
+            ->createCommand(
+                "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
+            )
+            ->queryScalar();
 
         $this->assertNull($comment);
     }

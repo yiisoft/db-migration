@@ -101,8 +101,12 @@ final class MigrationHelper
     ): string {
         $className = self::createMigration($container, $name, $command, $table, $fields, $callback);
 
-        $migration = $container->get(MigrationService::class)->makeMigration($className);
-        $container->get(Migrator::class)->up($migration);
+        $migration = $container
+            ->get(MigrationService::class)
+            ->makeMigration($className);
+        $container
+            ->get(Migrator::class)
+            ->up($migration);
 
         return $className;
     }
@@ -114,7 +118,9 @@ final class MigrationHelper
 
     private static function getPathForMigrationPath(ContainerInterface $container): string
     {
-        return $container->get(Aliases::class)->get(self::PATH_ALIAS);
+        return $container
+            ->get(Aliases::class)
+            ->get(self::PATH_ALIAS);
     }
 
     private static function preparePaths(ContainerInterface $container): void

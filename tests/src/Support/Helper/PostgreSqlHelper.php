@@ -60,8 +60,12 @@ final class PostgreSqlHelper
     public static function clearDatabase(ContainerInterface $container): void
     {
         $connection = $container->get(PgSqlConnection::class);
-        foreach ($connection->getSchema()->getSchemaNames(true) as $name) {
-            $connection->createCommand('drop schema ' . $connection->quoteTableName($name) . ' cascade')->execute();
+        foreach ($connection
+                     ->getSchema()
+                     ->getSchemaNames(true) as $name) {
+            $connection
+                ->createCommand('drop schema ' . $connection->quoteTableName($name) . ' cascade')
+                ->execute();
         }
         self::createSchema($container, 'public');
     }
@@ -73,7 +77,11 @@ final class PostgreSqlHelper
 
         $quotedName = $connection->quoteTableName($name);
 
-        $connection->createCommand('drop schema if exists ' . $quotedName)->execute();
-        $connection->createCommand('create schema ' . $quotedName)->execute();
+        $connection
+            ->createCommand('drop schema if exists ' . $quotedName)
+            ->execute();
+        $connection
+            ->createCommand('create schema ' . $quotedName)
+            ->execute();
     }
 }

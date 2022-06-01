@@ -32,7 +32,9 @@ final class MigrationServiceTest extends TestCase
             'post',
             ['name:string(50)'],
         );
-        $container->get(Migrator::class)->up(new $className());
+        $container
+            ->get(Migrator::class)
+            ->up(new $className());
 
         $className = MigrationHelper::createMigration(
             $container,

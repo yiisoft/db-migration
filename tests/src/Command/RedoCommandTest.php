@@ -168,7 +168,9 @@ final class RedoCommandTest extends TestCase
         SqLiteHelper::clearDatabase($container);
         MigrationHelper::useMigrationsPath($container);
 
-        $container->get(Migrator::class)->up(new StubMigration());
+        $container
+            ->get(Migrator::class)
+            ->up(new StubMigration());
 
         $command = $this->createCommand($container);
         $command->setInputs(['yes']);

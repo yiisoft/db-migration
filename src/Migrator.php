@@ -84,12 +84,16 @@ final class Migrator
             return $this->migrationNameLimit;
         }
 
-        $tableSchema = $this->db->getSchema()->getTableSchema($this->historyTable, true);
+        $tableSchema = $this->db
+            ->getSchema()
+            ->getTableSchema($this->historyTable, true);
         if ($tableSchema === null) {
             return null;
         }
 
-        $limit = $tableSchema->getColumns()['name']->getSize();
+        $limit = $tableSchema
+            ->getColumns()
+            ->getSize();
         if ($limit === null) {
             return null;
         }
@@ -123,21 +127,26 @@ final class Migrator
 
     private function addMigrationToHistory(MigrationInterface $migration): void
     {
-        $this->db->createCommand()->insert(
-            $this->historyTable,
-            [
-                'name' => $this->getMigrationName($migration),
-                'apply_time' => time(),
-            ]
-        )->execute();
+        $this->db
+            ->createCommand()
+            ->insert(
+                $this->historyTable,
+                [
+                    'name' => $this->getMigrationName($migration),
+                    'apply_time' => time(),
+                ]
+            )
+            ->execute();
     }
 
     private function removeMigrationFromHistory(MigrationInterface $migration): void
     {
         $command = $this->db->createCommand();
-        $command->delete($this->historyTable, [
-            'name' => $this->getMigrationName($migration),
-        ])->execute();
+        $command
+            ->delete($this->historyTable, [
+                'name' => $this->getMigrationName($migration),
+            ])
+            ->execute();
     }
 
     private function getMigrationName(MigrationInterface $migration): string
@@ -151,7 +160,9 @@ final class Migrator
             return;
         }
 
-        if ($this->db->getSchema()->getTableSchema($this->historyTable, true) === null) {
+        if ($this->db
+                ->getSchema()
+                ->getTableSchema($this->historyTable, true) === null) {
             $this->createMigrationHistoryTable();
         }
 
@@ -160,7 +171,9 @@ final class Migrator
 
     private function createMigrationHistoryTable(): void
     {
-        $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
+        $tableName = $this->db
+            ->getSchema()
+            ->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
         $this->beforeMigrate();
@@ -168,8 +181,12 @@ final class Migrator
         $b = $this->createBuilder(new NullMigrationInformer());
         $b->createTable($this->historyTable, [
             'id' => $b->primaryKey(),
-            'name' => $b->string($this->migrationNameLimit)->notNull(),
-            'apply_time' => $b->integer()->notNull(),
+            'name' => $b
+                ->string($this->migrationNameLimit)
+                ->notNull(),
+            'apply_time' => $b
+                ->integer()
+                ->notNull(),
         ]);
 
         $this->afterMigrate();
@@ -202,7 +219,9 @@ final class Migrator
             $this->schemaCache->setEnable(true);
         }
 
-        $this->db->getSchema()->refresh();
+        $this->db
+            ->getSchema()
+            ->refresh();
     }
 
     private function createBuilder(?MigrationInformerInterface $informer = null): MigrationBuilder
