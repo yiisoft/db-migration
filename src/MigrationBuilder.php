@@ -463,9 +463,9 @@ final class MigrationBuilder
     public function addForeignKey(
         string $name,
         string $table,
-               $columns,
+        $columns,
         string $refTable,
-               $refColumns,
+        $refColumns,
         ?string $delete = null,
         ?string $update = null
     ): void {
