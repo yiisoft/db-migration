@@ -292,7 +292,7 @@ final class MigrationBuilderTest extends TestCase
 
     public function testAddPrimaryKey(): void
     {
-        $this->prepareSqLite();
+        $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->addPrimaryKey('id', 'test', ['id']);
@@ -327,8 +327,8 @@ final class MigrationBuilderTest extends TestCase
 
     public function testAddForeignKey(): void
     {
-        $this->prepareSqLite();
-        $this->createTable('target_table', ['id' => 'int']);
+        $this->preparePostgreSql();
+        $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
 
         $this->builder->addForeignKey(
@@ -345,7 +345,7 @@ final class MigrationBuilderTest extends TestCase
 
         $this->assertSame(
             [
-                ['target_table', 'foreign_id' => 'id'],
+                'fk' => ['target_table', 'foreign_id' => 'id'],
             ],
             $keys
         );
@@ -356,8 +356,8 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropForeignKey(): void
     {
-        $this->prepareSqLite();
-        $this->createTable('target_table', ['id' => 'int']);
+        $this->preparePostgreSql();
+        $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
         $this->db->createCommand()->addForeignKey('fk', 'test_table', 'foreign_id', 'target_table', 'id')->execute();
 

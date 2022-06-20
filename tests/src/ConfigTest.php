@@ -11,7 +11,8 @@ use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\Connection as SqlLiteConnection;
+use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
+use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
@@ -73,8 +74,6 @@ final class ConfigTest extends TestCase
 
     private function createConsoleContainer(): Container
     {
-        $params = $this->getParams();
-
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
                 [
@@ -87,9 +86,11 @@ final class ConfigTest extends TestCase
                     EventDispatcherInterface::class => Dispatcher::class,
 
                     ConnectionInterface::class => [
-                        'class' => SqlLiteConnection::class,
+                        'class' => SqLiteConnection::class,
                         '__construct()' => [
-                            'dsn' => 'sqlite:' . dirname(__DIR__, 2) . '/runtime/config-test.sq3',
+                            'driver' => new SqLitePDODriver(
+                                'sqlite:' . dirname(__DIR__, 2) . '/runtime/config-test.sq3'
+                            ),
                         ],
                     ],
                 ],

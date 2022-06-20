@@ -14,7 +14,8 @@ use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\Connection as SqlLiteConnection;
+use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
+use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function dirname;
@@ -36,13 +37,15 @@ final class SqLiteHelper
             static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
-                        return new SqlLiteConnection(
-                            'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3',
+                        return new SqLiteConnection(
+                            new SqLitePDODriver(
+                                'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
+                            ),
                             $container->get(QueryCache::class),
                             $container->get(SchemaCache::class),
                         );
 
-                    case SqlLiteConnection::class:
+                    case SqLiteConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
@@ -55,7 +58,7 @@ final class SqLiteHelper
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $db = $container->get(SqlLiteConnection::class);
+        $db = $container->get(SqLiteConnection::class);
         foreach ($db->getSchema()->getTableNames() as $tableName) {
             $db->createCommand()->dropTable($tableName)->execute();
         }

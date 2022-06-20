@@ -15,7 +15,8 @@ use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
+use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
+use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
 use Yiisoft\Profiler\Profiler;
 use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\Test\Support\Container\SimpleContainer;
@@ -41,7 +42,11 @@ final class PostgreSqlHelper
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new PgSqlConnection(
-                            'pgsql:host=127.0.0.1;port=5432;dbname=testdb;user=postgres;password=postgres',
+                            new PgSqlPDODriver(
+                                'pgsql:host=127.0.0.1;port=5432;dbname=testdb',
+                                'postgres',
+                                'postgres',
+                            ),
                             $container->get(QueryCache::class),
                             $container->get(SchemaCache::class),
                         );
@@ -61,7 +66,9 @@ final class PostgreSqlHelper
     {
         $connection = $container->get(PgSqlConnection::class);
         foreach ($connection->getSchema()->getSchemaNames(true) as $name) {
-            $connection->createCommand('drop schema ' . $connection->quoteTableName($name) . ' cascade')->execute();
+            $connection
+                ->createCommand('drop schema ' . $connection->getQuoter()->quoteTableName($name) . ' cascade')
+                ->execute();
         }
         self::createSchema($container, 'public');
     }
@@ -71,7 +78,7 @@ final class PostgreSqlHelper
         /** @var Connection $connection */
         $connection = $container->get(ConnectionInterface::class);
 
-        $quotedName = $connection->quoteTableName($name);
+        $quotedName = $connection->getQuoter()->quoteTableName($name);
 
         $connection->createCommand('drop schema if exists ' . $quotedName)->execute();
         $connection->createCommand('create schema ' . $quotedName)->execute();
