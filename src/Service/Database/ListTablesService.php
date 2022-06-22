@@ -8,6 +8,7 @@ use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Driver\PDO\ConnectionPDOInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -49,7 +50,6 @@ final class ListTablesService
 
         $tables = $this->getAllTableNames();
         $migrationTable = $this->db->getSchema()->getRawTableName($this->migrator->getHistoryTable());
-        $dsn = $this->db->getDSN();
 
         if (empty($tables) || implode(',', $tables) === $migrationTable) {
             $this->io->error('Your database does not contain any tables yet.');
@@ -57,9 +57,12 @@ final class ListTablesService
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
-        $dbname = $this->getDsnAttribute('dbname', $dsn);
-
-        $this->io->section("List of tables for database: {$dbname}");
+        $databaseName = $this->getDatabaseName();
+        $this->io->section(
+            $databaseName === null
+                ? 'List of tables: '
+                : ('List of tables for database: ' . $databaseName)
+        );
 
         $count = 0;
 
@@ -114,5 +117,16 @@ final class ListTablesService
         }
 
         return $result;
+    }
+
+    private function getDatabaseName(): ?string
+    {
+        if (!$this->db instanceof ConnectionPDOInterface) {
+            return null;
+        }
+
+        $dsn = $this->db->getDriver()->getDsn();
+
+        return $this->getDsnAttribute('dbname', $dsn);
     }
 }
