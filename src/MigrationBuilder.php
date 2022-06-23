@@ -471,7 +471,7 @@ final class MigrationBuilder
         $time = $this->beginCommand(
             'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array)$columns) . ')'
         );
-        $this->db->createCommand()->createIndex($name, $table, $columns, 'UNIQUE')->execute();
+        $this->db->createCommand()->createIndex($name, $table, $columns, $unique ? 'UNIQUE' : null)->execute();
         $this->endCommand($time);
     }
 
