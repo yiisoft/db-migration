@@ -201,11 +201,11 @@ final class MigrationService
     {
         if ($this->io) {
             $this->io->writeln(
-                "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
+                "<fg=cyan>\nDriver: {$this->db->getName()}.</>"
             );
         }
     }
-
+9
     /**
      * Creates a new migration instance.
      *
