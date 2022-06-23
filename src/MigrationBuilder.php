@@ -460,18 +460,27 @@ final class MigrationBuilder
      * @param array|string $columns the column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
-     * @param bool $unique whether to add UNIQUE constraint on the created index.
+     * @param string|null $indexType Type of index supported DBMS - for example: UNIQUE, FULLTEXT, SPATIAL, BITMAP or
+     * `null` as default.
+     * @param string|null $indexMethod For setting index organization method (with 'USING', not all DBMS).
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function createIndex(string $name, string $table, $columns, bool $unique = false): void
-    {
+    public function createIndex(
+        string $name,
+        string $table,
+        array|string $columns,
+        ?string $indexType = null,
+        ?string $indexMethod = null
+    ): void {
         $time = $this->beginCommand(
-            'Create' . ($unique ? ' unique' : '') . " index $name on $table (" . implode(',', (array)$columns) . ')'
+            'Create'
+            . ($indexType !== null ? ' ' . $indexType : '')
+            . " index $name on $table (" . implode(',', (array) $columns) . ')'
         );
-        $this->db->createCommand()->createIndex($name, $table, $columns, $unique ? 'UNIQUE' : null)->execute();
+        $this->db->createCommand()->createIndex($name, $table, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);
     }
 
