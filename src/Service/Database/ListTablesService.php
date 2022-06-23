@@ -77,7 +77,7 @@ final class ListTablesService
         }
 
         $table->render();
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }

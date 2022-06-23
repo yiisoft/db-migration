@@ -80,7 +80,7 @@ final class UpdateCommand extends Command
         if (empty($migrations)) {
             $output->writeln("<fg=green> >>> No new migrations found.</>\n");
             $io->success('Your system is up-to-date.');
-            $this->migrationService->dbVersion();
+            $this->migrationService->databaseConnection();
 
             return ExitCode::OK;
         }
@@ -139,7 +139,7 @@ final class UpdateCommand extends Command
             $io->success('Updated successfully.');
         }
 
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }

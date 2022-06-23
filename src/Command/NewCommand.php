@@ -59,7 +59,7 @@ final class NewCommand extends Command
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $this->migrationService->dbVersion();
+            $this->migrationService->databaseConnection();
 
             return ExitCode::DATAERR;
         }
@@ -68,7 +68,7 @@ final class NewCommand extends Command
 
         if (empty($migrations)) {
             $io->success('No new migrations found. Your system is up-to-date.');
-            $this->migrationService->dbVersion();
+            $this->migrationService->databaseConnection();
 
             return ExitCode::UNSPECIFIED_ERROR;
         }
@@ -88,7 +88,7 @@ final class NewCommand extends Command
             $output->writeln("<info>\t" . $migration . '</info>');
         }
 
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }
