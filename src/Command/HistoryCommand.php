@@ -65,7 +65,7 @@ final class HistoryCommand extends Command
 
         if ($limit < 0) {
             $io->error('The step argument must be greater than 0.');
-            $this->migrationService->dbVersion();
+            $this->migrationService->databaseConnection();
 
             return ExitCode::DATAERR;
         }
@@ -94,7 +94,7 @@ final class HistoryCommand extends Command
 
         $output->writeln("\n");
         $io->success('Success.');
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }

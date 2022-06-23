@@ -79,7 +79,7 @@ final class DownCommand extends Command
             $limit = (int)$input->getOption('limit');
             if ($limit <= 0) {
                 $io->error('The limit argument must be greater than 0.');
-                $this->migrationService->dbVersion();
+                $this->migrationService->databaseConnection();
                 return ExitCode::DATAERR;
             }
         }
@@ -123,7 +123,7 @@ final class DownCommand extends Command
             $io->success('Migrated down successfully.');
         }
 
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }

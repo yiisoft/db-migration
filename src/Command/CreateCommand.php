@@ -214,7 +214,7 @@ final class CreateCommand extends Command
             $io->success('New migration created successfully.');
         }
 
-        $this->migrationService->dbVersion();
+        $this->migrationService->databaseConnection();
 
         return ExitCode::OK;
     }

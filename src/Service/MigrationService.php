@@ -197,13 +197,11 @@ final class MigrationService
         return $this->version;
     }
 
-    public function dbVersion(): void
+    public function databaseConnection(): void
     {
-        if ($this->io) {
-            $this->io->writeln(
-                "<fg=cyan>\nDriver: {$this->db->getDrivername()} {$this->db->getServerVersion()}.</>"
-            );
-        }
+        $this->io?->writeln(
+            "<fg=cyan>\nDatabase connection: {$this->db->getName()}.</>"
+        );
     }
 
     /**

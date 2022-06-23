@@ -179,8 +179,6 @@ final class Migrator
 
     private function beforeMigrate(): void
     {
-        $this->db->setEnableSlaves(false);
-
         $this->queryCacheEnabled = $this->queryCache->isEnabled();
         if ($this->queryCacheEnabled) {
             $this->queryCache->setEnable(false);
