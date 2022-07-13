@@ -34,7 +34,7 @@ composer require yiisoft/db-sqlite --prefer-dist
 
 ## Requirements
 
-- PHP 7.4 or higher.
+- PHP 8.0 or higher.
 - `Filter` PHP extension.
 
 ## Configuration
