@@ -25,7 +25,7 @@
         "yiisoft/aliases": "^1.1|^2.0",
         "yiisoft/arrays": "^2.0",
         "yiisoft/db": "3.0.x-dev",
-        "yiisoft/files": "^1.0",
+        "yiisoft/files": "^1.0|^2.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0",
         "yiisoft/view": "^4.0|^5.0",
