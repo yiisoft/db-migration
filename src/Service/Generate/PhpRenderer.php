@@ -13,8 +13,10 @@ final class PhpRenderer
 {
     public function render(string $file, array $params = []): string
     {
+        /** @psalm-suppress MissingClosureReturnType */
         $renderer = function () {
             extract(func_get_arg(1), EXTR_OVERWRITE);
+            /** @psalm-suppress UnresolvableInclude */
             require func_get_arg(0);
         };
 
@@ -22,6 +24,7 @@ final class PhpRenderer
         ob_start();
         ob_implicit_flush(false);
         try {
+            /** @psalm-suppress PossiblyInvalidFunctionCall */
             $renderer->bindTo($this)($file, $params);
             return ob_get_clean();
         } catch (Throwable $e) {
