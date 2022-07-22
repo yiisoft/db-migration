@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
  */
 
-echo $this->render(__DIR__ . './_dropForeignKeys.php', [
+echo $this->render(__DIR__ . '/_dropForeignKeys.php', [
     'table' => $table,
     'foreignKeys' => $foreignKeys,
 ]);
