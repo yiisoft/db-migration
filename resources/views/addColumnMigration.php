@@ -47,7 +47,7 @@ final class <?= $className ?> implements RevertibleMigrationInterface
 
     public function down(MigrationBuilder $b): void
     {
-<?= $this->render('_dropColumns', [
+<?= $this->render(__DIR__ . '/_dropColumns.php', [
     'table' => $table,
     'columns' => $columns,
     'foreignKeys' => $foreignKeys,
