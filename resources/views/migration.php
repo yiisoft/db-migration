@@ -6,9 +6,11 @@ declare(strict_types=1);
  * This view is used by Yiisoft\Db\Yii\Migration\Command.
  *
  * The following variables are available in this view:
+ *
+ * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
+ * @var $className string the new migration class name without namespace
+ * @var $namespace string the new migration class namespace
  */
-/* @var $className string the new migration class name without namespace */
-/* @var $namespace string the new migration class namespace */
 
 echo "<?php\n";
 

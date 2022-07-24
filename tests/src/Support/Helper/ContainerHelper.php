@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
-use Yiisoft\EventDispatcher\Provider\ListenerCollection;
-use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
@@ -46,11 +42,6 @@ final class ContainerHelper
             case Injector::class:
                 return new Injector($container);
 
-            case EventDispatcherInterface::class:
-                return new Dispatcher(
-                    new Provider(new ListenerCollection())
-                );
-
             case UpdateRunner::class:
                 return new UpdateRunner(
                     $container->get(Migrator::class),
@@ -81,7 +72,6 @@ final class ContainerHelper
                 return new CreateService(
                     $container->get(Aliases::class),
                     $container->get(ConnectionInterface::class),
-                    $container->get(EventDispatcherInterface::class),
                     $config->useTablePrefix,
                 );
 

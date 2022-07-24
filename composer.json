@@ -28,7 +28,6 @@
         "yiisoft/files": "^1.0|^2.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0",
-        "yiisoft/view": "^4.0|^5.0",
         "yiisoft/yii-console": "^1.0"
     },
     "require-dev": {
@@ -39,7 +38,6 @@
         "yiisoft/db-pgsql": "3.0.x-dev",
         "yiisoft/db-sqlite": "^3.0@dev",
         "yiisoft/di": "^1.0",
-        "yiisoft/event-dispatcher": "^1.0",
         "yiisoft/test-support": "^3.0"
     },
     "autoload": {

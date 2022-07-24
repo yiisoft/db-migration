@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\View\View;
 
 use function dirname;
 use function in_array;
@@ -18,7 +16,7 @@ final class CreateService
 {
     private Aliases $aliases;
     private ConnectionInterface $db;
-    private View $view;
+    private PhpRenderer $phpRenderer;
     private ?SymfonyStyle $io = null;
 
     /**
@@ -38,15 +36,11 @@ final class CreateService
     public function __construct(
         Aliases $aliases,
         ConnectionInterface $db,
-        EventDispatcherInterface $eventDispatcher,
         bool $useTablePrefix = true
     ) {
         $this->aliases = $aliases;
         $this->db = $db;
-        $this->view = new View(
-            dirname(__DIR__, 3) . '/resources/views',
-            $eventDispatcher,
-        );
+        $this->phpRenderer = new PhpRenderer();
         $this->useTablePrefix = $useTablePrefix;
     }
 
@@ -92,7 +86,7 @@ final class CreateService
             $table .= '_' . $and;
         }
 
-        return $this->view->renderFile(
+        return $this->phpRenderer->render(
             $this->aliases->get($templateFile),
             [
                 'table' => $table,

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @var $this \Yiisoft\View\WebView
+ * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
  * @var $table string the name table
  * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
  */

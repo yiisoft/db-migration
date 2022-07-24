@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
@@ -16,8 +14,6 @@ use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
 use Yiisoft\Definitions\Reference;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
-use Yiisoft\EventDispatcher\Dispatcher\Dispatcher;
-use Yiisoft\EventDispatcher\Provider\Provider;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
@@ -81,9 +77,6 @@ final class ConfigTest extends TestCase
                         'class' => Cache::class,
                         '__construct()' => [Reference::to(ArrayCache::class)],
                     ],
-
-                    ListenerProviderInterface::class => Provider::class,
-                    EventDispatcherInterface::class => Dispatcher::class,
 
                     ConnectionInterface::class => [
                         'class' => SqLiteConnection::class,
