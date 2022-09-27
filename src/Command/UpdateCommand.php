@@ -32,24 +32,15 @@ use function strlen;
  */
 final class UpdateCommand extends Command
 {
-    private UpdateRunner $updateRunner;
-    private MigrationService $migrationService;
-
     protected static $defaultName = 'migrate/up';
     protected static $defaultDescription = 'Upgrades the application by applying new migrations.';
 
-    private Migrator $migrator;
-
     public function __construct(
-        UpdateRunner $updateRunner,
-        MigrationService $migrationService,
-        Migrator $migrator,
+        private UpdateRunner $updateRunner,
+        private MigrationService $migrationService,
+        private Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->updateRunner = $updateRunner;
-        $this->migrationService = $migrationService;
-
-        $this->migrator = $migrator;
         $this->migrator->setInformer($informer);
 
         parent::__construct();

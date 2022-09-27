@@ -18,19 +18,8 @@ final class MigrationBuilder
 {
     use SchemaBuilderTrait;
 
-    private ConnectionInterface $db;
-    private MigrationInformerInterface $informer;
-
-    private int $maxSqlOutputLength;
-
-    public function __construct(
-        ConnectionInterface $db,
-        MigrationInformerInterface $informer,
-        int $maxSqlOutputLength = 0
-    ) {
-        $this->db = $db;
-        $this->informer = $informer;
-        $this->maxSqlOutputLength = $maxSqlOutputLength;
+    public function __construct(private ConnectionInterface $db, private MigrationInformerInterface $informer, private int $maxSqlOutputLength = 0)
+    {
     }
 
     public function getDb(): ConnectionInterface
@@ -121,7 +110,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function upsert(string $table, $insertColumns, $updateColumns = true, array $params = []): void
+    public function upsert(string $table, array|Query $insertColumns, array|bool $updateColumns = true, array $params = []): void
     {
         $time = $this->beginCommand("Upsert into $table");
         $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
@@ -143,7 +132,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function update(string $table, array $columns, $condition = '', array $params = []): void
+    public function update(string $table, array $columns, array|string $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Update $table");
         $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
@@ -162,7 +151,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function delete(string $table, $condition = '', array $params = []): void
+    public function delete(string $table, array|string $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Delete from $table");
         $this->db->createCommand()->delete($table, $condition, $params)->execute();
@@ -260,7 +249,7 @@ final class MigrationBuilder
      * recognized as abstract type will be kept in the generated SQL. For example, 'string' will be turned
      * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      */
-    public function addColumn(string $table, string $column, $type): void
+    public function addColumn(string $table, string $column, ColumnSchemaBuilder|string $type): void
     {
         $comment = null;
         if ($type instanceof ColumnSchemaBuilder) {
@@ -323,7 +312,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, $type): void
+    public function alterColumn(string $table, string $column, ColumnSchemaBuilder|string $type): void
     {
         $comment = null;
 
@@ -356,7 +345,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function addPrimaryKey(string $name, string $table, $columns): void
+    public function addPrimaryKey(string $name, string $table, array|string $columns): void
     {
         $time = $this->beginCommand(
             "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
@@ -406,9 +395,9 @@ final class MigrationBuilder
     public function addForeignKey(
         string $name,
         string $table,
-        $columns,
+        array|string $columns,
         string $refTable,
-        $refColumns,
+        array|string $refColumns,
         ?string $delete = null,
         ?string $update = null
     ): void {

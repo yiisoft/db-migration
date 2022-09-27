@@ -85,22 +85,14 @@ use function strlen;
  */
 final class CreateCommand extends Command
 {
-    private CreateService $createService;
-    private MigrationService $migrationService;
-
     protected static $defaultName = 'migrate/create';
     protected static $defaultDescription = 'Generate migration template.';
-    private Migrator $migrator;
 
     public function __construct(
-        CreateService $createService,
-        MigrationService $migrationService,
-        Migrator $migrator
+        private CreateService $createService,
+        private MigrationService $migrationService,
+        private Migrator $migrator
     ) {
-        $this->createService = $createService;
-        $this->migrationService = $migrationService;
-        $this->migrator = $migrator;
-
         parent::__construct();
     }
 
@@ -116,9 +108,6 @@ final class CreateCommand extends Command
             ->setHelp('This command Generate migration template.');
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -223,27 +212,14 @@ final class CreateCommand extends Command
     {
         $result = '';
 
-        switch ($command) {
-            case 'create':
-                $result = $name;
-                break;
-            case 'table':
-                $result = 'Create_' . $name . '_Table';
-                break;
-            case 'dropTable':
-                $result = 'Drop_' . $name . '_Table';
-                break;
-            case 'addColumn':
-                $result = 'Add_Column_' . $name;
-                break;
-            case 'dropColumn':
-                $result = 'Drop_Column_' . $name;
-                break;
-            case 'junction':
-                $result = 'Junction_Table_For_' . $name . '_And_' . $and . '_Tables';
-                break;
-        }
-
-        return $result;
+        return match ($command) {
+            'create' => $name,
+            'table' => 'Create_' . $name . '_Table',
+            'dropTable' => 'Drop_' . $name . '_Table',
+            'addColumn' => 'Add_Column_' . $name,
+            'dropColumn' => 'Drop_Column_' . $name,
+            'junction' => 'Junction_Table_For_' . $name . '_And_' . $and . '_Tables',
+            default => $result,
+        };
     }
 }

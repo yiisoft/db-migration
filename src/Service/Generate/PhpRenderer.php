@@ -15,7 +15,8 @@ final class PhpRenderer
     {
         /** @psalm-suppress MissingClosureReturnType */
         $renderer = function () {
-            extract(func_get_arg(1), EXTR_OVERWRITE);
+            $funcGetArg = func_get_arg(1);
+            extract($funcGetArg, EXTR_OVERWRITE);
             /** @psalm-suppress UnresolvableInclude */
             require func_get_arg(0);
         };
@@ -25,7 +26,7 @@ final class PhpRenderer
         ob_implicit_flush(false);
         try {
             /** @psalm-suppress PossiblyInvalidFunctionCall */
-            $renderer->bindTo($this)($file, $params);
+            $renderer->bindTo($this)();
             return ob_get_clean();
         } catch (Throwable $e) {
             while (ob_get_level() > $obInitialLevel) {

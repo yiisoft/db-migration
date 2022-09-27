@@ -9,16 +9,12 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 
-use function get_class;
-
 final class UpdateRunner
 {
-    private Migrator $migrator;
     private ?SymfonyStyle $io = null;
 
-    public function __construct(Migrator $migrator)
+    public function __construct(private Migrator $migrator)
     {
-        $this->migrator = $migrator;
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -33,7 +29,7 @@ final class UpdateRunner
             throw new RuntimeException('Need set output decorator via `setIO()`.');
         }
 
-        $className = get_class($migration);
+        $className = $migration::class;
 
         $this->io->title("\nApplying $className");
 
