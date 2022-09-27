@@ -26,22 +26,10 @@ final class MigrationService
     private array $updateNamespaces = [];
     private array $updatePaths = [];
     private string $version = '1.0';
-    private Aliases $aliases;
-    private ConnectionInterface $db;
-    private Injector $injector;
-    private Migrator $migrator;
     private ?SymfonyStyle $io = null;
 
-    public function __construct(
-        Aliases $aliases,
-        ConnectionInterface $db,
-        Injector $injector,
-        Migrator $migrator
-    ) {
-        $this->aliases = $aliases;
-        $this->db = $db;
-        $this->injector = $injector;
-        $this->migrator = $migrator;
+    public function __construct(private Aliases $aliases, private ConnectionInterface $db, private Injector $injector, private Migrator $migrator)
+    {
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -217,7 +205,7 @@ final class MigrationService
     private function makeMigrationInstance(string $class): object
     {
         $class = trim($class, '\\');
-        if (strpos($class, '\\') === false) {
+        if (!str_contains($class, '\\')) {
             $isIncluded = false;
             foreach ($this->updatePaths as $path) {
                 $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
@@ -330,7 +318,7 @@ final class MigrationService
      */
     public function findMigrationPath(?string $namespace): string
     {
-        $namespace = $namespace ?? $this->createNamespace;
+        $namespace ??= $this->createNamespace;
 
         return empty($namespace)
             ? $this->aliases->get($this->createPath)

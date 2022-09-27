@@ -6,20 +6,11 @@ namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 final class Column
 {
-    private string $property;
-
-    /**
-     * @var string[]
-     */
-    private array $decorators;
-
     /**
      * @param string[] $decorators
      */
-    public function __construct(string $property, array $decorators = [])
+    public function __construct(private string $property, private array $decorators = [])
     {
-        $this->property = $property;
-        $this->decorators = $decorators;
     }
 
     public function getProperty(): string

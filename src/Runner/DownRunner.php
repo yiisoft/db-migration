@@ -13,12 +13,10 @@ use function get_class;
 
 final class DownRunner
 {
-    private Migrator $migrator;
     private ?SymfonyStyle $io = null;
 
-    public function __construct(Migrator $migrator)
+    public function __construct(private Migrator $migrator)
     {
-        $this->migrator = $migrator;
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -33,7 +31,7 @@ final class DownRunner
             throw new RuntimeException('Need set output decorator via `setIO()`.');
         }
 
-        $className = get_class($migration);
+        $className = $migration::class;
 
         $this->io->title("\nReverting $className");
 
