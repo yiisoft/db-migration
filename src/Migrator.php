@@ -13,8 +13,6 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
-use function get_class;
-
 final class Migrator
 {
     private bool $checkMigrationHistoryTable = true;

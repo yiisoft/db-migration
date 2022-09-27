@@ -110,7 +110,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function upsert(string $table, array|\Yiisoft\Db\Query\Query $insertColumns, array|bool $updateColumns = true, array $params = []): void
+    public function upsert(string $table, array|Query $insertColumns, array|bool $updateColumns = true, array $params = []): void
     {
         $time = $this->beginCommand("Upsert into $table");
         $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
@@ -249,7 +249,7 @@ final class MigrationBuilder
      * recognized as abstract type will be kept in the generated SQL. For example, 'string' will be turned
      * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      */
-    public function addColumn(string $table, string $column, \Yiisoft\Db\Schema\ColumnSchemaBuilder|string $type): void
+    public function addColumn(string $table, string $column, ColumnSchemaBuilder|string $type): void
     {
         $comment = null;
         if ($type instanceof ColumnSchemaBuilder) {
@@ -312,7 +312,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, \Yiisoft\Db\Schema\ColumnSchemaBuilder|string $type): void
+    public function alterColumn(string $table, string $column, ColumnSchemaBuilder|string $type): void
     {
         $comment = null;
 

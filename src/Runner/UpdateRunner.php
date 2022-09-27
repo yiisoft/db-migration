@@ -9,8 +9,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 
-use function get_class;
-
 final class UpdateRunner
 {
     private ?SymfonyStyle $io = null;

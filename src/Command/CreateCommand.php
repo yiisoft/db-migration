@@ -212,7 +212,7 @@ final class CreateCommand extends Command
     {
         $result = '';
 
-        $result = match ($command) {
+        return match ($command) {
             'create' => $name,
             'table' => 'Create_' . $name . '_Table',
             'dropTable' => 'Drop_' . $name . '_Table',
@@ -221,7 +221,5 @@ final class CreateCommand extends Command
             'junction' => 'Junction_Table_For_' . $name . '_And_' . $and . '_Tables',
             default => $result,
         };
-
-        return $result;
     }
 }

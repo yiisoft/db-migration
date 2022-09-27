@@ -9,8 +9,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 
-use function get_class;
-
 final class DownRunner
 {
     private ?SymfonyStyle $io = null;
