@@ -433,11 +433,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addCommentOnTable('test_table', 'test comment');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
 
-        $this->assertSame('test comment', $comment);
+        $this->assertSame('test comment', $tableSchema?->getComment());
     }
 
     public function testAddCommentOnTableNotSupported(): void
@@ -479,11 +477,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->dropCommentFromTable('test_table');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
 
-        $this->assertNull($comment);
+        $this->assertNull($tableSchema?->getComment());
     }
 
     public function testDropCommentFromTableNotSupported(): void
