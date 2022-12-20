@@ -8,19 +8,16 @@ use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Db\Migration\AbstractMigrationBuilder;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilder;
-use Yiisoft\Db\Schema\SchemaBuilderTrait;
 use Yiisoft\Strings\StringHelper;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 
-final class MigrationBuilder
+final class MigrationBuilder extends AbstractMigrationBuilder
 {
-    use SchemaBuilderTrait;
-
     private ConnectionInterface $db;
     private MigrationInformerInterface $informer;
-
     private int $maxSqlOutputLength;
 
     public function __construct(
@@ -31,6 +28,8 @@ final class MigrationBuilder
         $this->db = $db;
         $this->informer = $informer;
         $this->maxSqlOutputLength = $maxSqlOutputLength;
+
+        parent::__construct($this->db->getSchema());
     }
 
     public function getDb(): ConnectionInterface
