@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
@@ -24,7 +23,6 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator(
             $container->get(ConnectionInterface::class),
             $container->get(SchemaCache::class),
-            $container->get(QueryCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             42
@@ -41,7 +39,6 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator(
             $container->get(ConnectionInterface::class),
             $container->get(SchemaCache::class),
-            $container->get(QueryCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -60,7 +57,6 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator(
             $db,
             $container->get(SchemaCache::class),
-            $container->get(QueryCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -87,7 +83,6 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator(
             $container->get(ConnectionInterface::class),
             $container->get(SchemaCache::class),
-            $container->get(QueryCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null

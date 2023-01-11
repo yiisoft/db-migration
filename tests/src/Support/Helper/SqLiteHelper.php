@@ -11,7 +11,6 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
@@ -41,7 +40,6 @@ final class SqLiteHelper
                             new SqLitePDODriver(
                                 'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
                             ),
-                            $container->get(QueryCache::class),
                             $container->get(SchemaCache::class),
                         );
 

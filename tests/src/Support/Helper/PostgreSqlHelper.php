@@ -11,9 +11,7 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Cache\Cache;
 use Yiisoft\Cache\CacheInterface;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
-use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
 use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
@@ -47,7 +45,6 @@ final class PostgreSqlHelper
                                 'postgres',
                                 'postgres',
                             ),
-                            $container->get(QueryCache::class),
                             $container->get(SchemaCache::class),
                         );
 
@@ -75,7 +72,7 @@ final class PostgreSqlHelper
 
     public static function createSchema(ContainerInterface $container, string $name): void
     {
-        /** @var Connection $connection */
+        /** @var ConnectionInterface $connection */
         $connection = $container->get(ConnectionInterface::class);
 
         $quotedName = $connection->getQuoter()->quoteTableName($name);
