@@ -38,6 +38,7 @@
         "yiisoft/db-pgsql": "^3.0@dev",
         "yiisoft/db-sqlite": "^3.0@dev",
         "yiisoft/di": "^1.0",
+        "yiisoft/profiler": "^2.0",
         "yiisoft/test-support": "^3.0"
     },
     "autoload": {
