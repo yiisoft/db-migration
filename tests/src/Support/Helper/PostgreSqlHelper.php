@@ -15,8 +15,6 @@ use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
 use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
-use Yiisoft\Profiler\Profiler;
-use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 
 use function dirname;
@@ -29,7 +27,6 @@ final class PostgreSqlHelper
             [
                 LoggerInterface::class => new NullLogger(),
                 CacheInterface::class => new Cache(new ArrayCache()),
-                ProfilerInterface::class => new Profiler(new NullLogger()),
                 Aliases::class => new Aliases(
                     [
                         '@runtime' => dirname(__DIR__, 3) . '/runtime',
