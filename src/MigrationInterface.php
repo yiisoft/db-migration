@@ -21,7 +21,7 @@ interface MigrationInterface
      * transaction.
      *
      * Note: Not all DBMS support transactions. And some DB queries cannot be put into a transaction. For some examples,
-     * please refer to [implicit commit](http://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
+     * please refer to [implicit commit](https://dev.mysql.com/doc/refman/5.7/en/implicit-commit.html).
      *
      * @param MigrationBuilder $b
      */
