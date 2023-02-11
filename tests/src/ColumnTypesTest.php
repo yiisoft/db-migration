@@ -8,11 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Driver\PDO\ConnectionPDOInterface;
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Provider\ColumnTypes;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 class ColumnTypesTest extends TestCase
 {
