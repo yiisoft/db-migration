@@ -26,6 +26,12 @@ final class MigrationBuilderTest extends TestCase
     private StubMigrationInformer $informer;
     private MigrationBuilder $builder;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->prepareSqLite();
+    }
+
     public function testExecute(): void
     {
         $this->prepareSqLite();
@@ -499,6 +505,106 @@ final class MigrationBuilderTest extends TestCase
         $builder->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
 
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $this->informer->getOutput());
+    }
+
+    public function testBigInteger(): void
+    {
+        $this->assertSame('bigint', $this->builder->bigInteger()->asString());
+    }
+
+    public function testBigPrimaryKey(): void
+    {
+        $this->assertSame('bigpk', $this->builder->bigPrimaryKey()->asString());
+    }
+
+    public function testBinary(): void
+    {
+        $this->assertSame('binary', $this->builder->binary()->asString());
+    }
+
+    public function testBoolean(): void
+    {
+        $this->assertSame('boolean', $this->builder->boolean()->asString());
+    }
+
+    public function testChar(): void
+    {
+        $this->assertSame('char', $this->builder->char()->asString());
+    }
+
+    public function testDate(): void
+    {
+        $this->assertSame('date', $this->builder->date()->asString());
+    }
+
+    public function testDateTime(): void
+    {
+        $this->assertSame('datetime', $this->builder->dateTime()->asString());
+    }
+
+    public function testDecimal(): void
+    {
+        $this->assertSame('decimal', $this->builder->decimal()->asString());
+    }
+
+    public function testDouble(): void
+    {
+        $this->assertSame('double', $this->builder->double()->asString());
+    }
+
+    public function testFloat(): void
+    {
+        $this->assertSame('float', $this->builder->float()->asString());
+    }
+
+    public function testInteger(): void
+    {
+        $this->assertSame('integer', $this->builder->integer()->asString());
+    }
+
+    public function testJson(): void
+    {
+        $this->assertSame('json', $this->builder->json()->asString());
+    }
+
+    public function testMoney(): void
+    {
+        $this->assertSame('money', $this->builder->money()->asString());
+    }
+
+    public function testPrimaryKey(): void
+    {
+        $this->assertSame('pk', $this->builder->primaryKey()->asString());
+    }
+
+    public function testSmallInteger(): void
+    {
+        $this->assertSame('smallint', $this->builder->smallInteger()->asString());
+    }
+
+    public function testString(): void
+    {
+        $this->assertSame('string', $this->builder->string()->asString());
+    }
+
+    public function testText(): void
+    {
+        $this->assertSame('text', $this->builder->text()->asString());
+    }
+
+    public function testTime(): void
+    {
+        $this->assertSame('time', $this->builder->time()->asString());
+    }
+
+    public function testTimestamp(): void
+    {
+        $this->assertSame('timestamp', $this->builder->timestamp()->asString());
+    }
+
+    public function testTinyInteger(): void
+    {
+        $this->assertSame('tinyint', $this->builder->tinyInteger()->asString());
     }
 
     private function createTable(string $name, array $fields): void
