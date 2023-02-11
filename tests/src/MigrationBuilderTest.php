@@ -26,6 +26,12 @@ final class MigrationBuilderTest extends TestCase
     private StubMigrationInformer $informer;
     private MigrationBuilder $builder;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->prepareSqLite();
+    }
+
     public function testExecute(): void
     {
         $this->prepareSqLite();
@@ -503,188 +509,102 @@ final class MigrationBuilderTest extends TestCase
 
     public function testBigInteger(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('bigint', $migrationBuilder->bigInteger()->asString());
+        $this->assertSame('bigint', $this->builder->bigInteger()->asString());
     }
 
     public function testBigPrimaryKey(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('bigpk', $migrationBuilder->bigPrimaryKey()->asString());
+        $this->assertSame('bigpk', $this->builder->bigPrimaryKey()->asString());
     }
 
     public function testBinary(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('binary', $migrationBuilder->binary()->asString());
+        $this->assertSame('binary', $this->builder->binary()->asString());
     }
 
     public function testBoolean(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('boolean', $migrationBuilder->boolean()->asString());
+        $this->assertSame('boolean', $this->builder->boolean()->asString());
     }
 
     public function testChar(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('char', $migrationBuilder->char()->asString());
+        $this->assertSame('char', $this->builder->char()->asString());
     }
 
     public function testDate(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('date', $migrationBuilder->date()->asString());
+        $this->assertSame('date', $this->builder->date()->asString());
     }
 
     public function testDateTime(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('datetime', $migrationBuilder->dateTime()->asString());
+        $this->assertSame('datetime', $this->builder->dateTime()->asString());
     }
 
     public function testDecimal(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('decimal', $migrationBuilder->decimal()->asString());
+        $this->assertSame('decimal', $this->builder->decimal()->asString());
     }
 
     public function testDouble(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('double', $migrationBuilder->double()->asString());
+        $this->assertSame('double', $this->builder->double()->asString());
     }
 
     public function testFloat(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('float', $migrationBuilder->float()->asString());
+        $this->assertSame('float', $this->builder->float()->asString());
     }
 
     public function testInteger(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('integer', $migrationBuilder->integer()->asString());
+        $this->assertSame('integer', $this->builder->integer()->asString());
     }
 
     public function testJson(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('json', $migrationBuilder->json()->asString());
+        $this->assertSame('json', $this->builder->json()->asString());
     }
 
     public function testMoney(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('money', $migrationBuilder->money()->asString());
+        $this->assertSame('money', $this->builder->money()->asString());
     }
 
     public function testPrimaryKey(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('pk', $migrationBuilder->primaryKey()->asString());
+        $this->assertSame('pk', $this->builder->primaryKey()->asString());
     }
 
     public function testSmallInteger(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('smallint', $migrationBuilder->smallInteger()->asString());
+        $this->assertSame('smallint', $this->builder->smallInteger()->asString());
     }
 
     public function testString(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('string', $migrationBuilder->string()->asString());
+        $this->assertSame('string', $this->builder->string()->asString());
     }
 
     public function testText(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('text', $migrationBuilder->text()->asString());
+        $this->assertSame('text', $this->builder->text()->asString());
     }
 
     public function testTime(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('time', $migrationBuilder->time()->asString());
+        $this->assertSame('time', $this->builder->time()->asString());
     }
 
     public function testTimestamp(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('timestamp', $migrationBuilder->timestamp()->asString());
+        $this->assertSame('timestamp', $this->builder->timestamp()->asString());
     }
 
     public function testTinyInteger(): void
     {
-        $db = $this->getConnection();
-
-        $migrationBuilder = $db->getMigrationBuilder();
-
-        $this->assertSame('tinyint', $migrationBuilder->tinyInteger()->asString());
-    }
-
-    private function getConnection()
-    {
-        $this->prepareSqLite();
-        return $this->db;
+        $this->assertSame('tinyint', $this->builder->tinyInteger()->asString());
     }
 
     private function createTable(string $name, array $fields): void
