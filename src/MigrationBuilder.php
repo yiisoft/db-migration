@@ -8,7 +8,6 @@ use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Db\Migration\AbstractMigrationBuilder;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Schema\ColumnSchemaBuilderInterface;
 use Yiisoft\Strings\StringHelper;
