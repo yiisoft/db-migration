@@ -22,7 +22,7 @@
     "require": {
         "php": "^8.0",
         "ext-filter": "*",
-        "yiisoft/aliases": "^1.1|^2.0",
+        "yiisoft/aliases": "^3.0.0",
         "yiisoft/arrays": "^2.0|^3.0",
         "yiisoft/db": "^3.0@dev",
         "yiisoft/files": "^1.0|^2.0",
