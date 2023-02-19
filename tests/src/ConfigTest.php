@@ -95,7 +95,7 @@ final class ConfigTest extends TestCase
     private function getConsoleDefinitions(): array
     {
         $params = $this->getParams();
-        return require dirname(__DIR__, 2) . '/config/console.php';
+        return require dirname(__DIR__, 2) . '/config/di-console.php';
     }
 
     private function getParams(): array
