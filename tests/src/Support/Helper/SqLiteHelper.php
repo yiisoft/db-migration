@@ -8,14 +8,12 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Cache\ArrayCache;
-use Yiisoft\Cache\Cache;
-use Yiisoft\Cache\CacheInterface;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
 use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
+use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
 use function dirname;
 
@@ -23,10 +21,12 @@ final class SqLiteHelper
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
+        $config ??= new ContainerConfig();
+
         $container = new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
-                CacheInterface::class => new Cache(new ArrayCache()),
+                SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
                 Aliases::class => new Aliases(
                     [
                         '@runtime' => dirname(__DIR__, 3) . '/runtime',
@@ -40,14 +40,14 @@ final class SqLiteHelper
                             new SqLitePDODriver(
                                 'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
                             ),
-                            $container->get(SchemaCache::class),
+                            new SchemaCache(new MemorySimpleCache())
                         );
 
                     case SqLiteConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
-                        return ContainerHelper::get($container, $id, $config ?? new ContainerConfig());
+                        return ContainerHelper::get($container, $id, $config);
                 }
             }
         );
