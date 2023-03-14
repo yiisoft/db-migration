@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Db\Sqlite\ColumnSchemaBuilder;
+use Yiisoft\Db\Pgsql\Column;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
@@ -187,9 +187,9 @@ final class MigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
+            'builder-type' => [new Column('string', 4), null],
             'builder-type-with-comment' => [
-                (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
+                (new Column('string', 4))->comment('test comment'),
                 'test comment',
             ],
         ];
@@ -260,9 +260,9 @@ final class MigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
+            'builder-type' => [new Column('string', 4), null],
             'builder-type-with-comment' => [
-                (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
+                (new Column('string', 4))->comment('test comment'),
                 'test comment',
             ],
         ];

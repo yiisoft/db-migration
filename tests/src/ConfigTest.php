@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\Cache\ArrayCache;
-use Yiisoft\Cache\Cache;
-use Yiisoft\Cache\CacheInterface;
+use Psr\SimpleCache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
 use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
-use Yiisoft\Definitions\Reference;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
+use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
@@ -73,10 +71,7 @@ final class ConfigTest extends TestCase
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
                 [
-                    CacheInterface::class => [
-                        'class' => Cache::class,
-                        '__construct()' => [Reference::to(ArrayCache::class)],
-                    ],
+                    CacheInterface::class => MemorySimpleCache::class,
 
                     ConnectionInterface::class => [
                         'class' => SqLiteConnection::class,

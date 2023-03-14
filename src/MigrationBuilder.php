@@ -9,7 +9,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
-use Yiisoft\Db\Schema\ColumnSchemaBuilderInterface;
+use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Strings\StringHelper;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 
@@ -195,7 +195,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
         foreach ($columns as $column => $type) {
-            if ($type instanceof ColumnSchemaBuilderInterface) {
+            if ($type instanceof ColumnInterface) {
                 $comment = $type->getComment();
                 if ($comment !== null) {
                     $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
@@ -253,15 +253,15 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table the table that the new column will be added to.
      * The table name will be properly quoted by the method.
      * @param string $column the name of the new column. The name will be properly quoted by the method.
-     * @param ColumnSchemaBuilderInterface|string $type the column type. The {@see QueryBuilder::getColumnType()} method
+     * @param ColumnInterface|string $type the column type. The {@see QueryBuilder::getColumnType()} method
      * will be invoked to convert abstract column type (if any) into the physical one. Anything that is not
      * recognized as abstract type will be kept in the generated SQL. For example, 'string' will be turned
      * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      */
-    public function addColumn(string $table, string $column, ColumnSchemaBuilderInterface|string $type): void
+    public function addColumn(string $table, string $column, ColumnInterface|string $type): void
     {
         $comment = null;
-        if ($type instanceof ColumnSchemaBuilderInterface) {
+        if ($type instanceof ColumnInterface) {
             $comment = $type->getComment();
             $type = $type->asString();
         }
@@ -311,7 +311,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table the table whose column is to be changed. The table name will be properly quoted by the
      * method.
      * @param string $column the name of the column to be changed. The name will be properly quoted by the method.
-     * @param ColumnSchemaBuilderInterface|string $type the new column type.
+     * @param ColumnInterface|string $type the new column type.
      * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert abstract column
      * type (if any) into the physical one. Anything that is not recognized as abstract type will be kept in the
      * generated SQL. For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become
@@ -321,11 +321,11 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, ColumnSchemaBuilderInterface|string $type): void
+    public function alterColumn(string $table, string $column, ColumnInterface|string $type): void
     {
         $comment = null;
 
-        if ($type instanceof ColumnSchemaBuilderInterface) {
+        if ($type instanceof ColumnInterface) {
             $comment = $type->getComment();
             $type = $type->asString();
         }
