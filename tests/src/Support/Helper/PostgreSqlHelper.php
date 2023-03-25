@@ -38,9 +38,9 @@ final class PostgreSqlHelper
                     case ConnectionInterface::class:
                         return new PgSqlConnection(
                             new PgSqlPDODriver(
-                                'pgsql:host=127.0.0.1;port=5432;dbname=yiitest',
-                                'root',
-                                'root',
+                                'pgsql:host=127.0.0.1;port=5432;dbname=testdb',
+                                'postgres',
+                                'postgres',
                             ),
                             new SchemaCache(new MemorySimpleCache()),
                         );
