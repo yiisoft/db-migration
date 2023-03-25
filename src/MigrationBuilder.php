@@ -346,37 +346,37 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * The method will properly quote the table and column names.
      *
-     * @param string $name the name of the primary key constraint.
      * @param string $table the table that the primary key constraint will be added to.
+     * @param string $name the name of the primary key constraint.
      * @param array|string $columns comma separated string or array of columns that the primary key will consist of.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function addPrimaryKey(string $name, string $table, $columns): void
+    public function addPrimaryKey(string $table, string $name, $columns): void
     {
         $time = $this->beginCommand(
             "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
         );
-        $this->db->createCommand()->addPrimaryKey($name, $table, $columns)->execute();
+        $this->db->createCommand()->addPrimaryKey($table, $name, $columns)->execute();
         $this->endCommand($time);
     }
 
     /**
      * Builds and executes a SQL statement for dropping a primary key.
      *
-     * @param string $name the name of the primary key constraint to be removed.
      * @param string $table the table that the primary key constraint will be removed from.
+     * @param string $name the name of the primary key constraint to be removed.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function dropPrimaryKey(string $name, string $table): void
+    public function dropPrimaryKey(string $table, string $name): void
     {
         $time = $this->beginCommand("Drop primary key $name");
-        $this->db->createCommand()->dropPrimaryKey($name, $table)->execute();
+        $this->db->createCommand()->dropPrimaryKey($table, $name)->execute();
         $this->endCommand($time);
     }
 
@@ -385,8 +385,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * The method will properly quote the table and column names.
      *
-     * @param string $name the name of the foreign key constraint.
      * @param string $table the table that the foreign key constraint will be added to.
+     * @param string $name the name of the foreign key constraint.
      * @param array|string $columns the name of the column to that the constraint will be added on. If there are
      * multiple columns, separate them with commas or use an array.
      * @param string $refTable the table that the foreign key references to.
@@ -402,8 +402,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws NotSupportedException
      */
     public function addForeignKey(
-        string $name,
         string $table,
+        string $name,
         $columns,
         string $refTable,
         $refColumns,
@@ -420,8 +420,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
             ) . ')'
         );
         $this->db->createCommand()->addForeignKey(
-            $name,
             $table,
+            $name,
             $columns,
             $refTable,
             $refColumns,
@@ -434,27 +434,27 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Builds a SQL statement for dropping a foreign key constraint.
      *
+     * @param string $table the table whose foreign is to be dropped. The name will be properly quoted by the method.
      * @param string $name the name of the foreign key constraint to be dropped. The name will be properly quoted by the
      * method.
-     * @param string $table the table whose foreign is to be dropped. The name will be properly quoted by the method.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function dropForeignKey(string $name, string $table): void
+    public function dropForeignKey(string $table, string $name): void
     {
         $time = $this->beginCommand("Drop foreign key $name from table $table");
-        $this->db->createCommand()->dropForeignKey($name, $table)->execute();
+        $this->db->createCommand()->dropForeignKey($table, $name)->execute();
         $this->endCommand($time);
     }
 
     /**
      * Builds and executes a SQL statement for creating a new index.
      *
-     * @param string $name the name of the index. The name will be properly quoted by the method.
      * @param string $table the table that the new index will be created for. The table name will be properly quoted by
      * the method.
+     * @param string $name the name of the index. The name will be properly quoted by the method.
      * @param array|string $columns the column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
@@ -467,8 +467,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws NotSupportedException
      */
     public function createIndex(
-        string $name,
         string $table,
+        string $name,
         array|string $columns,
         ?string $indexType = null,
         ?string $indexMethod = null
@@ -478,24 +478,24 @@ final class MigrationBuilder extends AbstractMigrationBuilder
             . ($indexType !== null ? ' ' . $indexType : '')
             . " index $name on $table (" . implode(',', (array) $columns) . ')'
         );
-        $this->db->createCommand()->createIndex($name, $table, $columns, $indexType, $indexMethod)->execute();
+        $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);
     }
 
     /**
      * Builds and executes a SQL statement for dropping an index.
      *
-     * @param string $name the name of the index to be dropped. The name will be properly quoted by the method.
      * @param string $table the table whose index is to be dropped. The name will be properly quoted by the method.
+     * @param string $name the name of the index to be dropped. The name will be properly quoted by the method.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function dropIndex(string $name, string $table): void
+    public function dropIndex(string $table, string $name): void
     {
         $time = $this->beginCommand("Drop index $name on $table");
-        $this->db->createCommand()->dropIndex($name, $table)->execute();
+        $this->db->createCommand()->dropIndex($table, $name)->execute();
         $this->endCommand($time);
     }
 

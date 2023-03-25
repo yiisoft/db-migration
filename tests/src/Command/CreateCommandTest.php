@@ -189,15 +189,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `user_id`
         \$b->createIndex(
-            'idx-post-user_id',
             'post',
+            'idx-post-user_id',
             'user_id'
         );
 
         // add foreign key for table `{{%user}}`
         \$b->addForeignKey(
-            'fk-post-user_id',
             'post',
+            'fk-post-user_id',
             'user_id',
             '{{%user}}',
             'id',
@@ -206,15 +206,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `tag_id`
         \$b->createIndex(
-            'idx-post-tag_id',
             'post',
+            'idx-post-tag_id',
             'tag_id'
         );
 
         // add foreign key for table `{{%tag}}`
         \$b->addForeignKey(
-            'fk-post-tag_id',
             'post',
+            'fk-post-tag_id',
             'tag_id',
             '{{%tag}}',
             'id',
@@ -223,15 +223,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `category_id`
         \$b->createIndex(
-            'idx-post-category_id',
             'post',
+            'idx-post-category_id',
             'category_id'
         );
 
         // add foreign key for table `{{%category}}`
         \$b->addForeignKey(
-            'fk-post-category_id',
             'post',
+            'fk-post-category_id',
             'category_id',
             '{{%category}}',
             'id',
@@ -240,15 +240,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `category_id2`
         \$b->createIndex(
-            'idx-post-category_id2',
             'post',
+            'idx-post-category_id2',
             'category_id2'
         );
 
         // add foreign key for table `{{%category}}`
         \$b->addForeignKey(
-            'fk-post-category_id2',
             'post',
+            'fk-post-category_id2',
             'category_id2',
             '{{%category}}',
             'id2',
@@ -262,50 +262,50 @@ final class $className implements RevertibleMigrationInterface
     {
         // drops foreign key for table `{{%user}}`
         \$b->dropForeignKey(
-            'fk-post-user_id',
-            'post'
+            'post',
+            'fk-post-user_id'
         );
 
         // drops index for column `user_id`
         \$b->dropIndex(
-            'idx-post-user_id',
-            'post'
+            'post',
+            'idx-post-user_id'
         );
 
         // drops foreign key for table `{{%tag}}`
         \$b->dropForeignKey(
-            'fk-post-tag_id',
-            'post'
+            'post',
+            'fk-post-tag_id'
         );
 
         // drops index for column `tag_id`
         \$b->dropIndex(
-            'idx-post-tag_id',
-            'post'
+            'post',
+            'idx-post-tag_id'
         );
 
         // drops foreign key for table `{{%category}}`
         \$b->dropForeignKey(
-            'fk-post-category_id',
-            'post'
+            'post',
+            'fk-post-category_id'
         );
 
         // drops index for column `category_id`
         \$b->dropIndex(
-            'idx-post-category_id',
-            'post'
+            'post',
+            'idx-post-category_id'
         );
 
         // drops foreign key for table `{{%category}}`
         \$b->dropForeignKey(
-            'fk-post-category_id2',
-            'post'
+            'post',
+            'fk-post-category_id2'
         );
 
         // drops index for column `category_id2`
         \$b->dropIndex(
-            'idx-post-category_id2',
-            'post'
+            'post',
+            'idx-post-category_id2'
         );
 
         \$b->dropTable('post');
@@ -370,15 +370,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `user_id`
         \$b->createIndex(
-            'idx-post-user_id',
             'post',
+            'idx-post-user_id',
             'user_id'
         );
 
         // add foreign key for table `user`
         \$b->addForeignKey(
-            'fk-post-user_id',
             'post',
+            'fk-post-user_id',
             'user_id',
             'user',
             'id',
@@ -390,14 +390,14 @@ final class $className implements RevertibleMigrationInterface
     {
         // drops foreign key for table `user`
         \$b->dropForeignKey(
-            'fk-post-user_id',
-            'post'
+            'post',
+            'fk-post-user_id'
         );
 
         // drops index for column `user_id`
         \$b->dropIndex(
-            'idx-post-user_id',
-            'post'
+            'post',
+            'idx-post-user_id'
         );
 
         \$b->dropTable('post');
@@ -792,15 +792,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `author_id`
         \$b->createIndex(
-            'idx-post-author_id',
             'post',
+            'idx-post-author_id',
             'author_id'
         );
 
         // add foreign key for table `{{%user}}`
         \$b->addForeignKey(
-            'fk-post-author_id',
             'post',
+            'fk-post-author_id',
             'author_id',
             '{{%user}}',
             'id',
@@ -809,15 +809,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `category_id`
         \$b->createIndex(
-            'idx-post-category_id',
             'post',
+            'idx-post-category_id',
             'category_id'
         );
 
         // add foreign key for table `{{%category}}`
         \$b->addForeignKey(
-            'fk-post-category_id',
             'post',
+            'fk-post-category_id',
             'category_id',
             '{{%category}}',
             'id',
@@ -829,26 +829,26 @@ final class $className implements RevertibleMigrationInterface
     {
         // drops foreign key for table `{{%user}}`
         \$b->dropForeignKey(
-            'fk-post-author_id',
-            'post'
+            'post',
+            'fk-post-author_id'
         );
 
         // drops index for column `author_id`
         \$b->dropIndex(
-            'idx-post-author_id',
-            'post'
+            'post',
+            'idx-post-author_id'
         );
 
         // drops foreign key for table `{{%category}}`
         \$b->dropForeignKey(
-            'fk-post-category_id',
-            'post'
+            'post',
+            'fk-post-category_id'
         );
 
         // drops index for column `category_id`
         \$b->dropIndex(
-            'idx-post-category_id',
-            'post'
+            'post',
+            'idx-post-category_id'
         );
 
         \$b->dropTable('post');
@@ -913,15 +913,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `post_id`
         \$b->createIndex(
-            'idx-post_tag-post_id',
             'post_tag',
+            'idx-post_tag-post_id',
             'post_id'
         );
 
         // add foreign key for table `{{%post}}`
         \$b->addForeignKey(
-            'fk-post_tag-post_id',
             'post_tag',
+            'fk-post_tag-post_id',
             'post_id',
             '{{%post}}',
             'id',
@@ -930,15 +930,15 @@ final class $className implements RevertibleMigrationInterface
 
         // creates index for column `tag_id`
         \$b->createIndex(
-            'idx-post_tag-tag_id',
             'post_tag',
+            'idx-post_tag-tag_id',
             'tag_id'
         );
 
         // add foreign key for table `{{%tag}}`
         \$b->addForeignKey(
-            'fk-post_tag-tag_id',
             'post_tag',
+            'fk-post_tag-tag_id',
             'tag_id',
             '{{%tag}}',
             'id',
@@ -950,26 +950,26 @@ final class $className implements RevertibleMigrationInterface
     {
         // drops foreign key for table `{{%post}}`
         \$b->dropForeignKey(
-            'fk-post_tag-post_id',
-            'post_tag'
+            'post_tag',
+            'fk-post_tag-post_id'
         );
 
         // drops index for column `post_id`
         \$b->dropIndex(
-            'idx-post_tag-post_id',
-            'post_tag'
+            'post_tag',
+            'idx-post_tag-post_id'
         );
 
         // drops foreign key for table `{{%tag}}`
         \$b->dropForeignKey(
-            'fk-post_tag-tag_id',
-            'post_tag'
+            'post_tag',
+            'fk-post_tag-tag_id'
         );
 
         // drops index for column `tag_id`
         \$b->dropIndex(
-            'idx-post_tag-tag_id',
-            'post_tag'
+            'post_tag',
+            'idx-post_tag-tag_id'
         );
 
         \$b->dropTable('post_tag');
