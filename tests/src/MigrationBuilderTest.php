@@ -301,7 +301,7 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int']);
 
-        $this->builder->addPrimaryKey('id', 'test', ['id']);
+        $this->builder->addPrimaryKey('test', 'id', ['id']);
 
         $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
         $this->assertNotEmpty($schema);
@@ -314,7 +314,7 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => 'string']);
 
-        $this->builder->dropPrimaryKey('test_pk', 'test');
+        $this->builder->dropPrimaryKey('test', 'test_pk');
 
         $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
         $this->assertNotEmpty($schema);
@@ -338,8 +338,8 @@ final class MigrationBuilderTest extends TestCase
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
 
         $this->builder->addForeignKey(
-            'fk',
             'test_table',
+            'fk',
             'foreign_id',
             'target_table',
             'id',
@@ -365,9 +365,9 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
-        $this->db->createCommand()->addForeignKey('fk', 'test_table', 'foreign_id', 'target_table', 'id')->execute();
+        $this->db->createCommand()->addForeignKey('test_table', 'fk', 'foreign_id', 'target_table', 'id')->execute();
 
-        $this->builder->dropForeignKey('fk', 'test_table');
+        $this->builder->dropForeignKey('test_table', 'fk');
 
         $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
 
@@ -380,7 +380,7 @@ final class MigrationBuilderTest extends TestCase
         $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
 
-        $this->builder->createIndex('unique_index', 'test_table', 'id', 'UNIQUE');
+        $this->builder->createIndex('test_table', 'unique_index', 'id', 'UNIQUE');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
         $this->assertCount(1, $indexes);
@@ -401,9 +401,9 @@ final class MigrationBuilderTest extends TestCase
     {
         $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->createIndex('test_index', 'test_table', 'id')->execute();
+        $this->db->createCommand()->createIndex('test_table', 'test_index', 'id')->execute();
 
-        $this->builder->dropIndex('test_index', 'test_table');
+        $this->builder->dropIndex('test_table', 'test_index');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
 
