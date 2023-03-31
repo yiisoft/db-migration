@@ -137,8 +137,8 @@ The package is tested with [PHPUnit](https://phpunit.de/). For tests need Postgr
 
 #### Docker Image
 
-To easily set up a pre-configured PostgreSQL instance for testing you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) file that is in the `/tests/Support/docker/pgsql` folder.
-[PostgreSQL 15](/tests/Support/docker/pgsql/docker-compose.yml)
+To easily set up a pre-configured PostgreSQL instance for testing you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) 
+file in this repository.
 
 For running the docker containers you can use the following command:
 
