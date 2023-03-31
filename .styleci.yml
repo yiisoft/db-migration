@@ -7,6 +7,9 @@ finder:
   exclude:
     - docs
     - vendor
+  not-path:
+    - 'tests/src/Support/Helper/PostgreSqlHelper.php'
+    - 'tests/src/Support/Helper/SqLiteHelper.php'
 
 enabled:
   - alpha_ordered_traits
