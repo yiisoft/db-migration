@@ -23,7 +23,7 @@ final class PostgreSqlHelper
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -53,7 +53,6 @@ final class PostgreSqlHelper
                 }
             }
         );
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void
