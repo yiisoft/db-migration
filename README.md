@@ -133,7 +133,18 @@ The package is tested with [PHPUnit](https://phpunit.de/). For tests need Postgr
 - port: `5432`
 - name: `testdb`
 - user: `postgres`
-- password: `postgres` 
+- password: `postgres`
+
+#### Docker Image
+
+To easily set up a pre-configured PostgreSQL instance for testing you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) file that is in the `/tests/Support/docker/pgsql` folder.
+[PostgreSQL 15](/tests/Support/docker/pgsql/docker-compose.yml)
+
+For running the docker containers you can use the following command:
+
+```shell
+docker compose up -d
+```
 
 To run tests:
 
