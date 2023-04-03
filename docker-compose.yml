@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  pgsql:
+    container_name: yii-db-migration-test-pgsql
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
