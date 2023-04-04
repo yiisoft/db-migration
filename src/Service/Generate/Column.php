@@ -9,8 +9,10 @@ final class Column
     /**
      * @param string[] $decorators
      */
-    public function __construct(private string $property, private array $decorators = [])
-    {
+    public function __construct(
+        private string $property,
+        private array $decorators = []
+    ) {
     }
 
     public function getProperty(): string

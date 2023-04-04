@@ -6,8 +6,13 @@ namespace Yiisoft\Yii\Db\Migration\Service\Generate;
 
 final class ForeignKey
 {
-    public function __construct(private string $indexName, private string $foreignKeyName, private ?string $column, private string $relatedTable, private string $relatedColumn)
-    {
+    public function __construct(
+        private string $indexName,
+        private string $foreignKeyName,
+        private ?string $column,
+        private string $relatedTable,
+        private string $relatedColumn
+    ) {
     }
 
     public function getIndexName(): string

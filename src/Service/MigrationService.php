@@ -28,8 +28,12 @@ final class MigrationService
     private string $version = '1.0';
     private ?SymfonyStyle $io = null;
 
-    public function __construct(private Aliases $aliases, private ConnectionInterface $db, private Injector $injector, private Migrator $migrator)
-    {
+    public function __construct(
+        private Aliases $aliases,
+        private ConnectionInterface $db,
+        private Injector $injector,
+        private Migrator $migrator
+    ) {
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -249,7 +253,7 @@ final class MigrationService
     public function makeMigrations(array $classes): array
     {
         return array_map(
-            fn (string $class) => $this->makeMigration($class),
+            fn(string $class) => $this->makeMigration($class),
             $classes
         );
     }
@@ -275,7 +279,7 @@ final class MigrationService
     public function makeRevertibleMigrations(array $classes): array
     {
         return array_map(
-            fn (string $class) => $this->makeRevertibleMigration($class),
+            fn(string $class) => $this->makeRevertibleMigration($class),
             $classes
         );
     }

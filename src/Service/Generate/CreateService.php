@@ -22,16 +22,13 @@ final class CreateService
      */
     private ?array $templates = null;
 
+    /**
+     * @param bool $useTablePrefix Indicates whether the table names generated should consider the `tablePrefix` setting
+     * of the DB connection. For example, if the table name is `post` the generator will return `{{%post}}`.
+     */
     public function __construct(
         private Aliases $aliases,
         private ConnectionInterface $db,
-        /**
-         * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
-         *
-         * For example, if the table name is `post` the generator will return `{{%post}}`.
-         *
-         * @param bool $value
-         */
         private bool $useTablePrefix = true
     ) {
         $this->phpRenderer = new PhpRenderer();

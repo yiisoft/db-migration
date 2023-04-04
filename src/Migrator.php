@@ -17,8 +17,13 @@ final class Migrator
     private bool $checkMigrationHistoryTable = true;
     private bool $schemaCacheEnabled = false;
 
-    public function __construct(private ConnectionInterface $db, private SchemaCache $schemaCache, private MigrationInformerInterface $informer, private string $historyTable = '{{%migration}}', private ?int $migrationNameLimit = 180)
-    {
+    public function __construct(
+        private ConnectionInterface $db,
+        private SchemaCache $schemaCache,
+        private MigrationInformerInterface $informer,
+        private string $historyTable = '{{%migration}}',
+        private ?int $migrationNameLimit = 180
+    ) {
     }
 
     public function setInformer(MigrationInformerInterface $informer): void

@@ -22,8 +22,11 @@ final class ListTablesService
 {
     private ?SymfonyStyle $io = null;
 
-    public function __construct(private ConnectionInterface $db, private MigrationService $migrationService, private Migrator $migrator)
-    {
+    public function __construct(
+        private ConnectionInterface $db,
+        private MigrationService $migrationService,
+        private Migrator $migrator
+    ) {
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -63,7 +66,7 @@ final class ListTablesService
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
-                $table->addRow([(string) $count, (string) $value]);
+                $table->addRow([(string)$count, (string)$value]);
             }
         }
 
