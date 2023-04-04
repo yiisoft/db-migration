@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -84,11 +85,9 @@ use function strlen;
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
  */
+#[AsCommand('migrate/create', 'Generate migration template.')]
 final class CreateCommand extends Command
 {
-    protected static $defaultName = 'migrate/create';
-    protected static $defaultDescription = 'Generate migration template.';
-
     public function __construct(
         private CreateService $createService,
         private MigrationService $migrationService,
@@ -116,7 +115,7 @@ final class CreateCommand extends Command
         $this->migrationService->setIO($io);
         $this->createService->setIO($io);
 
-        if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
+        if ($this->migrationService->before(self::getDefaultName() ?? '') === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 

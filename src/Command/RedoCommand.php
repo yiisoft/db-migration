@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,11 +35,9 @@ use function count;
  * yii migrate/redo all # redo all migrations
  * ```
  */
+#[AsCommand('migrate/redo', 'Redoes the last few migrations.')]
 final class RedoCommand extends Command
 {
-    protected static $defaultName = 'migrate/redo';
-    protected static $defaultDescription = 'Redoes the last few migrations.';
-
     public function __construct(
         private MigrationService $migrationService,
         private Migrator $migrator,
@@ -66,7 +65,7 @@ final class RedoCommand extends Command
         $this->downRunner->setIO($io);
         $this->updateRunner->setIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::getDefaultName() ?? '');
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 

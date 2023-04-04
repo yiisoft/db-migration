@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,11 +32,9 @@ use function count;
  * yii migrate/down all # revert all migrations
  * ```
  */
+#[AsCommand('migrate/down', 'Downgrades the application by reverting old migrations.')]
 final class DownCommand extends Command
 {
-    protected static $defaultName = 'migrate/down';
-    protected static $defaultDescription = 'Downgrades the application by reverting old migrations.';
-
     public function __construct(
         private DownRunner $downRunner,
         private MigrationService $migrationService,
@@ -62,7 +61,7 @@ final class DownCommand extends Command
         $this->migrationService->setIO($io);
         $this->downRunner->setIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $this->migrationService->before(self::getDefaultName() ?? '');
 
         $limit = null;
         if (!$input->getOption('all')) {
