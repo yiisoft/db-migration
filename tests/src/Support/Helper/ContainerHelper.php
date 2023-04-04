@@ -6,8 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Cache\CacheInterface;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
@@ -33,12 +31,6 @@ final class ContainerHelper
     public static function get(ContainerInterface $container, string $id, ContainerConfig $config): object
     {
         switch ($id) {
-            case SchemaCache::class:
-                return new SchemaCache($container->get(CacheInterface::class));
-
-            case QueryCache::class:
-                return new QueryCache($container->get(CacheInterface::class));
-
             case Injector::class:
                 return new Injector($container);
 
@@ -56,7 +48,6 @@ final class ContainerHelper
                 return new Migrator(
                     $container->get(ConnectionInterface::class),
                     $container->get(SchemaCache::class),
-                    $container->get(QueryCache::class),
                     $container->get(ConsoleMigrationInformer::class),
                 );
 

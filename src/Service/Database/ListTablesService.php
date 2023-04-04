@@ -72,7 +72,7 @@ final class ListTablesService
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
-                $table->addRow([(string) ($count), (string) ($value)]);
+                $table->addRow([(string) $count, (string) $value]);
             }
         }
 

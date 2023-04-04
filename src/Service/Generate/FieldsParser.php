@@ -20,6 +20,7 @@ final class FieldsParser
 
     /**
      * @return array[]
+     *
      * @psalm-return array{0:Column[],1:ForeignKey[]}
      */
     public function parse(

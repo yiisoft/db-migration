@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Db\Sqlite\ColumnSchemaBuilder;
+use Yiisoft\Db\Pgsql\Column;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
@@ -25,6 +25,12 @@ final class MigrationBuilderTest extends TestCase
     private ConnectionInterface $db;
     private StubMigrationInformer $informer;
     private MigrationBuilder $builder;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->prepareSqLite();
+    }
 
     public function testExecute(): void
     {
@@ -181,9 +187,9 @@ final class MigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
+            'builder-type' => [new Column('string', 4), null],
             'builder-type-with-comment' => [
-                (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
+                (new Column('string', 4))->comment('test comment'),
                 'test comment',
             ],
         ];
@@ -254,9 +260,9 @@ final class MigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new ColumnSchemaBuilder('string', 4), null],
+            'builder-type' => [new Column('string', 4), null],
             'builder-type-with-comment' => [
-                (new ColumnSchemaBuilder('string', 4))->comment('test comment'),
+                (new Column('string', 4))->comment('test comment'),
                 'test comment',
             ],
         ];
@@ -295,7 +301,7 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int']);
 
-        $this->builder->addPrimaryKey('id', 'test', ['id']);
+        $this->builder->addPrimaryKey('test', 'id', ['id']);
 
         $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
         $this->assertNotEmpty($schema);
@@ -308,7 +314,7 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => 'string']);
 
-        $this->builder->dropPrimaryKey('test_pk', 'test');
+        $this->builder->dropPrimaryKey('test', 'test_pk');
 
         $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
         $this->assertNotEmpty($schema);
@@ -332,8 +338,8 @@ final class MigrationBuilderTest extends TestCase
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
 
         $this->builder->addForeignKey(
-            'fk',
             'test_table',
+            'fk',
             'foreign_id',
             'target_table',
             'id',
@@ -359,9 +365,9 @@ final class MigrationBuilderTest extends TestCase
         $this->preparePostgreSql();
         $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
-        $this->db->createCommand()->addForeignKey('fk', 'test_table', 'foreign_id', 'target_table', 'id')->execute();
+        $this->db->createCommand()->addForeignKey('test_table', 'fk', 'foreign_id', 'target_table', 'id')->execute();
 
-        $this->builder->dropForeignKey('fk', 'test_table');
+        $this->builder->dropForeignKey('test_table', 'fk');
 
         $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
 
@@ -374,7 +380,7 @@ final class MigrationBuilderTest extends TestCase
         $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
 
-        $this->builder->createIndex('unique_index', 'test_table', 'id', 'UNIQUE');
+        $this->builder->createIndex('test_table', 'unique_index', 'id', 'UNIQUE');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
         $this->assertCount(1, $indexes);
@@ -395,9 +401,9 @@ final class MigrationBuilderTest extends TestCase
     {
         $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->createIndex('test_index', 'test_table', 'id')->execute();
+        $this->db->createCommand()->createIndex('test_table', 'test_index', 'id')->execute();
 
-        $this->builder->dropIndex('test_index', 'test_table');
+        $this->builder->dropIndex('test_table', 'test_index');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
 
@@ -433,11 +439,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->addCommentOnTable('test_table', 'test comment');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
 
-        $this->assertSame('test comment', $comment);
+        $this->assertSame('test comment', $tableSchema?->getComment());
     }
 
     public function testAddCommentOnTableNotSupported(): void
@@ -479,11 +483,9 @@ final class MigrationBuilderTest extends TestCase
 
         $this->builder->dropCommentFromTable('test_table');
 
-        $comment = $this->db->createCommand(
-            "SELECT obj_description(oid) FROM pg_class WHERE relname='test_table'"
-        )->queryScalar();
+        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
 
-        $this->assertNull($comment);
+        $this->assertNull($tableSchema?->getComment());
     }
 
     public function testDropCommentFromTableNotSupported(): void
@@ -503,6 +505,106 @@ final class MigrationBuilderTest extends TestCase
         $builder->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
 
         $this->assertMatchesRegularExpression('/.*SEL\[\.\.\. hidden\].*/', $this->informer->getOutput());
+    }
+
+    public function testBigInteger(): void
+    {
+        $this->assertSame('bigint', $this->builder->bigInteger()->asString());
+    }
+
+    public function testBigPrimaryKey(): void
+    {
+        $this->assertSame('bigpk', $this->builder->bigPrimaryKey()->asString());
+    }
+
+    public function testBinary(): void
+    {
+        $this->assertSame('binary', $this->builder->binary()->asString());
+    }
+
+    public function testBoolean(): void
+    {
+        $this->assertSame('boolean', $this->builder->boolean()->asString());
+    }
+
+    public function testChar(): void
+    {
+        $this->assertSame('char', $this->builder->char()->asString());
+    }
+
+    public function testDate(): void
+    {
+        $this->assertSame('date', $this->builder->date()->asString());
+    }
+
+    public function testDateTime(): void
+    {
+        $this->assertSame('datetime', $this->builder->dateTime()->asString());
+    }
+
+    public function testDecimal(): void
+    {
+        $this->assertSame('decimal', $this->builder->decimal()->asString());
+    }
+
+    public function testDouble(): void
+    {
+        $this->assertSame('double', $this->builder->double()->asString());
+    }
+
+    public function testFloat(): void
+    {
+        $this->assertSame('float', $this->builder->float()->asString());
+    }
+
+    public function testInteger(): void
+    {
+        $this->assertSame('integer', $this->builder->integer()->asString());
+    }
+
+    public function testJson(): void
+    {
+        $this->assertSame('json', $this->builder->json()->asString());
+    }
+
+    public function testMoney(): void
+    {
+        $this->assertSame('money', $this->builder->money()->asString());
+    }
+
+    public function testPrimaryKey(): void
+    {
+        $this->assertSame('pk', $this->builder->primaryKey()->asString());
+    }
+
+    public function testSmallInteger(): void
+    {
+        $this->assertSame('smallint', $this->builder->smallInteger()->asString());
+    }
+
+    public function testString(): void
+    {
+        $this->assertSame('string', $this->builder->string()->asString());
+    }
+
+    public function testText(): void
+    {
+        $this->assertSame('text', $this->builder->text()->asString());
+    }
+
+    public function testTime(): void
+    {
+        $this->assertSame('time', $this->builder->time()->asString());
+    }
+
+    public function testTimestamp(): void
+    {
+        $this->assertSame('timestamp', $this->builder->timestamp()->asString());
+    }
+
+    public function testTinyInteger(): void
+    {
+        $this->assertSame('tinyint', $this->builder->tinyInteger()->asString());
     }
 
     private function createTable(string $name, array $fields): void
