@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,11 +32,9 @@ use function strlen;
  * yii migrate/up --limit=3 # apply the first 3 new migrations
  * ```
  */
+#[AsCommand('migrate/up', 'Upgrades the application by applying new migrations.')]
 final class UpdateCommand extends Command
 {
-    protected static $defaultName = 'migrate/up';
-    protected static $defaultDescription = 'Upgrades the application by applying new migrations.';
-
     public function __construct(
         private UpdateRunner $updateRunner,
         private MigrationService $migrationService,
@@ -61,7 +60,7 @@ final class UpdateCommand extends Command
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
 
-        if ($this->migrationService->before(self::$defaultName) === ExitCode::DATAERR) {
+        if ($this->migrationService->before($this->getDefaultName()) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 

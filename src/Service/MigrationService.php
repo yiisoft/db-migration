@@ -192,7 +192,7 @@ final class MigrationService
     public function databaseConnection(): void
     {
         $this->io?->writeln(
-            "<fg=cyan>\nDatabase connection: {$this->db->getName()}.</>"
+            "<fg=cyan>\nDatabase connection: {$this->db->getDriverName()}.</>"
         );
     }
 

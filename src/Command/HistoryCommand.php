@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,11 +29,9 @@ use function date;
  * yii migrate/history all # showing the whole history
  * ```
  */
+#[AsCommand('migrate/history', 'Displays the migration history.')]
 final class HistoryCommand extends Command
 {
-    protected static $defaultName = 'migrate/history';
-    protected static $defaultDescription = 'Displays the migration history.';
-
     public function __construct(
         private MigrationService $migrationService,
         private Migrator $migrator
@@ -53,7 +52,7 @@ final class HistoryCommand extends Command
         $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $this->migrationService->before($this->getDefaultName());
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 

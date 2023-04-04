@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,11 +28,9 @@ use function count;
  * yii migrate/new all # showing all new migrations
  * ```
  */
+#[AsCommand('migrate/new', 'Displays the first 10 new migrations.')]
 final class NewCommand extends Command
 {
-    protected static $defaultName = 'migrate/new';
-    protected static $defaultDescription = 'Displays the first 10 new migrations.';
-
     public function __construct(private MigrationService $migrationService)
     {
         parent::__construct();
@@ -49,7 +48,7 @@ final class NewCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->migrationService->setIO($io);
 
-        $this->migrationService->before(self::$defaultName);
+        $this->migrationService->before($this->getDefaultName());
 
         $limit = (int) $input->getOption('limit');
 
