@@ -61,7 +61,7 @@ final class DownCommand extends Command
         $this->migrationService->setIO($io);
         $this->downRunner->setIO($io);
 
-        $this->migrationService->before(self::getDefaultName());
+        $this->migrationService->before(self::getDefaultName() ?? '');
 
         $limit = null;
         if (!$input->getOption('all')) {
