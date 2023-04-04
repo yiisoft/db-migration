@@ -111,8 +111,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function upsert(string $table, array|Query $insertColumns, array|bool $updateColumns = true, array $params = []): void
-    {
+    public function upsert(
+        string $table,
+        array|Query $insertColumns,
+        array|bool $updateColumns = true,
+        array $params = []
+    ): void {
         $time = $this->beginCommand("Upsert into $table");
         $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
         $this->endCommand($time);
@@ -346,7 +350,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function addPrimaryKey(string $name, string $table, array|string $columns): void
+    public function addPrimaryKey(string $table, string $name, array|string $columns): void
     {
         $time = $this->beginCommand(
             "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
@@ -395,13 +399,13 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      */
     public function addForeignKey(
         string $table,
+        string $name,
         array|string $columns,
         string $refTable,
         array|string $refColumns,
         ?string $delete = null,
         ?string $update = null
     ): void {
-        $name = null;
         $time = $this->beginCommand(
             "Add foreign key $name: $table (" . implode(
                 ',',
@@ -468,7 +472,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $time = $this->beginCommand(
             'Create'
             . ($indexType !== null ? ' ' . $indexType : '')
-            . " index $name on $table (" . implode(',', (array) $columns) . ')'
+            . " index $name on $table (" . implode(',', (array)$columns) . ')'
         );
         $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);
