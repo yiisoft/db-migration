@@ -22,21 +22,23 @@
     "require": {
         "php": "^8.0",
         "ext-filter": "*",
-        "yiisoft/aliases": "^1.1|^2.0",
-        "yiisoft/arrays": "^2.0",
-        "yiisoft/db": "3.0.x-dev",
+        "symfony/console": "^6.0",
+        "yiisoft/aliases": "^1.1|^2.0|^3.0",
+        "yiisoft/arrays": "^2.0|^3.0",
+        "yiisoft/db": "@dev",
         "yiisoft/files": "^1.0|^2.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0",
-        "yiisoft/yii-console": "^1.0"
+        "yiisoft/yii-console": "^1.0|^2.0"
     },
     "require-dev": {
+        "maglnet/composer-require-checker": "^4.2",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^0.14.3",
         "roave/infection-static-analysis-plugin": "^1.18",
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.23",
-        "yiisoft/db-pgsql": "3.0.x-dev",
+        "yiisoft/db-pgsql": "^3.0@dev",
         "yiisoft/db-sqlite": "^3.0@dev",
         "yiisoft/di": "^1.0",
         "yiisoft/test-support": "^3.0"
@@ -61,7 +63,7 @@
         },
         "config-plugin": {
             "params": "params.php",
-            "console": "console.php"
+            "di-console": "di-console.php"
         }
     },
     "config": {

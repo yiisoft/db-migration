@@ -8,18 +8,12 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Cache\ArrayCache;
-use Yiisoft\Cache\Cache;
-use Yiisoft\Cache\CacheInterface;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
-use Yiisoft\Db\Connection\Connection;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
 use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
-use Yiisoft\Profiler\Profiler;
-use Yiisoft\Profiler\ProfilerInterface;
 use Yiisoft\Test\Support\Container\SimpleContainer;
+use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
 use function dirname;
 
@@ -27,11 +21,12 @@ final class PostgreSqlHelper
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
+        $config ??= new ContainerConfig();
+
         $container = new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
-                CacheInterface::class => new Cache(new ArrayCache()),
-                ProfilerInterface::class => new Profiler(new NullLogger()),
+                SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
                 Aliases::class => new Aliases(
                     [
                         '@runtime' => dirname(__DIR__, 3) . '/runtime',
@@ -47,15 +42,14 @@ final class PostgreSqlHelper
                                 'postgres',
                                 'postgres',
                             ),
-                            $container->get(QueryCache::class),
-                            $container->get(SchemaCache::class),
+                            new SchemaCache(new MemorySimpleCache()),
                         );
 
                     case PgSqlConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
-                        return ContainerHelper::get($container, $id, $config ?? new ContainerConfig());
+                        return ContainerHelper::get($container, $id, $config);
                 }
             }
         );
@@ -75,7 +69,7 @@ final class PostgreSqlHelper
 
     public static function createSchema(ContainerInterface $container, string $name): void
     {
-        /** @var Connection $connection */
+        /** @var ConnectionInterface $connection */
         $connection = $container->get(ConnectionInterface::class);
 
         $quotedName = $connection->getQuoter()->quoteTableName($name);

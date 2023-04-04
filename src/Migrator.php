@@ -6,21 +6,39 @@ namespace Yiisoft\Yii\Db\Migration;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Cache\QueryCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
+use function get_class;
+
 final class Migrator
 {
+    private ConnectionInterface $db;
+    private SchemaCache $schemaCache;
+    private MigrationInformerInterface $informer;
+
+    private string $historyTable;
+    private ?int $migrationNameLimit;
+
     private bool $checkMigrationHistoryTable = true;
     private bool $schemaCacheEnabled = false;
-    private bool $queryCacheEnabled = false;
 
-    public function __construct(private ConnectionInterface $db, private SchemaCache $schemaCache, private QueryCache $queryCache, private MigrationInformerInterface $informer, private string $historyTable = '{{%migration}}', private ?int $migrationNameLimit = 180)
-    {
+    public function __construct(
+        ConnectionInterface $db,
+        SchemaCache $schemaCache,
+        MigrationInformerInterface $informer,
+        string $historyTable = '{{%migration}}',
+        ?int $maxMigrationNameLength = 180
+    ) {
+        $this->db = $db;
+        $this->schemaCache = $schemaCache;
+        $this->informer = $informer;
+
+        $this->historyTable = $historyTable;
+        $this->migrationNameLimit = $maxMigrationNameLength;
     }
 
     public function setInformer(MigrationInformerInterface $informer): void
@@ -119,7 +137,7 @@ final class Migrator
 
     private function getMigrationName(MigrationInterface $migration): string
     {
-        return $migration::class;
+        return get_class($migration);
     }
 
     private function checkMigrationHistoryTable(): void
@@ -156,11 +174,6 @@ final class Migrator
 
     private function beforeMigrate(): void
     {
-        $this->queryCacheEnabled = $this->queryCache->isEnabled();
-        if ($this->queryCacheEnabled) {
-            $this->queryCache->setEnable(false);
-        }
-
         $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
         if ($this->schemaCacheEnabled) {
             $this->schemaCache->setEnable(false);
@@ -169,10 +182,6 @@ final class Migrator
 
     private function afterMigrate(): void
     {
-        if ($this->queryCacheEnabled) {
-            $this->queryCache->setEnable(true);
-        }
-
         if ($this->schemaCacheEnabled) {
             $this->schemaCache->setEnable(true);
         }

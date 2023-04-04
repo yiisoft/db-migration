@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Yii\Db\Migration\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -171,6 +172,7 @@ final class CreateCommand extends Command
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
 
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         if (!file_exists($migrationPath)) {

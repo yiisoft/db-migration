@@ -1,7 +1,7 @@
 preset: psr12
 risky: true
 
-version: 8
+version: 8.1
 
 finder:
   exclude:
@@ -59,7 +59,6 @@ enabled:
   - phpdoc_order
   - phpdoc_property
   - phpdoc_scalar
-  - phpdoc_separation
   - phpdoc_singular_inheritdoc
   - phpdoc_trim
   - phpdoc_trim_consecutive_blank_line_separation
@@ -84,3 +83,6 @@ enabled:
   - empty_loop_body_braces
   - integer_literal_case
   - union_type_without_spaces
+
+disabled:
+  - function_declaration

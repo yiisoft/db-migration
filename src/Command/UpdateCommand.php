@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Command;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Migrator;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Console\ExitCode;
+use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -111,6 +112,7 @@ final class UpdateCommand extends Command
             $output->writeln("\t<fg=yellow>$migration</>");
         }
 
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $question = new ConfirmationQuestion(
