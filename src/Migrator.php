@@ -16,29 +16,11 @@ use function get_class;
 
 final class Migrator
 {
-    private ConnectionInterface $db;
-    private SchemaCache $schemaCache;
-    private MigrationInformerInterface $informer;
-
-    private string $historyTable;
-    private ?int $migrationNameLimit;
-
     private bool $checkMigrationHistoryTable = true;
     private bool $schemaCacheEnabled = false;
 
-    public function __construct(
-        ConnectionInterface $db,
-        SchemaCache $schemaCache,
-        MigrationInformerInterface $informer,
-        string $historyTable = '{{%migration}}',
-        ?int $maxMigrationNameLength = 180
-    ) {
-        $this->db = $db;
-        $this->schemaCache = $schemaCache;
-        $this->informer = $informer;
-
-        $this->historyTable = $historyTable;
-        $this->migrationNameLimit = $maxMigrationNameLength;
+    public function __construct(private ConnectionInterface $db, private SchemaCache $schemaCache, private MigrationInformerInterface $informer, private string $historyTable = '{{%migration}}', private ?int $migrationNameLimit = 180)
+    {
     }
 
     public function setInformer(MigrationInformerInterface $informer): void
@@ -137,7 +119,7 @@ final class Migrator
 
     private function getMigrationName(MigrationInterface $migration): string
     {
-        return get_class($migration);
+        return $migration::class;
     }
 
     private function checkMigrationHistoryTable(): void
