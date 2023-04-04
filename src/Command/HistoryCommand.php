@@ -52,7 +52,7 @@ final class HistoryCommand extends Command
         $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
 
-        $this->migrationService->before($this->getDefaultName());
+        $this->migrationService->before(self::getDefaultName());
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 

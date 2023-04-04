@@ -48,7 +48,7 @@ final class NewCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->migrationService->setIO($io);
 
-        $this->migrationService->before($this->getDefaultName());
+        $this->migrationService->before(self::getDefaultName());
 
         $limit = (int) $input->getOption('limit');
 

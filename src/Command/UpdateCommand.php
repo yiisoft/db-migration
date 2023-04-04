@@ -60,7 +60,7 @@ final class UpdateCommand extends Command
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
 
-        if ($this->migrationService->before($this->getDefaultName()) === ExitCode::DATAERR) {
+        if ($this->migrationService->before(self::getDefaultName()) === ExitCode::DATAERR) {
             return ExitCode::DATAERR;
         }
 
