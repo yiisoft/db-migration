@@ -343,7 +343,6 @@ final class MigrationBuilderTest extends TestCase
             'foreign_id',
             'target_table',
             'id',
-            'CASCADE',
             'CASCADE'
         );
 
