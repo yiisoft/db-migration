@@ -36,26 +36,16 @@ use function count;
  */
 final class RedoCommand extends Command
 {
-    private MigrationService $migrationService;
-    private Migrator $migrator;
-    private DownRunner $downRunner;
-    private UpdateRunner $updateRunner;
-
     protected static $defaultName = 'migrate/redo';
     protected static $defaultDescription = 'Redoes the last few migrations.';
 
     public function __construct(
-        MigrationService $migrationService,
-        Migrator $migrator,
+        private MigrationService $migrationService,
+        private Migrator $migrator,
         ConsoleMigrationInformer $informer,
-        DownRunner $downRunner,
-        UpdateRunner $updateRunner
+        private DownRunner $downRunner,
+        private UpdateRunner $updateRunner
     ) {
-        $this->downRunner = $downRunner;
-        $this->migrationService = $migrationService;
-        $this->updateRunner = $updateRunner;
-
-        $this->migrator = $migrator;
         $this->migrator->setInformer($informer);
 
         parent::__construct();

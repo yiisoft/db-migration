@@ -15,19 +15,11 @@ use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
-    private ConnectionInterface $db;
-    private MigrationInformerInterface $informer;
-    private int $maxSqlOutputLength;
-
     public function __construct(
-        ConnectionInterface $db,
-        MigrationInformerInterface $informer,
-        int $maxSqlOutputLength = 0
+        private ConnectionInterface $db,
+        private MigrationInformerInterface $informer,
+        private int $maxSqlOutputLength = 0
     ) {
-        $this->db = $db;
-        $this->informer = $informer;
-        $this->maxSqlOutputLength = $maxSqlOutputLength;
-
         parent::__construct($this->db->getSchema());
     }
 
@@ -119,8 +111,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function upsert(string $table, $insertColumns, $updateColumns = true, array $params = []): void
-    {
+    public function upsert(
+        string $table,
+        array|Query $insertColumns,
+        array|bool $updateColumns = true,
+        array $params = []
+    ): void {
         $time = $this->beginCommand("Upsert into $table");
         $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
         $this->endCommand($time);
@@ -141,7 +137,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function update(string $table, array $columns, $condition = '', array $params = []): void
+    public function update(string $table, array $columns, array|string $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Update $table");
         $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
@@ -160,7 +156,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function delete(string $table, $condition = '', array $params = []): void
+    public function delete(string $table, array|string $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Delete from $table");
         $this->db->createCommand()->delete($table, $condition, $params)->execute();
@@ -354,7 +350,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function addPrimaryKey(string $table, string $name, $columns): void
+    public function addPrimaryKey(string $table, string $name, array|string $columns): void
     {
         $time = $this->beginCommand(
             "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
@@ -404,9 +400,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function addForeignKey(
         string $table,
         string $name,
-        $columns,
+        array|string $columns,
         string $refTable,
-        $refColumns,
+        array|string $refColumns,
         ?string $delete = null,
         ?string $update = null
     ): void {
@@ -476,7 +472,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $time = $this->beginCommand(
             'Create'
             . ($indexType !== null ? ' ' . $indexType : '')
-            . " index $name on $table (" . implode(',', (array) $columns) . ')'
+            . " index $name on $table (" . implode(',', (array)$columns) . ')'
         );
         $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);

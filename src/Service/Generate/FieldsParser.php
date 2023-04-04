@@ -11,11 +11,8 @@ use function in_array;
  */
 final class FieldsParser
 {
-    private ForeignKeyFactory $foreignKeyFactory;
-
-    public function __construct(ForeignKeyFactory $foreignKeyFactory)
+    public function __construct(private ForeignKeyFactory $foreignKeyFactory)
     {
-        $this->foreignKeyFactory = $foreignKeyFactory;
     }
 
     /**
@@ -38,7 +35,7 @@ final class FieldsParser
                 $property = array_shift($chunks);
 
                 foreach ($chunks as $i => $chunk) {
-                    if (strncmp($chunk, 'foreignKey', 10) === 0) {
+                    if (str_starts_with($chunk, 'foreignKey')) {
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
                         $foreignKeys[] = $this->foreignKeyFactory->create(
                             $table,

@@ -33,23 +33,15 @@ use function count;
  */
 final class DownCommand extends Command
 {
-    private DownRunner $downRunner;
-    private MigrationService $migrationService;
-    private Migrator $migrator;
-
     protected static $defaultName = 'migrate/down';
     protected static $defaultDescription = 'Downgrades the application by reverting old migrations.';
 
     public function __construct(
-        DownRunner $downRunner,
-        MigrationService $migrationService,
-        Migrator $migrator,
+        private DownRunner $downRunner,
+        private MigrationService $migrationService,
+        private Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->downRunner = $downRunner;
-        $this->migrationService = $migrationService;
-
-        $this->migrator = $migrator;
         $this->migrator->setInformer($informer);
 
         parent::__construct();
@@ -63,9 +55,6 @@ final class DownCommand extends Command
             ->setHelp('This command downgrades the application by reverting old migrations.');
     }
 
-    /**
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

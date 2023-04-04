@@ -29,15 +29,11 @@ use function count;
  */
 final class NewCommand extends Command
 {
-    private MigrationService $migrationService;
-
     protected static $defaultName = 'migrate/new';
     protected static $defaultDescription = 'Displays the first 10 new migrations.';
 
-    public function __construct(MigrationService $migrationService)
+    public function __construct(private MigrationService $migrationService)
     {
-        $this->migrationService = $migrationService;
-
         parent::__construct();
     }
 

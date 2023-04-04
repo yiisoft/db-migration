@@ -15,15 +15,11 @@ use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
  */
 final class ListTablesCommand extends Command
 {
-    private ListTablesService $listTablesService;
-
     protected static $defaultName = 'database/list';
     protected static $defaultDescription = 'Lists all tables in the database.';
 
-    public function __construct(ListTablesService $listTablesService)
+    public function __construct(private ListTablesService $listTablesService)
     {
-        $this->listTablesService = $listTablesService;
-
         parent::__construct();
     }
 

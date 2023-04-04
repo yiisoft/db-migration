@@ -20,19 +20,13 @@ use function preg_match;
 
 final class ListTablesService
 {
-    private ConnectionInterface $db;
-    private MigrationService $migrationService;
-    private Migrator $migrator;
     private ?SymfonyStyle $io = null;
 
     public function __construct(
-        ConnectionInterface $db,
-        MigrationService $migrationService,
-        Migrator $migrator
+        private ConnectionInterface $db,
+        private MigrationService $migrationService,
+        private Migrator $migrator
     ) {
-        $this->db = $db;
-        $this->migrationService = $migrationService;
-        $this->migrator = $migrator;
     }
 
     public function setIO(?SymfonyStyle $io): void
@@ -72,7 +66,7 @@ final class ListTablesService
         foreach ($tables as $value) {
             if ($value !== $migrationTable) {
                 $count++;
-                $table->addRow([(string) $count, (string) $value]);
+                $table->addRow([(string)$count, (string)$value]);
             }
         }
 
@@ -86,7 +80,7 @@ final class ListTablesService
     {
         try {
             $schemaNames = $this->db->getSchema()->getSchemaNames(true);
-        } catch (NotSupportedException $e) {
+        } catch (NotSupportedException) {
             $schemaNames = [];
         }
 

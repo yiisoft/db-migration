@@ -30,19 +30,13 @@ use function date;
  */
 final class HistoryCommand extends Command
 {
-    private MigrationService $migrationService;
-    private Migrator $migrator;
-
     protected static $defaultName = 'migrate/history';
     protected static $defaultDescription = 'Displays the migration history.';
 
     public function __construct(
-        MigrationService $migrationService,
-        Migrator $migrator
+        private MigrationService $migrationService,
+        private Migrator $migrator
     ) {
-        $this->migrationService = $migrationService;
-        $this->migrator = $migrator;
-
         parent::__construct();
     }
 

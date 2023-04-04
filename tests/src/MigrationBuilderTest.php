@@ -344,7 +344,7 @@ final class MigrationBuilderTest extends TestCase
             'target_table',
             'id',
             'CASCADE',
-            'CASCADE'
+            'CASCADE',
         );
 
         $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();

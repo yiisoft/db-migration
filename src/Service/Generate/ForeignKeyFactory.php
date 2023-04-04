@@ -14,18 +14,11 @@ use function count;
  */
 final class ForeignKeyFactory
 {
-    private ConnectionInterface $db;
-    private ?SymfonyStyle $io;
-    private bool $useTablePrefix;
-
     public function __construct(
-        ConnectionInterface $db,
-        ?SymfonyStyle $io,
-        bool $useTablePrefix
+        private ConnectionInterface $db,
+        private ?SymfonyStyle $io,
+        private bool $useTablePrefix
     ) {
-        $this->db = $db;
-        $this->io = $io;
-        $this->useTablePrefix = $useTablePrefix;
     }
 
     public function create(

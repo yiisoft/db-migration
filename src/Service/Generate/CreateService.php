@@ -14,34 +14,24 @@ use function in_array;
 
 final class CreateService
 {
-    private Aliases $aliases;
-    private ConnectionInterface $db;
     private PhpRenderer $phpRenderer;
     private ?SymfonyStyle $io = null;
-
-    /**
-     * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
-     *
-     * For example, if the table name is `post` the generator will return `{{%post}}`.
-     *
-     * @param bool $value
-     */
-    private bool $useTablePrefix;
 
     /**
      * @psalm-var array<string,string>|null
      */
     private ?array $templates = null;
 
+    /**
+     * @param bool $useTablePrefix Indicates whether the table names generated should consider the `tablePrefix` setting
+     * of the DB connection. For example, if the table name is `post` the generator will return `{{%post}}`.
+     */
     public function __construct(
-        Aliases $aliases,
-        ConnectionInterface $db,
-        bool $useTablePrefix = true
+        private Aliases $aliases,
+        private ConnectionInterface $db,
+        private bool $useTablePrefix = true
     ) {
-        $this->aliases = $aliases;
-        $this->db = $db;
         $this->phpRenderer = new PhpRenderer();
-        $this->useTablePrefix = $useTablePrefix;
     }
 
     public function run(
