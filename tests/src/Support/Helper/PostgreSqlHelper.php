@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
-use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
+use Yiisoft\Db\Pgsql\PdoConnection;
+use Yiisoft\Db\Pgsql\PdoDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
@@ -36,8 +36,8 @@ final class PostgreSqlHelper
             static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
-                        return new PgSqlConnection(
-                            new PgSqlPDODriver(
+                        return new PdoConnection(
+                            new PdoDriver(
                                 'pgsql:host=127.0.0.1;port=5432;dbname=testdb',
                                 'postgres',
                                 'postgres',
@@ -45,7 +45,7 @@ final class PostgreSqlHelper
                             new SchemaCache(new MemorySimpleCache()),
                         );
 
-                    case PgSqlConnection::class:
+                    case PdoConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
@@ -58,7 +58,7 @@ final class PostgreSqlHelper
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $connection = $container->get(PgSqlConnection::class);
+        $connection = $container->get(PdoConnection::class);
         foreach ($connection->getSchema()->getSchemaNames(true) as $name) {
             $connection
                 ->createCommand('drop schema ' . $connection->getQuoter()->quoteTableName($name) . ' cascade')

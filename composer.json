@@ -38,8 +38,8 @@
         "roave/infection-static-analysis-plugin": "^1.18",
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.30|^5.9",
-        "yiisoft/db-pgsql": "^3.0@dev",
-        "yiisoft/db-sqlite": "^3.0@dev",
+        "yiisoft/db-pgsql": "dev-better-naming-classes as 3.0@dev",
+        "yiisoft/db-sqlite": "dev-better-naming-classes as 3.0@dev",
         "yiisoft/di": "^1.0",
         "yiisoft/test-support": "^3.0"
     },
