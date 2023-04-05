@@ -24,7 +24,7 @@ final class PhpRenderer
         ob_start();
         ob_implicit_flush(false);
         try {
-            /** @psalm-suppress PossiblyInvalidFunctionCall */
+            /** @psalm-suppress PossiblyInvalidFunctionCall,PossiblyNullFunctionCall */
             $renderer->bindTo($this)($file, $params);
             return ob_get_clean();
         } catch (Throwable $e) {
