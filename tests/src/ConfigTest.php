@@ -7,8 +7,8 @@ namespace Yiisoft\Yii\Db\Migration\Tests;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
-use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
+use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
+use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
@@ -76,7 +76,7 @@ final class ConfigTest extends TestCase
                     ConnectionInterface::class => [
                         'class' => SqLiteConnection::class,
                         '__construct()' => [
-                            'driver' => new SqLitePDODriver(
+                            'driver' => new SqLiteDriver(
                                 'sqlite:' . dirname(__DIR__, 2) . '/runtime/config-test.sq3'
                             ),
                         ],

@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\ConnectionPDO as SqLiteConnection;
-use Yiisoft\Db\Sqlite\PDODriver as SqLitePDODriver;
+use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
+use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
@@ -37,7 +37,7 @@ final class SqLiteHelper
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new SqLiteConnection(
-                            new SqLitePDODriver(
+                            new SqLiteDriver(
                                 'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
                             ),
                             new SchemaCache(new MemorySimpleCache())

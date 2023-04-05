@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Pgsql\ConnectionPDO as PgSqlConnection;
-use Yiisoft\Db\Pgsql\PDODriver as PgSqlPDODriver;
+use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
+use Yiisoft\Db\Pgsql\Driver as PgSqlDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
@@ -37,7 +37,7 @@ final class PostgreSqlHelper
                 switch ($id) {
                     case ConnectionInterface::class:
                         return new PgSqlConnection(
-                            new PgSqlPDODriver(
+                            new PgSqlDriver(
                                 'pgsql:host=127.0.0.1;port=5432;dbname=testdb',
                                 'postgres',
                                 'postgres',
