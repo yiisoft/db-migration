@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\PdoConnection;
-use Yiisoft\Db\Sqlite\PdoDriver;
+use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
+use Yiisoft\Db\Sqlite\Driver as SqLitePDODriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
@@ -36,14 +36,14 @@ final class SqLiteHelper
             static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
-                        return new PdoConnection(
-                            new PdoDriver(
+                        return new SqLiteConnection(
+                            new SqLitePDODriver(
                                 'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
                             ),
                             new SchemaCache(new MemorySimpleCache())
                         );
 
-                    case PdoConnection::class:
+                    case SqLiteConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
@@ -56,7 +56,7 @@ final class SqLiteHelper
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $db = $container->get(PdoConnection::class);
+        $db = $container->get(SqLiteConnection::class);
         foreach ($db->getSchema()->getTableNames() as $tableName) {
             $db->createCommand()->dropTable($tableName)->execute();
         }
