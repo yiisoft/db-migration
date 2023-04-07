@@ -7,7 +7,7 @@ namespace Yiisoft\Db\Tests\Common;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Driver\PDO\ConnectionPDOInterface;
+use Yiisoft\Db\Driver\Pdo\PdoConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Tests\Provider\ColumnTypes;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\PostgreSqlHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
@@ -15,13 +15,13 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\SqLiteHelper;
 class ColumnTypesTest extends TestCase
 {
     private ContainerInterface $container;
-    private ConnectionPDOInterface $dbPgsql;
-    private ConnectionPDOInterface $dbSqlite;
+    private ConnectionInterface $dbPgsql;
+    private ConnectionInterface $dbSqlite;
 
     /**
      * @dataProvider dbProvider
      */
-    public function testGetColumnType(ConnectionPDOInterface $db): void
+    public function testGetColumnType(PdoConnectionInterface $db): void
     {
         $qb = $db->getQueryBuilder();
         $columnTypes = (new ColumnTypes($db))->getColumnTypes();
