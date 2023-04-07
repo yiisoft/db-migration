@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Provider;
 
-use Yiisoft\Db\Driver\Pdo\ConnectionInterface;
+use Yiisoft\Db\Driver\Pdo\PdoConnectionInterface;
 use Yiisoft\Db\Schema\SchemaInterface;
 use Yiisoft\Yii\Db\Migration\AbstractMigrationBuilder;
 
@@ -13,7 +13,7 @@ use function array_values;
 
 final class ColumnTypes extends AbstractMigrationBuilder
 {
-    public function __construct(private ConnectionInterface $db)
+    public function __construct(private PdoConnectionInterface $db)
     {
         parent::__construct($this->db->getSchema());
     }
