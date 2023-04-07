@@ -8,7 +8,7 @@ use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Driver\PDO\ConnectionPDOInterface;
+use Yiisoft\Db\Driver\Pdo\PdoConnectionInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Migrator;
@@ -115,7 +115,7 @@ final class ListTablesService
 
     private function getDatabaseName(): ?string
     {
-        if (!$this->db instanceof ConnectionPDOInterface) {
+        if (!$this->db instanceof PDOConnectionInterface) {
             return null;
         }
 
