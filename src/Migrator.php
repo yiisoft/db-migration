@@ -161,14 +161,14 @@ final class Migrator
     {
         $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
         if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(false);
+            $this->schemaCache->setEnabled(false);
         }
     }
 
     private function afterMigrate(): void
     {
         if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnable(true);
+            $this->schemaCache->setEnabled(true);
         }
 
         $this->db->getSchema()->refresh();
