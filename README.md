@@ -67,7 +67,7 @@ Add to `config/params.php`:
 ...
 'yiisoft/yii-db-migration' => [
     'createNamespace' => 'App\\Migration',
-    'updateNamespace' => ['App\\Migration'],
+    'updateNamespaces' => ['App\\Migration'],
 ],
 ...
 ```
