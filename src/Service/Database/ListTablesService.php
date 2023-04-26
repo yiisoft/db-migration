@@ -115,7 +115,7 @@ final class ListTablesService
 
     private function getDatabaseName(): ?string
     {
-        if (!$this->db instanceof PDOConnectionInterface) {
+        if (!$this->db instanceof PdoConnectionInterface) {
             return null;
         }
 

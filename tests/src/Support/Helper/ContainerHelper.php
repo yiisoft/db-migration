@@ -113,7 +113,7 @@ final class ContainerHelper
                 );
 
             default:
-                //throw new NotFoundException($id);
+                throw new NotFoundException($id);
         }
     }
 }
