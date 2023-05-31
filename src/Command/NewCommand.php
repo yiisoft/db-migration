@@ -23,12 +23,12 @@ use function count;
  * For example,
  *
  * ```
- * yii migrate/new     # showing the first 10 new migrations
- * yii migrate/new 5   # showing the first 5 new migrations
- * yii migrate/new all # showing all new migrations
+ * yii migrate:new     # showing the first 10 new migrations
+ * yii migrate:new 5   # showing the first 5 new migrations
+ * yii migrate:new all # showing all new migrations
  * ```
  */
-#[AsCommand('migrate/new', 'Displays the first 10 new migrations.')]
+#[AsCommand('migrate:new', 'Displays the first 10 new migrations.')]
 final class NewCommand extends Command
 {
     public function __construct(private MigrationService $migrationService)

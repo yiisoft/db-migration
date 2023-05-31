@@ -59,7 +59,7 @@ final class MigrationService
         $result = ExitCode::OK;
 
         switch ($defaultName) {
-            case 'migrate/create':
+            case 'migrate:create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     if ($this->io) {
                         $this->io->error(
@@ -70,7 +70,7 @@ final class MigrationService
                     $result = ExitCode::DATAERR;
                 }
                 break;
-            case 'migrate/up':
+            case 'migrate:up':
                 if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
                     if ($this->io) {
                         $this->io->error(

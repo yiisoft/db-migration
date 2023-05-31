@@ -24,12 +24,12 @@ use function date;
  * so far. For example,
  *
  * ```
- * yii migrate/history     # showing the last 10 migrations
- * yii migrate/history 5   # showing the last 5 migrations
- * yii migrate/history all # showing the whole history
+ * yii migrate:history     # showing the last 10 migrations
+ * yii migrate:history 5   # showing the last 5 migrations
+ * yii migrate:history all # showing the whole history
  * ```
  */
-#[AsCommand('migrate/history', 'Displays the migration history.')]
+#[AsCommand('migrate:history', 'Displays the migration history.')]
 final class HistoryCommand extends Command
 {
     public function __construct(

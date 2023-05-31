@@ -14,7 +14,7 @@ use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 /**
  * Lists all tables in the database.
  */
-#[AsCommand('database/list', 'Lists all tables in the database.')]
+#[AsCommand('database:list', 'Lists all tables in the database.')]
 final class ListTablesCommand extends Command
 {
     public function __construct(private ListTablesService $listTablesService)

@@ -69,7 +69,7 @@ use function strlen;
  * migration logic.
  *
  * ```php
- * ./yii migrate/create table --command=table
+ * ./yii migrate:create table --command=table
  * ```
  *
  * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
@@ -80,12 +80,12 @@ use function strlen;
  * For example:
  *
  * ```php
- * ./yii migrate/create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
+ * ./yii migrate:create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
  */
-#[AsCommand('migrate/create', 'Generate migration template.')]
+#[AsCommand('migrate:create', 'Generate migration template.')]
 final class CreateCommand extends Command
 {
     public function __construct(

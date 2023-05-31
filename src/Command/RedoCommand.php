@@ -30,12 +30,12 @@ use function count;
  * them again. For example,
  *
  * ```
- * yii migrate/redo     # redo the last applied migration
- * yii migrate/redo 3   # redo the last 3 applied migrations
- * yii migrate/redo all # redo all migrations
+ * yii migrate:redo     # redo the last applied migration
+ * yii migrate:redo 3   # redo the last 3 applied migrations
+ * yii migrate:redo all # redo all migrations
  * ```
  */
-#[AsCommand('migrate/redo', 'Redoes the last few migrations.')]
+#[AsCommand('migrate:redo', 'Redoes the last few migrations.')]
 final class RedoCommand extends Command
 {
     public function __construct(
