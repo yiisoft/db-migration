@@ -13,13 +13,13 @@ use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 return [
     'yiisoft/yii-console' => [
         'commands' => [
-            'migrate/create' => CreateCommand::class,
-            'database/list' => ListTablesCommand::class,
-            'migrate/down' => DownCommand::class,
-            'migrate/history' => HistoryCommand::class,
-            'migrate/new' => NewCommand::class,
-            'migrate/redo' => RedoCommand::class,
-            'migrate/up' => UpdateCommand::class,
+            'migrate:create' => CreateCommand::class,
+            'database:list' => ListTablesCommand::class,
+            'migrate:down' => DownCommand::class,
+            'migrate:history' => HistoryCommand::class,
+            'migrate:new' => NewCommand::class,
+            'migrate:redo' => RedoCommand::class,
+            'migrate:up' => UpdateCommand::class,
         ],
     ],
 

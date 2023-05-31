@@ -28,11 +28,11 @@ use function strlen;
  * For example,
  *
  * ```
- * yii migrate/up           # apply all new migrations
- * yii migrate/up --limit=3 # apply the first 3 new migrations
+ * yii migrate:up           # apply all new migrations
+ * yii migrate:up --limit=3 # apply the first 3 new migrations
  * ```
  */
-#[AsCommand('migrate/up', 'Upgrades the application by applying new migrations.')]
+#[AsCommand('migrate:up', 'Upgrades the application by applying new migrations.')]
 final class UpdateCommand extends Command
 {
     public function __construct(

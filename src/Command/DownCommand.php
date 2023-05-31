@@ -27,12 +27,12 @@ use function count;
  * For example,
  *
  * ```
- * yii migrate/down     # revert the last migration
- * yii migrate/down 3   # revert the last 3 migrations
- * yii migrate/down all # revert all migrations
+ * yii migrate:down     # revert the last migration
+ * yii migrate:down 3   # revert the last 3 migrations
+ * yii migrate:down all # revert all migrations
  * ```
  */
-#[AsCommand('migrate/down', 'Downgrades the application by reverting old migrations.')]
+#[AsCommand('migrate:down', 'Downgrades the application by reverting old migrations.')]
 final class DownCommand extends Command
 {
     public function __construct(

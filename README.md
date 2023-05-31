@@ -82,26 +82,26 @@ View the list of available commands execute in console: `./yii list`
 
 ```
 Available commands:
-  database/list    Lists all tables in the database.
-  migrate/create  Generate migration template.
+  database:list    Lists all tables in the database.
+  migrate:create  Generate migration template.
   help             Displays help for a command
   list             Lists commands
-  migrate/down     Downgrades the application by reverting old migrations.
-  migrate/history  Displays the migration history.
-  migrate/new      Displays the first 10 new migrations.
-  migrate/redo     Redoes the last few migrations.
-  migrate/up       Upgrades the application by applying new migrations.
+  migrate:down     Downgrades the application by reverting old migrations.
+  migrate:history  Displays the migration history.
+  migrate:new      Displays the first 10 new migrations.
+  migrate:redo     Redoes the last few migrations.
+  migrate:up       Upgrades the application by applying new migrations.
   serve            Runs PHP built-in web server
 ```
 
-Help simple command execute in console `./yii migrate/create --help`.
+Help simple command execute in console `./yii migrate:create --help`.
 
 ```
 Description:
   Generate migration template.
 
 Usage:
-  migrate/create [options] [--] <name>
+  migrate:create [options] [--] <name>
 
 Arguments:
   name                         Table name for generate migration.
