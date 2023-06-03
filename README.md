@@ -131,9 +131,9 @@ The package is tested with [PHPUnit](https://phpunit.de/). For tests need Postgr
 
 - host: `127.0.0.1`
 - port: `5432`
-- name: `testdb`
-- user: `postgres`
-- password: `postgres`
+- name: `yiitest`
+- user: `root`
+- password: `root`
 
 #### Docker Image
 
