@@ -38,7 +38,7 @@ final class SqLiteHelper
                     case ConnectionInterface::class:
                         return new SqLiteConnection(
                             new SqLiteDriver(
-                                'sqlite:' . dirname(__DIR__, 3) . '/runtime/testdb.sq3'
+                                'sqlite:' . dirname(__DIR__, 3) . '/runtime/yiitest.sq3'
                             ),
                             new SchemaCache(new MemorySimpleCache())
                         );

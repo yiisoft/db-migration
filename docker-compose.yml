@@ -1,13 +1,16 @@
-version: '3.1'
+version: '3'
 
 services:
   pgsql:
-    container_name: yii-db-migration-test-pgsql
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: testdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: yiitest
     ports:
-      - "5432:5432"
+      # <Port exposed> : < PGSQL Port running inside container>
+      - '5432:5432'
+    expose:
+      # Opens port 5432 on the container
+      - '5432'

@@ -33,7 +33,7 @@ final class ListTablesCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::OK, $exitCode);
-        $this->assertStringContainsString('List of tables for database: testdb', $output);
+        $this->assertStringContainsString('List of tables for database: yiitest', $output);
         $this->assertStringContainsString('the_post', $output);
         $this->assertStringContainsString('the_user', $output);
     }
@@ -53,7 +53,7 @@ final class ListTablesCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(ExitCode::OK, $exitCode);
-        $this->assertStringContainsString('List of tables for database: testdb', $output);
+        $this->assertStringContainsString('List of tables for database: yiitest', $output);
         $this->assertStringContainsString(' backup.test2 ', $output);
         $this->assertStringContainsString(' test1 ', $output);
     }
