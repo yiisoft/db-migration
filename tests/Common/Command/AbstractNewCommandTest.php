@@ -9,7 +9,6 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 

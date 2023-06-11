@@ -29,6 +29,7 @@ use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+
 use function dirname;
 
 final class ConfigTest extends TestCase

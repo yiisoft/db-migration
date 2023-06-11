@@ -14,7 +14,6 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
  */
 final class ColumnTypesTest extends AbstractColumnTypesTest
 {
-
     private ContainerInterface $container;
 
     public function setup(): void

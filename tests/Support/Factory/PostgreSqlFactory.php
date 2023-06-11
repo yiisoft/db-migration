@@ -16,6 +16,7 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerHelper;
+
 use function dirname;
 
 final class PostgreSqlFactory
@@ -24,7 +25,7 @@ final class PostgreSqlFactory
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -54,7 +55,6 @@ final class PostgreSqlFactory
                 }
             }
         );
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void
