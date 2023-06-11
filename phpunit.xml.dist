@@ -17,7 +17,8 @@
 
     <testsuites>
         <testsuite name="Yii DB Migration tests">
-            <directory>./tests/src</directory>
+            <directory>./tests/Driver</directory>
+            <directory>./tests/Migration</directory>
         </testsuite>
     </testsuites>
 
