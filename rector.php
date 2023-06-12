@@ -26,4 +26,6 @@ return static function (RectorConfig $rectorConfig): void {
         ClosureToArrowFunctionRector::class,
         RemoveExtraParametersRector::class => [__DIR__ . '/src/Service/Generate/PhpRenderer.php'],
     ]);
+
+    $rectorConfig->disableParallel();
 };
