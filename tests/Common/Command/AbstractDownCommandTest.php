@@ -254,7 +254,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertStringContainsString('[OK] 2 migrations were reverted.', $output);
     }
 
-    public function dataIncorrectLimit(): array
+    public static function dataIncorrectLimit(): array
     {
         return [
             'negative' => [-1],

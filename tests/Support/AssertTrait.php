@@ -31,21 +31,6 @@ trait AssertTrait
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws ExpectationFailedException
      */
-    public function assertStringContainsStringIgnoringLineEndings(
-        string $needle,
-        string $haystack,
-        string $message = ''
-    ): void {
-        $needle = $this->normalizeLineEndings($needle);
-        $haystack = $this->normalizeLineEndings($haystack);
-
-        static::assertThat($haystack, new StringContains($needle, false), $message);
-    }
-
-    /**
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     * @throws ExpectationFailedException
-     */
     public function assertStringContainsStringCollapsingSpaces(
         string $needle,
         string $haystack,
