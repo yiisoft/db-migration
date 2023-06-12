@@ -48,8 +48,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Yii\\Db\\Migration\\Tests\\": "tests",
-            "Yiisoft\\Yii\\Db\\Migration\\TestsRuntime\\": "tests/runtime"
+            "Yiisoft\\Yii\\Db\\Migration\\Tests\\": "tests"
         }
     },
     "extra": {
