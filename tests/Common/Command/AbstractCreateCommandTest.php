@@ -65,7 +65,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testCreateTableWithNamespace(): void
@@ -113,7 +113,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testCreateTableExtends(): void
@@ -305,7 +305,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testWithoutTablePrefix(): void
@@ -397,7 +397,7 @@ final class $className implements RevertibleMigrationInterface
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testExecuteInputNamespaces(): void
@@ -444,7 +444,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testExecuteNameException(): void
@@ -543,7 +543,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testDropColumn(): void
@@ -594,7 +594,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testDropTable(): void
@@ -651,7 +651,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testCreateTableWithFields(): void
@@ -708,7 +708,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testCreateTableWithFieldsForeignKey(): void
@@ -830,7 +830,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testJunction(): void
@@ -951,7 +951,7 @@ EOF;
 
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertStringContainsStringIgnoringLineEndings($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
     public function testIncorrectCreatePath(): void
