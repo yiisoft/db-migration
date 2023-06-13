@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit bootstrap="vendor/autoload.php"
-         colors="true"
-         verbose="true"
-         failOnRisky="true"
-         failOnWarning="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         stopOnFailure="false"
-         executionOrder="random"
-         resolveDependencies="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    failOnRisky="true"
+    failOnWarning="true"
+    stopOnFailure="false"
+    executionOrder="random"
+    resolveDependencies="true"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
+>
     <php>
         <ini name="error_reporting" value="-1"/>
     </php>
-
     <testsuites>
         <testsuite name="Yii DB Migration tests">
             <directory>./tests/Driver</directory>
             <directory>./tests/Migration</directory>
         </testsuite>
     </testsuites>
-
-    <coverage>
+    <source>
         <include>
             <directory>./src</directory>
             <directory>./config</directory>
             <directory>./resources</directory>
         </include>
-    </coverage>
+    </source>
 </phpunit>

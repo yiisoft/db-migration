@@ -183,7 +183,7 @@ final class MigrationBuilderTest extends TestCase
         $this->assertInformerOutputContains('    > truncate table test_table ... Done in ');
     }
 
-    public function dataAddColumn(): array
+    public static function dataAddColumn(): array
     {
         return [
             'string-type' => ['string(4)', null],
@@ -256,7 +256,7 @@ final class MigrationBuilderTest extends TestCase
         $this->builder->renameColumn('test', 'id', 'id_new');
     }
 
-    public function dataAlterColumn(): array
+    public static function dataAlterColumn(): array
     {
         return [
             'string-type' => ['string(4)', null],
