@@ -39,8 +39,7 @@ final class NewCommand extends Command
     public function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10')
-            ->setHelp('This command displays the first 10 new migrations.');
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -22,11 +22,6 @@ final class ListTablesCommand extends Command
         parent::__construct();
     }
 
-    public function configure(): void
-    {
-        $this->setHelp('This command Lists all tables in the database.');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

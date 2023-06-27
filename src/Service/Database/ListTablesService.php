@@ -51,15 +51,9 @@ final class ListTablesService
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
-        $databaseName = $this->getDatabaseName();
-        $this->io->section(
-            $databaseName === null
-                ? 'List of tables: '
-                : ('List of tables for database: ' . $databaseName)
-        );
+        $this->io->section('List of tables for database: ' . $this->getDatabaseName());
 
         $count = 0;
-
         $table = new Table($this->io);
         $table->setHeaders(['#', 'Table']);
 
@@ -113,7 +107,7 @@ final class ListTablesService
         return $result;
     }
 
-    private function getDatabaseName(): ?string
+    private function getDatabaseName(): string
     {
         if (!$this->db instanceof PdoConnectionInterface) {
             return null;
