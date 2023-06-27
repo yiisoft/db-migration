@@ -17,6 +17,15 @@
             <directory>./tests/Driver</directory>
             <directory>./tests/Migration</directory>
         </testsuite>
+        <testsuite name="Mssql">
+            <directory>./tests/Driver/Mssql</directory>
+        </testsuite>
+        <testsuite name="Pgsql">
+            <directory>./tests/Driver/Pgsql</directory>
+        </testsuite>
+        <testsuite name="Sqlite">
+            <directory>./tests/Driver/Sqlite</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
