@@ -76,7 +76,7 @@ final class PostgreSqlFactory
 
     public static function createSchema(ContainerInterface $container, string $name): void
     {
-        /** @var ConnectionInterface $connection */
+        /** @var ConnectionInterface $db */
         $db = $container->get(ConnectionInterface::class);
 
         $quotedName = $db->getQuoter()->quoteTableName($name);
