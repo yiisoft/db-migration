@@ -92,9 +92,9 @@ final class ListTablesService
         return $tableNames;
     }
 
-    private function getDsnAttribute(string $name, string $dsn): ?string
+    private function getDsnAttribute(string $name, string $dsn): string
     {
-        $result = null;
+        $result = '';
 
         if (preg_match('/' . $name . '=([^;]*)/', $dsn, $match)) {
             $result = $match[1];
@@ -110,7 +110,7 @@ final class ListTablesService
     private function getDatabaseName(): string
     {
         if (!$this->db instanceof PdoConnectionInterface) {
-            return null;
+            return '';
         }
 
         $dsn = $this->db->getDriver()->getDsn();
