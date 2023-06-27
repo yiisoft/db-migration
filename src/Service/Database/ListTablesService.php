@@ -125,6 +125,5 @@ final class ListTablesService
             'sqlsrv' => $this->getDsnAttribute('Database', $dsn),
             default => $this->getDsnAttribute('dbname', $dsn),
         };
-
     }
 }
