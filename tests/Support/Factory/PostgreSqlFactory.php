@@ -70,8 +70,6 @@ final class PostgreSqlFactory
         }
 
         self::createSchema($container, 'public');
-
-        $db->close();
     }
 
     public static function createSchema(ContainerInterface $container, string $name): void
