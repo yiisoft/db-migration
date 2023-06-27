@@ -64,12 +64,14 @@ final class Migrator
             return $this->migrationNameLimit;
         }
 
-        $tableSchema = $this->db->getSchema()->getTableSchema($this->historyTable, true);
+        $tableSchema = $this->db->getSchema()->getTableSchema($this->historyTable);
+
         if ($tableSchema === null) {
             return null;
         }
 
         $limit = $tableSchema->getColumns()['name']->getSize();
+
         if ($limit === null) {
             return null;
         }
