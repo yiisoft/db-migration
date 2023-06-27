@@ -121,6 +121,10 @@ final class ListTablesService
 
         $dsn = $this->db->getDriver()->getDsn();
 
-        return $this->getDsnAttribute('dbname', $dsn);
+        return match ($this->db->getDriverName()) {
+            'sqlsrv' => $this->getDsnAttribute('Database', $dsn),
+            default => $this->getDsnAttribute('dbname', $dsn),
+        };
+
     }
 }

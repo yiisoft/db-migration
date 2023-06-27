@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
-use Yiisoft\Db\Pgsql\Driver as PgSqlDriver;
+use Yiisoft\Db\Mssql\Connection as MssqlConnection;
+use Yiisoft\Db\Mssql\Driver as MssqlDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
@@ -19,7 +19,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
 use function dirname;
 
-final class PostgreSqlFactory
+final class MssqlSqlFactory
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
@@ -38,16 +38,16 @@ final class PostgreSqlFactory
             static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
-                        return new PgSqlConnection(
-                            new PgSqlDriver(
-                                'pgsql:host=127.0.0.1;port=5432;dbname=yiitest',
-                                'root',
-                                'root',
+                        return new MssqlConnection(
+                            new MssqlDriver(
+                                'sqlsrv:Server=127.0.0.1,1433;Database=yiitest',
+                                'SA',
+                                'YourStrong!Passw0rd',
                             ),
                             new SchemaCache(new MemorySimpleCache()),
                         );
 
-                    case PgSqlConnection::class:
+                    case MssqlConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
@@ -61,25 +61,24 @@ final class PostgreSqlFactory
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $connection = $container->get(PgSqlConnection::class);
+        $db = $container->get(MssqlConnection::class);
 
-        foreach ($connection->getSchema()->getSchemaNames(true) as $name) {
-            $connection
-                ->createCommand('drop schema ' . $connection->getQuoter()->quoteTableName($name) . ' cascade')
-                ->execute();
+        $tables = [
+            'migration',
+            'student',
+            'department',
+            'post',
+            'user',
+            'tag',
+            'category',
+            'the_post',
+            'the_user',
+        ];
+
+        foreach ($tables as $table) {
+            if ($db->getTableSchema($table)) {
+                $db->createCommand()->dropTable($table)->execute();
+            }
         }
-
-        self::createSchema($container, 'public');
-    }
-
-    public static function createSchema(ContainerInterface $container, string $name): void
-    {
-        /** @var ConnectionInterface $connection */
-        $connection = $container->get(ConnectionInterface::class);
-
-        $quotedName = $connection->getQuoter()->quoteTableName($name);
-
-        $connection->createCommand('drop schema if exists ' . $quotedName)->execute();
-        $connection->createCommand('create schema ' . $quotedName)->execute();
     }
 }
