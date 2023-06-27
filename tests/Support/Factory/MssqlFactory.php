@@ -19,7 +19,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
 use function dirname;
 
-final class MssqlSqlFactory
+final class MssqlFactory
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {

@@ -7,7 +7,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mssql;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Tests\Common\AbstractColumnTypesTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlSqlFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
 
 /**
  * @group mssql
@@ -19,13 +19,13 @@ final class ColumnTypesTest extends AbstractColumnTypesTest
     public function setup(): void
     {
         parent::setUp();
-        $this->container = MssqlSqlFactory::createContainer();
+        $this->container = MssqlFactory::createContainer();
         $this->db = $this->container->get(ConnectionInterface::class);
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        MssqlSqlFactory::clearDatabase($this->container);
+        MssqlFactory::clearDatabase($this->container);
     }
 }
