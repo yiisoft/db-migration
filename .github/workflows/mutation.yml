@@ -23,6 +23,9 @@ jobs:
   mutation:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
+    env:
+      extensions: pdo, pdo_pgsql, pdo_sqlsrv, pdo_sqlite
+
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -37,6 +40,16 @@ jobs:
           - 15
 
     services:
+      mssql:
+        image: mcr.microsoft.com/mssql/${{ matrix.mssql }}
+        env:
+          SA_PASSWORD: YourStrong!Passw0rd
+          ACCEPT_EULA: Y
+          MSSQL_PID: Developer
+        ports:
+          - 1433:1433
+        options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'YourStrong!Passw0rd' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
+
       postgres:
         image: postgres:${{ matrix.pgsql }}
         env:
@@ -51,11 +64,15 @@ jobs:
       - name: Checkout.
         uses: actions/checkout@v3
 
+      - name: Create MS SQL Database.
+        run: docker exec -i mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'YourStrong!Passw0rd' -Q 'CREATE DATABASE yiitest'
+
       - name: Install PHP.
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          ini-values: memory_limit=-1
+          extensions: ${{ env.extensions }}
+          ini-values: date.timezone='UTC'
           coverage: pcov
           tools: composer:v2
 
@@ -67,6 +84,6 @@ jobs:
 
       - name: Run infection.
         run: |
-          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql"
+          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
