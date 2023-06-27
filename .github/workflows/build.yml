@@ -19,7 +19,7 @@ on:
       - 'infection.json.dist'
       - 'psalm.xml'
 
-name: sqlite
+name: build
 
 jobs:
   tests:
