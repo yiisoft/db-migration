@@ -73,6 +73,10 @@ final class MssqlFactory
             'category',
             'the_post',
             'the_user',
+            'test',
+            'test_table',
+            'target_table',
+            'new_table',
         ];
 
         foreach ($tables as $table) {
