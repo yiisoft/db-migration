@@ -80,5 +80,7 @@ final class MssqlSqlFactory
                 $db->createCommand()->dropTable($table)->execute();
             }
         }
+
+        $db->close();
     }
 }

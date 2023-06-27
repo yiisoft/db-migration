@@ -61,25 +61,27 @@ final class PostgreSqlFactory
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $connection = $container->get(PgSqlConnection::class);
+        $db = $container->get(PgSqlConnection::class);
 
-        foreach ($connection->getSchema()->getSchemaNames(true) as $name) {
-            $connection
-                ->createCommand('drop schema ' . $connection->getQuoter()->quoteTableName($name) . ' cascade')
+        foreach ($db->getSchema()->getSchemaNames(true) as $name) {
+            $db
+                ->createCommand('drop schema ' . $db->getQuoter()->quoteTableName($name) . ' cascade')
                 ->execute();
         }
 
         self::createSchema($container, 'public');
+
+        $db->close();
     }
 
     public static function createSchema(ContainerInterface $container, string $name): void
     {
         /** @var ConnectionInterface $connection */
-        $connection = $container->get(ConnectionInterface::class);
+        $db = $container->get(ConnectionInterface::class);
 
-        $quotedName = $connection->getQuoter()->quoteTableName($name);
+        $quotedName = $db->getQuoter()->quoteTableName($name);
 
-        $connection->createCommand('drop schema if exists ' . $quotedName)->execute();
-        $connection->createCommand('create schema ' . $quotedName)->execute();
+        $db->createCommand('drop schema if exists ' . $quotedName)->execute();
+        $db->createCommand('create schema ' . $quotedName)->execute();
     }
 }
