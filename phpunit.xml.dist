@@ -13,7 +13,7 @@
         <ini name="error_reporting" value="-1"/>
     </php>
     <testsuites>
-        <testsuite name="Yii DB Migration tests">
+        <testsuite name="default">
             <directory>./tests/Driver</directory>
             <directory>./tests/Migration</directory>
         </testsuite>
