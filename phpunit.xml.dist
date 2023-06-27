@@ -14,7 +14,6 @@
     </php>
     <testsuites>
         <testsuite name="YiiDbMigration">
-            <directory>./tests/Driver</directory>
             <directory>./tests/Migration</directory>
         </testsuite>
         <testsuite name="Mssql">
