@@ -16,7 +16,7 @@ final class ColumnTypesTest extends AbstractColumnTypesTest
 {
     private ContainerInterface $container;
 
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = SqLiteFactory::createContainer();

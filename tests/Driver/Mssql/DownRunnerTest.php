@@ -12,7 +12,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
  */
 final class DownRunnerTest extends AbstractDownRunnerTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = MssqlFactory::createContainer();

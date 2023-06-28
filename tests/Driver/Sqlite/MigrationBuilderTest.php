@@ -14,7 +14,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
  */
 final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         $this->container = SqLiteFactory::createContainer();
         $this->db = $this->container->get(ConnectionInterface::class);

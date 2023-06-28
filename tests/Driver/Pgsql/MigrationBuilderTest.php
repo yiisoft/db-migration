@@ -13,7 +13,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
  */
 final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         $this->container = PostgreSqlFactory::createContainer();
 

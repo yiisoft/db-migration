@@ -13,7 +13,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
  */
 final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         $this->container = MssqlFactory::createContainer();
 

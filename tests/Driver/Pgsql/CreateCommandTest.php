@@ -12,7 +12,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
  */
 final class CreateCommandTest extends AbstractCreateCommandTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = PostgreSqlFactory::createContainer();

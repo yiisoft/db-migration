@@ -12,7 +12,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
  */
 final class RedoCommandTest extends AbstractRedoCommandTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = PostgreSqlFactory::createContainer();
