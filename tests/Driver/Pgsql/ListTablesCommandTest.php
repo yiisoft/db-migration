@@ -14,7 +14,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
  */
 final class ListTablesCommandTest extends AbstractListTablesCommandTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = PostgreSqlFactory::createContainer();

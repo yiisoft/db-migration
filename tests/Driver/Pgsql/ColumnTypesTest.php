@@ -16,7 +16,7 @@ final class ColumnTypesTest extends AbstractColumnTypesTest
 {
     private ContainerInterface $container;
 
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = PostgreSqlFactory::createContainer();
@@ -27,5 +27,7 @@ final class ColumnTypesTest extends AbstractColumnTypesTest
     {
         parent::tearDown();
         PostgreSqlFactory::clearDatabase($this->container);
+
+        $this->db->close();
     }
 }

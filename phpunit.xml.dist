@@ -13,9 +13,17 @@
         <ini name="error_reporting" value="-1"/>
     </php>
     <testsuites>
-        <testsuite name="Yii DB Migration tests">
-            <directory>./tests/Driver</directory>
+        <testsuite name="YiiDbMigration">
             <directory>./tests/Migration</directory>
+        </testsuite>
+        <testsuite name="Mssql">
+            <directory>./tests/Driver/Mssql</directory>
+        </testsuite>
+        <testsuite name="Pgsql">
+            <directory>./tests/Driver/Pgsql</directory>
+        </testsuite>
+        <testsuite name="Sqlite">
+            <directory>./tests/Driver/Sqlite</directory>
         </testsuite>
     </testsuites>
     <source>

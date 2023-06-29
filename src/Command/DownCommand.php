@@ -50,8 +50,7 @@ final class DownCommand extends Command
     {
         $this
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', 1)
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Downgrade all migrations.')
-            ->setHelp('This command downgrades the application by reverting old migrations.');
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Downgrade all migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

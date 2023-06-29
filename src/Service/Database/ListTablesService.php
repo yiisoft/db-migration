@@ -51,15 +51,9 @@ final class ListTablesService
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
-        $databaseName = $this->getDatabaseName();
-        $this->io->section(
-            $databaseName === null
-                ? 'List of tables: '
-                : ('List of tables for database: ' . $databaseName)
-        );
+        $this->io->section('List of tables for database: ' . $this->getDatabaseName());
 
         $count = 0;
-
         $table = new Table($this->io);
         $table->setHeaders(['#', 'Table']);
 
@@ -98,9 +92,9 @@ final class ListTablesService
         return $tableNames;
     }
 
-    private function getDsnAttribute(string $name, string $dsn): ?string
+    private function getDsnAttribute(string $name, string $dsn): string
     {
-        $result = null;
+        $result = '';
 
         if (preg_match('/' . $name . '=([^;]*)/', $dsn, $match)) {
             $result = $match[1];
@@ -113,14 +107,17 @@ final class ListTablesService
         return $result;
     }
 
-    private function getDatabaseName(): ?string
+    private function getDatabaseName(): string
     {
         if (!$this->db instanceof PdoConnectionInterface) {
-            return null;
+            return '';
         }
 
         $dsn = $this->db->getDriver()->getDsn();
 
-        return $this->getDsnAttribute('dbname', $dsn);
+        return match ($this->db->getDriverName()) {
+            'sqlsrv' => $this->getDsnAttribute('Database', $dsn),
+            default => $this->getDsnAttribute('dbname', $dsn),
+        };
     }
 }

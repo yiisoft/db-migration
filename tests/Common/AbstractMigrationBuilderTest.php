@@ -2,39 +2,36 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Migration;
+namespace Yiisoft\Yii\Db\Migration\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Pgsql\Column;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
-final class MigrationBuilderTest extends TestCase
+abstract class AbstractMigrationBuilderTest extends TestCase
 {
     use AssertTrait;
 
-    private ContainerInterface $container;
-    private ConnectionInterface $db;
+    protected ContainerInterface $container;
+    protected ConnectionInterface $db;
     private StubMigrationInformer $informer;
     private MigrationBuilder $builder;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->prepareSqLite();
+
+        $this->prepareVariables();
     }
 
     public function testExecute(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->execute('DROP TABLE test');
@@ -45,7 +42,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testInsert(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->insert('test', ['id' => 1]);
@@ -59,7 +55,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testBatchInsert(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->batchInsert('test', ['id'], [['id' => 1], ['id' => 2]]);
@@ -73,7 +68,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testUpsertWithoutRow(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int primary key', 'name' => 'string']);
         $this->insert('test', ['id' => 1, 'name' => 'Ivan']);
 
@@ -90,7 +84,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testUpdate(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int primary key', 'name' => 'string']);
         $this->insert('test', ['id' => 1, 'name' => 'Ivan']);
 
@@ -107,7 +100,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDelete(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test', ['id' => 'int']);
         $this->insert('test', ['id' => 1]);
 
@@ -119,8 +111,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testCreateTable(): void
     {
-        $this->prepareSqLite();
-
         $this->builder->createTable('test', ['id' => $this->builder->primaryKey()]);
 
         $schema = $this->db->getSchema()->getTableSchema('test');
@@ -135,8 +125,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testCreateTableWithStringColumnDefinition(): void
     {
-        $this->prepareSqLite();
-
         $this->builder->createTable('test', ['name' => 'varchar(50)']);
 
         $schema = $this->db->getSchema()->getTableSchema('test');
@@ -150,7 +138,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testRenameTable(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->renameTable('test_table', 'new_table');
@@ -162,7 +149,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropTable(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->dropTable('test_table');
@@ -173,7 +159,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testTruncateTable(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
         $this->insert('test_table', ['id' => 1]);
 
@@ -198,9 +183,12 @@ final class MigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAddColumn
      */
-    public function testAddColumn($type, ?string $expectedComment): void
+    public function testAddColumn($type, string $expectedComment = null): void
     {
-        $this->preparePostgreSql();
+        if ($expectedComment === null && $this->db->getDriverName() === 'sqlsrv') {
+            $expectedComment = '';
+        }
+
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->addColumn('test_table', 'code', $type);
@@ -216,7 +204,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropColumn(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int primary key', 'name' => 'string']);
 
         $this->builder->dropColumn('test', 'name');
@@ -226,18 +213,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertInformerOutputContains('    > drop column name from table test ... Done in');
     }
 
-    public function testDropColumnNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test', ['id' => 'int primary key', 'name' => 'string']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->dropColumn('test', 'name');
-    }
-
     public function testRenameColumn(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->renameColumn('test', 'id', 'id_new');
@@ -245,15 +222,6 @@ final class MigrationBuilderTest extends TestCase
         $schema = $this->db->getSchema()->getTableSchema('test');
         $this->assertSame(['id_new'], $schema->getColumnNames());
         $this->assertInformerOutputContains('    > Rename column id in table test to id_new ... Done in');
-    }
-
-    public function testRenameColumnNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->renameColumn('test', 'id', 'id_new');
     }
 
     public static function dataAlterColumn(): array
@@ -271,9 +239,12 @@ final class MigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn($type, ?string $expectedComment): void
+    public function testAlterColumn($type, string $expectedComment = null): void
     {
-        $this->preparePostgreSql();
+        if ($expectedComment === null && $this->db->getDriverName() === 'sqlsrv') {
+            $expectedComment = '';
+        }
+
         $this->createTable('test', ['id' => 'int']);
 
         $this->builder->alterColumn('test', 'id', $type);
@@ -287,19 +258,15 @@ final class MigrationBuilderTest extends TestCase
         $this->assertInformerOutputContains('    > Alter column id in table test to string(4) ... Done in');
     }
 
-    public function testAlterColumnNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->alterColumn('test', 'id', 'string');
-    }
-
     public function testAddPrimaryKey(): void
     {
-        $this->preparePostgreSql();
-        $this->createTable('test', ['id' => 'int']);
+        $fieldType = 'int';
+
+        if ($this->db->getDriverName() === 'sqlsrv') {
+            $fieldType = 'int not null';
+        }
+
+        $this->createTable('test', ['id' => $fieldType]);
 
         $this->builder->addPrimaryKey('test', 'id', ['id']);
 
@@ -311,7 +278,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropPrimaryKey(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test', ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => 'string']);
 
         $this->builder->dropPrimaryKey('test', 'test_pk');
@@ -322,18 +288,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertInformerOutputContains('    > Drop primary key test_pk ... Done in ');
     }
 
-    public function testDropPrimaryKeyNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test', ['id' => 'int primary key']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->dropPrimaryKey('id', 'test');
-    }
-
     public function testAddForeignKey(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
 
@@ -362,11 +318,10 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropForeignKey(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('target_table', ['id' => 'int unique']);
         $this->createTable('test_table', ['id' => 'int', 'foreign_id' => 'int']);
-        $this->db->createCommand()->addForeignKey('test_table', 'fk', 'foreign_id', 'target_table', 'id')->execute();
 
+        $this->db->createCommand()->addForeignKey('test_table', 'fk', 'foreign_id', 'target_table', 'id')->execute();
         $this->builder->dropForeignKey('test_table', 'fk');
 
         $keys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
@@ -377,7 +332,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testCreateIndex(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->createIndex('test_table', 'unique_index', 'id', 'UNIQUE');
@@ -399,10 +353,9 @@ final class MigrationBuilderTest extends TestCase
 
     public function testDropIndex(): void
     {
-        $this->prepareSqLite();
         $this->createTable('test_table', ['id' => 'int']);
-        $this->db->createCommand()->createIndex('test_table', 'test_index', 'id')->execute();
 
+        $this->db->createCommand()->createIndex('test_table', 'test_index', 'id')->execute();
         $this->builder->dropIndex('test_table', 'test_index');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
@@ -413,7 +366,6 @@ final class MigrationBuilderTest extends TestCase
 
     public function testAddCommentOnColumn(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->addCommentOnColumn('test_table', 'id', 'test comment');
@@ -423,18 +375,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertSame('test comment', $schema->getComment());
     }
 
-    public function testAddCommentOnColumnNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test_table', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->addCommentOnColumn('test_table', 'id', 'test comment');
-    }
-
     public function testAddCommentOnTable(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
 
         $this->builder->addCommentOnTable('test_table', 'test comment');
@@ -444,18 +386,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertSame('test comment', $tableSchema?->getComment());
     }
 
-    public function testAddCommentOnTableNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test_table', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->addCommentOnTable('test_table', 'comment');
-    }
-
     public function testDropCommentFromColumn(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
         $this->db->createCommand()->addCommentOnColumn('test_table', 'id', 'comment')->execute();
 
@@ -463,21 +395,14 @@ final class MigrationBuilderTest extends TestCase
 
         $schema = $this->db->getSchema()->getTableSchema('test_table')->getColumn('id');
 
-        $this->assertNull($schema->getComment());
-    }
-
-    public function testDropCommentFromColumnNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test_table', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->dropCommentFromColumn('test_table', 'id');
+        match ($this->db->getDriverName() === 'sqlsrv') {
+            true => $this->assertEmpty($schema->getComment()),
+            default => $this->assertNull($schema->getComment()),
+        };
     }
 
     public function testDropCommentFromTable(): void
     {
-        $this->preparePostgreSql();
         $this->createTable('test_table', ['id' => 'int']);
         $this->db->createCommand()->addCommentOnTable('test_table', 'comment')->execute();
 
@@ -488,18 +413,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertNull($tableSchema?->getComment());
     }
 
-    public function testDropCommentFromTableNotSupported(): void
-    {
-        $this->prepareSqLite();
-        $this->createTable('test_table', ['id' => 'int']);
-
-        $this->expectException(NotSupportedException::class);
-        $this->builder->dropCommentFromTable('test_table');
-    }
-
     public function testMaxSqlOutputLength(): void
     {
-        $this->prepareSqLite();
         $builder = new MigrationBuilder($this->db, $this->informer, 15);
 
         $builder->execute('SELECT (1+2+3+4+5+6+7+8+9+10+11)');
@@ -627,23 +542,8 @@ final class MigrationBuilderTest extends TestCase
         $this->assertStringContainsString($string, $this->informer->getOutput());
     }
 
-    private function prepareSqLite(): void
-    {
-        $this->container = SqLiteFactory::createContainer();
-        SqLiteFactory::clearDatabase($this->container);
-        $this->prepareVariables();
-    }
-
-    private function preparePostgreSql(): void
-    {
-        $this->container = PostgreSqlFactory::createContainer();
-        PostgreSqlFactory::clearDatabase($this->container);
-        $this->prepareVariables();
-    }
-
     private function prepareVariables(): void
     {
-        $this->db = $this->container->get(ConnectionInterface::class);
         $this->informer = new StubMigrationInformer();
         $this->builder = new MigrationBuilder($this->db, $this->informer);
     }

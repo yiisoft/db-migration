@@ -12,7 +12,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
  */
 final class RedoCommandTest extends AbstractRedoCommandTest
 {
-    public function setup(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->container = SqLiteFactory::createContainer();

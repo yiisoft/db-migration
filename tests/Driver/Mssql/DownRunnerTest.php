@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Pgsql;
+namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mssql;
 
 use Yiisoft\Yii\Db\Migration\Tests\Common\Runner\AbstractDownRunnerTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
 
 /**
- * @group pgsql
+ * @group mssql
  */
 final class DownRunnerTest extends AbstractDownRunnerTest
 {
     public function setUp(): void
     {
         parent::setUp();
-        $this->container = PostgreSqlFactory::createContainer();
+        $this->container = MssqlFactory::createContainer();
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        PostgreSqlFactory::clearDatabase($this->container);
+        MssqlFactory::clearDatabase($this->container);
     }
 }

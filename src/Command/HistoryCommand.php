@@ -41,9 +41,7 @@ final class HistoryCommand extends Command
 
     public function configure(): void
     {
-        $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', null)
-            ->setHelp('This command displays the migration history.');
+        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

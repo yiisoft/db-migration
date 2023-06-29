@@ -53,8 +53,7 @@ final class RedoCommand extends Command
     public function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', null)
-            ->setHelp('This command redoes the last few migrations.');
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

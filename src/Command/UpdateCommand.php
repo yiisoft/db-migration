@@ -48,9 +48,7 @@ final class UpdateCommand extends Command
 
     public function configure(): void
     {
-        $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
-            ->setHelp('This command applying new migrations to database.');
+        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

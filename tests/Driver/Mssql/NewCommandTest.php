@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Sqlite;
+namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mssql;
 
 use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractNewCommandTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
 
 /**
- * @group sqlite
+ * @group mssql
  */
 final class NewCommandTest extends AbstractNewCommandTest
 {
     public function setUp(): void
     {
         parent::setUp();
-        $this->container = SqLiteFactory::createContainer();
+        $this->container = MssqlFactory::createContainer();
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        SqLiteFactory::clearDatabase($this->container);
+        MssqlFactory::clearDatabase($this->container);
     }
 }
