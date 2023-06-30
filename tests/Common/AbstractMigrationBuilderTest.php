@@ -185,7 +185,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAddColumn($type, string $expectedComment = null): void
     {
-        if ($expectedComment === null && $this->db->getDriverName() === 'sqlsrv') {
+        if ($expectedComment === null && in_array($this->db->getDriverName(),['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
 
@@ -241,7 +241,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAlterColumn($type, string $expectedComment = null): void
     {
-        if ($expectedComment === null && $this->db->getDriverName() === 'sqlsrv') {
+        if ($expectedComment === null && in_array($this->db->getDriverName(),['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
 
@@ -278,7 +278,12 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropPrimaryKey(): void
     {
-        $this->createTable('test', ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => 'string']);
+        if ($this->db->getDriverName() === 'sqlite') {
+            $this->createTable('test', ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => 'string']);
+        } else {
+            $this->createTable('test', ['id' => 'int not null', 'name' => 'string']);
+            $this->db->createCommand()->addPrimaryKey('test', 'test_pk', 'id')->execute();
+        }
 
         $this->builder->dropPrimaryKey('test', 'test_pk');
 
@@ -395,8 +400,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $schema = $this->db->getSchema()->getTableSchema('test_table')->getColumn('id');
 
-        match ($this->db->getDriverName() === 'sqlsrv') {
-            true => $this->assertEmpty($schema->getComment()),
+        match ($this->db->getDriverName()) {
+            'mysql', 'sqlsrv' => $this->assertEmpty($schema->getComment()),
             default => $this->assertNull($schema->getComment()),
         };
     }
@@ -410,7 +415,10 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
 
-        $this->assertNull($tableSchema?->getComment());
+        match ($this->db->getDriverName()) {
+            'mysql' => $this->assertEmpty($tableSchema?->getComment()),
+            default => $this->assertNull($tableSchema?->getComment()),
+        };
     }
 
     public function testMaxSqlOutputLength(): void
