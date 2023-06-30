@@ -185,7 +185,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAddColumn($type, string $expectedComment = null): void
     {
-        if ($expectedComment === null && in_array($this->db->getDriverName(),['mysql', 'sqlsrv'], true)) {
+        if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
 
@@ -241,7 +241,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAlterColumn($type, string $expectedComment = null): void
     {
-        if ($expectedComment === null && in_array($this->db->getDriverName(),['mysql', 'sqlsrv'], true)) {
+        if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
 

@@ -25,7 +25,7 @@ final class MysqlFactory
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -55,8 +55,6 @@ final class MysqlFactory
                 }
             }
         );
-
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void
@@ -81,7 +79,7 @@ final class MysqlFactory
 
         foreach ($tables as $table) {
             if ($db->getTableSchema($table)) {
-                $db->createCommand('DROP TABLE IF EXISTS ' . $table .  ' CASCADE;')->execute();
+                $db->createCommand('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
             }
         }
     }
