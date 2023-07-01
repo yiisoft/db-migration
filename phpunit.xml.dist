@@ -19,6 +19,9 @@
         <testsuite name="Mssql">
             <directory>./tests/Driver/Mssql</directory>
         </testsuite>
+        <testsuite name="Mysql">
+            <directory>./tests/Driver/Mysql</directory>
+        </testsuite>
         <testsuite name="Pgsql">
             <directory>./tests/Driver/Pgsql</directory>
         </testsuite>
