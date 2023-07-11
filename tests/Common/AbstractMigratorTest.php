@@ -46,6 +46,10 @@ abstract class AbstractMigratorTest extends TestCase
     {
         $db = $this->container->get(ConnectionInterface::class);
 
+        if ($db->getDriverName() === 'oci') {
+            $this->markTestSkipped('Should be fixed in Oracle.');
+        }
+
         $migrator = new Migrator(
             $db,
             $this->container->get(SchemaCache::class),

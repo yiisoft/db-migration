@@ -22,6 +22,9 @@
         <testsuite name="Mysql">
             <directory>./tests/Driver/Mysql</directory>
         </testsuite>
+        <testsuite name="Oracle">
+            <directory>./tests/Driver/Oracle</directory>
+        </testsuite>
         <testsuite name="Pgsql">
             <directory>./tests/Driver/Pgsql</directory>
         </testsuite>

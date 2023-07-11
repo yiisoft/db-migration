@@ -10,8 +10,8 @@ use Psr\Log\NullLogger;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Mysql\Connection as MysqlConnection;
-use Yiisoft\Db\Mysql\Driver as MysqlDriver;
+use Yiisoft\Db\Oracle\Connection as OracleConnection;
+use Yiisoft\Db\Oracle\Driver as OracleDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
@@ -19,7 +19,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
 use function dirname;
 
-final class MysqlFactory
+final class OracleFactory
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface
     {
@@ -38,16 +38,16 @@ final class MysqlFactory
             static function (string $id) use (&$container, $config): object {
                 switch ($id) {
                     case ConnectionInterface::class:
-                        return new MysqlConnection(
-                            new MysqlDriver(
-                                'mysql:host=127.0.0.1;dbname=yiitest;port=3306;charset=utf8',
+                        return new OracleConnection(
+                            new OracleDriver(
+                                'oci:dbname=localhost:1521;charset=AL32UTF8',
+                                'system',
                                 'root',
-                                '',
                             ),
                             new SchemaCache(new MemorySimpleCache()),
                         );
 
-                    case MysqlConnection::class:
+                    case OracleConnection::class:
                         return $container->get(ConnectionInterface::class);
 
                     default:
@@ -61,7 +61,7 @@ final class MysqlFactory
 
     public static function clearDatabase(ContainerInterface $container): void
     {
-        $db = $container->get(MysqlConnection::class);
+        $db = $container->get(OracleConnection::class);
 
         $tables = [
             'migration',
@@ -81,8 +81,8 @@ final class MysqlFactory
         ];
 
         foreach ($tables as $table) {
-            if ($db->getTableSchema($table)) {
-                $db->createCommand('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
+            if ($db->getTableSchema($table, true) !== null) {
+                $db->createCommand()->dropTable($table)->execute();
             }
         }
     }

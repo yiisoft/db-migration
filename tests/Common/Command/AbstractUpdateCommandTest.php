@@ -39,7 +39,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
         $this->assertSame(ExitCode::OK, $exitCode);
@@ -51,7 +52,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('id', $departmentSchema->getColumn('id')->getName());
         $this->assertSame('integer', $departmentSchema->getColumn('id')->getType());
         $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+        }
 
         /** Check table department field name */
         $this->assertSame('name', $departmentSchema->getColumn('name')->getName());
@@ -77,7 +81,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
         $this->assertSame(ExitCode::OK, $exitCode);
@@ -89,7 +94,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertEquals('id', $departmentSchema->getColumn('id')->getName());
         $this->assertEquals('integer', $departmentSchema->getColumn('id')->getType());
         $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+        }
 
         /** Check table department field name */
         $this->assertEquals('name', $departmentSchema->getColumn('name')->getName());
@@ -127,7 +135,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
         $studentSchema = $dbSchema->getTableSchema('student');
 
@@ -140,7 +149,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('id', $departmentSchema->getColumn('id')->getName());
         $this->assertSame('integer', $departmentSchema->getColumn('id')->getType());
         $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+        }
 
         /** Check table department field name */
         $this->assertSame('name', $departmentSchema->getColumn('name')->getName());
@@ -155,7 +167,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('id', $studentSchema->getColumn('id')->getName());
         $this->assertSame('integer', $studentSchema->getColumn('id')->getType());
         $this->assertTrue($studentSchema->getColumn('id')->isPrimaryKey());
-        $this->assertTrue($studentSchema->getColumn('id')->isAutoIncrement());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertTrue($studentSchema->getColumn('id')->isAutoIncrement());
+        }
 
         /** Check table student field name */
         $this->assertSame('name', $studentSchema->getColumn('name')->getName());
@@ -175,7 +190,13 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         /** Check table student field dateofbirth */
         $this->assertSame('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());
-        $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
+        } else {
+            $this->assertSame('string', $studentSchema->getColumn('dateofbirth')->getType());
+        }
+
         $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
     }
 
