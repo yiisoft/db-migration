@@ -28,7 +28,7 @@ jobs:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
     env:
-      extensions: pdo, pdo_pgsql, pdo_sqlsrv, pdo_sqlite
+      extensions: pdo, pdo_pgsql, pdo_sqlsrv, pdo_sqlite, pdo_oci
 
     runs-on: ${{ matrix.os }}
 
