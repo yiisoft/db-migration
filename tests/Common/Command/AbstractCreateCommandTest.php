@@ -124,7 +124,8 @@ EOF;
         DbHelper::createTable($this->container, 'tag', ['[[id]]' => 'int']);
         DbHelper::createTable(
             $this->container,
-            'category', ['[[id1]]' => 'int', '[[id2]]' => 'int', 'primary key ([[id1]], [[id2]])'],
+            'category',
+            ['[[id1]]' => 'int', '[[id2]]' => 'int', 'primary key ([[id1]], [[id2]])'],
         );
 
         $command = $this->createCommand($this->container);
