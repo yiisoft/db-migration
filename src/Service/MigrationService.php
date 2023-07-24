@@ -50,7 +50,6 @@ final class MigrationService
      *
      * {@see createNamespace}, {@see updateNamespaces}.
      *
-     *
      * @return int whether the action should continue to be executed.
      */
     public function before(string $defaultName): int
@@ -145,7 +144,6 @@ final class MigrationService
 
     /**
      * List of namespaces containing the migration update classes.
-     *
      *
      * Migration namespaces should be resolvable as a [path alias](guide:concept-aliases) if prefixed with `@`, e.g.
      * if you specify the namespace `app\migrations`, the code `$this->aliases->get('@app/migrations')` should be able
