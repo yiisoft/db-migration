@@ -36,11 +36,6 @@
         "roave/infection-static-analysis-plugin": "^1.25|^1.32",
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.30|^5.12",
-        "yiisoft/db-mssql": "^1.0",
-        "yiisoft/db-mysql": "^1.0",
-        "yiisoft/db-oracle": "^1.1",
-        "yiisoft/db-pgsql": "^1.1",
-        "yiisoft/db-sqlite": "^1.0",
         "yiisoft/di": "^1.0",
         "yiisoft/test-support": "^3.0"
     },
