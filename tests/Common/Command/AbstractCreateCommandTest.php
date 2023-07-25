@@ -483,10 +483,9 @@ EOF;
 
     public function testExecuteNameToLongException(): void
     {
-        $container = SqLiteFactory::createContainer();
-        MigrationHelper::useMigrationsNamespace($container);
+        MigrationHelper::useMigrationsNamespace($this->container);
 
-        $command = $this->createCommand($container);
+        $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([
