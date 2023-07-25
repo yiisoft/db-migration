@@ -2,27 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mysql;
+namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Oracle;
 
 use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\OracleFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 
 /**
- * @group mysql
+ * @group oracle
  */
 final class CreateCommandTest extends AbstractCreateCommandTest
 {
     public function setUp(): void
     {
         parent::setUp();
-        $this->container = MysqlFactory::createContainer();
+        $this->container = OracleFactory::createContainer();
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
-        MysqlFactory::clearDatabase($this->container);
+        OracleFactory::clearDatabase($this->container);
     }
 
     public function testWithoutTablePrefix(): void
@@ -30,7 +30,7 @@ final class CreateCommandTest extends AbstractCreateCommandTest
         $containerConfig = new ContainerConfig();
         $containerConfig->useTablePrefix = false;
 
-        $this->container = MysqlFactory::createContainer($containerConfig);
+        $this->container = OracleFactory::createContainer($containerConfig);
 
         parent::testWithoutTablePrefix();
     }

@@ -105,9 +105,6 @@ final class CreateService
     /**
      * Set of template paths for generating migration code automatically.
      *
-     * @param string $key
-     * @param string $value
-     *
      * The key is the template type, the value is a path or the alias.
      *
      * Supported types are:

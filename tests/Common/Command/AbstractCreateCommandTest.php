@@ -120,9 +120,13 @@ EOF;
     {
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
-        DbHelper::createTable($this->container, 'user', ['id' => 'int primary key']);
-        DbHelper::createTable($this->container, 'tag', ['id' => 'int']);
-        DbHelper::createTable($this->container, 'category', ['id1' => 'int', 'id2' => 'int', 'primary key (id1, id2)']);
+        DbHelper::createTable($this->container, 'user', ['[[id]]' => 'int primary key']);
+        DbHelper::createTable($this->container, 'tag', ['[[id]]' => 'int']);
+        DbHelper::createTable(
+            $this->container,
+            'category',
+            ['[[id1]]' => 'int', '[[id2]]' => 'int', 'primary key ([[id1]], [[id2]])'],
+        );
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -310,14 +314,9 @@ EOF;
 
     public function testWithoutTablePrefix(): void
     {
-        $containerConfig = new ContainerConfig();
-        $containerConfig->useTablePrefix = false;
-        $container = SqLiteFactory::createContainer($containerConfig);
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
-        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
-        SqLiteFactory::clearDatabase($container);
-
-        $command = $this->createCommand($container);
+        $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $command->execute(
@@ -484,10 +483,9 @@ EOF;
 
     public function testExecuteNameToLongException(): void
     {
-        $container = SqLiteFactory::createContainer();
-        MigrationHelper::useMigrationsNamespace($container);
+        MigrationHelper::useMigrationsNamespace($this->container);
 
-        $command = $this->createCommand($container);
+        $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([

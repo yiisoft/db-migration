@@ -8,8 +8,9 @@ finder:
     - docs
     - vendor
   not-path:
-    - 'tests/Support/Factory/MysqlFactory.php'
     - 'tests/Support/Factory/MssqlFactory.php'
+    - 'tests/Support/Factory/MysqlFactory.php'
+    - 'tests/Support/Factory/OracleFactory.php'
     - 'tests/Support/Factory/PostgreSqlFactory.php'
     - 'tests/Support/Factory/SqLiteFactory.php'
 

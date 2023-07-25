@@ -21,6 +21,10 @@ on:
 
 name: build
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   tests:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
@@ -52,8 +56,8 @@ jobs:
       - name: Update composer.
         run: composer self-update
 
-      - name: Install dependencies with composer.
-        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+      - name: Install db-sqlite.
+        run: composer require yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=YiiDbMigration --coverage-clover=coverage.xml --colors=always

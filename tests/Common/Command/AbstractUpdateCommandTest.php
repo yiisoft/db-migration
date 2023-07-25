@@ -39,7 +39,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
         $this->assertSame(ExitCode::OK, $exitCode);
@@ -77,7 +78,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
         $this->assertSame(ExitCode::OK, $exitCode);
@@ -127,7 +129,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
 
-        $dbSchema = $this->container->get(ConnectionInterface::class)->getSchema();
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
         $studentSchema = $dbSchema->getTableSchema('student');
 
@@ -175,7 +178,13 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         /** Check table student field dateofbirth */
         $this->assertSame('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());
-        $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
+
+        if ($db->getDriverName() !== 'oci') {
+            $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
+        } else {
+            $this->assertSame('string', $studentSchema->getColumn('dateofbirth')->getType());
+        }
+
         $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
     }
 

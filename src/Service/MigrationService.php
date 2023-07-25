@@ -50,8 +50,6 @@ final class MigrationService
      *
      * {@see createNamespace}, {@see updateNamespaces}.
      *
-     * @param string $defaultName
-     *
      * @return int whether the action should continue to be executed.
      */
     public function before(string $defaultName): int
@@ -147,12 +145,9 @@ final class MigrationService
     /**
      * List of namespaces containing the migration update classes.
      *
-     * @param array $value
-     *
      * Migration namespaces should be resolvable as a [path alias](guide:concept-aliases) if prefixed with `@`, e.g.
      * if you specify the namespace `app\migrations`, the code `$this->aliases->get('@app/migrations')` should be able
      * to return the file path to the directory this namespace refers to.
-     *
      * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
      */
     public function updateNamespaces(array $value): void
@@ -175,7 +170,6 @@ final class MigrationService
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
-     * @param array $value
      *
      * {@see $createNamespace}
      */

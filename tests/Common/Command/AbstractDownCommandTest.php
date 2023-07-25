@@ -89,25 +89,23 @@ abstract class AbstractDownCommandTest extends TestCase
 
     public function testExecuteAgain(): void
     {
-        $container = SqLiteFactory::createContainer();
-        MigrationHelper::useMigrationsNamespace($container);
-        SqLiteFactory::clearDatabase($container);
+        MigrationHelper::useMigrationsNamespace($this->container);
 
         MigrationHelper::createAndApplyMigration(
-            $container,
+            $this->container,
             'Create_Department',
             'table',
             'department',
             ['name:string(50)']
         );
 
-        $command1 = $this->createCommand($container);
+        $command1 = $this->createCommand($this->container);
         $command1->setInputs(['yes']);
 
         $exitCode1 = $command1->execute([]);
         $output1 = $command1->getDisplay(true);
 
-        $command2 = $this->createCommand($container);
+        $command2 = $this->createCommand($this->container);
         $command2->setInputs(['yes']);
 
         $exitCode2 = $command2->execute([]);

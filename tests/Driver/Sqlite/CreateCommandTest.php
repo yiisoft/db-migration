@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Sqlite;
 
 use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 
 /**
  * @group sqlite
@@ -22,5 +23,15 @@ final class CreateCommandTest extends AbstractCreateCommandTest
     {
         parent::tearDown();
         SqLiteFactory::clearDatabase($this->container);
+    }
+
+    public function testWithoutTablePrefix(): void
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->useTablePrefix = false;
+
+        $this->container = SqLiteFactory::createContainer($containerConfig);
+
+        parent::testWithoutTablePrefix();
     }
 }

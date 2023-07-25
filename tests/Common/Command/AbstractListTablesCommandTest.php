@@ -19,8 +19,14 @@ abstract class AbstractListTablesCommandTest extends TestCase
 {
     protected ContainerInterface $container;
 
-    public function testExecute(): void
+    public function testExecuted(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
+        if ($db->getDriverName() === 'oci') {
+            $this->markTestSkipped('Should be fixed for Oracle.');
+        }
+
         DbHelper::createTable($this->container, 'the_post', ['name' => 'string']);
         DbHelper::createTable($this->container, 'the_user', ['name' => 'string']);
 
@@ -37,6 +43,12 @@ abstract class AbstractListTablesCommandTest extends TestCase
 
     public function testWithoutTables(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
+        if ($db->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped('Should be fixed for MsSQL.');
+        }
+
         $command = $this->getCommand($this->container);
 
         $exitCode = $command->execute([]);

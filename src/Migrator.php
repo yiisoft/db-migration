@@ -148,6 +148,7 @@ final class Migrator
         $this->beforeMigrate();
 
         $b = $this->createBuilder(new NullMigrationInformer());
+
         $b->createTable($this->historyTable, [
             'id' => $b->primaryKey(),
             'name' => $b->string($this->migrationNameLimit)->notNull(),

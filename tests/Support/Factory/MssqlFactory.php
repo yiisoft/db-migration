@@ -74,6 +74,7 @@ final class MssqlFactory
             'the_post',
             'the_user',
             'test',
+            'test_pk',
             'test_table',
             'target_table',
             'new_table',
