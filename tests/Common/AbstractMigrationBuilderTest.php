@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Db\Pgsql\Column;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
@@ -171,9 +170,9 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new Column('string', 4), null],
+            'builder-type' => ['build-string(4)', null],
             'builder-type-with-comment' => [
-                (new Column('string', 4))->comment('test comment'),
+                'build-string(4)-with-comment',
                 'test comment',
             ],
         ];
@@ -184,6 +183,14 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAddColumn($type, string $expectedComment = null): void
     {
+        if ($type === 'build-string(4)') {
+            $type = $this->db->getSchema()->createColumn('string', 4);
+        }
+
+        if ($type === 'build-string(4)-with-comment') {
+            $type = $this->db->getSchema()->createColumn('string', 4)->comment('test comment');
+        }
+
         if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
@@ -227,9 +234,9 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     {
         return [
             'string-type' => ['string(4)', null],
-            'builder-type' => [new Column('string', 4), null],
+            'builder-type' => ['build-string(4)', null],
             'builder-type-with-comment' => [
-                (new Column('string', 4))->comment('test comment'),
+                'build-string(4)-with-comment',
                 'test comment',
             ],
         ];
@@ -238,8 +245,16 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn($type, string $expectedComment = null): void
+    public function testAlterColumn1($type, string $expectedComment = null): void
     {
+        if ($type === 'build-string(4)') {
+            $type = $this->db->getSchema()->createColumn('string', 4);
+        }
+
+        if ($type === 'build-string(4)-with-comment') {
+            $type = $this->db->getSchema()->createColumn('string', 4)->comment('test comment');
+        }
+
         if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
             $expectedComment = '';
         }
@@ -249,6 +264,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->alterColumn('test', 'id', $type);
 
         $schema = $this->db->getSchema()->getTableSchema('test')->getColumn('id');
+
         $this->assertNotEmpty($schema);
         $this->assertSame('id', $schema->getName());
         $this->assertSame('string', $schema->getType());
