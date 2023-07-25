@@ -314,14 +314,9 @@ EOF;
 
     public function testWithoutTablePrefix(): void
     {
-        $containerConfig = new ContainerConfig();
-        $containerConfig->useTablePrefix = false;
-        $container = SqLiteFactory::createContainer($containerConfig);
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
-        $migrationsPath = MigrationHelper::useMigrationsNamespace($container);
-        SqLiteFactory::clearDatabase($container);
-
-        $command = $this->createCommand($container);
+        $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $command->execute(

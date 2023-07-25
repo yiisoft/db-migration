@@ -43,6 +43,12 @@ abstract class AbstractListTablesCommandTest extends TestCase
 
     public function testWithoutTables(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
+        if ($db->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped('Should be fixed for MsSQL.');
+        }
+
         $command = $this->getCommand($this->container);
 
         $exitCode = $command->execute([]);

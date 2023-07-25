@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mysql;
 
 use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 
 /**
  * @group mysql
@@ -22,5 +23,15 @@ final class CreateCommandTest extends AbstractCreateCommandTest
     {
         parent::tearDown();
         MysqlFactory::clearDatabase($this->container);
+    }
+
+    public function testWithoutTablePrefix(): void
+    {
+        $containerConfig = new ContainerConfig();
+        $containerConfig->useTablePrefix = false;
+
+        $this->container = MysqlFactory::createContainer($containerConfig);
+
+        parent::testWithoutTablePrefix();
     }
 }
