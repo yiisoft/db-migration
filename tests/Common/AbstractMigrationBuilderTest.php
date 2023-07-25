@@ -245,7 +245,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn1($type, string $expectedComment = null): void
+    public function testAlterColumn($type, string $expectedComment = null): void
     {
         if ($type === 'build-string(4)') {
             $type = $this->db->getSchema()->createColumn('string', 4);
