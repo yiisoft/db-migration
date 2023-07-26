@@ -7,6 +7,7 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mysql;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 
 /**
  * @group mysql
@@ -25,7 +26,16 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     public function tearDown(): void
     {
         parent::tearDown();
-        MysqlFactory::clearDatabase($this->container);
+
+        $tables = [
+            'target_table',
+            'test_table',
+            'test',
+        ];
+
+        foreach ($tables as $table) {
+            DbHelper::dropTable($this->db, $table);
+        }
 
         $this->db->close();
     }

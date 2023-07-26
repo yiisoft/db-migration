@@ -27,8 +27,8 @@ abstract class AbstractListTablesCommandTest extends TestCase
             $this->markTestSkipped('Should be fixed for Oracle.');
         }
 
-        DbHelper::createTable($this->container, 'the_post', ['name' => 'string']);
-        DbHelper::createTable($this->container, 'the_user', ['name' => 'string']);
+        DbHelper::createTable($db, 'the_post', ['name' => 'string']);
+        DbHelper::createTable($db, 'the_user', ['name' => 'string']);
 
         $command = $this->getCommand($this->container);
 
