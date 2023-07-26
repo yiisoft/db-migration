@@ -24,11 +24,9 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 
     public function tearDown(): void
     {
-        parent::tearDown();
-
         $tables = [
-            'target_table',
             'test_table',
+            'target_table',
             'test',
         ];
 
@@ -37,5 +35,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         }
 
         $this->db->close();
+
+        parent::tearDown();
     }
 }

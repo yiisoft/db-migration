@@ -28,8 +28,8 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         parent::tearDown();
 
         $tables = [
-            'target_table',
             'test_table',
+            'target_table',
             'test',
         ];
 

@@ -28,10 +28,10 @@ final class DbHelper
         }
     }
 
-    public static function checkSchema(ConnectionInterface $db, string $table): bool
+    public static function checkSchema(ConnectionInterface $db, string $name): bool
     {
         $schema = $db->getSchema();
-        $tableSchema = $schema->getTableSchema($table, true);
+        $tableSchema = $schema->getTableSchema($name, true);
 
         return $tableSchema !== null;
     }
