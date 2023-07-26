@@ -10,7 +10,6 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 abstract class AbstractMigrationBuilderTest extends TestCase

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
 
-use FTP\Connection;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -13,9 +12,7 @@ use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
