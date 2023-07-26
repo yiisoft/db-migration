@@ -299,7 +299,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame('id', $column->getName());
         $this->assertSame('string', $column->getType());
         $this->assertSame(4, $column->getSize());
-        $this->assertSame($expectedComment, $tableSchema->getComment());
+        $this->assertSame($expectedComment, $column->getComment());
 
         $this->assertInformerOutputContains($expectedOutputString);
 
