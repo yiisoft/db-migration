@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Pgsql;
 
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractListTablesCommandTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
@@ -28,9 +29,11 @@ final class ListTablesCommandTest extends AbstractListTablesCommandTest
 
     public function testSeveralSchemas(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
         PostgreSqlFactory::createSchema($this->container, 'backup');
-        DbHelper::createTable($this->container, 'public.test1', ['name' => 'string']);
-        DbHelper::createTable($this->container, 'backup.test2', ['name' => 'string']);
+        DbHelper::createTable($db, 'public.test1', ['name' => 'string']);
+        DbHelper::createTable($db, 'backup.test2', ['name' => 'string']);
 
         $command = $this->getCommand($this->container);
 

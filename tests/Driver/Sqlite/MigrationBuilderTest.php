@@ -8,6 +8,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Yii\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 
 /**
  * @group sqlite
@@ -25,7 +26,16 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     public function tearDown(): void
     {
         parent::tearDown();
-        SqLiteFactory::clearDatabase($this->container);
+
+        $tables = [
+            'test_table',
+            'target_table',
+            'test',
+        ];
+
+        foreach ($tables as $table) {
+            DbHelper::dropTable($this->db, $table);
+        }
     }
 
     /**

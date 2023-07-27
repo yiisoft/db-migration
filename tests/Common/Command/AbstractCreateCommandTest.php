@@ -7,13 +7,12 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
@@ -118,12 +117,14 @@ EOF;
 
     public function testCreateTableExtends(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
-        DbHelper::createTable($this->container, 'user', ['[[id]]' => 'int primary key']);
-        DbHelper::createTable($this->container, 'tag', ['[[id]]' => 'int']);
+        DbHelper::createTable($db, 'user', ['[[id]]' => 'int primary key']);
+        DbHelper::createTable($db, 'tag', ['[[id]]' => 'int']);
         DbHelper::createTable(
-            $this->container,
+            $db,
             'category',
             ['[[id1]]' => 'int', '[[id2]]' => 'int', 'primary key ([[id1]], [[id2]])'],
         );

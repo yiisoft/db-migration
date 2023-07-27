@@ -14,7 +14,6 @@ use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
