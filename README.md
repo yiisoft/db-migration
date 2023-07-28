@@ -82,7 +82,6 @@ View the list of available commands execute in console: `./yii list`
 
 ```
 Available commands:
-  database:list    Lists all tables in the database.
   migrate:create  Generate migration template.
   help             Displays help for a command
   list             Lists commands

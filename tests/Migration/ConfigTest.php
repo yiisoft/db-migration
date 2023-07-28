@@ -15,7 +15,6 @@ use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Command\ListTablesCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
@@ -26,7 +25,6 @@ use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
 use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Yii\Db\Migration\Service\Database\ListTablesService;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -42,7 +40,6 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(CreateCommand::class, $container->get(CreateCommand::class));
         $this->assertInstanceOf(DownCommand::class, $container->get(DownCommand::class));
         $this->assertInstanceOf(HistoryCommand::class, $container->get(HistoryCommand::class));
-        $this->assertInstanceOf(ListTablesCommand::class, $container->get(ListTablesCommand::class));
         $this->assertInstanceOf(NewCommand::class, $container->get(NewCommand::class));
         $this->assertInstanceOf(RedoCommand::class, $container->get(RedoCommand::class));
         $this->assertInstanceOf(UpdateCommand::class, $container->get(UpdateCommand::class));
@@ -57,7 +54,6 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(UpdateRunner::class, $container->get(UpdateRunner::class));
 
         // Services
-        $this->assertInstanceOf(ListTablesService::class, $container->get(ListTablesService::class));
         $this->assertInstanceOf(CreateService::class, $container->get(CreateService::class));
         $this->assertInstanceOf(MigrationService::class, $container->get(MigrationService::class));
 
