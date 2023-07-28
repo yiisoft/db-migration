@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @var $tableComment string the comment table
  * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
  * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
- * @var $transactional bool whether the migration should be transactional.
+ * @var $transactional bool Whether the migration should be transactional.
  */
 
 echo "<?php\n";
