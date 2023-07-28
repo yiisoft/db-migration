@@ -43,7 +43,6 @@ final class CreateService
         string $and = null,
         string $tableComment = null,
         bool $transactional = false,
-
     ): string {
         $templateFile = $this->getTemplate($command);
 

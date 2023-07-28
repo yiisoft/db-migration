@@ -13,7 +13,6 @@ use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
-use Yiisoft\Db\Transaction\TransactionInterface;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 
