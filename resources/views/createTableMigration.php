@@ -27,7 +27,7 @@ if (!empty($namespace)) {
 ?>
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-<?= $transactional === false ? 'use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface' : 'use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface' ?>;
+use <?= $transactional ? 'Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface' : 'Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface' ?>;
 
 /**
  * Handles the creation of table `<?= $table ?>`.
