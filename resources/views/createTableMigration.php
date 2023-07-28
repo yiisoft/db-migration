@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @var $tableComment string the comment table
  * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
  * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
+ * @var $transactional bool whether the migration should be transactional.
  */
 
 echo "<?php\n";
@@ -26,7 +27,7 @@ if (!empty($namespace)) {
 ?>
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+<?= $transactional === false ? 'use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface' : 'use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface' ?>;
 
 /**
  * Handles the creation of table `<?= $table ?>`.
@@ -34,7 +35,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
     'foreignKeys' => $foreignKeys,
 ]) ?>
  */
-final class <?= $className ?> implements RevertibleMigrationInterface
+final class <?= $className ?> implements <?= $transactional === false ? "RevertibleMigrationInterface\n" : "TransactionalMigrationInterface\n" ?>
 {
     public function up(MigrationBuilder $b): void
     {

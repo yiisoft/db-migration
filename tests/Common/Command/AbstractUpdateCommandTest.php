@@ -61,6 +61,46 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
     }
 
+    public function testExecuteWithPathTransactional(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Department',
+            'table',
+            'department',
+            ['name:string(50)'],
+            transactional: true,
+        );
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
+        $departmentSchema = $dbSchema->getTableSchema('department');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+
+        /** Check create table department columns*/
+        $this->assertCount(2, $departmentSchema->getColumns());
+
+        /** Check table department field id */
+        $this->assertSame('id', $departmentSchema->getColumn('id')->getName());
+        $this->assertSame('integer', $departmentSchema->getColumn('id')->getType());
+        $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
+        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+
+        /** Check table department field name */
+        $this->assertSame('name', $departmentSchema->getColumn('name')->getName());
+        $this->assertSame(50, $departmentSchema->getColumn('name')->getSize());
+        $this->assertSame('string', $departmentSchema->getColumn('name')->getType());
+        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+    }
+
     public function testExecuteWithNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
@@ -71,6 +111,46 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'table',
             'department',
             ['name:string(50)']
+        );
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $dbSchema = $db->getSchema();
+        $departmentSchema = $dbSchema->getTableSchema('department');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+
+        /** Check create table department columns*/
+        $this->assertCount(2, $departmentSchema->getColumns());
+
+        /** Check table department field id */
+        $this->assertEquals('id', $departmentSchema->getColumn('id')->getName());
+        $this->assertEquals('integer', $departmentSchema->getColumn('id')->getType());
+        $this->assertTrue($departmentSchema->getColumn('id')->isPrimaryKey());
+        $this->assertTrue($departmentSchema->getColumn('id')->isAutoIncrement());
+
+        /** Check table department field name */
+        $this->assertEquals('name', $departmentSchema->getColumn('name')->getName());
+        $this->assertEquals(50, $departmentSchema->getColumn('name')->getSize());
+        $this->assertEquals('string', $departmentSchema->getColumn('name')->getType());
+        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+    }
+
+    public function testExecuteWithNamespaceTransactional(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Department',
+            'table',
+            'department',
+            ['name:string(50)'],
+            transactional: true,
         );
 
         $command = $this->createCommand($this->container);

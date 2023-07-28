@@ -38,10 +38,12 @@ final class CreateService
         string $command,
         string $table,
         string $className,
-        ?string $namespace = null,
-        ?string $fields = null,
-        ?string $and = null,
-        ?string $tableComment = null
+        string $namespace = null,
+        string $fields = null,
+        string $and = null,
+        string $tableComment = null,
+        bool $transactional = false,
+
     ): string {
         $templateFile = $this->getTemplate($command);
 
@@ -85,6 +87,7 @@ final class CreateService
                 'columns' => $columns,
                 'foreignKeys' => $foreignKeys,
                 'tableComment' => $tableComment,
+                'transactional' => $transactional,
             ]
         );
     }

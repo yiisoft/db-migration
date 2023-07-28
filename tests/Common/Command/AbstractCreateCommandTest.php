@@ -115,6 +115,51 @@ EOF;
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
+    public function testCreateTableWithTransaction(): void
+    {
+        $migrationsPath = MigrationHelper::useMigrationsPath($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+        $exitCode = $command->execute(['name' => 'post', '--command' => 'table', '-t' => '']);
+        $output = $command->getDisplay(true);
+
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+
+        $expectedMigrationCode = <<<EOF
+<?php
+
+declare(strict_types=1);
+
+use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+
+/**
+ * Handles the creation of table `post`.
+ */
+final class $className implements TransactionalMigrationInterface
+{
+    public function up(MigrationBuilder \$b): void
+    {
+        \$b->createTable('post', [
+            'id' => \$b->primaryKey(),
+        ]);
+    }
+
+    public function down(MigrationBuilder \$b): void
+    {
+        \$b->dropTable('post');
+    }
+}
+
+EOF;
+        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
+
+        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+    }
+
     public function testCreateTableExtends(): void
     {
         $db = $this->container->get(ConnectionInterface::class);

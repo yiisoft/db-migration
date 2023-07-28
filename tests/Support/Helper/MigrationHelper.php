@@ -61,7 +61,8 @@ final class MigrationHelper
         string $command,
         string $table,
         array $fields = [],
-        ?Closure $callback = null
+        Closure $callback = null,
+        bool $transactional = false,
     ): string {
         $migrationService = $container->get(MigrationService::class);
         $createService = $container->get(CreateService::class);
@@ -75,6 +76,7 @@ final class MigrationHelper
             $className,
             $namespace,
             implode(',', $fields),
+            transactional: $transactional,
         );
 
         if ($callback) {
