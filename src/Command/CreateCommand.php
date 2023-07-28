@@ -105,7 +105,7 @@ final class CreateCommand extends Command
             ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction')
             ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace migration')
-            ->addOption('transactional', 't', InputOption::VALUE_OPTIONAL, 'Transactional migration', false)
+            ->addOption('transactional', 't', InputOption::VALUE_NONE, 'Transactional migration')
             ->setHelp('This command Generate migration template.');
     }
 
