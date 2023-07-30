@@ -115,7 +115,7 @@ EOF;
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
-    public function testCreateTableWithTransaction(): void
+    public function testCreateTableWithTransactional(): void
     {
         $migrationsPath = MigrationHelper::useMigrationsPath($this->container);
 
@@ -132,12 +132,13 @@ EOF;
 declare(strict_types=1);
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
+use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $className implements TransactionalMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
