@@ -9,6 +9,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
+use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Strings\StringHelper;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
@@ -479,6 +480,26 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
+     * Builds and executes a SQL statement for create view.
+     *
+     * @param string $viewName The name of the view to create.
+     * @param QueryInterface|string $subQuery The select statement which defines the view.
+     * This can be either a string or a {@see Query} object.
+     *
+     * @throws InvalidConfigException
+     * @throws NotSupportedException If this isn't supported by the underlying DBMS.
+     * @throws Exception
+     *
+     * Note: The method will quote the `viewName` parameter before using it in the generated SQL.
+     */
+    public function createView(string $viewName, QueryInterface|string $subQuery): void
+    {
+        $time = $this->beginCommand("Create view $viewName");
+        $this->db->createCommand()->createView($viewName, $subQuery)->execute();
+        $this->endCommand($time);
+    }
+
+    /**
      * Builds and executes a SQL statement for dropping an index.
      *
      * @param string $table the table whose index is to be dropped. The name will be properly quoted by the method.
@@ -492,6 +513,24 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     {
         $time = $this->beginCommand("Drop index $name on $table");
         $this->db->createCommand()->dropIndex($table, $name)->execute();
+        $this->endCommand($time);
+    }
+
+    /**
+     * Builds and executes a SQL statement for dropping a DB view.
+     *
+     * @param string $viewName The name of the view to be dropped.
+     *
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws NotSupportedException If this isn't supported by the underlying DBMS.
+     *
+     * Note: The method will quote the `viewName` parameter before using it in the generated SQL.
+     */
+    public function dropView(string $viewName): void
+    {
+        $time = $this->beginCommand("Drop view $viewName");
+        $this->db->createCommand()->dropView($viewName)->execute();
         $this->endCommand($time);
     }
 
