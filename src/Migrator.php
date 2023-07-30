@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Yii\Db\Migration;
 
-use Closure;
-use Exception;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Cache\SchemaCache;
@@ -25,7 +21,6 @@ final class Migrator
         private ConnectionInterface $db,
         private SchemaCache $schemaCache,
         private MigrationInformerInterface $informer,
-        private LoggerInterface|null $logger = null,
         private string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180
     ) {
@@ -48,7 +43,7 @@ final class Migrator
         $this->beforeMigrate();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->transaction(fn () => $migration->up($this->createBuilder())),
+            true => $this->db->transaction(fn () => $migration->up($this->createBuilder())),
             false => $migration->up($this->createBuilder()),
         };
 
@@ -64,7 +59,7 @@ final class Migrator
         $this->beforeMigrate();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->transaction(fn () => $migration->down($this->createBuilder())),
+            true => $this->db->transaction(fn () => $migration->down($this->createBuilder())),
             false => $migration->down($this->createBuilder()),
         };
 
@@ -198,23 +193,5 @@ final class Migrator
             $this->db,
             $informer ?? $this->informer,
         );
-    }
-
-    private function transaction(Closure $operation): void
-    {
-        $transaction = $this->db->beginTransaction();
-
-        try {
-            $operation();
-            $transaction->commit();
-        } catch (Exception $e) {
-            if (
-                $this->db->getDriverName() === 'mysql' &&
-                $e->getMessage() !== 'Failed to commit transaction: transaction was inactive.'
-            ) {
-                $transaction->rollBack();
-                $this->logger?->log(LogLevel::WARNING, $e->getMessage());
-            }
-        }
     }
 }

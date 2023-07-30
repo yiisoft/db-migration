@@ -20,7 +20,6 @@
     "require": {
         "php": "^8.0",
         "ext-filter": "*",
-        "psr/log": "^3.0",
         "symfony/console": "^6.0",
         "yiisoft/aliases": "^1.1|^2.0|^3.0",
         "yiisoft/arrays": "^2.0|^3.0",
