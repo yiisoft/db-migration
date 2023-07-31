@@ -145,11 +145,6 @@ final class $className implements TransactionalMigrationInterface
             'id' => \$b->primaryKey(),
         ]);
     }
-
-    public function down(MigrationBuilder \$b): void
-    {
-        \$b->dropTable('post');
-    }
 }
 
 EOF;

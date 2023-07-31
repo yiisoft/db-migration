@@ -53,6 +53,7 @@ final class <?= $className ?> implements <?= $transactional ? "TransactionalMigr
 }
 ?>
     }
+<?php if ($transactional === false) : ?>
 
     public function down(MigrationBuilder $b): void
     {
@@ -62,4 +63,5 @@ final class <?= $className ?> implements <?= $transactional ? "TransactionalMigr
 ])
 ?>
     }
+<?php endif; ?>
 }
