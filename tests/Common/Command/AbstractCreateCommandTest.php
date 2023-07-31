@@ -121,7 +121,7 @@ EOF;
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
-        $exitCode = $command->execute(['name' => 'post', '--command' => 'table', '-t' => '']);
+        $exitCode = $command->execute(['name' => 'post', '--command' => 'table', '-t' => true]);
         $output = $command->getDisplay(true);
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
