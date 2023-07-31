@@ -139,7 +139,7 @@ final class CreateCommand extends Command
         $namespace = $input->getOption('namespace');
 
         /** @var bool */
-        $transactional = $input->getOption('transactional') === '' ? true : false;
+        $transactional = $input->getOption('transactional') !== false;
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
             $io->error(
