@@ -27,8 +27,7 @@ if (!empty($namespace)) {
 ?>
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-<?= $transactional ? "use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;\n" : '' ?>
+use Yiisoft\Yii\Db\Migration\<?= $transactional ? "TransactionalMigrationInterface;\n" : "RevertibleMigrationInterface;\n" ?>
 
 /**
  * Handles the creation of table `<?= $table ?>`.
@@ -36,7 +35,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
     'foreignKeys' => $foreignKeys,
 ]) ?>
  */
-final class <?= $className ?> implements RevertibleMigrationInterface<?= $transactional ? ", TransactionalMigrationInterface\n" : "\n" ?>
+final class <?= $className ?> implements <?= $transactional ? "TransactionalMigrationInterface\n" : "RevertibleMigrationInterface\n" ?>
 {
     public function up(MigrationBuilder $b): void
     {
