@@ -397,6 +397,25 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         );
     }
 
+    public function testCreateAndDropView(): void
+    {
+        $schema = $this->db->getSchema();
+
+        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createView('test_view', 'SELECT * FROM {{test}}');
+
+        $viewNames = $schema->getViewNames(refresh: true);
+
+        $this->assertContains('test_view', $viewNames);
+        $this->assertInformerOutputContains('    > Create view test_view ... Done in ');
+
+        $this->builder->dropView('test_view');
+
+        $viewNames = $schema->getViewNames(refresh: true);
+
+        $this->assertNotContains('test_view', $viewNames);
+    }
+
     public function testDropIndex(): void
     {
         $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
