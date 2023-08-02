@@ -480,7 +480,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for create view.
+     * Builds and executes a SQL statement for creating a view.
      *
      * @param string $viewName The name of the view to create.
      * @param QueryInterface|string $subQuery The select statement which defines the view.
