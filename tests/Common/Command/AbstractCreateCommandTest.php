@@ -40,11 +40,12 @@ declare(strict_types=1);
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -88,11 +89,12 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -104,46 +106,6 @@ final class $className implements RevertibleMigrationInterface
     public function down(MigrationBuilder \$b): void
     {
         \$b->dropTable('post');
-    }
-}
-
-EOF;
-        $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
-
-        $this->assertSame(ExitCode::OK, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
-    }
-
-    public function testCreateTableWithTransactional(): void
-    {
-        $migrationsPath = MigrationHelper::useMigrationsPath($this->container);
-
-        $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
-        $exitCode = $command->execute(['name' => 'post', '--command' => 'table', '-t' => true]);
-        $output = $command->getDisplay(true);
-
-        $className = MigrationHelper::findMigrationClassNameInOutput($output);
-
-        $expectedMigrationCode = <<<EOF
-<?php
-
-declare(strict_types=1);
-
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
-
-/**
- * Handles the creation of table `post`.
- */
-final class $className implements TransactionalMigrationInterface
-{
-    public function up(MigrationBuilder \$b): void
-    {
-        \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-        ]);
     }
 }
 
@@ -197,6 +159,7 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -207,7 +170,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%category}}`
  * - `{{%category}}`
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -381,6 +344,7 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -388,7 +352,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  *
  * - `user`
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -721,11 +685,12 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -779,6 +744,7 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -787,7 +753,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%user}}`
  * - `{{%category}}`
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
@@ -901,6 +867,7 @@ namespace $namespace;
 
 use Yiisoft\Yii\Db\Migration\MigrationBuilder;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post_tag`.
@@ -909,7 +876,7 @@ use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
  * - `{{%post}}`
  * - `{{%tag}}`
  */
-final class $className implements RevertibleMigrationInterface
+final class $className implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {

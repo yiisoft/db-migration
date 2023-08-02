@@ -105,7 +105,6 @@ final class CreateCommand extends Command
             ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction')
             ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace migration')
-            ->addOption('transactional', 't', InputOption::VALUE_NONE, 'Transactional migration')
             ->setHelp('This command Generate migration template.');
     }
 
@@ -137,9 +136,6 @@ final class CreateCommand extends Command
 
         /** @var string */
         $namespace = $input->getOption('namespace');
-
-        /** @var bool */
-        $transactional = $input->getOption('transactional');
 
         if (!preg_match('/^[\w\\\\]+$/', $name)) {
             $io->error(
@@ -199,7 +195,6 @@ final class CreateCommand extends Command
                 $fields,
                 $and,
                 $tableComment,
-                $transactional,
             );
 
             file_put_contents($file, $content, LOCK_EX);
