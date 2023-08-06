@@ -70,7 +70,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_Department',
             'table',
             'department',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
 
         $command = $this->createCommand($this->container);
@@ -197,7 +197,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_Department',
             'table',
             'department',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
 
         $command1 = $this->createCommand($this->container);
@@ -230,7 +230,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'department',
             ['name:string(50)'],
             static fn (string $content) => str_replace(
-                'implements RevertibleMigrationInterface',
+                'implements RevertibleMigrationInterface, TransactionalMigrationInterface',
                 '',
                 $content
             ),
@@ -291,7 +291,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_Post',
             'table',
             'post',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
         sleep(1);
         MigrationHelper::createMigration(
@@ -299,7 +299,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_User',
             'table',
             'user',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
 
         $command = $this->createCommand($this->container);
@@ -324,7 +324,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_Post' . str_repeat('X', 200),
             'table',
             'post',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
 
         $command = $this->createCommand($this->container);

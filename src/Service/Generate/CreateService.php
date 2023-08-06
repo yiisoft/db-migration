@@ -38,10 +38,10 @@ final class CreateService
         string $command,
         string $table,
         string $className,
-        ?string $namespace = null,
-        ?string $fields = null,
-        ?string $and = null,
-        ?string $tableComment = null
+        string|null $namespace = null,
+        string|null $fields = null,
+        string|null $and = null,
+        string|null $tableComment = null
     ): string {
         $templateFile = $this->getTemplate($command);
 

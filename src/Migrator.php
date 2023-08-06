@@ -41,7 +41,12 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         $this->beforeMigrate();
-        $migration->up($this->createBuilder());
+
+        match ($migration instanceof TransactionalMigrationInterface) {
+            true => $this->db->transaction(fn () => $migration->up($this->createBuilder())),
+            false => $migration->up($this->createBuilder()),
+        };
+
         $this->afterMigrate();
 
         $this->addMigrationToHistory($migration);
@@ -52,7 +57,12 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         $this->beforeMigrate();
-        $migration->down($this->createBuilder());
+
+        match ($migration instanceof TransactionalMigrationInterface) {
+            true => $this->db->transaction(fn () => $migration->down($this->createBuilder())),
+            false => $migration->down($this->createBuilder()),
+        };
+
         $this->afterMigrate();
 
         $this->removeMigrationFromHistory($migration);
