@@ -174,7 +174,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAddColumn
      */
-    public function testAddColumn($type, string $expectedComment = null): void
+    public function testAddColumn(string $type, string $expectedComment = null): void
     {
         $expectedOutputString = '    > add column code string(4) to table test ... Done in';
 
@@ -233,24 +233,27 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     public static function dataAlterColumn(): array
     {
         return [
-            'string-type' => ['string(4)', null],
-            'builder-type' => ['build-string(4)', null],
-            'builder-type-with-comment' => [
-                'build-string(4)-with-comment',
-                'test comment',
-            ],
+            'string-type' => ['string(4)', null, null],
+            'string-type-with-default-value' => ['string(4)-defaultValue', 'test', null],
+            'builder-type' => ['build-string(4)', null, null],
+            'builder-type-with-comment' => ['build-string(4)-with-comment', null, 'test comment'],
         ];
     }
 
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn($type, string $expectedComment = null): void
+    public function testAlterColumn(string $type, string|null $defaultValue = null, string $expectedComment = null): void
     {
         $expectedOutputString = '    > Alter column id in table test to string(4) ... Done in';
 
         if ($type === 'build-string(4)') {
             $type = $this->builder->string(4);
+        }
+
+        if ($type === 'string(4)-defaultValue') {
+            $type = $this->builder->string(4)->defaultValue($defaultValue);
+            $expectedOutputString = "    > Alter column id in table test to string(4) DEFAULT '$defaultValue' ... Done in";
         }
 
         if ($type === 'build-string(4)-with-comment') {
@@ -276,6 +279,10 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame('string', $column->getType());
         $this->assertSame(4, $column->getSize());
         $this->assertSame($expectedComment, $column->getComment());
+
+        if ($defaultValue !== null) {
+            $this->assertSame($defaultValue, $column->getDefaultValue());
+        }
 
         $this->assertInformerOutputContains($expectedOutputString);
     }

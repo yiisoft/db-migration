@@ -41,7 +41,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     /**
      * @dataProvider dataAddColumn
      */
-    public function testAddColumn($type, string $expectedComment = null): void
+    public function testAddColumn(string $type, string $expectedComment = null): void
     {
         if ($expectedComment === 'test comment') {
             $this->expectException(NotSupportedException::class);
@@ -86,14 +86,14 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn($type, string $expectedComment = null): void
+    public function testAlterColumn(string $type, string|null $defaultValue = null, string $expectedComment = null): void
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
             'Yiisoft\Db\Sqlite\DDLQueryBuilder::alterColumn is not supported by SQLite.'
         );
 
-        parent::testAlterColumn($type, $expectedComment);
+        parent::testAlterColumn($type, $defaultValue, $expectedComment);
     }
 
     public function testAddForeignKey(): void
