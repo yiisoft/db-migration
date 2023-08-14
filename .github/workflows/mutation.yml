@@ -67,11 +67,11 @@ jobs:
       - name: Update composer.
         run: composer self-update
 
-      - name: Install db-mysql.
+      - name: Install dependencies.
         run: composer require yiisoft/db-pgsql:^1.1 yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run infection.
         run: |
-          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered --test-framework-options=""--testsuite=Pgsql,Sqlite"
+          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql,Sqlite"
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
