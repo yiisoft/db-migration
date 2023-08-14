@@ -323,9 +323,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $comment = null;
         $typeAsString = $type;
 
-        if ($type instanceof ColumnInterface) {
-            $comment = $type->getComment();
-            $typeAsString = $type->asString();
+        if ($typeAsString instanceof ColumnInterface) {
+            $comment = $typeAsString->getComment();
+            $typeAsString = $typeAsString->asString();
         }
 
         $time = $this->beginCommand("Alter column $column in table $table to $typeAsString");
