@@ -28,7 +28,7 @@ jobs:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
     env:
-      extensions: pdo, pdo_pgsql, pdo_sqlsrv, pdo_sqlite, pdo_oci
+      extensions: pdo, pdo_pgsql
 
     runs-on: ${{ matrix.os }}
 
@@ -40,46 +40,9 @@ jobs:
         php:
           - 8.1
 
-        pgsql:
-          - 15
-
     services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_PASSWORD: ''
-          MYSQL_DATABASE: yiitest
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          SA_PASSWORD: YourStrong!Passw0rd
-          ACCEPT_EULA: Y
-          MSSQL_PID: Developer
-        ports:
-          - 1433:1433
-        options: --name=mssql --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'YourStrong!Passw0rd' -Q 'SELECT 1'" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      oci:
-        image: gvenzl/oracle-xe:21
-        ports:
-          - 1521:1521
-        env:
-          ORACLE_DATABASE : yiitest
-          ORACLE_PASSWORD : root
-        options: >-
-          --name=oci
-          --health-cmd healthcheck.sh
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
       postgres:
-        image: postgres:${{ matrix.pgsql }}
+        image: postgres:15
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root
@@ -108,10 +71,10 @@ jobs:
         run: composer self-update
 
       - name: Install db-mysql.
-        run: composer require yiisoft/db-mssql:^1.0 yiisoft/db-mysql:^1.0 yiisoft/db-oracle:^1.1 yiisoft/db-pgsql:^1.1 yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        run: composer require yiisoft/db-pgsql:^1.1 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run infection.
         run: |
-          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered
+          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql"
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
