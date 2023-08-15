@@ -25,7 +25,7 @@ final class ForeignKeyFactory
         string $table,
         string $column,
         string $relatedTable,
-        ?string $relatedColumn
+        string|null $relatedColumn
     ): ForeignKey {
         /**
          * We're trying to get it from table schema.
@@ -34,25 +34,18 @@ final class ForeignKeyFactory
          */
         if ($relatedColumn === null) {
             $relatedColumn = 'id';
-            $relatedTableSchema = $this->db->getTableSchema($relatedTable);
-            if ($relatedTableSchema !== null) {
-                $primaryKeyCount = count($relatedTableSchema->getPrimaryKey());
-                if ($primaryKeyCount === 1) {
-                    $relatedColumn = $relatedTableSchema->getPrimaryKey()[0];
-                } elseif ($primaryKeyCount > 1) {
-                    if ($this->io) {
-                        $this->io->writeln(
-                            "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
-                        );
-                    }
-                } elseif ($primaryKeyCount === 0) {
-                    if ($this->io) {
-                        $this->io->writeln(
-                            "<fg=yellow> Related table for field \"{$column}\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
-                        );
-                    }
-                }
-            }
+            $tablePrimaryKeys = $this->db->getSchema()->getTablePrimaryKey($relatedTable);
+            $primaryKeys = $tablePrimaryKeys?->getColumnNames() ?? [];
+
+            match (count($primaryKeys)) {
+                1 => $relatedColumn = $primaryKeys[0],
+                0 => $this->io?->writeln(
+                    "<fg=yellow> Related table for field \"{$column}\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
+                ),
+                default => $this->io?->writeln(
+                    "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
+                ),
+            };
         }
 
         return new ForeignKey(
