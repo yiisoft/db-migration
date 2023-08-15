@@ -37,7 +37,7 @@ final class ForeignKeyFactory
             $tablePrimaryKeys = $this->db->getSchema()->getTablePrimaryKey($relatedTable);
             $primaryKeys = $tablePrimaryKeys?->getColumnNames() ?? [];
 
-            match (count($primaryKeys)) {
+            match (is_countable($primaryKeys) ? count($primaryKeys) : 0) {
                 1 => $relatedColumn = $primaryKeys[0],
                 0 => $this->io?->writeln(
                     "<fg=yellow> Related table for field \"{$column}\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
