@@ -314,7 +314,7 @@ EOF;
         $this->assertSame(ExitCode::OK, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertStringContainsString(
-            'Related table for field "category_id" exists, but primary key iscomposite. Default name "id" will be used for related field',
+            'Related table for field "category_id" exists, but primary key is composite. Default name "id" will be used for related field',
             $output,
         );
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
