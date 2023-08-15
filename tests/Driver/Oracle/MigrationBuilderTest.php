@@ -7,7 +7,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Oracle;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\OracleFactory;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
 
 /**
  * @group oracle
