@@ -476,6 +476,33 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->dropTable('test_table');
     }
 
+    public function testDropIndexNoExist(): void
+    {
+        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->dropIndex('test_table', 'test_index');
+
+        $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
+
+        $this->assertCount(0, $indexes);
+        $this->assertInformerOutputContains('    > Drop index test_index on test_table skipped. Index does not exist.');
+
+        $this->builder->dropTable('test_table');
+    }
+
+    public function testDropIndexUnique(): void
+    {
+        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createIndex('test_table', 'test_index', 'id', 'UNIQUE');
+        $this->builder->dropIndex('test_table', 'test_index');
+
+        $indexes = $this->db->getSchema()->getTableIndexes('test_table', true);
+
+        $this->assertCount(0, $indexes);
+        $this->assertInformerOutputContains('    > Drop index test_index on test_table ... Done in ');
+
+        $this->builder->dropTable('test_table');
+    }
+
     public function testAddCommentOnColumn(): void
     {
         $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);

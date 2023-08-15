@@ -512,6 +512,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      */
     public function dropIndex(string $table, string $name): void
     {
+        if ($this->hasIndex($table, $name) === false) {
+            $time = $this->beginCommand("Drop index $name on $table skipped. Index does not exist.");
+            $this->endCommand($time);
+            return;
+        }
+
         $time = $this->beginCommand("Drop index $name on $table");
         $this->db->createCommand()->dropIndex($table, $name)->execute();
         $this->endCommand($time);
@@ -629,5 +635,18 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     protected function endCommand(float $time): void
     {
         $this->informer->endCommand('Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
+    }
+
+    private function hasIndex(string $table, string $column): bool
+    {
+        $indexes = $this->db->getSchema()->getTableIndexes($table);
+
+        foreach ($indexes as $index) {
+            if ($index->getName() === $column) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
