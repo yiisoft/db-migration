@@ -35,17 +35,22 @@ final class ForeignKeyFactory
         if ($relatedColumn === null) {
             $relatedColumn = 'id';
             $tablePrimaryKeys = $this->db->getSchema()->getTablePrimaryKey($relatedTable);
-            $primaryKeys = $tablePrimaryKeys?->getColumnNames() ?? [];
 
-            match (is_countable($primaryKeys) ? count($primaryKeys) : 0) {
-                1 => $relatedColumn = $primaryKeys[0],
-                0 => $this->io?->writeln(
+            if ($tablePrimaryKeys !== null) {
+                $columNames = $tablePrimaryKeys->getColumnNames() ?? [];
+                $primaryKeys = is_string($columNames) ? [$columNames] : $columNames;
+
+                match (count($primaryKeys)) {
+                    1 => $relatedColumn = $primaryKeys[0],
+                    default => $this->io?->writeln(
+                        "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
+                    ),
+                };
+            } else {
+                $this->io?->writeln(
                     "<fg=yellow> Related table for field \"{$column}\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
-                ),
-                default => $this->io?->writeln(
-                    "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
-                ),
-            };
+                );
+            }
         }
 
         return new ForeignKey(
