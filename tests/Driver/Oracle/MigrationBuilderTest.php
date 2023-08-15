@@ -18,25 +18,29 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->container = OracleFactory::createContainer();
 
-        $this->db = $this->container->get(ConnectionInterface::class);
-
         parent::setUp();
     }
 
-    public function tearDown(): void
+    public function testCreateTableAnotherSchema(): void
     {
-        parent::tearDown();
+        $db = $this->container->get(ConnectionInterface::class);
+        $command = $db->createCommand();
 
-        $tables = [
-            'test_table',
-            'target_table',
-            'test',
-        ];
+        $command->setSql('CREATE USER yii IDENTIFIED BY yiiSCHEMA')->execute();
 
-        foreach ($tables as $table) {
-            DbHelper::dropTable($this->db, $table);
-        }
+        $this->builder->createTable('YII.test', ['id' => $this->builder->primaryKey()]);
+        $tableSchema = $db->getSchema()->getTableSchema('YII.test', true);
+        $column = $tableSchema->getColumn('id');
 
-        $this->db->close();
+        $this->assertNotEmpty($tableSchema);
+        $this->assertSame('id', $column->getName());
+        $this->assertSame('integer', $column->getType());
+        $this->assertTrue($column->isPrimaryKey());
+        $this->assertTrue($column->isAutoIncrement());
+        $this->assertInformerOutputContains('    > create table YII.test ... Done');
+
+        $this->builder->dropTable('YII.test');
+
+        $command->setSql('DROP USER yii CASCADE')->execute();
     }
 }

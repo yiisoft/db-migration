@@ -17,9 +17,9 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     use AssertTrait;
 
     protected ContainerInterface $container;
-    protected ConnectionInterface $db;
+    protected MigrationBuilder $builder;
+    private ConnectionInterface $db;
     private StubMigrationInformer $informer;
-    private MigrationBuilder $builder;
 
     protected function setUp(): void
     {
@@ -33,7 +33,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => $this->builder->integer()]);
         $this->builder->execute('DROP TABLE {{test}}');
 
-        $this->assertEmpty($this->db->getSchema()->getTableSchema('test_table'));
+        $this->assertEmpty($this->db->getTableSchema('test_table'));
         $this->assertInformerOutputContains('    > Execute SQL: DROP TABLE {{test}} ... Done in ');
     }
 
@@ -47,6 +47,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] = 1')->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testBatchInsert(): void
@@ -59,6 +61,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar()
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testUpsertWithoutRow(): void
@@ -75,6 +79,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             $this->db->createCommand('SELECT * FROM {{test}}')->queryAll()
         );
         $this->assertInformerOutputContains('    > Upsert into test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testUpdate(): void
@@ -90,6 +96,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             $this->db->createCommand('SELECT * FROM {{test}}')->queryAll()
         );
         $this->assertInformerOutputContains('    > Update test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testDelete(): void
@@ -100,12 +108,14 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM [[test]]')->queryScalar());
         $this->assertInformerOutputContains('    > Delete from test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testCreateTable(): void
     {
         $this->builder->createTable('test', ['id' => $this->builder->primaryKey()]);
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('id');
 
         $this->assertNotEmpty($tableSchema);
@@ -114,20 +124,23 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertTrue($column->isPrimaryKey());
         $this->assertTrue($column->isAutoIncrement());
         $this->assertInformerOutputContains('    > create table test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testCreateTableWithStringColumnDefinition(): void
     {
         $this->builder->createTable('test', ['name' => 'varchar(50)']);
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('name');
 
         $this->assertNotEmpty($tableSchema);
         $this->assertSame('name', $column->getName());
         $this->assertSame('string', $column->getType());
         $this->assertSame(50, $column->getSize());
-
         $this->assertInformerOutputContains('    > create table test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testRenameTable(): void
@@ -138,6 +151,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertExistsTables($this->container, 'new_table');
         $this->assertNotExistsTables($this->container, 'test');
         $this->assertInformerOutputContains('    > rename table test to new_table ... Done in ');
+
+        $this->builder->dropTable('new_table');
     }
 
     public function testDropTable(): void
@@ -157,6 +172,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->assertEquals('0', $this->db->createCommand('SELECT count(*) FROM {{test}}')->queryScalar());
         $this->assertInformerOutputContains('    > truncate table test ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public static function dataAddColumn(): array
@@ -197,7 +214,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => 'int']);
         $this->builder->addColumn('test', 'code', $type);
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('code');
 
         $this->assertNotEmpty($tableSchema);
@@ -206,6 +223,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame(4, $column->getSize());
         $this->assertSame($expectedComment, $column->getComment());
         $this->assertInformerOutputContains($expectedOutputString);
+
+        $this->builder->dropTable('test');
     }
 
     public function testDropColumn(): void
@@ -213,10 +232,12 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => $this->builder->primaryKey(), 'name' => $this->builder->string()]);
         $this->builder->dropColumn('test', 'name');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
 
         $this->assertSame(['id'], $tableSchema->getColumnNames());
         $this->assertInformerOutputContains('    > drop column name from table test ... Done in');
+
+        $this->builder->dropTable('test');
     }
 
     public function testRenameColumn(): void
@@ -224,10 +245,12 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => $this->builder->integer()]);
         $this->builder->renameColumn('test', 'id', 'id_new');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
 
         $this->assertSame(['id_new'], $tableSchema->getColumnNames());
         $this->assertInformerOutputContains('    > Rename column id in table test to id_new ... Done in');
+
+        $this->builder->dropTable('test');
     }
 
     public static function dataAlterColumn(): array
@@ -271,7 +294,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => $this->builder->integer()]);
         $this->builder->alterColumn('test', 'id', $type);
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('id');
 
         $this->assertNotEmpty($tableSchema);
@@ -285,6 +308,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         }
 
         $this->assertInformerOutputContains($expectedOutputString);
+
+        $this->builder->dropTable('test');
     }
 
     public function testAddPrimaryKey(): void
@@ -298,12 +323,14 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test', ['id' => $fieldType]);
         $this->builder->addPrimaryKey('test', 'id', ['id']);
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('id');
 
         $this->assertNotEmpty($tableSchema);
         $this->assertTrue($column->isPrimaryKey());
         $this->assertInformerOutputContains('    > Add primary key id on test (id) ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testDropPrimaryKey(): void
@@ -323,12 +350,14 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->builder->dropPrimaryKey('test', 'test_pk');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test', true);
+        $tableSchema = $this->db->getTableSchema('test', true);
         $column = $tableSchema->getColumn('id');
 
         $this->assertNotEmpty($tableSchema);
         $this->assertFalse($column->isPrimaryKey());
         $this->assertInformerOutputContains('    > Drop primary key test_pk ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testAddForeignKey(): void
@@ -356,7 +385,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             $update,
         );
 
-        $foreingKeys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
+        $foreingKeys = $this->db->getTableSchema('test_table')->getForeignKeys();
 
         if ($this->db->getDriverName() !== 'oci') {
             $this->assertSame(['fk' => ['target_table', 'foreign_id' => 'id']], $foreingKeys);
@@ -367,6 +396,9 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertInformerOutputContains(
             '    > Add foreign key fk: test_table (foreign_id) references target_table (id) ... Done in',
         );
+
+        $this->builder->dropTable('test_table');
+        $this->builder->dropTable('target_table');
     }
 
     public function testDropForeignKey(): void
@@ -376,10 +408,13 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->addForeignKey('test_table', 'fk', 'foreign_id', 'target_table', 'id');
         $this->builder->dropForeignKey('test_table', 'fk');
 
-        $foreingKeys = $this->db->getSchema()->getTableSchema('test_table')->getForeignKeys();
+        $foreingKeys = $this->db->getTableSchema('test_table')->getForeignKeys();
 
         $this->assertEmpty($foreingKeys);
         $this->assertInformerOutputContains('    > Drop foreign key fk from table test_table ... Done');
+
+        $this->builder->dropTable('test_table');
+        $this->builder->dropTable('target_table');
     }
 
     public function testCreateIndex(): void
@@ -398,10 +433,11 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame(['id'], $index->getColumnNames());
         $this->assertTrue($index->isUnique());
         $this->assertFalse($index->isPrimary());
-
         $this->assertInformerOutputContains(
             '    > Create UNIQUE index unique_index on test_table (id) ... Done in ',
         );
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testCreateAndDropView(): void
@@ -421,6 +457,9 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $viewNames = $schema->getViewNames(refresh: true);
 
         $this->assertNotContains('test_view', $viewNames);
+        $this->assertInformerOutputContains('    > Drop view test_view ... Done in ');
+
+        $this->builder->dropTable('test');
     }
 
     public function testDropIndex(): void
@@ -433,6 +472,8 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->assertCount(0, $indexes);
         $this->assertInformerOutputContains('    > Drop index test_index on test_table ... Done in ');
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testAddCommentOnColumn(): void
@@ -440,11 +481,13 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
         $this->builder->addCommentOnColumn('test_table', 'id', 'test comment');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
+        $tableSchema = $this->db->getTableSchema('test_table', true);
         $column = $tableSchema->getColumn('id');
 
         $this->assertSame('test comment', $column->getComment());
         $this->assertInformerOutputContains('    > Add comment on column id ... Done ');
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testAddCommentOnTable(): void
@@ -452,9 +495,12 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
         $this->builder->addCommentOnTable('test_table', 'test comment');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
+        $tableSchema = $this->builder->getDb()->getTableSchema('test_table', true);
 
         $this->assertSame('test comment', $tableSchema?->getComment());
+        $this->assertInformerOutputContains('    > Add comment on table test_table ... Done ');
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testDropCommentFromColumn(): void
@@ -463,13 +509,17 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->addCommentOnColumn('test_table', 'id', 'comment');
         $this->builder->dropCommentFromColumn('test_table', 'id');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
+        $tableSchema = $this->builder->getDb()->getTableSchema('test_table', true);
         $column = $tableSchema->getColumn('id');
 
-        match ($this->db->getDriverName()) {
+        match ($this->builder->getDb()->getDriverName()) {
             'mysql', 'oci', 'sqlsrv' => $this->assertEmpty($column->getComment()),
             default => $this->assertNull($column->getComment()),
         };
+
+        $this->assertInformerOutputContains('    > Drop comment from column id ... Done ');
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testDropCommentFromTable(): void
@@ -478,19 +528,21 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->addCommentOnTable('test_table', 'comment');
         $this->builder->dropCommentFromTable('test_table');
 
-        $tableSchema = $this->db->getSchema()->getTableSchema('test_table', true);
+        $tableSchema = $this->builder->getDb()->getTableSchema('test_table', true);
 
-        match ($this->db->getDriverName()) {
+        match ($this->builder->getDb()->getDriverName()) {
             'mysql' => $this->assertEmpty($tableSchema?->getComment()),
             default => $this->assertNull($tableSchema?->getComment()),
         };
+
+        $this->builder->dropTable('test_table');
     }
 
     public function testMaxSqlOutputLength(): void
     {
         $this->prepareVariables(4);
 
-        if ($this->db->getDriverName() === 'oci') {
+        if ($this->builder->getDb()->getDriverName() === 'oci') {
             $this->builder->execute(
                 <<<SQL
                 SELECT 1+2+3+4+5+6+7+8+9+10+11 AS resultado FROM dual
@@ -624,13 +676,15 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame($this->db, $this->builder->getDb());
     }
 
-    private function assertInformerOutputContains(string $string): void
+    protected function assertInformerOutputContains(string $string): void
     {
         $this->assertStringContainsString($string, $this->informer->getOutput());
     }
 
     private function prepareVariables(int $maxSqlOutputLength = 0): void
     {
+        $this->db = $this->container->get(ConnectionInterface::class);
+
         $this->informer = new StubMigrationInformer();
         $this->builder = new MigrationBuilder($this->db, $this->informer, $maxSqlOutputLength);
     }

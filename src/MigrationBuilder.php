@@ -608,6 +608,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $this->endCommand($time);
     }
 
+    public function defaulSchema(string $defaultSchema): void
+    {
+        $schema = $this->db->getSchema();
+        $schema->defaultSchema($defaultSchema);
+    }
+
     /**
      * Prepares for a command to be executed, and outputs to the console.
      *
