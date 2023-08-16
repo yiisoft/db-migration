@@ -13,7 +13,7 @@
         <ini name="error_reporting" value="-1"/>
     </php>
     <testsuites>
-        <testsuite name="YiiDbMigration">
+        <testsuite name="Migration">
             <directory>./tests/Migration</directory>
         </testsuite>
         <testsuite name="Mssql">
@@ -35,8 +35,9 @@
     <source>
         <include>
             <directory>./src</directory>
-            <directory>./config</directory>
-            <directory>./resources</directory>
         </include>
+        <exclude>
+            <file>./src/Service/Generate/PhpRenderer.php</file>
+        </exclude>
     </source>
 </phpunit>

@@ -15,12 +15,14 @@ use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 abstract class AbstractUpdateCommandTest extends TestCase
 {
     use AssertTrait;
 
     protected ContainerInterface $container;
+    private StubMigrationInformer $informer;
 
     public function testExecuteWithPath(): void
     {
@@ -38,6 +40,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
 
         $db = $this->container->get(ConnectionInterface::class);
         $dbSchema = $db->getSchema();
@@ -59,6 +62,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(50, $departmentSchema->getColumn('name')->getSize());
         $this->assertSame('string', $departmentSchema->getColumn('name')->getType());
         $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+
+        // check title
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+
+        $this->assertStringContainsString("Applying $className", $output);
+        $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
     }
 
     public function testExecuteWithNamespace(): void
