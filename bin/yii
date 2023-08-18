@@ -12,8 +12,6 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 
-$application = new Application('migration', '1.0.0');
-
 $containerConfig = ContainerConfig::create()->withDefinitions(Di::definitions());
 $container = new Container($containerConfig);
 
@@ -25,8 +23,6 @@ if ($container->has(ConnectionInterface::class) === false) {
     throw new \RuntimeException('ConnectionInterface not found in container');
 }
 
-foreach (Di::getCommands() as $command) {
-    $application->add($container->get($command));
-}
-
+/** @var Application $application */
+$application = $container->get(Application::class);
 $application->run();

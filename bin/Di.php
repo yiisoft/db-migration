@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Console\Application;
+use Yiisoft\Definitions\ReferencesArray;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -17,6 +19,13 @@ final class Di
     public static function definitions(): array
     {
         return [
+            Application::class => [
+                '__construct()' => [
+                    'name' => 'Yii Database Migration Tool',
+                    'version' => '1.0.0',
+                ],
+                'addCommands()' => [self::getCommands()],
+            ],
             MigrationService::class => [
                 'class' => MigrationService::class,
                 'createNamespace()' => [''],
@@ -30,13 +39,15 @@ final class Di
 
     public static function getCommands(): array
     {
-        return [
-            CreateCommand::class,
-            DownCommand::class,
-            HistoryCommand::class,
-            NewCommand::class,
-            RedoCommand::class,
-            UpdateCommand::class,
-        ];
+        return ReferencesArray::from(
+            [
+                CreateCommand::class,
+                DownCommand::class,
+                HistoryCommand::class,
+                NewCommand::class,
+                RedoCommand::class,
+                UpdateCommand::class,
+            ]
+        );
     }
 }
