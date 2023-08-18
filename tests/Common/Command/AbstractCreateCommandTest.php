@@ -6,9 +6,9 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
@@ -63,7 +63,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -112,7 +112,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -311,7 +311,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertStringContainsString(
             'Related table for field "category_id" exists, but primary key is composite. Default name "id" will be used for related field',
@@ -450,7 +450,7 @@ final class $className implements RevertibleMigrationInterface
 EOF;
         $generatedMigrationCode = file_get_contents(MigrationHelper::getPathForMigrationNamespace() . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -465,7 +465,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post?']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'The migration name should contain letters, digits, underscore and/or backslash characters only.',
             $output
@@ -482,7 +482,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post', '--command' => 'noExist']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'Command not found "noExist". Available commands: ' .
             'create, table, dropTable, addColumn, dropColumn, junction.',
@@ -502,7 +502,7 @@ EOF;
         ]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The migration name is too long.', $output);
     }
 
@@ -548,7 +548,7 @@ final class $className implements RevertibleMigrationInterface
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -599,7 +599,7 @@ final class $className implements RevertibleMigrationInterface
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -656,7 +656,7 @@ final class $className implements RevertibleMigrationInterface
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -714,7 +714,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -837,7 +837,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -959,7 +959,7 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -976,7 +976,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
@@ -992,7 +992,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'At least one of `createNamespace` or `createPath` should be specified.',
             $output
@@ -1012,7 +1012,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
@@ -1028,7 +1028,7 @@ EOF;
         $exitCode = $command->execute(['name' => 'post']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'At least one of `createNamespace` or `createPath` should be specified.',
             $output

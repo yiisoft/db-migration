@@ -15,7 +15,6 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Strings\Inflector;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -115,8 +114,8 @@ final class CreateCommand extends Command
         $this->migrationService->setIO($io);
         $this->createService->setIO($io);
 
-        if ($this->migrationService->before(self::getDefaultName() ?? '') === ExitCode::DATAERR) {
-            return ExitCode::DATAERR;
+        if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
+            return Command::INVALID;
         }
 
         /** @var string */
@@ -142,7 +141,7 @@ final class CreateCommand extends Command
                 'The migration name should contain letters, digits, underscore and/or backslash characters only.'
             );
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
@@ -152,7 +151,7 @@ final class CreateCommand extends Command
                 "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'
             );
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
@@ -164,7 +163,7 @@ final class CreateCommand extends Command
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
             $io->error('The migration name is too long.');
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $migrationPath = FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace));
@@ -177,7 +176,7 @@ final class CreateCommand extends Command
         if (!file_exists($migrationPath)) {
             $io->error("Invalid path directory {$migrationPath}");
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $question = new ConfirmationQuestion(
@@ -206,7 +205,7 @@ final class CreateCommand extends Command
 
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 
     private function generateName(string $command, string $name, ?string $and): string

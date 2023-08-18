@@ -6,8 +6,8 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
@@ -40,7 +40,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertEquals(ExitCode::OK, $exitCode);
+        $this->assertEquals(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);
         $this->assertStringContainsString($classPost, $output);
         $this->assertStringContainsString($classTag, $output);
@@ -70,7 +70,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $exitCode = $command->execute(['-l' => '1']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Last 1 applied migration:', $output);
         $this->assertStringContainsString($classTag, $output);
     }
@@ -92,7 +92,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $exitCode = $command->execute(['-l' => -1]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The step argument must be greater than 0.', $output);
     }
 
@@ -105,7 +105,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('No migration has been done before.', $output);
     }
 
