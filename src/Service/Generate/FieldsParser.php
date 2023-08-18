@@ -30,10 +30,12 @@ final class FieldsParser
 
         if (!empty($value)) {
             $fields = explode(',', $value);
+            /** @psalm-var string[] $fields */
             foreach ($fields as $field) {
                 $chunks = $this->splitFieldIntoChunks($field);
-                $property = array_shift($chunks);
+                $property = (string) array_shift($chunks);
 
+                /** @psalm-var string[] $chunks */
                 foreach ($chunks as $i => $chunk) {
                     if (str_starts_with($chunk, 'foreignKey')) {
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
@@ -53,6 +55,7 @@ final class FieldsParser
                     }
                 }
 
+                /** @psalm-var string[] $chunks */
                 $columns[] = new Column($property, $chunks);
             }
         }

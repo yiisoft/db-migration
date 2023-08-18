@@ -63,6 +63,7 @@ final class UpdateCommand extends Command
 
         $limit = (int) $input->getOption('limit');
 
+        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {

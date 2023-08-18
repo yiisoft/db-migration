@@ -15,6 +15,7 @@ final class PhpRenderer
     {
         /** @psalm-suppress MissingClosureReturnType */
         $renderer = function () {
+            /** @psalm-suppress MixedArgument */
             extract(func_get_arg(1), EXTR_OVERWRITE);
             /** @psalm-suppress UnresolvableInclude */
             require func_get_arg(0);

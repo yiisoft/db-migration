@@ -98,8 +98,8 @@ final class RedoCommand extends Command
             true
         );
 
-
         if ($helper->ask($input, $output, $question)) {
+            /** @psalm-var class-string[] $migrations */
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
             foreach ($instances as $instance) {
                 $this->downRunner->run($instance);

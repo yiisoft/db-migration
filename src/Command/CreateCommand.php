@@ -156,6 +156,10 @@ final class CreateCommand extends Command
 
         $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
 
+        /**
+         * @var string $namespace
+         * @var string $className
+         */
         [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
 
         $nameLimit = $this->migrator->getMigrationNameLimit();
@@ -208,7 +212,7 @@ final class CreateCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function generateName(string $command, string $name, ?string $and): string
+    private function generateName(string $command, string $name, string|null $and): string
     {
         $result = '';
 
@@ -218,7 +222,7 @@ final class CreateCommand extends Command
             'dropTable' => 'Drop_' . $name . '_Table',
             'addColumn' => 'Add_Column_' . $name,
             'dropColumn' => 'Drop_Column_' . $name,
-            'junction' => 'Junction_Table_For_' . $name . '_And_' . $and . '_Tables',
+            'junction' => 'Junction_Table_For_' . $name . '_And_' . (string) $and . '_Tables',
             default => $result,
         };
     }

@@ -6,6 +6,7 @@ namespace Yiisoft\Yii\Db\Migration;
 
 use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
@@ -185,12 +186,13 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function createTable(string $table, array $columns, ?string $options = null): void
+    public function createTable(string $table, array $columns, string|null $options = null): void
     {
         $time = $this->beginCommand("create table $table");
 
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
+        /** @psalm-var array<string, string> $columns */
         foreach ($columns as $column => $type) {
             if ($type instanceof ColumnInterface) {
                 $comment = $type->getComment();
@@ -351,11 +353,13 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @psalm-param string[]|string $columns
      */
     public function addPrimaryKey(string $table, string $name, array|string $columns): void
     {
         $time = $this->beginCommand(
-            "Add primary key $name on $table (" . (is_array($columns) ? implode(',', $columns) : $columns) . ')'
+            "Add primary key $name on $table (" . implode(',', (array) $columns) . ')'
         );
         $this->db->createCommand()->addPrimaryKey($table, $name, $columns)->execute();
         $this->endCommand($time);
@@ -398,6 +402,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @psalm-param string[]|string $columns
+     * @psalm-param string[]|string $refColumns
      */
     public function addForeignKey(
         string $table,
@@ -405,16 +412,16 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         array|string $columns,
         string $refTable,
         array|string $refColumns,
-        ?string $delete = null,
-        ?string $update = null
+        string|null $delete = null,
+        string|null $update = null
     ): void {
         $time = $this->beginCommand(
             "Add foreign key $name: $table (" . implode(
                 ',',
-                (array)$columns
+                (array) $columns
             ) . ") references $refTable (" . implode(
                 ',',
-                (array)$refColumns
+                (array) $refColumns
             ) . ')'
         );
         $this->db->createCommand()->addForeignKey(
@@ -463,18 +470,20 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @psalm-param string[]|string $columns
      */
     public function createIndex(
         string $table,
         string $name,
         array|string $columns,
-        ?string $indexType = null,
-        ?string $indexMethod = null
+        string|null $indexType = null,
+        string|null $indexMethod = null
     ): void {
         $time = $this->beginCommand(
             'Create'
             . ($indexType !== null ? ' ' . $indexType : '')
-            . " index $name on $table (" . implode(',', (array)$columns) . ')'
+            . " index $name on $table (" . implode(',', (array) $columns) . ')'
         );
         $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);
@@ -639,6 +648,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
 
     private function hasIndex(string $table, string $column): bool
     {
+        /** @psalm-var Constraint[] $indexes */
         $indexes = $this->db->getSchema()->getTableIndexes($table);
 
         foreach ($indexes as $index) {
