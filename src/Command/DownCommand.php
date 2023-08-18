@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
@@ -68,7 +67,7 @@ final class DownCommand extends Command
             if ($limit <= 0) {
                 $io->error('The limit argument must be greater than 0.');
                 $this->migrationService->databaseConnection();
-                return ExitCode::DATAERR;
+                return Command::INVALID;
             }
         }
 
@@ -78,7 +77,7 @@ final class DownCommand extends Command
             $output->writeln("<fg=yellow> >>> Apply a new migration to run this command.</>\n");
             $io->warning('No migration has been done before.');
 
-            return ExitCode::UNSPECIFIED_ERROR;
+            return Command::SUCCESS;
         }
 
         $migrations = array_keys($migrations);
@@ -114,6 +113,6 @@ final class DownCommand extends Command
 
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 }

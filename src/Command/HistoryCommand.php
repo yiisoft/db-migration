@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
@@ -58,7 +57,7 @@ final class HistoryCommand extends Command
             $io->error('The step argument must be greater than 0.');
             $this->migrationService->databaseConnection();
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $migrations = $this->migrator->getHistory($limit);
@@ -66,7 +65,7 @@ final class HistoryCommand extends Command
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return ExitCode::UNSPECIFIED_ERROR;
+            return Command::SUCCESS;
         }
 
         $n = count($migrations);
@@ -87,6 +86,6 @@ final class HistoryCommand extends Command
         $io->success('Success.');
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 }

@@ -7,12 +7,12 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Strings\Inflector;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
@@ -54,7 +54,7 @@ final class MigrationService
      */
     public function before(string $defaultName): int
     {
-        $result = ExitCode::OK;
+        $result = Command::SUCCESS;
 
         switch ($defaultName) {
             case 'migrate:create':
@@ -65,7 +65,7 @@ final class MigrationService
                         );
                     }
 
-                    $result = ExitCode::DATAERR;
+                    $result = Command::INVALID;
                 }
                 break;
             case 'migrate:up':
@@ -76,7 +76,7 @@ final class MigrationService
                         );
                     }
 
-                    $result = ExitCode::DATAERR;
+                    $result = Command::INVALID;
                 }
                 break;
         }

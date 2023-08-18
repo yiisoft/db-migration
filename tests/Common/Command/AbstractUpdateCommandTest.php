@@ -7,9 +7,9 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
@@ -46,7 +46,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
@@ -91,7 +91,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
@@ -143,7 +143,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $departmentSchema = $dbSchema->getTableSchema('department');
         $studentSchema = $dbSchema->getTableSchema('student');
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
@@ -221,10 +221,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode2 = $command2->execute([]);
         $output2 = $command2->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode1);
+        $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('1 Migration was applied.', $output1);
 
-        $this->assertSame(ExitCode::OK, $exitCode2);
+        $this->assertSame(Command::SUCCESS, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
     }
 
@@ -265,7 +265,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'At least one of `updateNamespaces` or `updatePaths` should be specified.',
             $output
@@ -284,7 +284,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'At least one of `updateNamespaces` or `updatePaths` should be specified.',
             $output
@@ -317,7 +317,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute(['-l' => 1]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 out of 2 new migrations to be applied:', $output);
         $this->assertStringContainsString('create table post', $output);
         $this->assertExistsTables($this->container, 'post');
@@ -342,7 +342,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'is too long. Its not possible to apply this migration.',
             $output

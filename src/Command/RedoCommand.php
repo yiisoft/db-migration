@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
@@ -72,7 +71,7 @@ final class RedoCommand extends Command
             $io->error('The step argument must be greater than 0.');
             $this->migrationService->databaseConnection();
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
         $migrations = $this->migrator->getHistory($limit);
@@ -80,7 +79,7 @@ final class RedoCommand extends Command
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return ExitCode::UNSPECIFIED_ERROR;
+            return Command::SUCCESS;
         }
 
         $migrations = array_keys($migrations);
@@ -117,6 +116,6 @@ final class RedoCommand extends Command
 
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 }
