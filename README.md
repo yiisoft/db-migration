@@ -17,157 +17,18 @@ The package implementing migration for [yiisoft/db](https://github.com/yiisoft/d
 [![static analysis](https://github.com/yiisoft/yii-db-migration/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/yii-db-migration/coverage.svg)](https://shepherd.dev/github/yiisoft/yii-db-migration)
 
-## Installation
+## Usage 
 
-The package could be installed via composer:
+[Check the documentation](/docs/en/README.md) to learn about usage.
 
-```shell
-composer require yiisoft/yii-db-migration --prefer-dist
-```
+## Support
 
-**Note: You must install the repository of the implementation to use.**
-
-Example:
-
-```shell
-composer require yiisoft/db-sqlite --prefer-dist
-```
-
-## Requirements
-
-- PHP 8.0 or higher.
-- `Filter` PHP extension.
-
-## Configuration
-
-Example using [yiisoft/app](https://github.com/yiisoft/app).
-
-Di-Container:
-
-Create `config/common/db.php` with content:
-```php
-<?php
-
-declare(strict_types=1);
-
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
-
-return [
-    ConnectionInterface::class => [
-        'class' => SqliteConnection::class,
-        '__construct()' => [
-            'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
-        ]
-    ]
-];
-```
-
-Add to `config/params.php`:
-```php
-...
-'yiisoft/yii-db-migration' => [
-    'createNamespace' => 'App\\Migration',
-    'updateNamespaces' => ['App\\Migration'],
-],
-...
-```
-
-Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
-
-Execute `composer du` in console config its rebuild.
-
-Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
-
-View the list of available commands execute in console: `./yii list`
-
-```
-Available commands:
-  migrate:create  Generate migration template.
-  help             Displays help for a command
-  list             Lists commands
-  migrate:down     Downgrades the application by reverting old migrations.
-  migrate:history  Displays the migration history.
-  migrate:new      Displays the first 10 new migrations.
-  migrate:redo     Redoes the last few migrations.
-  migrate:up       Upgrades the application by applying new migrations.
-  serve            Runs PHP built-in web server
-```
-
-Help simple command execute in console `./yii migrate:create --help`.
-
-```
-Description:
-  Generate migration template.
-
-Usage:
-  migrate:create [options] [--] <name>
-
-Arguments:
-  name                         Table name for generate migration.
-
-Options:
-  -c, --command[=COMMAND]      Command to execute. [default: "create"]
-  -f, --fields[=FIELDS]        To create table fields right away
-      --and[=AND]              And junction
-      --namespace[=NAMESPACE]  Namespace migration
-  -h, --help                   Display this help message
-  -q, --quiet                  Do not output any message
-  -V, --version                Display this application version
-      --ansi                   Force ANSI output
-      --no-ansi                Disable ANSI output
-  -n, --no-interaction         Do not ask any interactive question
-  -v|vv|vvv, --verbose         Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
-
-Help:
-  This command Generate migration template
-```
+If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/db/68) is a good place for that.
+You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
 
 ## Testing
 
-### Unit testing
-
-The package is tested with [PHPUnit](https://phpunit.de/). For tests need PostgreSQL database with configuration:
-
-- host: `127.0.0.1`
-- port: `5432`
-- name: `yiitest`
-- user: `root`
-- password: `root`
-
-#### Docker Image
-
-To easily set up a pre-configured PostgreSQL instance for testing you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) 
-file in this repository.
-
-For running the docker containers you can use the following command:
-
-```shell
-docker compose up -d
-```
-
-To run tests:
-
-```shell
-./vendor/bin/phpunit
-```
-
-### Mutation testing
-
-The package tests are checked with [Infection](https://infection.github.io/) mutation framework with
-[Infection Static Analysis Plugin](https://github.com/Roave/infection-static-analysis-plugin). To run it:
-
-```shell
-./vendor/bin/roave-infection-static-analysis-plugin
-```
-
-### Static analysis
-
-The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
-
-```shell
-./vendor/bin/psalm
-```
+[Check the testing instructions](/docs/en/testing.md) to learn about testing.
 
 ## License
 
