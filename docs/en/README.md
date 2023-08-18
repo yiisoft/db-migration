@@ -83,13 +83,22 @@ View the list of available commands execute in console: `./yii list`
 
 Edit `./bin/Di.php` and add definitions for `Psr\SimpleCache\CacheInterface` and `Yiisoft\Db\Connection\ConnectionInterface`.
 
-Also, configure `MigrationService::class` and `MigrationInformerInterface::class`. Here's a sample configuration.
+Also, configure `MigrationService::class` and `MigrationInformerInterface::class`.
+
+Here's a sample configuration.
 
 ```php
 <?php
 
 declare(strict_types=1);
 
+use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Console\Application;
+use Yiisoft\Cache\ArrayCache;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Sqlite\Connection;
+use Yiisoft\Db\Sqlite\Driver;
+use Yiisoft\Definitions\ReferencesArray;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
@@ -99,17 +108,19 @@ use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
-use Psr\SimpleCache\CacheInterface;
-use Yiisoft\Cache\ArrayCache;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\Connection;
-use Yiisoft\Db\Sqlite\Driver;
 
 final class Di
 {
     public static function definitions(): array
     {
         return [
+            Application::class => [
+                '__construct()' => [
+                    'name' => 'Yii Database Migration Tool',
+                    'version' => '1.0.0',
+                ],
+                'addCommands()' => [self::getCommands()],
+            ],
             CacheInterface::class => ArrayCache::class,
             ConnectionInterface::class => [
                 'class' => Connection::class,
@@ -130,19 +141,24 @@ final class Di
 
     public static function getCommands(): array
     {
-        return [
-            CreateCommand::class,
-            DownCommand::class,
-            HistoryCommand::class,
-            NewCommand::class,
-            RedoCommand::class,
-            UpdateCommand::class,
-        ];
+        return ReferencesArray::from(
+            [
+                CreateCommand::class,
+                DownCommand::class,
+                HistoryCommand::class,
+                NewCommand::class,
+                RedoCommand::class,
+                UpdateCommand::class,
+            ]
+        );
     }
 }
+
 ```
 
+
 > Note: The script `.bin/yii` its copy to `vendor/bin/yii`, also you can add more command console in `getCommands()`.
+
 
 ```
 Available commands:
@@ -157,7 +173,9 @@ Available commands:
   serve            Runs PHP built-in web server
 ```
 
+
 Help simple command execute in console `./yii migrate:create --help`.
+
 
 ```
 Description:
