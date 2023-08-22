@@ -20,7 +20,7 @@ if ($container->has(CacheInterface::class) === false) {
 }
 
 if ($container->has(ConnectionInterface::class) === false) {
-    throw new \RuntimeException('ConnectionInterface not found in container');
+    throw new \RuntimeException('ConnectionInterface not found in container.');
 }
 
 /** @var Application $application */
