@@ -85,8 +85,8 @@ final class Di
 to the `root` folder of your project, otherwise the command will not work.
 
 ```shell
-cp ./vendor/yiisoft/yii-db-migration/bin/yii ./yii
-cp ./vendor/yiisoft/yii-db-migration/bin/yii.bat ./yii.bat
+cp ./vendor/yiisoft/yii-db-migration/bin/yii ./
+cp ./vendor/yiisoft/yii-db-migration/bin/yii.bat ./
 ```
 
 4.- Run the command `./yii` to see the list of available commands.
