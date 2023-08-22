@@ -79,7 +79,7 @@ final class RedoCommand extends Command
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         $migrations = array_keys($migrations);

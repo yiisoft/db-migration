@@ -149,8 +149,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('No migration has been done before.', $output);
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('[WARNING] No migration has been done before.', $output);
     }
 
     public function testNotRevertibleMigrationInterface(): void

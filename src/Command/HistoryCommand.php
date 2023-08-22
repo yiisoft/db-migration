@@ -65,7 +65,7 @@ final class HistoryCommand extends Command
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         $n = count($migrations);

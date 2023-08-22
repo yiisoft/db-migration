@@ -77,7 +77,7 @@ final class DownCommand extends Command
             $output->writeln("<fg=yellow> >>> Apply a new migration to run this command.</>\n");
             $io->warning('No migration has been done before.');
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         $migrations = array_keys($migrations);

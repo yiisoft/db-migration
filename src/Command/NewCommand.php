@@ -61,10 +61,10 @@ final class NewCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $io->success('No new migrations found. Your system is up-to-date.');
+            $io->warning('No new migrations found. Your system is up-to-date.');
             $this->migrationService->databaseConnection();
 
-            return Command::SUCCESS;
+            return Command::FAILURE;
         }
 
         $n = count($migrations);

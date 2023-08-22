@@ -113,8 +113,8 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('1 migration was reverted.', $output1);
 
-        $this->assertSame(Command::SUCCESS, $exitCode2);
-        $this->assertStringContainsString('No migration has been done before.', $output2);
+        $this->assertSame(Command::FAILURE, $exitCode2);
+        $this->assertStringContainsString('[WARNING] No migration has been done before.', $output2);
     }
 
     public function testDowngradeAll(): void

@@ -121,8 +121,8 @@ abstract class AbstractNewCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('[OK] No new migrations found. Your system is up-to-date.', $output);
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('[WARNING] No new migrations found. Your system is up-to-date', $output);
     }
 
     public function testCountMigrationsMoreLimit(): void
