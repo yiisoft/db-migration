@@ -14,7 +14,7 @@ use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
-final class Di
+final class DiConsoleSymfony
 {
     public static function definitions(): array
     {

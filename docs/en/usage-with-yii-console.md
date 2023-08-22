@@ -40,3 +40,7 @@ Execute `composer du` in console config its rebuild.
 Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
 
 View the list of available commands execute in console: `./yii list`
+
+```shell
+./yii list
+```
