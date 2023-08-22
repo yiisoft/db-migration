@@ -16,7 +16,7 @@ $containerConfig = ContainerConfig::create()->withDefinitions(Di::definitions())
 $container = new Container($containerConfig);
 
 if ($container->has(CacheInterface::class) === false) {
-    throw new \RuntimeException('CacheInterface not found in container');
+    throw new \RuntimeException('CacheInterface not found in container.');
 }
 
 if ($container->has(ConnectionInterface::class) === false) {
