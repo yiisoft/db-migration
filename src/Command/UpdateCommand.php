@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
@@ -58,12 +57,13 @@ final class UpdateCommand extends Command
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
 
-        if ($this->migrationService->before(self::getDefaultName() ?? '') === ExitCode::DATAERR) {
-            return ExitCode::DATAERR;
+        if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
+            return Command::INVALID;
         }
 
         $limit = (int) $input->getOption('limit');
 
+        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
@@ -71,7 +71,7 @@ final class UpdateCommand extends Command
             $io->success('Your system is up-to-date.');
             $this->migrationService->databaseConnection();
 
-            return ExitCode::OK;
+            return Command::SUCCESS;
         }
 
         $total = count($migrations);
@@ -103,7 +103,7 @@ final class UpdateCommand extends Command
                     'this migration.</>'
                 );
 
-                return ExitCode::UNSPECIFIED_ERROR;
+                return Command::INVALID;
             }
 
             $output->writeln("\t<fg=yellow>$migration</>");
@@ -131,6 +131,6 @@ final class UpdateCommand extends Command
 
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 }

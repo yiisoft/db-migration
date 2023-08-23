@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require './vendor/autoload.php';
+require './DiConsoleSymfony.php';
+
+use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Console\Application;
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Di\Container;
+use Yiisoft\Di\ContainerConfig;
+
+$containerConfig = ContainerConfig::create()->withDefinitions(DiConsoleSymfony::definitions());
+$container = new Container($containerConfig);
+
+if ($container->has(CacheInterface::class) === false) {
+    throw new \RuntimeException('CacheInterface not found in container.');
+}
+
+if ($container->has(ConnectionInterface::class) === false) {
+    throw new \RuntimeException('ConnectionInterface not found in container.');
+}
+
+/** @var Application $application */
+$application = $container->get(Application::class);
+$application->run();

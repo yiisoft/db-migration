@@ -7,12 +7,12 @@ namespace Yiisoft\Yii\Db\Migration\Service;
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Strings\Inflector;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\MigrationInterface;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
@@ -23,7 +23,9 @@ final class MigrationService
 {
     private string $createNamespace = '';
     private string $createPath = '';
+    /** @psalm-var string[] */
     private array $updateNamespaces = [];
+    /** @psalm-var string[] */
     private array $updatePaths = [];
     private string $version = '1.0';
     private ?SymfonyStyle $io = null;
@@ -54,7 +56,7 @@ final class MigrationService
      */
     public function before(string $defaultName): int
     {
-        $result = ExitCode::OK;
+        $result = Command::SUCCESS;
 
         switch ($defaultName) {
             case 'migrate:create':
@@ -65,7 +67,7 @@ final class MigrationService
                         );
                     }
 
-                    $result = ExitCode::DATAERR;
+                    $result = Command::INVALID;
                 }
                 break;
             case 'migrate:up':
@@ -76,7 +78,7 @@ final class MigrationService
                         );
                     }
 
-                    $result = ExitCode::DATAERR;
+                    $result = Command::INVALID;
                 }
                 break;
         }
@@ -94,7 +96,7 @@ final class MigrationService
         $applied = [];
 
         foreach ($this->migrator->getHistory() as $class => $time) {
-            $applied[trim($class, '\\')] = true;
+            $applied[trim((string) $class, '\\')] = true;
         }
 
         $migrationPaths = [];
@@ -149,6 +151,8 @@ final class MigrationService
      * if you specify the namespace `app\migrations`, the code `$this->aliases->get('@app/migrations')` should be able
      * to return the file path to the directory this namespace refers to.
      * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
+     *
+     * @psalm-param string[] $value
      */
     public function updateNamespaces(array $value): void
     {
@@ -172,6 +176,8 @@ final class MigrationService
      *
      *
      * {@see $createNamespace}
+     *
+     * @psalm-param string[] $value
      */
     public function updatePaths(array $value): void
     {
@@ -344,11 +350,16 @@ final class MigrationService
         /** @psalm-suppress UnresolvableInclude */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
+        /**
+         * @psalm-var array<string, array<int, string>> $map
+         */
         foreach ($map as $namespace => $directorys) {
             foreach ($directorys as $directory) {
                 $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
             }
         }
+
+        /** @psalm-var array<string, string> $namespacesPath */
         return (new Aliases($namespacesPath))->get($path);
     }
 

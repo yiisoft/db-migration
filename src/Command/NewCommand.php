@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
 use function array_slice;
@@ -55,16 +54,17 @@ final class NewCommand extends Command
             $io->error('The step argument must be greater than 0.');
             $this->migrationService->databaseConnection();
 
-            return ExitCode::DATAERR;
+            return Command::INVALID;
         }
 
+        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $io->success('No new migrations found. Your system is up-to-date.');
+            $io->warning('No new migrations found. Your system is up-to-date.');
             $this->migrationService->databaseConnection();
 
-            return ExitCode::UNSPECIFIED_ERROR;
+            return Command::FAILURE;
         }
 
         $n = count($migrations);
@@ -84,6 +84,6 @@ final class NewCommand extends Command
 
         $this->migrationService->databaseConnection();
 
-        return ExitCode::OK;
+        return Command::SUCCESS;
     }
 }

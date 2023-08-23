@@ -6,8 +6,6 @@
     <br>
 </p>
 
-The package implementing migration for [yiisoft/db](https://github.com/yiisoft/db).
-
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/yii-db-migration/v/stable.png)](https://packagist.org/packages/yiisoft/yii-db-migration)
 [![Total Downloads](https://poser.pugx.org/yiisoft/yii-db-migration/downloads.png)](https://packagist.org/packages/yiisoft/yii-db-migration)
 [![Build status](https://github.com/yiisoft/yii-db-migration/workflows/build/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3Abuild)
@@ -17,69 +15,49 @@ The package implementing migration for [yiisoft/db](https://github.com/yiisoft/d
 [![static analysis](https://github.com/yiisoft/yii-db-migration/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/yii-db-migration/coverage.svg)](https://shepherd.dev/github/yiisoft/yii-db-migration)
 
-## Installation
+Yii Db Migration is package for YiiFramework 3.0, which allows you to use migrations in your project, using Yii Db.
 
-The package could be installed via composer:
+Supports the following databases out of the box:
 
-```shell
-composer require yiisoft/yii-db-migration --prefer-dist
-```
-
-**Note: You must install the repository of the implementation to use.**
-
-Example:
-
-```shell
-composer require yiisoft/db-sqlite --prefer-dist
-```
+- [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-2019) of versions **2017, 2019, 2022**.
+- [MySQL](https://www.mysql.com/) of versions **5.7 - 8.0**.
+- [MariaDB](https://mariadb.org/) of versions **10.4 - 10.9**.
+- [Oracle](https://www.oracle.com/database/) of versions **12c - 21c**.
+- [PostgreSQL](https://www.postgresql.org/) of versions **9.6 - 15**. 
+- [SQLite](https://www.sqlite.org/index.html) of version **3.3 and above**.
 
 ## Requirements
 
 - PHP 8.0 or higher.
 - `Filter` PHP extension.
 
-## Configuration
+## Installation
 
-Example using [yiisoft/app](https://github.com/yiisoft/app).
+The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-Di-Container:
+Either run
 
-Create `config/common/db.php` with content:
-```php
-<?php
-
-declare(strict_types=1);
-
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
-
-return [
-    ConnectionInterface::class => [
-        'class' => SqliteConnection::class,
-        '__construct()' => [
-            'dsn' => 'sqlite:' . __DIR__ . '/Data/yiitest.sq3'
-        ]
-    ]
-];
+```shell
+composer require --prefer-dist yiisoft/db-migration
 ```
 
-Add to `config/params.php`:
-```php
-...
-'yiisoft/yii-db-migration' => [
-    'createNamespace' => 'App\\Migration',
-    'updateNamespaces' => ['App\\Migration'],
-],
-...
+or add
+
+```json
+"yiisoft/db-migration": "^1.0"
 ```
 
-Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
+to the require section of your composer.json.
 
-Execute `composer du` in console config its rebuild.
+## Usage with Yii Console
 
-Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
+[Check the instructions](/docs/en/usage-with-yii-console.md) to learn about usage with Yii Console.
 
-View the list of available commands execute in console: `./yii list`
+## Usage with Symfony Console
+
+[Check the instructions](/docs/en/usage-with-symfony-console.md) to learn about usage with Symfony Console.
+
+## Command list
 
 ```
 Available commands:
@@ -93,6 +71,7 @@ Available commands:
   migrate:up       Upgrades the application by applying new migrations.
   serve            Runs PHP built-in web server
 ```
+
 
 Help simple command execute in console `./yii migrate:create --help`.
 
@@ -123,51 +102,14 @@ Help:
   This command Generate migration template
 ```
 
+## Support
+
+If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/db/68) is a good place for that.
+You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
+
 ## Testing
 
-### Unit testing
-
-The package is tested with [PHPUnit](https://phpunit.de/). For tests need PostgreSQL database with configuration:
-
-- host: `127.0.0.1`
-- port: `5432`
-- name: `yiitest`
-- user: `root`
-- password: `root`
-
-#### Docker Image
-
-To easily set up a pre-configured PostgreSQL instance for testing you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) 
-file in this repository.
-
-For running the docker containers you can use the following command:
-
-```shell
-docker compose up -d
-```
-
-To run tests:
-
-```shell
-./vendor/bin/phpunit
-```
-
-### Mutation testing
-
-The package tests are checked with [Infection](https://infection.github.io/) mutation framework with
-[Infection Static Analysis Plugin](https://github.com/Roave/infection-static-analysis-plugin). To run it:
-
-```shell
-./vendor/bin/roave-infection-static-analysis-plugin
-```
-
-### Static analysis
-
-The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
-
-```shell
-./vendor/bin/psalm
-```
+[Check the testing instructions](/docs/en/testing.md) to learn about testing.
 
 ## License
 

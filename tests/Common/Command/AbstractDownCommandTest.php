@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
 use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Console\ExitCode;
 use Yiisoft\Yii\Db\Migration\Command\DownCommand;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
@@ -49,7 +49,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
         $this->assertNotExistsTables($this->container, 'user');
         $this->assertExistsTables($this->container, 'post');
@@ -80,7 +80,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
         $this->assertNotExistsTables($this->container, 'user');
         $this->assertExistsTables($this->container, 'post');
@@ -110,11 +110,11 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode2 = $command2->execute([]);
         $output2 = $command2->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode1);
+        $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('1 migration was reverted.', $output1);
 
-        $this->assertSame(ExitCode::UNSPECIFIED_ERROR, $exitCode2);
-        $this->assertStringContainsString('No migration has been done before.', $output2);
+        $this->assertSame(Command::FAILURE, $exitCode2);
+        $this->assertStringContainsString('[WARNING] No migration has been done before.', $output2);
     }
 
     public function testDowngradeAll(): void
@@ -142,7 +142,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode = $command->execute(['--all' => true]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('2 migrations were reverted.', $output);
         $this->assertNotExistsTables($this->container, 'user', 'post');
     }
@@ -247,7 +247,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode = $command->execute(['-l' => '2']);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::OK, $exitCode);
+        $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('[OK] 2 migrations were reverted.', $output);
     }
 
@@ -269,7 +269,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $exitCode = $command->execute(['--limit' => $limit]);
         $output = $command->getDisplay(true);
 
-        $this->assertSame(ExitCode::DATAERR, $exitCode);
+        $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The limit argument must be greater than 0.', $output);
     }
 
