@@ -30,7 +30,7 @@ use function count;
  *
  * ```
  * yii migrate:redo     # redo the last applied migration
- * yii migrate:redo 3   # redo the last 3 applied migrations
+ * yii migrate:redo 3   # redo last 3 applied migrations
  * yii migrate:redo all # redo all migrations
  * ```
  */
@@ -52,7 +52,7 @@ final class RedoCommand extends Command
     public function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redoes.', null);
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redo.', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

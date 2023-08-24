@@ -5,8 +5,8 @@ declare(strict_types=1);
 /**
  * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
  * @var $table string
- * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
- * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
+ * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] Fields.
+ * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
  */
 
 foreach ($columns as $column) {

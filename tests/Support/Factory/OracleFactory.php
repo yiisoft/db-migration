@@ -25,7 +25,7 @@ final class OracleFactory
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -36,27 +36,20 @@ final class OracleFactory
                 ),
             ],
             static function (string $id) use (&$container, $config): object {
-                switch ($id) {
-                    case ConnectionInterface::class:
-                        return new OracleConnection(
-                            new OracleDriver(
-                                'oci:dbname=localhost:1521;charset=AL32UTF8',
-                                'system',
-                                'root',
-                            ),
-                            new SchemaCache(new MemorySimpleCache()),
-                        );
-
-                    case OracleConnection::class:
-                        return $container->get(ConnectionInterface::class);
-
-                    default:
-                        return ContainerHelper::get($container, $id, $config);
-                }
+                return match ($id) {
+                    ConnectionInterface::class => new OracleConnection(
+                        new OracleDriver(
+                            'oci:dbname=localhost:1521;charset=AL32UTF8',
+                            'system',
+                            'root',
+                        ),
+                        new SchemaCache(new MemorySimpleCache()),
+                    ),
+                    OracleConnection::class => $container->get(ConnectionInterface::class),
+                    default => ContainerHelper::get($container, $id, $config),
+                };
             }
         );
-
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void

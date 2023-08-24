@@ -22,7 +22,7 @@ use function count;
 use function strlen;
 
 /**
- * Upgrades the application by applying new migrations.
+ * Applies new migrations.
  *
  * For example,
  *
@@ -31,7 +31,7 @@ use function strlen;
  * yii migrate:up --limit=3 # apply the first 3 new migrations
  * ```
  */
-#[AsCommand('migrate:up', 'Upgrades the application by applying new migrations.')]
+#[AsCommand('migrate:up', 'Applies new migrations.')]
 final class UpdateCommand extends Command
 {
     public function __construct(

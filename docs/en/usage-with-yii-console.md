@@ -1,10 +1,9 @@
 # Yii Console
 
-Example using [yiisoft/app](https://github.com/yiisoft/app).
+In this example we use [yiisoft/app](https://github.com/yiisoft/app).
 
-Di-Container:
+First, configure DI container. Create `config/common/db.php` with the following content:
 
-Create `config/common/db.php` with content:
 ```php
 <?php
 
@@ -24,6 +23,7 @@ return [
 ```
 
 Add to `config/params.php`:
+
 ```php
 ...
 'yiisoft/yii-db-migration' => [
@@ -35,11 +35,11 @@ Add to `config/params.php`:
 
 Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
 
-Execute `composer du` in console config its rebuild.
+Execute `composer du` in console to rebuild the configuration.
 
 Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
 
-View the list of available commands execute in console: `./yii list`
+View the list of available commands with `./yii list`:
 
 ```shell
 ./yii list

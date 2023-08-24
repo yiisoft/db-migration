@@ -25,7 +25,7 @@ final class SqLiteFactory
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -36,25 +36,18 @@ final class SqLiteFactory
                 ),
             ],
             static function (string $id) use (&$container, $config): object {
-                switch ($id) {
-                    case ConnectionInterface::class:
-                        return new SqLiteConnection(
-                            new SqLiteDriver(
-                                'sqlite:' . dirname(__DIR__, 2) . '/runtime/yiitest.sq3'
-                            ),
-                            new SchemaCache(new MemorySimpleCache())
-                        );
-
-                    case SqLiteConnection::class:
-                        return $container->get(ConnectionInterface::class);
-
-                    default:
-                        return ContainerHelper::get($container, $id, $config);
-                }
+                return match ($id) {
+                    ConnectionInterface::class => new SqLiteConnection(
+                        new SqLiteDriver(
+                            'sqlite:' . dirname(__DIR__, 2) . '/runtime/yiitest.sq3'
+                        ),
+                        new SchemaCache(new MemorySimpleCache())
+                    ),
+                    SqLiteConnection::class => $container->get(ConnectionInterface::class),
+                    default => ContainerHelper::get($container, $id, $config),
+                };
             }
         );
-
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void

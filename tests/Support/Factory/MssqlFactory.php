@@ -25,7 +25,7 @@ final class MssqlFactory
     {
         $config ??= new ContainerConfig();
 
-        $container = new SimpleContainer(
+        return new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -36,27 +36,20 @@ final class MssqlFactory
                 ),
             ],
             static function (string $id) use (&$container, $config): object {
-                switch ($id) {
-                    case ConnectionInterface::class:
-                        return new MssqlConnection(
-                            new MssqlDriver(
-                                'sqlsrv:Server=127.0.0.1,1433;Database=yiitest',
-                                'SA',
-                                'YourStrong!Passw0rd',
-                            ),
-                            new SchemaCache(new MemorySimpleCache()),
-                        );
-
-                    case MssqlConnection::class:
-                        return $container->get(ConnectionInterface::class);
-
-                    default:
-                        return ContainerHelper::get($container, $id, $config);
-                }
+                return match ($id) {
+                    ConnectionInterface::class => new MssqlConnection(
+                        new MssqlDriver(
+                            'sqlsrv:Server=127.0.0.1,1433;Database=yiitest',
+                            'SA',
+                            'YourStrong!Passw0rd',
+                        ),
+                        new SchemaCache(new MemorySimpleCache()),
+                    ),
+                    MssqlConnection::class => $container->get(ConnectionInterface::class),
+                    default => ContainerHelper::get($container, $id, $config),
+                };
             }
         );
-
-        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void

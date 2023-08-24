@@ -16,18 +16,18 @@ use function array_slice;
 use function count;
 
 /**
- * Displays the un-applied new migrations.
+ * Displays not yet applied migrations.
  *
- * This command will show the new migrations that have not been applied.
+ * This command will show the new migrations that have not been applied yet.
  * For example,
  *
  * ```
- * yii migrate:new     # showing the first 10 new migrations
- * yii migrate:new 5   # showing the first 5 new migrations
- * yii migrate:new all # showing all new migrations
+ * yii migrate:new     # first 10 new migrations
+ * yii migrate:new 5   # first 5 new migrations
+ * yii migrate:new all # all new migrations
  * ```
  */
-#[AsCommand('migrate:new', 'Displays the first 10 new migrations.')]
+#[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
 final class NewCommand extends Command
 {
     public function __construct(private MigrationService $migrationService)

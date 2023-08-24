@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * This view is used by Yiisoft\Db\Yii\Migration\Command.
+ * This view is used by {@see Yiisoft\Yii\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
  * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
- * @var $className string the new migration class name without namespace
- * @var $namespace string the new migration class namespace
+ * @var $className string The new migration class name without namespace.
+ * @var $namespace string The new migration class namespace.
  */
 
 echo "<?php\n";

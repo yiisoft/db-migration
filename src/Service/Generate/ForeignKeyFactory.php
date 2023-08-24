@@ -43,12 +43,12 @@ final class ForeignKeyFactory
                 match (count($primaryKeys)) {
                     1 => $relatedColumn = (string) $primaryKeys[0],
                     default => $this->io?->writeln(
-                        "<fg=yellow> Related table for field \"{$column}\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
+                        "<fg=yellow> Related table for field \"$column\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
                     ),
                 };
             } else {
                 $this->io?->writeln(
-                    "<fg=yellow> Related table for field \"{$column}\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
+                    "<fg=yellow> Related table for field \"$column\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
                 );
             }
         }

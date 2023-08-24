@@ -15,7 +15,7 @@
 [![static analysis](https://github.com/yiisoft/yii-db-migration/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/yii-db-migration/actions?query=workflow%3A%22static+analysis%22)
 [![type-coverage](https://shepherd.dev/github/yiisoft/yii-db-migration/coverage.svg)](https://shepherd.dev/github/yiisoft/yii-db-migration)
 
-Yii Db Migration is package for YiiFramework 3.0, which allows you to use migrations in your project, using Yii Db.
+Yii DB Migration allows you to manage database schema using migrations.
 
 Supports the following databases out of the box:
 
@@ -47,7 +47,7 @@ or add
 "yiisoft/db-migration": "^1.0"
 ```
 
-to the require section of your composer.json.
+to the `require` section of your `composer.json`.
 
 ## Usage with Yii Console
 
@@ -60,47 +60,15 @@ to the require section of your composer.json.
 ## Command list
 
 ```
-Available commands:
-  migrate:create  Generate migration template.
-  help             Displays help for a command
-  list             Lists commands
-  migrate:down     Downgrades the application by reverting old migrations.
-  migrate:history  Displays the migration history.
-  migrate:new      Displays the first 10 new migrations.
-  migrate:redo     Redoes the last few migrations.
-  migrate:up       Upgrades the application by applying new migrations.
-  serve            Runs PHP built-in web server
+migrate:create   Creates a new migration.
+migrate:down     Reverts the specified number of latest migrations.
+migrate:history  Displays the migration history.
+migrate:new      Displays not yet applied migrations.
+migrate:redo     Redoes the last few migrations.
+migrate:up       Applies new migrations.
 ```
 
-
-Help simple command execute in console `./yii migrate:create --help`.
-
-```
-Description:
-  Generate migration template.
-
-Usage:
-  migrate:create [options] [--] <name>
-
-Arguments:
-  name                         Table name for generate migration.
-
-Options:
-  -c, --command[=COMMAND]      Command to execute. [default: "create"]
-  -f, --fields[=FIELDS]        To create table fields right away
-      --and[=AND]              And junction
-      --namespace[=NAMESPACE]  Namespace migration
-  -h, --help                   Display this help message
-  -q, --quiet                  Do not output any message
-  -V, --version                Display this application version
-      --ansi                   Force ANSI output
-      --no-ansi                Disable ANSI output
-  -n, --no-interaction         Do not ask any interactive question
-  -v|vv|vvv, --verbose         Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
-
-Help:
-  This command Generate migration template
-```
+The create command allows to define fields for the table being created.
 
 ## Support
 
