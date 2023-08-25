@@ -25,7 +25,7 @@ final class MysqlFactory
     {
         $config ??= new ContainerConfig();
 
-        return new SimpleContainer(
+        $container = new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -50,6 +50,8 @@ final class MysqlFactory
                 };
             }
         );
+
+        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void

@@ -20,7 +20,7 @@ abstract class AbstractUpRunnerTest extends TestCase
         $runner = new UpdateRunner($this->container->get(Migrator::class));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Need set output decorator via `setIO()`.');
+        $this->expectExceptionMessage('You need to set output decorator via `setIO()`.');
 
         $runner->run(new StubMigration());
     }

@@ -25,7 +25,7 @@ final class SqLiteFactory
     {
         $config ??= new ContainerConfig();
 
-        return new SimpleContainer(
+        $container = new SimpleContainer(
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
@@ -48,6 +48,8 @@ final class SqLiteFactory
                 };
             }
         );
+
+        return $container;
     }
 
     public static function clearDatabase(ContainerInterface $container): void
