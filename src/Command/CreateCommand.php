@@ -30,21 +30,15 @@ use function strlen;
  *
  * This command creates a new migration using the available migration template.
  *
- * To use it, configure migrations paths (`createPath` and `updatePaths`) in DI container via `console.php`:
+ * To use it, configure migrations paths (`createPath` and `updatePaths`) in `params.php` file, in your application.
  *
  * ```php
- * MigrationService::class => static function (ContainerInterface $container) {
- *     $aliases = $container->get(Aliases::class);
- *     $db = $container->get(ConnectionInterface::class);
- *     $consoleHelper = $container->get(ConsoleHelper::class);
- *
- *     $migration = new MigrationService($aliases, $db, $consoleHelper);
- *
- *     $migration->createPath($aliases->get('@migration'));
- *     $migration->updatePaths([$aliases->get('@migration'), $aliases->get('@root/src/Build')]);
- *
- *     return $migration;
- * }
+ * 'yiisoft/yii-db-migration' => [
+ *     'createNamespace' => '',
+ *     'createPath' => '',
+ *     'updateNamespaces' => [],
+ *     'updatePaths' => [],
+ * ],
  * ```
  *
  * After using this command, developers should modify the created migration skeleton by filling up the actual
