@@ -101,11 +101,8 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        /**
-         * @var string $name
-         * @var string $table
-         */
-        $table = $name = $input->getArgument('name');
+        /** @var string $table */
+        $table = $input->getArgument('name');
 
         /** @var string $command */
         $command = $input->getOption('command');
@@ -119,7 +116,7 @@ final class CreateCommand extends Command
         /** @var string $namespace */
         $namespace = $input->getOption('namespace');
 
-        if (!preg_match('/^[\w\\\\]+$/', $name)) {
+        if (!preg_match('/^[\w\\\\]+$/', $table)) {
             $io->error(
                 'The migration name should contain letters, digits, underscore and/or backslash characters only.'
             );
@@ -137,7 +134,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
+        $name = $this->generateName($command, (new Inflector())->toPascalCase($table), $and);
 
         /**
          * @var string $namespace
