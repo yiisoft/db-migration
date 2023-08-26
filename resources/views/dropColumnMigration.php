@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * This view is used by Yiisoft\Db\Yii\Migration\Command.
+ * This view is used by {@see Yiisoft\Yii\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
  * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
- * @var $className string the new migration class name without namespace
- * @var $namespace string the new migration class namespace
- * @var $table string the name table
- * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] the fields
- * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
+ * @var $className string The new migration class name without namespace.
+ * @var $namespace string The new migration class namespace.
+ * @var $table string The table name.
+ * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] Fields.
+ * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
  */
 
 echo "<?php\n";

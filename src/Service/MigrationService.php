@@ -50,9 +50,7 @@ final class MigrationService
      * It checks the existence of the {@see createPath}, {@see updatePaths}, {@see createNamespace},
      * {@see updateNamespaces}.
      *
-     * {@see createNamespace}, {@see updateNamespaces}.
-     *
-     * @return int whether the action should continue to be executed.
+     * @return int Whether the action should continue to be executed.
      */
     public function before(string $defaultName): int
     {
@@ -61,22 +59,18 @@ final class MigrationService
         switch ($defaultName) {
             case 'migrate:create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
-                    if ($this->io) {
-                        $this->io->error(
-                            'At least one of `createNamespace` or `createPath` should be specified.'
-                        );
-                    }
+                    $this->io?->error(
+                        'At least one of `createNamespace` or `createPath` should be specified.'
+                    );
 
                     $result = Command::INVALID;
                 }
                 break;
             case 'migrate:up':
                 if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
-                    if ($this->io) {
-                        $this->io->error(
-                            'At least one of `updateNamespaces` or `updatePaths` should be specified.'
-                        );
-                    }
+                    $this->io?->error(
+                        'At least one of `updateNamespaces` or `updatePaths` should be specified.'
+                    );
 
                     $result = Command::INVALID;
                 }
@@ -89,7 +83,7 @@ final class MigrationService
     /**
      * Returns the migrations that are not applied.
      *
-     * @return array list of new migrations
+     * @return array List of new migrations.
      */
     public function getNewMigrations(): array
     {
@@ -167,10 +161,10 @@ final class MigrationService
      * Migration classes located at this path should be declared without a namespace.
      * Use {@see createNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {createNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see createNamespace}, you may set this field to `null` in order to disable usage of  migrations
      * that are not namespaced.
      *
-     * In general, to load migrations from different locations, {createNamespace} is the preferable solution as the
+     * In general, to load migrations from different locations, {@see createNamespace} is the preferable solution as the
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
@@ -202,9 +196,9 @@ final class MigrationService
      * @psalm-suppress MoreSpecificReturnType
      * @psalm-suppress LessSpecificReturnStatement
      *
-     * @param string $class the migration class name
+     * @param string $class The migration class name.
      *
-     * @return object The migration instance
+     * @return object The migration instance.
      */
     private function makeMigrationInstance(string $class): object
     {
@@ -297,10 +291,10 @@ final class MigrationService
     /**
      * Generates class base name and namespace from migration name from user input.
      *
-     * @param string|null $namespace migration.
-     * @param string $name migration name from user input.
+     * @param string|null $namespace Migration namespace from the user input.
+     * @param string $name Migration name from the user input.
      *
-     * @return array list of 2 elements: 'namespace' and 'class base name'.
+     * @return array List of 2 elements: 'namespace' and 'class base name'.
      */
     public function generateClassName(?string $namespace, string $name): array
     {
@@ -332,9 +326,9 @@ final class MigrationService
     /**
      * Returns the file path matching the give namespace.
      *
-     * @param string $namespace namespace.
+     * @param string $namespace Namespace.
      *
-     * @return string file path.
+     * @return string File path.
      */
     private function getNamespacePath(string $namespace): string
     {
@@ -353,8 +347,8 @@ final class MigrationService
         /**
          * @psalm-var array<string, array<int, string>> $map
          */
-        foreach ($map as $namespace => $directorys) {
-            foreach ($directorys as $directory) {
+        foreach ($map as $namespace => $directories) {
+            foreach ($directories as $directory) {
                 $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
             }
         }

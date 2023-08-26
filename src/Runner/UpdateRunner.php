@@ -26,7 +26,7 @@ final class UpdateRunner
     public function run(MigrationInterface $migration): void
     {
         if ($this->io === null) {
-            throw new RuntimeException('Need set output decorator via `setIO()`.');
+            throw new RuntimeException('You need to set output decorator via `setIO()`.');
         }
 
         $className = $migration::class;

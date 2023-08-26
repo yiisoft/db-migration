@@ -21,7 +21,7 @@ use function array_keys;
 use function count;
 
 /**
- * Downgrades the application by reverting old migrations.
+ * Reverts the specified number of latest migrations.
  *
  * For example,
  *
@@ -31,7 +31,7 @@ use function count;
  * yii migrate:down all # revert all migrations
  * ```
  */
-#[AsCommand('migrate:down', 'Downgrades the application by reverting old migrations.')]
+#[AsCommand('migrate:down', 'Reverts the specified number of latest migrations.')]
 final class DownCommand extends Command
 {
     public function __construct(
@@ -48,8 +48,8 @@ final class DownCommand extends Command
     public function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to downgrade.', 1)
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Downgrade all migrations.');
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to revert.', 1)
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Revert all migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -74,7 +74,7 @@ final class DownCommand extends Command
         $migrations = $this->migrator->getHistory($limit);
 
         if (empty($migrations)) {
-            $output->writeln("<fg=yellow> >>> Apply a new migration to run this command.</>\n");
+            $output->writeln("<fg=yellow> >>> Apply at least one migration first.</>\n");
             $io->warning('No migration has been done before.');
 
             return Command::FAILURE;

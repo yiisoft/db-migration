@@ -36,23 +36,18 @@ final class MysqlFactory
                 ),
             ],
             static function (string $id) use (&$container, $config): object {
-                switch ($id) {
-                    case ConnectionInterface::class:
-                        return new MysqlConnection(
-                            new MysqlDriver(
-                                'mysql:host=127.0.0.1;dbname=yiitest;port=3306;charset=utf8',
-                                'root',
-                                '',
-                            ),
-                            new SchemaCache(new MemorySimpleCache()),
-                        );
-
-                    case MysqlConnection::class:
-                        return $container->get(ConnectionInterface::class);
-
-                    default:
-                        return ContainerHelper::get($container, $id, $config);
-                }
+                return match ($id) {
+                    ConnectionInterface::class => new MysqlConnection(
+                        new MysqlDriver(
+                            'mysql:host=127.0.0.1;dbname=yiitest;port=3306;charset=utf8',
+                            'root',
+                            '',
+                        ),
+                        new SchemaCache(new MemorySimpleCache()),
+                    ),
+                    MysqlConnection::class => $container->get(ConnectionInterface::class),
+                    default => ContainerHelper::get($container, $id, $config),
+                };
             }
         );
 

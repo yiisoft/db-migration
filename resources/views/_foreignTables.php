@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
- * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] the foreign keys
+ * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
  */
 
 if (!empty($foreignKeys)) {

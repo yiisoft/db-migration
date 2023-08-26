@@ -36,23 +36,18 @@ final class PostgreSqlFactory
                 ),
             ],
             static function (string $id) use (&$container, $config): object {
-                switch ($id) {
-                    case ConnectionInterface::class:
-                        return new PgSqlConnection(
-                            new PgSqlDriver(
-                                'pgsql:host=127.0.0.1;port=5432;dbname=yiitest',
-                                'root',
-                                'root',
-                            ),
-                            new SchemaCache(new MemorySimpleCache()),
-                        );
-
-                    case PgSqlConnection::class:
-                        return $container->get(ConnectionInterface::class);
-
-                    default:
-                        return ContainerHelper::get($container, $id, $config);
-                }
+                return match ($id) {
+                    ConnectionInterface::class => new PgSqlConnection(
+                        new PgSqlDriver(
+                            'pgsql:host=127.0.0.1;port=5432;dbname=yiitest',
+                            'root',
+                            'root',
+                        ),
+                        new SchemaCache(new MemorySimpleCache()),
+                    ),
+                    PgSqlConnection::class => $container->get(ConnectionInterface::class),
+                    default => ContainerHelper::get($container, $id, $config),
+                };
             }
         );
 

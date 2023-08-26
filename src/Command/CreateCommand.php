@@ -30,38 +30,15 @@ use function strlen;
  *
  * This command creates a new migration using the available migration template.
  *
- * Config in di-container console.php migrations paths `createPath` and `updatePaths`:
+ * To use it, configure migrations paths (`createPath` and `updatePaths`) in `params.php` file, in your application.
  *
  * ```php
- * MigrationService::class => static function (ContainerInterface $container) {
- *    $aliases = $container->get(Aliases::class);
- *     $db = $container->get(ConnectionInterface::class);
- *     $consoleHelper = $container->get(ConsoleHelper::class);
- *
- *     $migration = new MigrationService($aliases, $db, $consoleHelper);
- *
- *     $migration->createPath($aliases->get('@migration'));
- *     $migration->updatePaths([$aliases->get('@migration'), $aliases->get('@root/src/Build')]);
- *
- *    return $migration;
- * }
- * ```
- *
- * Config in di-container console.php namespace paths `createPath` and `updatePaths`:
- *
- * ```php
- * MigrationService::class => static function (ContainerInterface $container) {
- *    $aliases = $container->get(Aliases::class);
- *     $db = $container->get(ConnectionInterface::class);
- *     $consoleHelper = $container->get(ConsoleHelper::class);
- *
- *     $migration = new MigrationService($aliases, $db, $consoleHelper);
- *
- *     $migration->createNamespace($aliases->get('@migration'));
- *     $migration->updateNamespaces(['Yiisoft\\Db\\Yii\Migration', 'App\\Migration')]);
- *
- *    return $migration;
- * }
+ * 'yiisoft/yii-db-migration' => [
+ *     'createNamespace' => '',
+ *     'createPath' => '',
+ *     'updateNamespaces' => [],
+ *     'updatePaths' => [],
+ * ],
  * ```
  *
  * After using this command, developers should modify the created migration skeleton by filling up the actual
@@ -84,7 +61,7 @@ use function strlen;
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
  */
-#[AsCommand('migrate:create', 'Generate migration template.')]
+#[AsCommand('migrate:create', 'Creates a new migration.')]
 final class CreateCommand extends Command
 {
     public function __construct(
@@ -98,13 +75,13 @@ final class CreateCommand extends Command
     public function configure(): void
     {
         $this
-            ->addArgument('name', InputArgument::REQUIRED, 'Table name for generate migration.')
+            ->addArgument('name', InputArgument::REQUIRED, 'Table name to generate migration for.')
             ->addOption('command', 'c', InputOption::VALUE_OPTIONAL, 'Command to execute.', 'create')
-            ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'To create table fields right away')
-            ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment')
-            ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction')
-            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Namespace migration')
-            ->setHelp('This command Generate migration template.');
+            ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'Table fields to generate.')
+            ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment.')
+            ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction.')
+            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Migration file namespace.')
+            ->setHelp('This command generates new migration file.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -118,25 +95,22 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        /** @var string */
-        $name = $input->getArgument('name');
+        /** @var string $table */
+        $table = $input->getArgument('name');
 
-        /** @var string */
-        $table = $name;
-
-        /** @var string */
+        /** @var string $command */
         $command = $input->getOption('command');
 
         $fields = $input->hasOption('fields') ? (string) $input->getOption('fields') : null;
         $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
 
-        /** @var string */
+        /** @var string $and */
         $and = $input->getOption('and');
 
-        /** @var string */
+        /** @var string $namespace */
         $namespace = $input->getOption('namespace');
 
-        if (!preg_match('/^[\w\\\\]+$/', $name)) {
+        if (!preg_match('/^[\w\\\\]+$/', $table)) {
             $io->error(
                 'The migration name should contain letters, digits, underscore and/or backslash characters only.'
             );
@@ -154,7 +128,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $name = $this->generateName($command, (new Inflector())->toPascalCase($name), $and);
+        $name = $this->generateName($command, (new Inflector())->toPascalCase($table), $and);
 
         /**
          * @var string $namespace
@@ -178,7 +152,7 @@ final class CreateCommand extends Command
         $helper = $this->getHelper('question');
 
         if (!file_exists($migrationPath)) {
-            $io->error("Invalid path directory {$migrationPath}");
+            $io->error("Invalid path directory $migrationPath");
 
             return Command::INVALID;
         }

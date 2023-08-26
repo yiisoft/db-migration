@@ -23,9 +23,9 @@ use function date;
  * so far. For example,
  *
  * ```
- * yii migrate:history     # showing the last 10 migrations
- * yii migrate:history 5   # showing the last 5 migrations
- * yii migrate:history all # showing the whole history
+ * yii migrate:history     # last 10 migrations
+ * yii migrate:history 5   # last 5 migrations
+ * yii migrate:history all # whole history
  * ```
  */
 #[AsCommand('migrate:history', 'Displays the migration history.')]
@@ -40,7 +40,7 @@ final class HistoryCommand extends Command
 
     public function configure(): void
     {
-        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', null);
+        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Maximum number of migrations to display.', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
