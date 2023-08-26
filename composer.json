@@ -1,5 +1,5 @@
 {
-    "name": "yiisoft/yii-db-migration",
+    "name": "yiisoft/db-migration",
     "type": "library",
     "description": "Yii DB Migration",
     "keywords": [
@@ -10,12 +10,12 @@
     "homepage": "https://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/yii-db-migration/issues?state=open",
+        "issues": "https://github.com/yiisoft/db-migration/issues?state=open",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
         "chat": "https://t.me/yii3en",
-        "source": "https://github.com/yiisoft/yii-db-migration"
+        "source": "https://github.com/yiisoft/db-migration"
     },
     "require": {
         "php": "^8.0",
