@@ -145,7 +145,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $studentSchema = $dbSchema->getTableSchema('student');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertSame('>>> 2 Migrations were applied.', $output);
+        $this->assertSame('2 Migrations were applied.', $output);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
