@@ -117,9 +117,8 @@ final class UpdateCommand extends Command
                 $this->updateRunner->run($instance);
             }
 
-            $output->writeln(
-                "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
-            );
+            $migrationWord = $n === 1 ? 'Migration was' : 'Migrations were';
+            $output->writeln("\n<fg=green> >>> $n $migrationWord applied.</>\n");
             $io->success('Updated successfully.');
         }
 

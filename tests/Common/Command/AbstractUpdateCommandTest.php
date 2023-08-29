@@ -66,9 +66,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
         // check title
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
+        $this->assertStringContainsString(">>> [OK] - '.Done..'.", $output);
+        $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
         $this->assertStringContainsString('Apply the above migration y/n:', $output);
         $this->assertStringContainsString("Applying $className", $output);
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
+        $this->assertStringContainsString('>>> 1 Migration was applied.', $output);
         $this->assertStringContainsString('Database connection: ' . $db->getDriverName(), $output);
     }
 
