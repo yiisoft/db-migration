@@ -91,7 +91,7 @@ final class RedoCommand extends Command
 
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
-        $question = new ConfirmationQuestion("\n<fg=cyan>Redo the above $migrationWord", true);
+        $question = new ConfirmationQuestion("\n<fg=cyan>Redo the above $migrationWord");
 
         if ($helper->ask($input, $output, $question)) {
             /** @psalm-var class-string[] $migrations */

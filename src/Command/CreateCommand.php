@@ -157,11 +157,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Create new migration y/n: </>",
-            false,
-            '/^(y)/i'
-        );
+        $question = new ConfirmationQuestion("\n<fg=cyan>Create new migration y/n: </>");
 
         if ($helper->ask($input, $output, $question)) {
             $content = $this->createService->run(

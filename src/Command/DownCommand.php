@@ -95,10 +95,7 @@ final class DownCommand extends Command
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Revert the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
-            true
-        );
+        $question = new ConfirmationQuestion("\n<fg=cyan>Revert the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '));
 
         if ($helper->ask($input, $output, $question)) {
             /** @psalm-var class-string[] $migrations */
