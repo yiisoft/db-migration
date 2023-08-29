@@ -9,6 +9,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
@@ -46,11 +47,14 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('2 migrations were redone.', $output);
         $this->assertStringContainsString('Migration redone successfully.', $output);
         $this->assertExistsTables($this->container, 'post', 'user');
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testExecuteWithPath(): void

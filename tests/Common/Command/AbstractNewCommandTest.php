@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Command\NewCommand;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
@@ -47,12 +48,15 @@ abstract class AbstractNewCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Found 2 new migrations:', $output);
         $this->assertStringContainsString($classCreateUser, $output);
         $this->assertStringContainsString($classCreateTag, $output);
         $this->assertSame(2, substr_count($output, MigrationHelper::NAMESPACE));
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testExecuteWithPath(): void

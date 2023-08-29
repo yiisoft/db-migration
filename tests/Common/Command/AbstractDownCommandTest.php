@@ -48,11 +48,14 @@ abstract class AbstractDownCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
         $this->assertNotExistsTables($this->container, 'user');
         $this->assertExistsTables($this->container, 'post');
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testExecuteWithPath(): void

@@ -68,6 +68,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertStringContainsString("Applying $className", $output);
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
+        $this->assertStringContainsString('Database connection: ' . $db->getDriverName(), $output);
     }
 
     public function testExecuteWithNamespace(): void
