@@ -66,6 +66,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         // check title
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
+        $this->assertStringContainsString('Apply the above migration y/n:', $output);
         $this->assertStringContainsString("Applying $className", $output);
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
         $this->assertStringContainsString('Database connection: ' . $db->getDriverName(), $output);
@@ -85,7 +86,6 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
-
         $exitCode = $command->execute([]);
 
         $db = $this->container->get(ConnectionInterface::class);
@@ -145,6 +145,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $studentSchema = $dbSchema->getTableSchema('student');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Apply the above migrations y/n:', $output);
         $this->assertStringContainsString('>>> 2 Migrations were applied.', $output);
 
         /** Check create table department columns*/

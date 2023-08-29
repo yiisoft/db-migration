@@ -107,11 +107,9 @@ final class UpdateCommand extends Command
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
+        $migrationWord = $n === 1 ? 'migration y/n: ' : 'migrations y/n: ';
 
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Apply the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
-            true
-        );
+        $question = new ConfirmationQuestion("\n<fg=cyan>Apply the above $migrationWord", true);
 
         if ($helper->ask($input, $output, $question)) {
             $instances = $this->migrationService->makeMigrations($migrations);
