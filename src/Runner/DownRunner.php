@@ -20,7 +20,6 @@ final class DownRunner
     public function setIO(?SymfonyStyle $io): void
     {
         $this->io = $io;
-        $this->migrator->setIO($io);
     }
 
     public function run(RevertibleMigrationInterface $migration): void
