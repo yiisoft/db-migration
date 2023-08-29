@@ -80,10 +80,9 @@ final class HistoryCommand extends Command
 
         foreach ($migrations as $version => $time) {
             $dateWord = date('Y-m-d H:i:s', (int) $time);
-            $output->writeln("\t<info>($dateWord) $version</info>");
+            $output->writeln("\t<info>($dateWord) $version</info>\n");
         }
 
-        $output->writeln("\n");
         $io->success('Success.');
         $this->migrationService->databaseConnection();
 

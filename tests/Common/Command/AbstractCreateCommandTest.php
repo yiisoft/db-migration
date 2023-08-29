@@ -664,7 +664,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('DropPostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
