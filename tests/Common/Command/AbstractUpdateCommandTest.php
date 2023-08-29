@@ -183,7 +183,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
         $this->assertSame(
             ['department_id'],
-            $dbSchema->getTableForeignKeys('student', true)[0]->getColumnNames()
+            $dbSchema->getTableForeignKeys('student')[0]->getColumnNames()
         );
 
         /** Check table student field dateofbirth */
@@ -225,8 +225,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('1 Migration was applied.', $output1);
 
+
         $this->assertSame(Command::SUCCESS, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
+        $this->assertStringContainsString('[OK] Your system is up-to-date.', $output2);
     }
 
     public function testNotMigrationInterface(): void
