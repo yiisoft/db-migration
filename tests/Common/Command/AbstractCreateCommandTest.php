@@ -63,10 +63,14 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
+
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('CreatePostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testCreateTableWithNamespace(): void
@@ -602,6 +606,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('DropColumnPost', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
