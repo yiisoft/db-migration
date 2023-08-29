@@ -45,6 +45,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
 
         $this->assertEquals(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);
+        $this->assertStringContainsString(date('y-m-d'), $output);
         $this->assertStringContainsString($classPost, $output);
         $this->assertStringContainsString($classTag, $output);
         $this->assertStringContainsString('Database connection: ' . $driverName, $output);
