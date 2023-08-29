@@ -67,7 +67,7 @@ EOF;
         $driverName = $db->getDriverName();
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('CreatePostTable', $output);
+        $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         $this->assertStringContainsString('Database connection: ' . $driverName, $output);
@@ -554,7 +554,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('AddColumnPost', $output);
+        $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -606,7 +606,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('DropColumnPost', $output);
+        $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -664,7 +664,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('DropPostTable', $output);
+        $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -968,7 +968,7 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('JunctionTableForPostAndtagTables', $output);
+        $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
