@@ -71,7 +71,6 @@ final class NewCommand extends Command
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
         if ($limit && $n > $limit) {
-            $migrations = array_slice($migrations, 0, $limit);
             $io->warning("Showing $limit out of $n new $migrationWord:\n");
         } else {
             $io->section("Found $n new $migrationWord:");

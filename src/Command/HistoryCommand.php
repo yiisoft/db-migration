@@ -48,7 +48,6 @@ final class HistoryCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $this->migrationService->setIO($io);
-        $this->migrationService->before(self::getDefaultName() ?? '');
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
