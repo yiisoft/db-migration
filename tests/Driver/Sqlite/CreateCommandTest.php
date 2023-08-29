@@ -17,6 +17,7 @@ final class CreateCommandTest extends AbstractCreateCommandTest
     {
         parent::setUp();
         $this->container = SqLiteFactory::createContainer();
+        $this->driverName = 'sqlite';
     }
 
     public function tearDown(): void

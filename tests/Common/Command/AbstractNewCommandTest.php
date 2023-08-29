@@ -15,6 +15,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 abstract class AbstractNewCommandTest extends TestCase
 {
     protected ContainerInterface $container;
+    protected string $driverName = '';
 
     public function testExecuteWithNamespace(): void
     {
@@ -53,6 +54,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $this->assertStringContainsString($classCreateUser, $output);
         $this->assertStringContainsString($classCreateTag, $output);
         $this->assertSame(2, substr_count($output, MigrationHelper::NAMESPACE));
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testExecuteWithPath(): void
@@ -102,6 +104,7 @@ abstract class AbstractNewCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('[ERROR] The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testWithoutNewMigrations(): void
