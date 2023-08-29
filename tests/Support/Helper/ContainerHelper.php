@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
