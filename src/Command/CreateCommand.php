@@ -192,11 +192,11 @@ final class CreateCommand extends Command
 
         return match ($command) {
             'create' => $name,
-            'table' => 'Create_' . $name . '_Table',
-            'dropTable' => 'Drop_' . $name . '_Table',
-            'addColumn' => 'Add_Column_' . $name,
-            'dropColumn' => 'Drop_Column_' . $name,
-            'junction' => 'Junction_Table_For_' . $name . '_And_' . (string) $and . '_Tables',
+            'table' => 'Create' . $name . 'Table',
+            'dropTable' => 'Drop' . $name . 'Table',
+            'addColumn' => 'AddColumn' . $name,
+            'dropColumn' => 'DropColumn' . $name,
+            'junction' => 'JunctionTableFor' . $name . 'And' . (string) $and . 'Tables',
             default => $result,
         };
     }
