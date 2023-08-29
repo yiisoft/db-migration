@@ -79,7 +79,8 @@ final class HistoryCommand extends Command
         }
 
         foreach ($migrations as $version => $time) {
-            $output->writeln("\t<info>(" . date('Y-m-d H:i:s', (int) $time) . ') ' . $version . '</info>');
+            $dateWord = date('Y-m-d H:i:s', (int) $time);
+            $output->writeln("\t<info>($dateWord) $version</info>");
         }
 
         $output->writeln("\n");

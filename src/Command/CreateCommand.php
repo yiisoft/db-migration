@@ -87,7 +87,7 @@ final class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
+
         $this->migrationService->setIO($io);
         $this->createService->setIO($io);
 
@@ -176,8 +176,7 @@ final class CreateCommand extends Command
 
             file_put_contents($file, $content, LOCK_EX);
 
-            $output->writeln("\n\t<info>$className</info>");
-            $output->writeln("\n");
+            $output->writeln("\n\t<info>$className</info>\n");
             $io->success('New migration created successfully.');
         }
 

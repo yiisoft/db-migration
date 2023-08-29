@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
 use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
@@ -40,12 +39,9 @@ final class RedoCommand extends Command
     public function __construct(
         private MigrationService $migrationService,
         private Migrator $migrator,
-        ConsoleMigrationInformer $informer,
         private DownRunner $downRunner,
         private UpdateRunner $updateRunner
     ) {
-        $this->migrator->setInformer($informer);
-
         parent::__construct();
     }
 
@@ -58,11 +54,10 @@ final class RedoCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
+
         $this->migrationService->setIO($io);
         $this->downRunner->setIO($io);
         $this->updateRunner->setIO($io);
-
         $this->migrationService->before(self::getDefaultName() ?? '');
 
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
