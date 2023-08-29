@@ -71,6 +71,7 @@ EOF;
         $this->assertStringContainsString('CreatePostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
         $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
@@ -494,6 +495,30 @@ EOF;
             'create, table, dropTable, addColumn, dropColumn, junction.',
             $output
         );
+    }
+
+    public function testExecuteNameToEqualLimit(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+
+
+        $exitCode = $command->execute([
+            'name' => str_repeat('x', 156),
+        ]);
+        $output = $command->getDisplay(true);
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertSame(180, strlen($className));
+        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testExecuteNameToLongException(): void

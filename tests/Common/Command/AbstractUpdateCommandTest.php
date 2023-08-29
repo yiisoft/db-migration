@@ -136,8 +136,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
-
         $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
 
         $db = $this->container->get(ConnectionInterface::class);
         $dbSchema = $db->getSchema();
@@ -145,6 +145,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $studentSchema = $dbSchema->getTableSchema('student');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertSame('>>> 2 Migrations were applied.', $output);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());
@@ -224,7 +225,6 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('1 Migration was applied.', $output1);
-
 
         $this->assertSame(Command::SUCCESS, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
