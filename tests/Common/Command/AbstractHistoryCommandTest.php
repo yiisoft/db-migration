@@ -48,6 +48,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $this->assertStringContainsString(date('y-m-d'), $output);
         $this->assertStringContainsString($classPost, $output);
         $this->assertStringContainsString($classTag, $output);
+        $this->assertStringContainsString(' [OK] Success.', $output);
         $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 

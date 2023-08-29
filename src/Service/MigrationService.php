@@ -108,30 +108,28 @@ final class MigrationService
             [$updatePaths, $namespace] = $item;
             $updatePaths = $this->aliases->get($updatePaths);
 
-            if (!file_exists($updatePaths)) {
-                continue;
-            }
-
-            $handle = opendir($updatePaths);
-            while (($file = readdir($handle)) !== false) {
-                if ($file === '.' || $file === '..') {
-                    continue;
-                }
-
-                $path = $updatePaths . DIRECTORY_SEPARATOR . $file;
-
-                if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
-                    $class = $matches[1];
-                    if (!empty($namespace)) {
-                        $class = $namespace . '\\' . $class;
+            if (file_exists($updatePaths)) {
+                $handle = opendir($updatePaths);
+                while (($file = readdir($handle)) !== false) {
+                    if ($file === '.' || $file === '..') {
+                        continue;
                     }
-                    $time = $matches[2];
-                    if (!isset($applied[$class])) {
-                        $migrations[$time . '\\' . $class] = $class;
+
+                    $path = $updatePaths . DIRECTORY_SEPARATOR . $file;
+
+                    if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
+                        $class = $matches[1];
+                        if (!empty($namespace)) {
+                            $class = $namespace . '\\' . $class;
+                        }
+                        $time = $matches[2];
+                        if (!isset($applied[$class])) {
+                            $migrations[$time . '\\' . $class] = $class;
+                        }
                     }
                 }
+                closedir($handle);
             }
-            closedir($handle);
         }
         ksort($migrations);
 
