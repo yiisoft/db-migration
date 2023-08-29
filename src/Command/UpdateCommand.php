@@ -83,15 +83,11 @@ final class UpdateCommand extends Command
         $n = count($migrations);
 
         if ($n === $total) {
-            $output->writeln(
-                "<fg=yellow>Total $n new " . ($n === 1 ? 'migration' : 'migrations') . ' to be ' .
-                "applied:</>\n"
-            );
+            $migrationWord = $n === 1 ? 'migration' : 'migrations';
+            $output->writeln("<fg=yellow>Total $n new $migrationWord to be applied:</>\n");
         } else {
-            $output->writeln(
-                "<fg=yellow>Total $n out of $total new " . ($total === 1 ? 'migration' : 'migrations') .
-                " to be applied:</>\n"
-            );
+            $totalWord = $total === 1 ? 'migration' : 'migrations';
+            $output->writeln("<fg=yellow>Total $n out of $total new $totalWord to be applied:</>\n");
         }
 
         foreach ($migrations as $migration) {

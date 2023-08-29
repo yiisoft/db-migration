@@ -71,11 +71,11 @@ final class HistoryCommand extends Command
         $n = count($migrations);
 
         if ($limit > 0) {
-            $io->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
+            $migrationWord = $n === 1 ? 'migration' : 'migrations';
+            $io->section("Last $n applied $migrationWord:");
         } else {
-            $io->section(
-                "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:'
-            );
+            $migrationWord = $n === 1 ? 'migration has' : 'migrations have';
+            $io->section("Total $n $migrationWord been applied before:");
         }
 
         foreach ($migrations as $version => $time) {

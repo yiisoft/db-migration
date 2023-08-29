@@ -93,10 +93,10 @@ final class RedoCommand extends Command
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Redo the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
-            true
-        );
+
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+
+        $question = new ConfirmationQuestion("\n<fg=cyan>Redo the above $migrationWord", true);
 
         if ($helper->ask($input, $output, $question)) {
             /** @psalm-var class-string[] $migrations */
@@ -108,9 +108,9 @@ final class RedoCommand extends Command
                 $this->updateRunner->run($instance);
             }
 
-            $output->writeln(
-                "\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n"
-            );
+            $migrationWord = $n === 1 ? 'migration was' : 'migrations were';
+
+            $output->writeln("\n<info> >>> $n $migrationWord redone.</info>\n");
             $io->success('Migration redone successfully.');
         }
 

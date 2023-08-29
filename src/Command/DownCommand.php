@@ -83,9 +83,10 @@ final class DownCommand extends Command
         $migrations = array_keys($migrations);
 
         $n = count($migrations);
-        $output->writeln(
-            "<fg=yellow>Total $n " . ($n === 1 ? 'migration' : 'migrations') . " to be reverted:</>\n"
-        );
+
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+
+        $output->writeln("<fg=yellow>Total $n $migrationWord to be reverted:</>\n");
 
         foreach ($migrations as $migration) {
             $output->writeln("\t<fg=yellow>$migration</>");
@@ -106,9 +107,8 @@ final class DownCommand extends Command
                 $this->downRunner->run($instance);
             }
 
-            $output->writeln(
-                "\n<fg=green> >>> [OK] $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
-            );
+            $migrationWord = $n === 1 ? 'migration was' : 'migrations were';
+            $output->writeln("\n<fg=green> >>> [OK] $n $migrationWord reverted.\n");
             $io->success('Migrated down successfully.');
         }
 
