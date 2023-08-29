@@ -12,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Yii\Db\Migration\Service\MigrationService;
 
-use function array_slice;
 use function count;
 
 /**
@@ -35,7 +34,7 @@ final class NewCommand extends Command
         parent::__construct();
     }
 
-    public function configure(): void
+    protected function configure(): void
     {
         $this
             ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10');
@@ -68,18 +67,16 @@ final class NewCommand extends Command
         }
 
         $n = count($migrations);
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
         if ($limit && $n > $limit) {
-            $migrations = array_slice($migrations, 0, $limit);
-            $io->warning(
-                "Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n"
-            );
+            $io->warning("Showing $limit out of $n new $migrationWord:\n");
         } else {
-            $io->section("Found $n new " . ($n === 1 ? 'migration' : 'migrations') . ':');
+            $io->section("Found $n new $migrationWord:");
         }
 
         foreach ($migrations as $migration) {
-            $output->writeln("<info>\t" . $migration . '</info>');
+            $output->writeln("<info>\t{$migration}</info>");
         }
 
         $this->migrationService->databaseConnection();

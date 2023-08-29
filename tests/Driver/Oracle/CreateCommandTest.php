@@ -17,6 +17,7 @@ final class CreateCommandTest extends AbstractCreateCommandTest
     {
         parent::setUp();
         $this->container = OracleFactory::createContainer();
+        $this->driverName = 'oci';
     }
 
     public function tearDown(): void

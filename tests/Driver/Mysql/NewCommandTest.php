@@ -16,6 +16,7 @@ final class NewCommandTest extends AbstractNewCommandTest
     {
         parent::setUp();
         $this->container = MysqlFactory::createContainer();
+        $this->driverName = 'mysql';
     }
 
     public function tearDown(): void

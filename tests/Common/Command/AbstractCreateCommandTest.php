@@ -21,6 +21,7 @@ abstract class AbstractCreateCommandTest extends TestCase
     use AssertTrait;
 
     protected ContainerInterface $container;
+    protected string $driverName = '';
 
     public function testCreateTableWithPath(): void
     {
@@ -64,8 +65,12 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('CreatePostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testCreateTableWithNamespace(): void

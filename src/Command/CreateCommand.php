@@ -72,7 +72,7 @@ final class CreateCommand extends Command
         parent::__construct();
     }
 
-    public function configure(): void
+    protected function configure(): void
     {
         $this
             ->addArgument('name', InputArgument::REQUIRED, 'Table name to generate migration for.')
