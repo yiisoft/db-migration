@@ -81,16 +81,8 @@ final class Di
 }
 ```
 
-3. Copy the script `./vendor/yiisoft/yii-db-migration/bin/yii` and `./vendor/yiisoft/yii-db-migration/bin/yii.bat`
-   they must be copied to the `root` folder of your project, otherwise the command will not work.
+3. Run the command `./vendor/bin/migration` to see the list of available migration commands.
 
 ```shell
-cp ./vendor/yiisoft/yii-db-migration/bin/yii ./
-cp ./vendor/yiisoft/yii-db-migration/bin/yii.bat ./
-```
-
-4. Run the command `./yii` to see the list of available migration commands.
-
-```shell
-./yii
+./vendor/bin/migration
 ```

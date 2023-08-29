@@ -1,5 +1,8 @@
 {
     "name": "yiisoft/db-migration",
+    "bin": [
+        "bin/migration"
+    ],
     "type": "library",
     "description": "Yii DB Migration",
     "keywords": [
