@@ -327,6 +327,32 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertNotExistsTables($this->container, 'user');
     }
 
+    public function testNameToEqualLimit(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Post' . str_repeat('X', 78),
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('[OK] Updated successfully.', $output);
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+    }
+
     public function testNameLimit(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);

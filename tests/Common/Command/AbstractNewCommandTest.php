@@ -103,9 +103,12 @@ abstract class AbstractNewCommandTest extends TestCase
 
         $exitCode = $command->execute(['-l' => -1]);
         $output = $command->getDisplay(true);
+        $db = $this->container->get(ConnectionInterface::class);
+        $driverName = $db->getDriverName();
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('[ERROR] The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
     }
 
     public function testWithoutNewMigrations(): void
