@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
@@ -15,11 +14,9 @@ use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 final class Migrator
 {
     private bool $checkMigrationHistoryTable = true;
-    private bool $schemaCacheEnabled = false;
 
     public function __construct(
         private ConnectionInterface $db,
-        private SchemaCache $schemaCache,
         private MigrationInformerInterface $informer,
         private string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180

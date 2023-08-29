@@ -20,7 +20,6 @@ abstract class AbstractMigratorTest extends TestCase
     {
         $migrator = new Migrator(
             $this->container->get(ConnectionInterface::class),
-            $this->container->get(SchemaCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             42
@@ -33,7 +32,6 @@ abstract class AbstractMigratorTest extends TestCase
     {
         $migrator = new Migrator(
             $this->container->get(ConnectionInterface::class),
-            $this->container->get(SchemaCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -52,7 +50,6 @@ abstract class AbstractMigratorTest extends TestCase
 
         $migrator = new Migrator(
             $db,
-            $this->container->get(SchemaCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -75,7 +72,6 @@ abstract class AbstractMigratorTest extends TestCase
     {
         $migrator = new Migrator(
             $this->container->get(ConnectionInterface::class),
-            $this->container->get(SchemaCache::class),
             new NullMigrationInformer(),
             '{{%migration}}',
             null

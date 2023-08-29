@@ -47,7 +47,6 @@ final class ContainerHelper
             case Migrator::class:
                 return new Migrator(
                     $container->get(ConnectionInterface::class),
-                    $container->get(SchemaCache::class),
                     $container->get(ConsoleMigrationInformer::class),
                 );
 
