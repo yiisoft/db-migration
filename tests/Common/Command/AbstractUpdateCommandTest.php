@@ -66,8 +66,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
         // check title
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
+        $this->assertStringContainsString(">>> [OK] - '.Done..'.", $output);
+        $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
+        $this->assertStringContainsString('Apply the above migration y/n:', $output);
         $this->assertStringContainsString("Applying $className", $output);
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
+        $this->assertStringContainsString('>>> 1 Migration was applied.', $output);
     }
 
     public function testExecuteWithNamespace(): void
@@ -137,6 +141,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
+        $output = $command->getDisplay(true);
 
         $db = $this->container->get(ConnectionInterface::class);
         $dbSchema = $db->getSchema();
@@ -146,7 +151,9 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $exitCode);
 
         /** Check create table department columns*/
-        $this->assertCount(2, $departmentSchema->getColumns());
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Apply the above migrations y/n:', $output);
+        $this->assertStringContainsString('>>> 2 Migrations were applied.', $output);
 
         /** Check table department field id */
         $this->assertSame('id', $departmentSchema->getColumn('id')->getName());

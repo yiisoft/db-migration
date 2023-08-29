@@ -79,7 +79,7 @@ final class NewCommand extends Command
         }
 
         foreach ($migrations as $migration) {
-            $output->writeln("<info>\t" . $migration . '</info>');
+            $output->writeln("<info>\t{$migration}</info>");
         }
 
         $this->migrationService->databaseConnection();
