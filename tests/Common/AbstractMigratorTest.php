@@ -10,15 +10,33 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
+use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubRevertibleMigration;
 
 abstract class AbstractMigratorTest extends TestCase
 {
     protected ContainerInterface $container;
+    protected ConnectionInterface $db;
+
+    public function testUpDown(): void
+    {
+        $migrator = new Migrator(
+            $this->db,
+            new NullMigrationInformer(),
+            '{{%migration}}',
+            null
+        );
+        $stubRevertibleMigration = new StubRevertibleMigration();
+
+        $migrator->up($stubRevertibleMigration);
+        $migrator->down($stubRevertibleMigration);
+
+        $this->assertNotNull($this->db->getTableSchema('{{%migration}}'));
+    }
 
     public function testGetMigrationNameLimitPredefined(): void
     {
         $migrator = new Migrator(
-            $this->container->get(ConnectionInterface::class),
+            $this->db,
             new NullMigrationInformer(),
             '{{%migration}}',
             42
@@ -30,7 +48,7 @@ abstract class AbstractMigratorTest extends TestCase
     public function testGetMigrationNameLimitWithoutHistoryTable(): void
     {
         $migrator = new Migrator(
-            $this->container->get(ConnectionInterface::class),
+            $this->db,
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -41,14 +59,12 @@ abstract class AbstractMigratorTest extends TestCase
 
     public function testGetMigrationNameLimitWithoutColumnSize(): void
     {
-        $db = $this->container->get(ConnectionInterface::class);
-
-        if ($db->getDriverName() === 'oci') {
+        if ($this->db->getDriverName() === 'oci') {
             $this->markTestSkipped('Should be fixed for Oracle.');
         }
 
         $migrator = new Migrator(
-            $db,
+            $this->db,
             new NullMigrationInformer(),
             '{{%migration}}',
             null
@@ -58,7 +74,7 @@ abstract class AbstractMigratorTest extends TestCase
         $migrator->up(new StubMigration());
 
         // Change column "name"
-        $db->createCommand()->alterColumn(
+        $this->db->createCommand()->alterColumn(
             $migrator->getHistoryTable(),
             'name',
             'text'
@@ -70,7 +86,7 @@ abstract class AbstractMigratorTest extends TestCase
     public function testGetMigrationNameLimitFromSchema(): void
     {
         $migrator = new Migrator(
-            $this->container->get(ConnectionInterface::class),
+            $this->db,
             new NullMigrationInformer(),
             '{{%migration}}',
             null

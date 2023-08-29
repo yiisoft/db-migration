@@ -16,6 +16,7 @@ final class DownCommandTest extends AbstractDownCommandTest
     {
         parent::setUp();
         $this->container = PostgreSqlFactory::createContainer();
+        $this->driverName = 'pgsql';
     }
 
     public function tearDown(): void

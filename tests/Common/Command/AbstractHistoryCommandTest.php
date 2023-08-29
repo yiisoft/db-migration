@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
@@ -16,6 +15,7 @@ use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
 abstract class AbstractHistoryCommandTest extends TestCase
 {
     protected ContainerInterface $container;
+    protected string $driverName = '';
 
     public function testExecute(): void
     {
@@ -40,8 +40,6 @@ abstract class AbstractHistoryCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
-        $db = $this->container->get(ConnectionInterface::class);
-        $driverName = $db->getDriverName();
 
         $this->assertEquals(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);
@@ -49,7 +47,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $this->assertStringContainsString($classPost, $output);
         $this->assertStringContainsString($classTag, $output);
         $this->assertStringContainsString(' [OK] Success.', $output);
-        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testLimit(): void
@@ -100,6 +98,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testWithoutNewMigrations(): void

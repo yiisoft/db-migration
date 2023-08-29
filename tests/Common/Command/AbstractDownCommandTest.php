@@ -23,6 +23,7 @@ abstract class AbstractDownCommandTest extends TestCase
     use AssertTrait;
 
     protected ContainerInterface $container;
+    protected string $driverName = '';
 
     public function testExecuteWithNamespace(): void
     {
@@ -48,14 +49,12 @@ abstract class AbstractDownCommandTest extends TestCase
 
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
-        $db = $this->container->get(ConnectionInterface::class);
-        $driverName = $db->getDriverName();
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
         $this->assertNotExistsTables($this->container, 'user');
         $this->assertExistsTables($this->container, 'post');
-        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testExecuteWithPath(): void
@@ -174,6 +173,8 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->expectException(ReflectionException::class);
         $this->expectExceptionMessageMatches('/Class ("|)\\\\Migration\\\\FakeMigration("|) does not exist$/');
         $command->execute(['']);
+
+        $db->close();
     }
 
     public function testFailCreateMigrationInstanceWithPath(): void
@@ -200,6 +201,8 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Migration file not found.');
         $command->execute(['']);
+
+        $db->close();
     }
 
     public function testNotRevertibleMigrationInterface(): void

@@ -21,6 +21,7 @@ abstract class AbstractCreateCommandTest extends TestCase
     use AssertTrait;
 
     protected ContainerInterface $container;
+    protected string $driverName = '';
 
     public function testCreateTableWithPath(): void
     {
@@ -63,16 +64,13 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
-        $db = $this->container->get(ConnectionInterface::class);
-        $driverName = $db->getDriverName();
-
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('CreatePostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
-        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testCreateTableWithNamespace(): void
@@ -325,6 +323,8 @@ EOF;
             $output,
         );
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+
+        $db->close();
     }
 
     public function testWithoutTablePrefix(): void
@@ -512,13 +512,10 @@ EOF;
         $output = $command->getDisplay(true);
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
-        $db = $this->container->get(ConnectionInterface::class);
-        $driverName = $db->getDriverName();
-
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertSame(180, strlen($className));
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
-        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testExecuteNameToLongException(): void

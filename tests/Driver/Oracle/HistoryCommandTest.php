@@ -16,6 +16,7 @@ final class HistoryCommandTest extends AbstractHistoryCommandTest
     {
         parent::setUp();
         $this->container = OracleFactory::createContainer();
+        $this->driverName = 'oci';
     }
 
     public function tearDown(): void

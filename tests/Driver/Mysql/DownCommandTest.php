@@ -16,6 +16,7 @@ final class DownCommandTest extends AbstractDownCommandTest
     {
         parent::setUp();
         $this->container = MysqlFactory::createContainer();
+        $this->driverName = 'mysql';
     }
 
     public function tearDown(): void

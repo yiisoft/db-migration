@@ -16,6 +16,7 @@ final class UpdateCommandTest extends AbstractUpdateCommandTest
     {
         parent::setUp();
         $this->container = MysqlFactory::createContainer();
+        $this->driverName = 'mysql';
     }
 
     public function tearDown(): void

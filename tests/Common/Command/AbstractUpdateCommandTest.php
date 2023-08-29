@@ -22,6 +22,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
     use AssertTrait;
 
     protected ContainerInterface $container;
+    protected string $driverName = '';
     private StubMigrationInformer $informer;
 
     public function testExecuteWithPath(): void
@@ -73,6 +74,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
         $this->assertStringContainsString('>>> 1 Migration was applied.', $output);
         $this->assertStringContainsString('Database connection: ' . $db->getDriverName(), $output);
+
+        $db->close();
     }
 
     public function testExecuteWithNamespace(): void
@@ -111,6 +114,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertEquals(50, $departmentSchema->getColumn('name')->getSize());
         $this->assertEquals('string', $departmentSchema->getColumn('name')->getType());
         $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+
+        $db->close();
     }
 
     public function testExecuteExtended(): void
@@ -201,6 +206,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
         }
 
         $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
+
+        $db->close();
     }
 
     public function testExecuteAgain(): void
@@ -349,12 +356,9 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $db = $this->container->get(ConnectionInterface::class);
-        $driverName = $db->getDriverName();
-
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('[OK] Updated successfully.', $output);
-        $this->assertStringContainsString('Database connection: ' . $driverName, $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testNameLimit(): void
