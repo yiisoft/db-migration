@@ -68,6 +68,7 @@ EOF;
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('CreatePostTable', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         $this->assertStringContainsString('Database connection: ' . $driverName, $output);
@@ -555,6 +556,7 @@ EOF;
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('AddColumnPost', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -607,6 +609,7 @@ EOF;
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('DropColumnPost', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
@@ -969,6 +972,7 @@ EOF;
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
+        $this->assertStringContainsString('JunctionTableForPostAndtagTables', $output);
         $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
