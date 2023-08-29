@@ -233,6 +233,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
+        $this->assertStringContainsString('[OK] Your system is up-to-date.', $outpu
     }
 
     public function testNotMigrationInterface(): void

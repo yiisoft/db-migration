@@ -40,8 +40,6 @@ final class UpdateCommand extends Command
         private Migrator $migrator,
         ConsoleMigrationInformer $informer
     ) {
-        $this->migrator->setInformer($informer);
-
         parent::__construct();
     }
 
@@ -53,7 +51,7 @@ final class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
+
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
 
