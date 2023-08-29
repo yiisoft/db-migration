@@ -40,14 +40,10 @@ final class Migrator
     {
         $this->checkMigrationHistoryTable();
 
-        $this->beforeMigrate();
-
         match ($migration instanceof TransactionalMigrationInterface) {
             true => $this->db->transaction(fn () => $migration->up($this->createBuilder())),
             false => $migration->up($this->createBuilder()),
         };
-
-        $this->afterMigrate();
 
         $this->addMigrationToHistory($migration);
     }
@@ -56,14 +52,10 @@ final class Migrator
     {
         $this->checkMigrationHistoryTable();
 
-        $this->beforeMigrate();
-
         match ($migration instanceof TransactionalMigrationInterface) {
             true => $this->db->transaction(fn () => $migration->down($this->createBuilder())),
             false => $migration->down($this->createBuilder()),
         };
-
-        $this->afterMigrate();
 
         $this->removeMigrationFromHistory($migration);
     }
@@ -155,8 +147,6 @@ final class Migrator
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
-        $this->beforeMigrate();
-
         $b = $this->createBuilder(new NullMigrationInformer());
 
         $b->createTable($this->historyTable, [
@@ -165,26 +155,7 @@ final class Migrator
             'apply_time' => $b->integer()->notNull(),
         ]);
 
-        $this->afterMigrate();
-
         $this->informer->endCreateHistoryTable('Done.');
-    }
-
-    private function beforeMigrate(): void
-    {
-        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnabled(false);
-        }
-    }
-
-    private function afterMigrate(): void
-    {
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnabled(true);
-        }
-
-        $this->db->getSchema()->refresh();
     }
 
     private function createBuilder(?MigrationInformerInterface $informer = null): MigrationBuilder

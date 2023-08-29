@@ -189,12 +189,11 @@ final class CreateCommand extends Command
     private function generateName(string $command, string $name, string|null $and): string
     {
         return match ($command) {
-            'table' => "Create{$name}Table",
             'dropTable' => "Drop{$name}Table",
             'addColumn' => "AddColumn{$name}",
             'dropColumn' => "DropColumn{$name}",
             'junction' => "JunctionTableFor{$name}And{$and}Tables",
-            default => $name,
+            default => "Create{$name}Table",
         };
     }
 }

@@ -38,8 +38,7 @@ final class UpdateRunner
         $this->migrator->up($migration);
 
         $time = microtime(true) - $start;
-        $this->io->writeln(
-            "\n\t<info>>>> [OK] - Applied $className (time: " . sprintf('%.3f', $time) . 's)</info>'
-        );
+        $timeWord = sprintf('%.3f', $time);
+        $this->io->writeln("\n\t<info>>>> [OK] - Applied $className (time: {$timeWord}s)</info>");
     }
 }
