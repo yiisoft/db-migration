@@ -126,6 +126,7 @@ abstract class AbstractNewCommandTest extends TestCase
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('[WARNING] No new migrations found. Your system is up-to-date', $output);
+        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
     public function testCountMigrationsMoreLimit(): void
