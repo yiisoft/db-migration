@@ -28,7 +28,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $command->setSql('CREATE SCHEMA yii')->execute();
 
         $this->builder->createTable('yii.test', ['id' => $this->builder->primaryKey()]);
-        $tableSchema = $db->getSchema()->getTableSchema('yii.test', true);
+        $tableSchema = $db->getSchema()->getTableSchema('yii.test');
         $column = $tableSchema->getColumn('id');
 
         $this->assertNotEmpty($tableSchema);

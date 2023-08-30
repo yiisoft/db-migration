@@ -76,7 +76,7 @@ final class OracleFactory
         ];
 
         foreach ($tables as $table) {
-            if ($db->getTableSchema($table, true) !== null) {
+            if ($db->getTableSchema($table) !== null) {
                 $db->createCommand()->dropTable($table)->execute();
             }
         }
