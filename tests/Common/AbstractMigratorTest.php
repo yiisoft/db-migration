@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Yii\Db\Migration\Migrator;
