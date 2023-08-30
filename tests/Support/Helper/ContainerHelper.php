@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
@@ -47,7 +46,6 @@ final class ContainerHelper
             case Migrator::class:
                 return new Migrator(
                     $container->get(ConnectionInterface::class),
-                    $container->get(SchemaCache::class),
                     $container->get(ConsoleMigrationInformer::class),
                 );
 

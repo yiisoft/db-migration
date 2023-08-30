@@ -6,7 +6,6 @@ namespace Yiisoft\Yii\Db\Migration;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
-use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
@@ -15,11 +14,9 @@ use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
 final class Migrator
 {
     private bool $checkMigrationHistoryTable = true;
-    private bool $schemaCacheEnabled = false;
 
     public function __construct(
         private ConnectionInterface $db,
-        private SchemaCache $schemaCache,
         private MigrationInformerInterface $informer,
         private string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180
@@ -40,14 +37,10 @@ final class Migrator
     {
         $this->checkMigrationHistoryTable();
 
-        $this->beforeMigrate();
-
         match ($migration instanceof TransactionalMigrationInterface) {
             true => $this->db->transaction(fn () => $migration->up($this->createBuilder())),
             false => $migration->up($this->createBuilder()),
         };
-
-        $this->afterMigrate();
 
         $this->addMigrationToHistory($migration);
     }
@@ -56,14 +49,10 @@ final class Migrator
     {
         $this->checkMigrationHistoryTable();
 
-        $this->beforeMigrate();
-
         match ($migration instanceof TransactionalMigrationInterface) {
             true => $this->db->transaction(fn () => $migration->down($this->createBuilder())),
             false => $migration->down($this->createBuilder()),
         };
-
-        $this->afterMigrate();
 
         $this->removeMigrationFromHistory($migration);
     }
@@ -155,8 +144,6 @@ final class Migrator
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
-        $this->beforeMigrate();
-
         $b = $this->createBuilder(new NullMigrationInformer());
 
         $b->createTable($this->historyTable, [
@@ -165,26 +152,7 @@ final class Migrator
             'apply_time' => $b->integer()->notNull(),
         ]);
 
-        $this->afterMigrate();
-
         $this->informer->endCreateHistoryTable('Done.');
-    }
-
-    private function beforeMigrate(): void
-    {
-        $this->schemaCacheEnabled = $this->schemaCache->isEnabled();
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnabled(false);
-        }
-    }
-
-    private function afterMigrate(): void
-    {
-        if ($this->schemaCacheEnabled) {
-            $this->schemaCache->setEnabled(true);
-        }
-
-        $this->db->getSchema()->refresh();
     }
 
     private function createBuilder(?MigrationInformerInterface $informer = null): MigrationBuilder

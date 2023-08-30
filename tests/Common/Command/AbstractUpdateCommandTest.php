@@ -189,7 +189,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
         $this->assertSame(
             ['department_id'],
-            $dbSchema->getTableForeignKeys('student', true)[0]->getColumnNames()
+            $dbSchema->getTableForeignKeys('student')[0]->getColumnNames()
         );
 
         /** Check table student field dateofbirth */
