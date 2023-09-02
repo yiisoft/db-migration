@@ -22,18 +22,18 @@ use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Console\Application;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Command\DownCommand;
+use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\NewCommand;
+use Yiisoft\Db\Migration\Command\RedoCommand;
+use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Sqlite\Connection;
 use Yiisoft\Db\Sqlite\Driver;
 use Yiisoft\Definitions\ReferencesArray;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Command\DownCommand;
-use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
 
 final class Di
 {
