@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Service\Generate;
+namespace Yiisoft\Db\Migration\Tests\Common\Service\Generate;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
-use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
 
 abstract class AbstractCreateServiceTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support\Factory;
+namespace Yiisoft\Db\Migration\Tests\Support\Factory;
 
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -14,8 +14,8 @@ use Yiisoft\Db\Pgsql\Connection as PgSqlConnection;
 use Yiisoft\Db\Pgsql\Driver as PgSqlDriver;
 use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
+use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
 use function dirname;
 

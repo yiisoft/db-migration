@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
+namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -10,12 +10,12 @@ use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
+use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
+use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 abstract class AbstractUpdateCommandTest extends TestCase
 {

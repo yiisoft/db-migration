@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Command\DownCommand;
-use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Command\DownCommand;
+use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\NewCommand;
+use Yiisoft\Db\Migration\Command\RedoCommand;
+use Yiisoft\Db\Migration\Command\UpdateCommand;
 
 return [
     'yiisoft/yii-console' => [
@@ -21,7 +21,7 @@ return [
         ],
     ],
 
-    'yiisoft/yii-db-migration' => [
+    'yiisoft/db-migration' => [
         'createNamespace' => '',
         'createPath' => '',
         'updateNamespaces' => [],

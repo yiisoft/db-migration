@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support;
+namespace Yiisoft\Db\Migration\Tests\Support;
 
 use PHPUnit\Framework\Constraint\StringContains;
 use Psr\Container\ContainerExceptionInterface;

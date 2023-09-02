@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Service\Generate;
+namespace Yiisoft\Db\Migration\Service\Generate;
 
 final class ForeignKey
 {

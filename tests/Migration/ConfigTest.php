@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Migration;
+namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
@@ -12,21 +12,21 @@ use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
-use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Command\DownCommand;
-use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
-use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Command\DownCommand;
+use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\NewCommand;
+use Yiisoft\Db\Migration\Command\RedoCommand;
+use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Runner\DownRunner;
+use Yiisoft\Db\Migration\Runner\UpdateRunner;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function dirname;
 

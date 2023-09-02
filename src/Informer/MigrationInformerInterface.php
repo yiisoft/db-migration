@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Informer;
+namespace Yiisoft\Db\Migration\Informer;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Informer\Tests;
+namespace Yiisoft\Db\Migration\Informer\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 
 final class NullMigrationInformerTest extends TestCase
 {

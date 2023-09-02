@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
+namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
 abstract class AbstractHistoryCommandTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Command;
+namespace Yiisoft\Db\Migration\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,9 +15,9 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Strings\Inflector;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function file_exists;
 use function file_put_contents;
@@ -56,7 +56,7 @@ use function strlen;
  * For example:
  *
  * ```php
- * ./yii migrate:create post --command=table --namespace=Yiisoft\\Yii\Db\\Migration\\Migration
+ * ./yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.

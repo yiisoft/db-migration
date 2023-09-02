@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 /** @var array $params */
 

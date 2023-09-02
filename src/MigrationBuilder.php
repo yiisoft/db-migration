@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration;
+namespace Yiisoft\Db\Migration;
 
 use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -13,7 +13,7 @@ use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Strings\StringHelper;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {

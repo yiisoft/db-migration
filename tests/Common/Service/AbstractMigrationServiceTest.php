@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Service;
+namespace Yiisoft\Db\Migration\Tests\Common\Service;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
 abstract class AbstractMigrationServiceTest extends TestCase
 {

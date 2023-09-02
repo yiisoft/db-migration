@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mssql;
+namespace Yiisoft\Db\Migration\Tests\Driver\Mssql;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Runner\AbstractUpRunnerTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MssqlFactory;
+use Yiisoft\Db\Migration\Tests\Common\Runner\AbstractUpRunnerTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\MssqlFactory;
 
 /**
  * @group mssql

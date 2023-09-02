@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support\Stub;
+namespace Yiisoft\Db\Migration\Tests\Support\Stub;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 
 final class StubMigrationInformer implements MigrationInformerInterface
 {

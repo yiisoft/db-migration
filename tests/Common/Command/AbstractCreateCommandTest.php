@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
+namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
-use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
+use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
 abstract class AbstractCreateCommandTest extends TestCase
 {
@@ -39,9 +39,9 @@ abstract class AbstractCreateCommandTest extends TestCase
 
 declare(strict_types=1);
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -92,9 +92,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -162,9 +162,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -351,9 +351,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -433,8 +433,8 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Class $className
@@ -531,8 +531,8 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles adding columns to table `post`.
@@ -582,8 +582,8 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles dropping columns from table `post`.
@@ -635,8 +635,8 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles the dropping of table `post`.
@@ -692,9 +692,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -751,9 +751,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post`.
@@ -874,9 +874,9 @@ declare(strict_types=1);
 
 namespace $namespace;
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
-use Yiisoft\Yii\Db\Migration\TransactionalMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 /**
  * Handles the creation of table `post_tag`.

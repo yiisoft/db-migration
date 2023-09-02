@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mysql;
+namespace Yiisoft\Db\Migration\Tests\Driver\Mysql;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MysqlFactory;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
+use Yiisoft\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 
 /**
  * @group mysql

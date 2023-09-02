@@ -1,9 +1,9 @@
 # Symfony Console
 
-1. Copy configuration file `./vendor/yiisoft/yii-db-migration/bin/DiConsoleSymfony.php` to `root` folder of your project.
+1. Copy configuration file `./vendor/yiisoft/db-migration/bin/DiConsoleSymfony.php` to `root` folder of your project.
 
 ```shell
-cp ./vendor/yiisoft/yii-db-migration/bin/DiConsoleSymfony.php ./
+cp ./vendor/yiisoft/db-migration/bin/DiConsoleSymfony.php ./
 ```
 
 2. Edit `./DiConsoleSymfony.php` and add definitions for `Psr\SimpleCache\CacheInterface`

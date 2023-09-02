@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
+namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
-use Yiisoft\Yii\Db\Migration\Command\CreateCommand;
-use Yiisoft\Yii\Db\Migration\Command\DownCommand;
-use Yiisoft\Yii\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Yii\Db\Migration\Command\NewCommand;
-use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
-use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Command\DownCommand;
+use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\NewCommand;
+use Yiisoft\Db\Migration\Command\RedoCommand;
+use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Runner\DownRunner;
+use Yiisoft\Db\Migration\Runner\UpdateRunner;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 final class ContainerHelper
 {

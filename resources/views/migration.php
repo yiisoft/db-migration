@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * This view is used by {@see Yiisoft\Yii\Db\Migration\Command\CreateCommand}.
+ * This view is used by {@see Yiisoft\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
- * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
+ * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
  * @var $className string The new migration class name without namespace.
  * @var $namespace string The new migration class namespace.
  */
@@ -21,8 +21,8 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Class <?= $className . "\n" ?>

@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
+ * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
  * @var $table string
- * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[]
+ * @var $foreignKeys \Yiisoft\Db\Migration\Service\Generate\ForeignKey[]
  */
 
 foreach ($foreignKeys as $foreignKey) {

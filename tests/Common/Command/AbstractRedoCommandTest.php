@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Command;
+namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Yii\Db\Migration\Command\RedoCommand;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\CommandHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\MigrationHelper;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
+use Yiisoft\Db\Migration\Command\RedoCommand;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
+use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
 abstract class AbstractRedoCommandTest extends TestCase
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Runner;
+namespace Yiisoft\Db\Migration\Runner;
 
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\MigrationInterface;
-use Yiisoft\Yii\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\MigrationInterface;
+use Yiisoft\Db\Migration\Migrator;
 
 final class UpdateRunner
 {

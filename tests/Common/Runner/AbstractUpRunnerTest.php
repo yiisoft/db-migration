@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common\Runner;
+namespace Yiisoft\Db\Migration\Tests\Common\Runner;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigration;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Runner\UpdateRunner;
+use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
 abstract class AbstractUpRunnerTest extends TestCase
 {

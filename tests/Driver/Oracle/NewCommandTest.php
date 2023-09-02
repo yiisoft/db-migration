@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Oracle;
+namespace Yiisoft\Db\Migration\Tests\Driver\Oracle;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractNewCommandTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\OracleFactory;
+use Yiisoft\Db\Migration\Tests\Common\Command\AbstractNewCommandTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\OracleFactory;
 
 /**
  * @group oracle
