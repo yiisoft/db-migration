@@ -45,12 +45,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Yiisoft\\Yii\\Db\\Migration\\": "src"
+            "Yiisoft\\Db\\Migration\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Yii\\Db\\Migration\\Tests\\": "tests"
+            "Yiisoft\\Db\\Migration\\Tests\\": "tests"
         }
     },
     "extra": {

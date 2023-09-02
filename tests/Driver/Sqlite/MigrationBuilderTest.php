@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Sqlite;
+namespace Yiisoft\Db\Migration\Tests\Driver\Sqlite;
 
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Yii\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\DbHelper;
+use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\SqLiteFactory;
+use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
 
 /**
  * @group sqlite

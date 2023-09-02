@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * This view is used by {@see Yiisoft\Yii\Db\Migration\Command\CreateCommand}.
+ * This view is used by {@see Yiisoft\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
- * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
+ * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
  * @var $className string The new migration class name without namespace.
  * @var $namespace string The new migration class namespace.
  * @var $table string The table name.
- * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] Fields.
- * @var $foreignKeys \Yiisoft\Yii\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
+ * @var $columns \Yiisoft\Db\Migration\Service\Generate\Column[] Fields.
+ * @var $foreignKeys \Yiisoft\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
  */
 
 echo "<?php\n";
@@ -24,8 +24,8 @@ if (!empty($namespace)) {
 }
 ?>
 
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 /**
  * Handles dropping columns from table `<?= $table ?>`.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Service\Generate;
+namespace Yiisoft\Db\Migration\Service\Generate;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;

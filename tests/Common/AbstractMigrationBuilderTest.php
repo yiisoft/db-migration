@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Common;
+namespace Yiisoft\Db\Migration\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Yii\Db\Migration\MigrationBuilder;
-use Yiisoft\Yii\Db\Migration\Tests\Support\AssertTrait;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
+use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 abstract class AbstractMigrationBuilderTest extends TestCase
 {

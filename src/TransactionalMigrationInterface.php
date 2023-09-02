@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration;
+namespace Yiisoft\Db\Migration;
 
 /**
  * Allowing to use transaction in migration.

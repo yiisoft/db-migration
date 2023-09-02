@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * Creates a call for the method `Yiisoft\Yii\Db\Migration\MigrationBuilder::createTable()`.
+ * Creates a call for the method `Yiisoft\Db\Migration\MigrationBuilder::createTable()`.
  *
- * @var $this \Yiisoft\Yii\Db\Migration\Service\Generate\PhpRenderer
+ * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
  * @var $table string The table name.
- * @var $columns \Yiisoft\Yii\Db\Migration\Service\Generate\Column[] Fields.
+ * @var $columns \Yiisoft\Db\Migration\Service\Generate\Column[] Fields.
  * @var $foreignKeys array Foreign keys.
  */
 

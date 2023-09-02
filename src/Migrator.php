@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration;
+namespace Yiisoft\Db\Migration;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
-use Yiisoft\Yii\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Yii\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 
 final class Migrator
 {

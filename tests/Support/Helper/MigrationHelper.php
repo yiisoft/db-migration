@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support\Helper;
+namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 
 use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function dirname;
 
 final class MigrationHelper
 {
     private const PATH_ALIAS = '@runtime/migration-path';
-    public const NAMESPACE = 'Yiisoft\\Yii\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
+    public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
 
     /**
      * @return string The migrations directory

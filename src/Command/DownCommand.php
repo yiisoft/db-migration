@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Command;
+namespace Yiisoft\Db\Migration\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -12,10 +12,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Yii\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\Runner\DownRunner;
-use Yiisoft\Yii\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Runner\DownRunner;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function array_keys;
 use function count;

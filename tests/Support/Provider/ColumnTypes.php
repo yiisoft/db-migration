@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Support\Provider;
+namespace Yiisoft\Db\Migration\Tests\Support\Provider;
 
 use Yiisoft\Db\Driver\Pdo\PdoConnectionInterface;
 use Yiisoft\Db\Schema\SchemaInterface;
-use Yiisoft\Yii\Db\Migration\AbstractMigrationBuilder;
+use Yiisoft\Db\Migration\AbstractMigrationBuilder;
 
 use function array_key_exists;
 use function array_values;

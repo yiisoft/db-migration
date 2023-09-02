@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Pgsql;
+namespace Yiisoft\Db\Migration\Tests\Driver\Pgsql;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Runner\AbstractDownRunnerTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
+use Yiisoft\Db\Migration\Tests\Common\Runner\AbstractDownRunnerTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
 
 /**
  * @group pgsql

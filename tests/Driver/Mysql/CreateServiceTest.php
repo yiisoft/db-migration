@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Mysql;
+namespace Yiisoft\Db\Migration\Tests\Driver\Mysql;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Service\Generate\AbstractCreateServiceTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Db\Migration\Tests\Common\Service\Generate\AbstractCreateServiceTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\MysqlFactory;
 
 /**
  * @group mysql

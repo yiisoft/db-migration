@@ -26,7 +26,7 @@ Add to `config/params.php`:
 
 ```php
 ...
-'yiisoft/yii-db-migration' => [
+'yiisoft/db-migration' => [
     'createNamespace' => 'App\\Migration',
     'updateNamespaces' => ['App\\Migration'],
 ],
@@ -37,7 +37,7 @@ Now the `MigrationService::class` uses the `View` of the application that is alr
 
 Execute `composer du` in console to rebuild the configuration.
 
-Now we have the `yiisoft/yii-db-migration` package configured and it can be called in the console.
+Now we have the `yiisoft/db-migration` package configured and it can be called in the console.
 
 View the list of available commands with `./yii list`:
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Service;
+namespace Yiisoft\Db\Migration\Service;
 
 use Composer\Autoload\ClassLoader;
 use ReflectionClass;
@@ -13,9 +13,9 @@ use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Strings\Inflector;
-use Yiisoft\Yii\Db\Migration\MigrationInterface;
-use Yiisoft\Yii\Db\Migration\Migrator;
-use Yiisoft\Yii\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\MigrationInterface;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 use function dirname;
 

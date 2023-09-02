@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration\Tests\Driver\Sqlite;
+namespace Yiisoft\Db\Migration\Tests\Driver\Sqlite;
 
-use Yiisoft\Yii\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Factory\SqLiteFactory;
-use Yiisoft\Yii\Db\Migration\Tests\Support\Helper\ContainerConfig;
+use Yiisoft\Db\Migration\Tests\Common\Command\AbstractCreateCommandTest;
+use Yiisoft\Db\Migration\Tests\Support\Factory\SqLiteFactory;
+use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 
 /**
  * @group sqlite

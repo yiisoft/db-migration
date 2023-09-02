@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Yii\Db\Migration;
+namespace Yiisoft\Db\Migration;
 
 /**
  * The RevertibleMigrationInterface defines the minimum set of methods to be implemented
