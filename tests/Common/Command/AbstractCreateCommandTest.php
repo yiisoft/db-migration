@@ -1009,7 +1009,7 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $this->container->get(MigrationService::class)
-            ->createNamespace('Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists');
+            ->createNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
