@@ -17,7 +17,7 @@ use function dirname;
 final class MigrationHelper
 {
     private const PATH_ALIAS = '@runtime/migration-path';
-    public const NAMESPACE = 'Yiisoft\\Migration\\Tests\\runtime\\MigrationNamespace';
+    public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
 
     /**
      * @return string The migrations directory
