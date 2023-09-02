@@ -46,7 +46,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
 
         $service->updateNamespaces([
             MigrationHelper::NAMESPACE,
-            'Yiisoft\\Yii\Db\\Migration\\TestsRuntime\\NotExists',
+            'Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists',
         ]);
 
         $migrations = $service->getNewMigrations();

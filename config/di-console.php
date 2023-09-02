@@ -11,10 +11,10 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 return [
     MigrationService::class => [
         'class' => MigrationService::class,
-        'createNamespace()' => [$params['yiisoft/yii-db-migration']['createNamespace']],
-        'updateNamespaces()' => [$params['yiisoft/yii-db-migration']['updateNamespaces']],
-        'createPath()' => [$params['yiisoft/yii-db-migration']['createPath']],
-        'updatePaths()' => [$params['yiisoft/yii-db-migration']['updatePaths']],
+        'createNamespace()' => [$params['yiisoft/db-migration']['createNamespace']],
+        'updateNamespaces()' => [$params['yiisoft/db-migration']['updateNamespaces']],
+        'createPath()' => [$params['yiisoft/db-migration']['createPath']],
+        'updatePaths()' => [$params['yiisoft/db-migration']['updatePaths']],
     ],
 
     MigrationInformerInterface::class => NullMigrationInformer::class,
