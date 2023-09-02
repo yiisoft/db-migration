@@ -33,7 +33,7 @@ use function strlen;
  * To use it, configure migrations paths (`createPath` and `updatePaths`) in `params.php` file, in your application.
  *
  * ```php
- * 'yiisoft/yii-db-migration' => [
+ * 'yiisoft/db-migration' => [
  *     'createNamespace' => '',
  *     'createPath' => '',
  *     'updateNamespaces' => [],
