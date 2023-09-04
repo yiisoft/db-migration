@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 require './vendor/autoload.php';
-require 'DiConsoleSymfony.php';
+require 'MigrationContainer.php';
 
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Console\Application;
@@ -12,7 +12,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 
-$containerConfig = ContainerConfig::create()->withDefinitions(DiConsoleSymfony::definitions());
+$containerConfig = ContainerConfig::create()->withDefinitions(MigrationContainer::definitions());
 $container = new Container($containerConfig);
 
 if ($container->has(CacheInterface::class) === false) {
