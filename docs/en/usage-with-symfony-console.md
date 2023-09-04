@@ -35,7 +35,7 @@ use Yiisoft\Db\Sqlite\Connection;
 use Yiisoft\Db\Sqlite\Driver;
 use Yiisoft\Definitions\ReferencesArray;
 
-final class Di
+final class MigrationContainer
 {
     public static function definitions(): array
     {
