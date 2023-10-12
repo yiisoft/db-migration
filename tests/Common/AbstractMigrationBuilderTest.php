@@ -18,7 +18,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     protected ContainerInterface $container;
     protected MigrationBuilder $builder;
-    private ConnectionInterface $db;
+    protected ConnectionInterface $db;
     private StubMigrationInformer $informer;
 
     protected function setUp(): void
