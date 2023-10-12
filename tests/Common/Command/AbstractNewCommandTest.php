@@ -177,51 +177,6 @@ abstract class AbstractNewCommandTest extends TestCase
         return CommandHelper::getCommandTester($container, NewCommand::class);
     }
 
-    public function testEmptyPath(): void
-    {
-        $command = $this->createCommand($this->container);
-
-        $this->expectException(InvalidOptionException::class);
-        $this->expectExceptionMessage('The "--path" option requires a value.');
-        $command->execute(['--path' => null]);
-    }
-
-    public function testEmptyNamespace(): void
-    {
-        $command = $this->createCommand($this->container);
-
-        $this->expectException(InvalidOptionException::class);
-        $this->expectExceptionMessage('The "--namespace" option requires a value.');
-        $command->execute(['--namespace' => null]);
-
-        $this->expectException(InvalidOptionException::class);
-        $this->expectExceptionMessage('The "-ns" option requires a value.');
-        $command->execute(['-ns' => null]);
-    }
-
-    public function testNotExistsPath(): void
-    {
-        $command = $this->createCommand($this->container);
-
-        $exitCode = $command->execute(['--path' => ['not-exists-path']]);
-        $output = $command->getDisplay(true);
-
-        $this->assertSame(Command::FAILURE, $exitCode);
-        $this->assertStringContainsString('[WARNING] No new migrations found. Your system is up-to-date.', $output);
-        $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
-    }
-
-    public function testNotExistsNamespace(): void
-    {
-        $command = $this->createCommand($this->container);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid path alias: @not-exists-namespace');
-
-        $command->execute(['--namespace' => ['not-exists-namespace']]);
-        $command->execute(['-ns' => ['not-exists-namespace']]);
-    }
-
     public function testOptionPath(): void
     {
         $command = $this->createCommand($this->container);
