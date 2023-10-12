@@ -53,16 +53,8 @@ final class NewCommand extends Command
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $this->migrationService->updatePaths([]);
-            $this->migrationService->updateNamespaces([]);
-
-            if (!empty($paths)) {
-                $this->migrationService->updatePaths($paths);
-            }
-
-            if (!empty($namespaces)) {
-                $this->migrationService->updateNamespaces($namespaces);
-            }
+            $this->migrationService->updatePaths($paths);
+            $this->migrationService->updateNamespaces($namespaces);
         }
 
         $this->migrationService->before(self::getDefaultName() ?? '');

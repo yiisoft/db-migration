@@ -58,20 +58,14 @@ final class UpdateCommand extends Command
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
 
+        /** @psalm-var string[] $paths */
         $paths = $input->getOption('path');
+        /** @psalm-var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $this->migrationService->updatePaths([]);
-            $this->migrationService->updateNamespaces([]);
-
-            if (!empty($paths)) {
-                $this->migrationService->updatePaths($paths);
-            }
-
-            if (!empty($namespaces)) {
-                $this->migrationService->updateNamespaces($namespaces);
-            }
+            $this->migrationService->updatePaths($paths);
+            $this->migrationService->updateNamespaces($namespaces);
         }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
