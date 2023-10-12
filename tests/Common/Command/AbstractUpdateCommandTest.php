@@ -16,6 +16,7 @@ use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
+use Yiisoft\Files\FileHelper;
 
 abstract class AbstractUpdateCommandTest extends TestCase
 {
@@ -360,5 +361,65 @@ abstract class AbstractUpdateCommandTest extends TestCase
     public function createCommand(ContainerInterface $container): CommandTester
     {
         return CommandHelper::getCommandTester($container, UpdateCommand::class);
+    }
+
+    public function testOptionPath(): void
+    {
+        $command = $this->createCommand($this->container);
+
+        $path = '@runtime/new-migration-path';
+        $service = $this->container->get(MigrationService::class);
+        $service->createPath($path);
+        $path = $service->findMigrationPath(null);
+
+        is_dir($path)
+            ? FileHelper::clearDirectory($path)
+            : mkdir($path);
+
+        $classCreatePost = MigrationHelper::createMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+
+        $exitCode = $command->setInputs(['n'])->execute(['--path' => [$path]], ['interactive' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
+        $this->assertStringContainsString('CreateBook', $output);
+    }
+
+    public function testOptionNamespace(): void
+    {
+        $command = $this->createCommand($this->container);
+
+        $namespace = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\NewMigrationNamespace';
+        $service = $this->container->get(MigrationService::class);
+        $service->createNamespace($namespace);
+        $path = $service->findMigrationPath($namespace);
+
+        is_dir($path)
+            ? FileHelper::clearDirectory($path)
+            : mkdir($path);
+
+        $classCreatePost = MigrationHelper::createMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+
+        foreach (['--namespace', '-ns'] as $option) {
+            $exitCode = $command->setInputs(['n'])->execute([$option => [$namespace]], ['interactive' => true]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
+            $this->assertStringContainsString('Yiisoft\Db\Migration\Tests\runtime\NewMigrationNamespace\\', $output);
+        }
     }
 }

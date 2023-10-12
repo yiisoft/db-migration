@@ -45,7 +45,10 @@ final class UpdateCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0');
+        $this
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to apply.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to apply.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,6 +57,17 @@ final class UpdateCommand extends Command
 
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
+
+        $paths = $input->getOption('path');
+        $namespaces = $input->getOption('namespace');
+
+        if (!empty($paths)) {
+            $this->migrationService->updatePaths($paths);
+        }
+
+        if (!empty($namespaces)) {
+            $this->migrationService->updateNamespaces($namespaces);
+        }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
             return Command::INVALID;

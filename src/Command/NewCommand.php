@@ -37,13 +37,28 @@ final class NewCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10');
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to apply.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to apply.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrationService->setIO($io);
+
+        /** @psalm-var string[] $paths */
+        $paths = $input->getOption('path');
+        /** @psalm-var string[] $namespaces */
+        $namespaces = $input->getOption('namespace');
+
+        if (!empty($paths)) {
+            $this->migrationService->updatePaths($paths);
+        }
+
+        if (!empty($namespaces)) {
+            $this->migrationService->updateNamespaces($namespaces);
+        }
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
