@@ -9,6 +9,7 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -365,18 +366,29 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
     public function testOptionPath(): void
     {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(32)'],
+        );
+
         $command = $this->createCommand($this->container);
 
-        $path = '@runtime/new-migration-path';
+        $alias = '@runtime/new-migration-path';
+        $path = $this->container->get(Aliases::class)->get($alias);
+
         $service = $this->container->get(MigrationService::class);
-        $service->createPath($path);
-        $path = $service->findMigrationPath(null);
+        $service->createPath($alias);
+        $service->createNamespace('');
 
         is_dir($path)
             ? FileHelper::clearDirectory($path)
             : mkdir($path);
 
-        $classCreatePost = MigrationHelper::createMigration(
+        $classCreateBook = MigrationHelper::createMigration(
             $this->container,
             'Create_Book',
             'table',
@@ -384,20 +396,30 @@ abstract class AbstractUpdateCommandTest extends TestCase
             ['title:string(100)', 'author:string(80)'],
         );
 
-        $exitCode = $command->setInputs(['n'])->execute(['--path' => [$path]], ['interactive' => true]);
+        $exitCode = $command->setInputs(['n'])->execute(['--path' => [$alias]], ['interactive' => true]);
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
-        $this->assertStringContainsString('CreateBook', $output);
+        $this->assertStringContainsString($classCreateBook, $output);
     }
 
     public function testOptionNamespace(): void
     {
+        MigrationHelper::useMigrationsPath($this->container);
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(32)'],
+        );
+
         $command = $this->createCommand($this->container);
 
         $namespace = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\NewMigrationNamespace';
         $service = $this->container->get(MigrationService::class);
+        $service->createPath('');
         $service->createNamespace($namespace);
         $path = $service->findMigrationPath($namespace);
 
@@ -405,12 +427,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
             ? FileHelper::clearDirectory($path)
             : mkdir($path);
 
-        $classCreatePost = MigrationHelper::createMigration(
+        $classCreateChapter = MigrationHelper::createMigration(
             $this->container,
-            'Create_Book',
+            'Create_Chapter',
             'table',
-            'book',
-            ['title:string(100)', 'author:string(80)'],
+            'chapter',
+            ['name:string(100)'],
         );
 
         foreach (['--namespace', '-ns'] as $option) {
@@ -419,7 +441,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
             $this->assertSame(Command::SUCCESS, $exitCode);
             $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
-            $this->assertStringContainsString('Yiisoft\Db\Migration\Tests\runtime\NewMigrationNamespace\\', $output);
+            $this->assertStringContainsString($classCreateChapter, $output);
         }
     }
 }

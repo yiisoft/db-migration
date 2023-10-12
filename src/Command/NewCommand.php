@@ -52,12 +52,17 @@ final class NewCommand extends Command
         /** @psalm-var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
-        if (!empty($paths)) {
-            $this->migrationService->updatePaths($paths);
-        }
+        if (!empty($paths) || !empty($namespaces)) {
+            $this->migrationService->updatePaths([]);
+            $this->migrationService->updateNamespaces([]);
 
-        if (!empty($namespaces)) {
-            $this->migrationService->updateNamespaces($namespaces);
+            if (!empty($paths)) {
+                $this->migrationService->updatePaths($paths);
+            }
+
+            if (!empty($namespaces)) {
+                $this->migrationService->updateNamespaces($namespaces);
+            }
         }
 
         $this->migrationService->before(self::getDefaultName() ?? '');
