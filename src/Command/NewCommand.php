@@ -21,9 +21,11 @@ use function count;
  * For example,
  *
  * ```
- * yii migrate:new     # first 10 new migrations
- * yii migrate:new 5   # first 5 new migrations
- * yii migrate:new all # all new migrations
+ * yii migrate:new                                           # first 10 new migrations
+ * yii migrate:new 5                                         # first 5 new migrations
+ * yii migrate:new all                                       # all new migrations
+ * yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations # new migrations from the directory
+ * yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations # new migrations from the namespace
  * ```
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]

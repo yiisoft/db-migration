@@ -44,8 +44,8 @@ use function strlen;
  * After using this command, developers should modify the created migration skeleton by filling up the actual
  * migration logic.
  *
- * ```php
- * ./yii migrate:create table --command=table
+ * ```
+ * yii migrate:create table --command=table
  * ```
  *
  * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
@@ -55,8 +55,9 @@ use function strlen;
  *
  * For example:
  *
- * ```php
- * ./yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
+ * ```
+ * yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
+ * yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
@@ -80,7 +81,7 @@ final class CreateCommand extends Command
             ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'Table fields to generate.')
             ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment.')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction.')
-            ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration file.')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
             ->setHelp('This command generates new migration file.');
     }
