@@ -60,6 +60,7 @@ final class UpdateCommand extends Command
 
         /** @psalm-var string[] $paths */
         $paths = $input->getOption('path');
+
         /** @psalm-var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 

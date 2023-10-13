@@ -178,28 +178,7 @@ abstract class AbstractNewCommandTest extends TestCase
 
     public function testOptionPath(): void
     {
-        MigrationHelper::useMigrationsNamespace($this->container);
-        MigrationHelper::createMigration(
-            $this->container,
-            'Create_User',
-            'table',
-            'user',
-            ['name:string(32)'],
-        );
-
-        $command = $this->createCommand($this->container);
-
-        $alias = '@runtime/new-migration-path';
-        $path = $this->container->get(Aliases::class)->get($alias);
-
-        $service = $this->container->get(MigrationService::class);
-        $service->createPath($alias);
-        $service->createNamespace('');
-
-        is_dir($path)
-            ? FileHelper::clearDirectory($path)
-            : mkdir($path);
-
+        MigrationHelper::useMigrationsPath($this->container);
         $classCreateBook = MigrationHelper::createMigration(
             $this->container,
             'Create_Book',
@@ -207,8 +186,11 @@ abstract class AbstractNewCommandTest extends TestCase
             'book',
             ['title:string(100)', 'author:string(80)'],
         );
+        MigrationHelper::resetPathAndNamespace($this->container);
 
-        $exitCode = $command->execute(['--path' => [$alias]]);
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->execute(['--path' => [MigrationHelper::PATH_ALIAS]]);
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
@@ -218,27 +200,7 @@ abstract class AbstractNewCommandTest extends TestCase
 
     public function testOptionNamespace(): void
     {
-        MigrationHelper::useMigrationsPath($this->container);
-        MigrationHelper::createMigration(
-            $this->container,
-            'Create_User',
-            'table',
-            'user',
-            ['name:string(32)'],
-        );
-
-        $command = $this->createCommand($this->container);
-
-        $namespace = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\NewMigrationNamespace';
-        $service = $this->container->get(MigrationService::class);
-        $service->createPath('');
-        $service->createNamespace($namespace);
-        $path = $service->findMigrationPath($namespace);
-
-        is_dir($path)
-            ? FileHelper::clearDirectory($path)
-            : mkdir($path);
-
+        MigrationHelper::useMigrationsNamespace($this->container);
         $classCreateChapter = MigrationHelper::createMigration(
             $this->container,
             'Create_Chapter',
@@ -246,12 +208,16 @@ abstract class AbstractNewCommandTest extends TestCase
             'chapter',
             ['name:string(100)'],
         );
+        MigrationHelper::resetPathAndNamespace($this->container);
 
-        $exitCode = $command->execute(['--namespace' => [$namespace]]);
-        $output = $command->getDisplay(true);
+        $command = $this->createCommand($this->container);
+        foreach (['--namespace', '-ns'] as $option) {
+            $exitCode = $command->execute([$option => [MigrationHelper::NAMESPACE]]);
+            $output = $command->getDisplay(true);
 
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Found 1 new migration:', $output);
-        $this->assertStringContainsString($classCreateChapter, $output);
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Found 1 new migration:', $output);
+            $this->assertStringContainsString($classCreateChapter, $output);
+        }
     }
 }
