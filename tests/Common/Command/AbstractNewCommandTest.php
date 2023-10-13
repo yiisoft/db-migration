@@ -8,12 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Migration\Command\NewCommand;
-use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
-use Yiisoft\Files\FileHelper;
 
 abstract class AbstractNewCommandTest extends TestCase
 {

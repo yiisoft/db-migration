@@ -9,7 +9,6 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -17,7 +16,6 @@ use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
-use Yiisoft\Files\FileHelper;
 
 abstract class AbstractUpdateCommandTest extends TestCase
 {
