@@ -80,5 +80,7 @@ final class MysqlFactory
                 $db->createCommand('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
             }
         }
+
+        $db->close();
     }
 }

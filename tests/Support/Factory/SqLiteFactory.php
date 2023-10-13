@@ -59,5 +59,7 @@ final class SqLiteFactory
         foreach ($db->getSchema()->getTableNames() as $tableName) {
             $db->createCommand()->dropTable($tableName)->execute();
         }
+
+        $db->close();
     }
 }
