@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Arrays\ArrayHelper;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
@@ -83,18 +82,16 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         $query = (new Query($this->db))
-            ->select(['name', 'apply_time'])
+            ->select(['apply_time', 'name'])
             ->from($this->historyTable)
-            ->orderBy(['apply_time' => SORT_DESC, 'id' => SORT_DESC]);
+            ->orderBy(['apply_time' => SORT_DESC, 'id' => SORT_DESC])
+            ->indexBy('name');
 
         if ($limit > 0) {
             $query->limit($limit);
         }
 
-        /** @psalm-var array<int,array<string,string|null>> $rows */
-        $rows = $query->all();
-
-        return ArrayHelper::map($rows, 'name', 'apply_time');
+        return $query->column();
     }
 
     public function getHistoryTable(): string
