@@ -396,7 +396,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             ['title:string(100)', 'author:string(80)'],
         );
 
-        $exitCode = $command->setInputs(['n'])->execute(['--path' => [$alias]], ['interactive' => true]);
+        $exitCode = $command->setInputs(['n'])->execute(['--path' => [$alias]]);
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
@@ -436,7 +436,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         );
 
         foreach (['--namespace', '-ns'] as $option) {
-            $exitCode = $command->setInputs(['n'])->execute([$option => [$namespace]], ['interactive' => true]);
+            $exitCode = $command->setInputs(['n'])->execute([$option => [$namespace]]);
             $output = $command->getDisplay(true);
 
             $this->assertSame(Command::SUCCESS, $exitCode);
