@@ -60,7 +60,15 @@ final class MigrationService
             case 'migrate:create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     $this->io?->error(
-                        'At least one of `createNamespace` or `createPath` should be specified.'
+                        'One of `createNamespace` or `createPath` should be specified.'
+                    );
+
+                    $result = Command::INVALID;
+                }
+
+                if (!empty($this->createNamespace) && !empty($this->createPath)) {
+                    $this->io?->error(
+                        'Only one of `createNamespace` or `createPath` should be specified.'
                     );
 
                     $result = Command::INVALID;
