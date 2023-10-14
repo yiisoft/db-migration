@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Files\FileHelper;
 use Yiisoft\Strings\Inflector;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -144,7 +143,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $migrationPath = FileHelper::normalizePath($this->migrationService->findMigrationPath($namespace));
+        $migrationPath = $this->migrationService->findMigrationPath($namespace);
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
 
