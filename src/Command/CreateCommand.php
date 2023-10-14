@@ -43,7 +43,7 @@ use function strlen;
  * After using this command, developers should modify the created migration skeleton by filling up the actual
  * migration logic.
  *
- * ```php
+ * ```shell
  * ./yii migrate:create table --command=table
  * ```
  *
@@ -54,8 +54,9 @@ use function strlen;
  *
  * For example:
  *
- * ```php
+ * ```shell
  * ./yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
+ * ./yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
@@ -79,7 +80,8 @@ final class CreateCommand extends Command
             ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'Table fields to generate.')
             ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment.')
             ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction.')
-            ->addOption('namespace', null, InputOption::VALUE_OPTIONAL, 'Migration file namespace.')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
             ->setHelp('This command generates new migration file.');
     }
 
@@ -89,6 +91,17 @@ final class CreateCommand extends Command
         $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
         $this->createService->setIO($io);
+
+        /** @var string|null $path */
+        $path = $input->getOption('path');
+
+        /** @var string|null $namespace */
+        $namespace = $input->getOption('namespace');
+
+        if ($path !== null || $namespace !== null) {
+            $this->migrationService->createPath((string) $path);
+            $this->migrationService->createNamespace((string) $namespace);
+        }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
             return Command::INVALID;
@@ -105,9 +118,6 @@ final class CreateCommand extends Command
 
         /** @var string $and */
         $and = $input->getOption('and');
-
-        /** @var string $namespace */
-        $namespace = $input->getOption('namespace');
 
         if (!preg_match('/^[\w\\\\]+$/', $table)) {
             $io->error(

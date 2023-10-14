@@ -26,9 +26,15 @@ use function strlen;
  *
  * For example,
  *
- * ```
- * yii migrate:up           # apply all new migrations
- * yii migrate:up --limit=3 # apply the first 3 new migrations
+ * ```shell
+ * ./yii migrate:up                                           # apply all new migrations
+ * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
+ * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
+ * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
+ *
+ * # apply new migrations from multiple directories and namespaces
+ * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
  */
 #[AsCommand('migrate:up', 'Applies new migrations.')]
@@ -45,7 +51,10 @@ final class UpdateCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0');
+        $this
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to apply.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to apply.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,6 +63,17 @@ final class UpdateCommand extends Command
 
         $this->migrationService->setIO($io);
         $this->updateRunner->setIO($io);
+
+        /** @psalm-var string[] $paths */
+        $paths = $input->getOption('path');
+
+        /** @psalm-var string[] $namespaces */
+        $namespaces = $input->getOption('namespace');
+
+        if (!empty($paths) || !empty($namespaces)) {
+            $this->migrationService->updatePaths($paths);
+            $this->migrationService->updateNamespaces($namespaces);
+        }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
             return Command::INVALID;

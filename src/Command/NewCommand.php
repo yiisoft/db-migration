@@ -20,10 +20,16 @@ use function count;
  * This command will show the new migrations that have not been applied yet.
  * For example,
  *
- * ```
- * yii migrate:new     # first 10 new migrations
- * yii migrate:new 5   # first 5 new migrations
- * yii migrate:new all # all new migrations
+ * ```shell
+ * ./yii migrate:new                                           # first 10 new migrations
+ * ./yii migrate:new 5                                         # first 5 new migrations
+ * ./yii migrate:new all                                       # all new migrations
+ * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations # new migrations from the directory
+ * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations # new migrations from the namespace
+ *
+ * # new migrations from multiple directories and namespaces
+ * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
@@ -37,13 +43,26 @@ final class NewCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to history.', '10');
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to display.', '10')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to display.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to display.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrationService->setIO($io);
+
+        /** @psalm-var string[] $paths */
+        $paths = $input->getOption('path');
+
+        /** @psalm-var string[] $namespaces */
+        $namespaces = $input->getOption('namespace');
+
+        if (!empty($paths) || !empty($namespaces)) {
+            $this->migrationService->updatePaths($paths);
+            $this->migrationService->updateNamespaces($namespaces);
+        }
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 

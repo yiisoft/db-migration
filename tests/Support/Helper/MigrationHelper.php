@@ -16,7 +16,7 @@ use function dirname;
 
 final class MigrationHelper
 {
-    private const PATH_ALIAS = '@runtime/migration-path';
+    public const PATH_ALIAS = '@runtime/migration-path';
     public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
 
     /**
@@ -129,5 +129,15 @@ final class MigrationHelper
                 ? FileHelper::clearDirectory($path)
                 : mkdir($path);
         }
+    }
+
+    public static function resetPathAndNamespace(ContainerInterface $container): void
+    {
+        $service = $container->get(MigrationService::class);
+
+        $service->createPath('');
+        $service->updatePaths([]);
+        $service->createNamespace('');
+        $service->updateNamespaces([]);
     }
 }

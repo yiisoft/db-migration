@@ -15,6 +15,7 @@ use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Files\FileHelper;
 
 abstract class AbstractCreateCommandTest extends TestCase
 {
@@ -416,17 +417,20 @@ EOF;
     public function testExecuteInputNamespaces(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
+        MigrationHelper::resetPathAndNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
-        $exitCode = $command->execute(['name' => 'post', '--namespace' => MigrationHelper::NAMESPACE]);
-        $output = $command->getDisplay(true);
+        foreach (['--namespace', '-ns'] as $option) {
+            $command->setInputs(['yes']);
 
-        $className = MigrationHelper::findMigrationClassNameInOutput($output);
-        $namespace = MigrationHelper::NAMESPACE;
+            $exitCode = $command->execute(['name' => 'post', $option => MigrationHelper::NAMESPACE]);
+            $output = $command->getDisplay(true);
 
-        $expectedMigrationCode = <<<EOF
+            $className = MigrationHelper::findMigrationClassNameInOutput($output);
+            $namespace = MigrationHelper::NAMESPACE;
+
+            $expectedMigrationCode = <<<EOF
 <?php
 
 declare(strict_types=1);
@@ -453,11 +457,30 @@ final class $className implements RevertibleMigrationInterface
 }
 
 EOF;
-        $generatedMigrationCode = file_get_contents(MigrationHelper::getPathForMigrationNamespace() . '/' . $className . '.php');
+            $generatedMigrationCode = file_get_contents(MigrationHelper::getPathForMigrationNamespace() . '/' . $className . '.php');
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Create new migration y/n:', $output);
+            $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+        }
+    }
+
+    public function testExecuteInputPath(): void
+    {
+        $path = MigrationHelper::useMigrationsPath($this->container);
+        MigrationHelper::resetPathAndNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
+        $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
+        $this->assertMatchesRegularExpression("/^\s+M\d{12}Post$/m", $output);
+        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
+        $this->assertCount(1, FileHelper::findFiles($path));
     }
 
     public function testExecuteNameException(): void

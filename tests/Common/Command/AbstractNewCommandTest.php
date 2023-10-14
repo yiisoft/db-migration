@@ -168,6 +168,51 @@ abstract class AbstractNewCommandTest extends TestCase
         $this->assertStringContainsString($classCreateUser, $output);
     }
 
+    public function testOptionPath(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+        $classCreateBook = MigrationHelper::createMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+        MigrationHelper::resetPathAndNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->execute(['--path' => [MigrationHelper::PATH_ALIAS]]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Found 1 new migration:', $output);
+        $this->assertStringContainsString($classCreateBook, $output);
+    }
+
+    public function testOptionNamespace(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        $classCreateChapter = MigrationHelper::createMigration(
+            $this->container,
+            'Create_Chapter',
+            'table',
+            'chapter',
+            ['name:string(100)'],
+        );
+        MigrationHelper::resetPathAndNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        foreach (['--namespace', '-ns'] as $option) {
+            $exitCode = $command->execute([$option => [MigrationHelper::NAMESPACE]]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Found 1 new migration:', $output);
+            $this->assertStringContainsString($classCreateChapter, $output);
+        }
+    }
+
     public function createCommand(ContainerInterface $container): CommandTester
     {
         return CommandHelper::getCommandTester($container, NewCommand::class);

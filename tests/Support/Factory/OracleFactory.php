@@ -80,5 +80,7 @@ final class OracleFactory
                 $db->createCommand()->dropTable($table)->execute();
             }
         }
+
+        $db->close();
     }
 }
