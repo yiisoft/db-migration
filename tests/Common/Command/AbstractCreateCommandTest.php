@@ -1089,7 +1089,7 @@ EOF;
         $exitCode = $command->execute([
             'name' => 'post',
             '--path' => MigrationHelper::PATH_ALIAS,
-            '--namespace' => MigrationHelper::NAMESPACE
+            '--namespace' => MigrationHelper::NAMESPACE,
         ]);
         $output = $command->getDisplay(true);
 
