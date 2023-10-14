@@ -27,10 +27,10 @@ use function strlen;
  * For example,
  *
  * ```
- * yii migrate:up                                           # apply all new migrations
- * yii migrate:up --limit=3                                 # apply the first 3 new migrations
- * yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
- * yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
+ * ./yii migrate:up                                           # apply all new migrations
+ * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
+ * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
+ * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
  * ```
  */
 #[AsCommand('migrate:up', 'Applies new migrations.')]

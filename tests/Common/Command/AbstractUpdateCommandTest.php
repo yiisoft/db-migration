@@ -357,11 +357,6 @@ abstract class AbstractUpdateCommandTest extends TestCase
         );
     }
 
-    public function createCommand(ContainerInterface $container): CommandTester
-    {
-        return CommandHelper::getCommandTester($container, UpdateCommand::class);
-    }
-
     public function testOptionPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
@@ -406,5 +401,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
             $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
             $this->assertStringContainsString($classCreateChapter, $output);
         }
+    }
+
+    public function createCommand(ContainerInterface $container): CommandTester
+    {
+        return CommandHelper::getCommandTester($container, UpdateCommand::class);
     }
 }

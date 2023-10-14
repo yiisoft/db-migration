@@ -45,7 +45,7 @@ use function strlen;
  * migration logic.
  *
  * ```
- * yii migrate:create table --command=table
+ * ./yii migrate:create table --command=table
  * ```
  *
  * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
@@ -56,8 +56,8 @@ use function strlen;
  * For example:
  *
  * ```
- * yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
- * yii migrate:create post --command=table --path=@root/migrations/blog
+ * ./yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
+ * ./yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
  *
  * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.

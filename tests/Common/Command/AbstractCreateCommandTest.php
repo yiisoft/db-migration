@@ -414,24 +414,6 @@ EOF;
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
-    public function testExecuteInputPath(): void
-    {
-        $path = MigrationHelper::useMigrationsPath($this->container);
-        MigrationHelper::resetPathAndNamespace($this->container);
-
-        $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
-
-        $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
-        $output = $command->getDisplay(true);
-
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertMatchesRegularExpression("/^\s+M\d{12}Post$/m", $output);
-        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
-        $this->assertCount(1, FileHelper::findFiles($path));
-    }
-
     public function testExecuteInputNamespaces(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
@@ -481,6 +463,24 @@ EOF;
             $this->assertStringContainsString('Create new migration y/n:', $output);
             $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         }
+    }
+
+    public function testExecuteInputPath(): void
+    {
+        $path = MigrationHelper::useMigrationsPath($this->container);
+        MigrationHelper::resetPathAndNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Create new migration y/n:', $output);
+        $this->assertMatchesRegularExpression("/^\s+M\d{12}Post$/m", $output);
+        $this->assertStringContainsString('[OK] New migration created successfully.', $output);
+        $this->assertCount(1, FileHelper::findFiles($path));
     }
 
     public function testExecuteNameException(): void

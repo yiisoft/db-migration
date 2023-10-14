@@ -168,11 +168,6 @@ abstract class AbstractNewCommandTest extends TestCase
         $this->assertStringContainsString($classCreateUser, $output);
     }
 
-    public function createCommand(ContainerInterface $container): CommandTester
-    {
-        return CommandHelper::getCommandTester($container, NewCommand::class);
-    }
-
     public function testOptionPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
@@ -216,5 +211,10 @@ abstract class AbstractNewCommandTest extends TestCase
             $this->assertStringContainsString('Found 1 new migration:', $output);
             $this->assertStringContainsString($classCreateChapter, $output);
         }
+    }
+
+    public function createCommand(ContainerInterface $container): CommandTester
+    {
+        return CommandHelper::getCommandTester($container, NewCommand::class);
     }
 }
