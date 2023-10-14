@@ -1022,7 +1022,7 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'At least one of `createNamespace` or `createPath` should be specified.',
+            'One of `createNamespace` or `createPath` should be specified.',
             $output
         );
     }
@@ -1058,7 +1058,44 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'At least one of `createNamespace` or `createPath` should be specified.',
+            'One of `createNamespace` or `createPath` should be specified.',
+            $output
+        );
+    }
+
+    public function testWithCreatePathAndNamespace(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute(['name' => 'post']);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::INVALID, $exitCode);
+        $this->assertStringContainsString(
+            'Only one of `createNamespace` or `createPath` should be specified.',
+            $output
+        );
+    }
+
+    public function testWithOptionsPathAndNamespace(): void
+    {
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([
+            'name' => 'post',
+            '--path' => MigrationHelper::PATH_ALIAS,
+            '--namespace' => MigrationHelper::NAMESPACE,
+        ]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::INVALID, $exitCode);
+        $this->assertStringContainsString(
+            'Only one of `createNamespace` or `createPath` should be specified.',
             $output
         );
     }
