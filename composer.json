@@ -27,7 +27,6 @@
         "yiisoft/aliases": "^1.1|^2.0|^3.0",
         "yiisoft/db": "^1.1",
         "yiisoft/di": "^1.0",
-        "yiisoft/definitions": "^3.0",
         "yiisoft/injector": "^1.0",
         "yiisoft/strings": "^2.0"
     },
