@@ -44,7 +44,7 @@ use function strlen;
  * After using this command, developers should modify the created migration skeleton by filling up the actual
  * migration logic.
  *
- * ```
+ * ```shell
  * ./yii migrate:create table --command=table
  * ```
  *
@@ -55,7 +55,7 @@ use function strlen;
  *
  * For example:
  *
- * ```
+ * ```shell
  * ./yii migrate:create post --command=table --namespace=Yiisoft\\Db\\Migration\\Migration
  * ./yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
