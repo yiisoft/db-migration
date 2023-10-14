@@ -32,8 +32,9 @@ use function strlen;
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
  * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
  *
- *  # apply new migrations from multiple directories
- *  ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * # apply new migrations from multiple directories and namespaces
+ * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
  */
 #[AsCommand('migrate:up', 'Applies new migrations.')]

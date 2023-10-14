@@ -27,8 +27,9 @@ use function count;
  * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations # new migrations from the directory
  * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations # new migrations from the namespace
  *
- * # new migrations from multiple directories
+ * # new migrations from multiple directories and namespaces
  * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
