@@ -26,11 +26,14 @@ use function strlen;
  *
  * For example,
  *
- * ```
+ * ```shell
  * ./yii migrate:up                                           # apply all new migrations
  * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
  * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
+ *
+ *  # apply new migrations from multiple directories
+ *  ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
  * ```
  */
 #[AsCommand('migrate:up', 'Applies new migrations.')]

@@ -20,12 +20,15 @@ use function count;
  * This command will show the new migrations that have not been applied yet.
  * For example,
  *
- * ```
+ * ```shell
  * ./yii migrate:new                                           # first 10 new migrations
  * ./yii migrate:new 5                                         # first 5 new migrations
  * ./yii migrate:new all                                       # all new migrations
  * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations # new migrations from the directory
  * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations # new migrations from the namespace
+ *
+ * # new migrations from multiple directories
+ * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
  * ```
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
