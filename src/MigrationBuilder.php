@@ -24,7 +24,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function __construct(
         private ConnectionInterface $db,
         private MigrationInformerInterface $informer,
-        private int $maxSqlOutputLength = 0
+        private int $maxSqlOutputLength = 0,
     ) {
         parent::__construct($this->db->getSchema());
     }

@@ -18,7 +18,8 @@ final class Migrator
         private ConnectionInterface $db,
         private MigrationInformerInterface $informer,
         private string $historyTable = '{{%migration}}',
-        private ?int $migrationNameLimit = 180
+        private ?int $migrationNameLimit = 180,
+        private int $maxSqlOutputLength = 0,
     ) {
     }
 
@@ -75,6 +76,11 @@ final class Migrator
         }
 
         return $this->migrationNameLimit = $limit;
+    }
+
+    public function getMaxSqlOutputLength(): int
+    {
+        return $this->maxSqlOutputLength;
     }
 
     public function getHistory(?int $limit = null): array
@@ -157,6 +163,7 @@ final class Migrator
         return new MigrationBuilder(
             $this->db,
             $informer ?? $this->informer,
+            $this->maxSqlOutputLength,
         );
     }
 }
