@@ -99,7 +99,7 @@ abstract class AbstractMigratorTest extends TestCase
         $migrator->up(new M231015155500ExecuteSql());
 
         $this->assertStringContainsString(
-            'Execute SQL: CREATE TABLE person [... hidden] ... Done',
+            'Execute SQL: CREATE TABLE person  [... hidden] ... Done',
             $informer->getOutput(),
         );
     }
