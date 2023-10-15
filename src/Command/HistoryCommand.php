@@ -19,13 +19,14 @@ use function date;
 /**
  * Displays the migration history.
  *
- * This command will show the list of migrations that have been applied
- * so far. For example,
+ * This command will show the list of migrations that have been applied so far.
+ *
+ * For example:
  *
  * ```
- * yii migrate:history     # last 10 migrations
- * yii migrate:history 5   # last 5 migrations
- * yii migrate:history all # whole history
+ * ./yii migrate:history           # last 10 migrations
+ * ./yii migrate:history --limit=5 # last 5 migrations
+ * ./yii migrate:history --all     # whole history
  * ```
  */
 #[AsCommand('migrate:history', 'Displays the migration history.')]
@@ -40,7 +41,9 @@ final class HistoryCommand extends Command
 
     protected function configure(): void
     {
-        $this->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Maximum number of migrations to display.', null);
+        $this
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to display.', 10)
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -51,10 +54,12 @@ final class HistoryCommand extends Command
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+        $limit = !$input->getOption('all')
+            ? (int)$input->getOption('limit')
+            : null;
 
-        if ($limit < 0) {
-            $io->error('The step argument must be greater than 0.');
+        if ($limit !== null && $limit <= 0) {
+            $io->error('The limit argument must be greater than 0.');
             $this->migrationService->databaseConnection();
 
             return Command::INVALID;
@@ -70,12 +75,10 @@ final class HistoryCommand extends Command
 
         $n = count($migrations);
 
-        if ($limit > 0) {
+        if ($limit === $n) {
             $io->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
         } else {
-            $io->section(
-                "Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:'
-            );
+            $io->section("Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:');
         }
 
         foreach ($migrations as $version => $time) {

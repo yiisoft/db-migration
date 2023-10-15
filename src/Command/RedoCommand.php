@@ -25,13 +25,14 @@ use function count;
 /**
  * Redoes the last few migrations.
  *
- * This command will first revert the specified migrations, and then apply
- * them again. For example,
+ * This command will first revert the specified migrations, and then apply them again.
+ *
+ * For example:
  *
  * ```
- * yii migrate:redo     # redo the last applied migration
- * yii migrate:redo 3   # redo last 3 applied migrations
- * yii migrate:redo all # redo all migrations
+ * ./yii migrate:redo           # redo the last applied migration
+ * ./yii migrate:redo --limit=3 # redo last 3 applied migrations
+ * ./yii migrate:redo --all     # redo all migrations
  * ```
  */
 #[AsCommand('migrate:redo', 'Redoes the last few migrations.')]
@@ -52,7 +53,8 @@ final class RedoCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redo.', null);
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to redo.', 1)
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -65,10 +67,12 @@ final class RedoCommand extends Command
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+        $limit = !$input->getOption('all')
+            ? (int)$input->getOption('limit')
+            : null;
 
-        if ($limit < 0) {
-            $io->error('The step argument must be greater than 0.');
+        if ($limit !== null && $limit <= 0) {
+            $io->error('The limit argument must be greater than 0.');
             $this->migrationService->databaseConnection();
 
             return Command::INVALID;

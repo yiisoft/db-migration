@@ -93,7 +93,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('The limit argument must be greater than 0.', $output);
     }
 
     public function testWithoutNewMigrations(): void
@@ -107,6 +107,34 @@ abstract class AbstractHistoryCommandTest extends TestCase
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('[WARNING] No migration has been done before.', $output);
+    }
+
+    public function testOptionAll(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->execute(['--all' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

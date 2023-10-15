@@ -23,12 +23,12 @@ use function count;
 /**
  * Reverts the specified number of latest migrations.
  *
- * For example,
+ * For example:
  *
  * ```
- * yii migrate:down     # revert the last migration
- * yii migrate:down 3   # revert the last 3 migrations
- * yii migrate:down all # revert all migrations
+ * ./yii migrate:down           # revert the last migration
+ * ./yii migrate:down --limit=3 # revert the last 3 migrations
+ * ./yii migrate:down --all     # revert all migrations
  * ```
  */
 #[AsCommand('migrate:down', 'Reverts the specified number of latest migrations.')]
@@ -61,14 +61,15 @@ final class DownCommand extends Command
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
-        $limit = null;
-        if (!$input->getOption('all')) {
-            $limit = (int)$input->getOption('limit');
-            if ($limit <= 0) {
-                $io->error('The limit argument must be greater than 0.');
-                $this->migrationService->databaseConnection();
-                return Command::INVALID;
-            }
+        $limit = !$input->getOption('all')
+            ? (int)$input->getOption('limit')
+            : null;
+
+        if ($limit !== null && $limit <= 0) {
+            $io->error('The limit argument must be greater than 0.');
+            $this->migrationService->databaseConnection();
+
+            return Command::INVALID;
         }
 
         $migrations = $this->migrator->getHistory($limit);
@@ -83,8 +84,10 @@ final class DownCommand extends Command
         $migrations = array_keys($migrations);
 
         $n = count($migrations);
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+
         $output->writeln(
-            "<fg=yellow>Total $n " . ($n === 1 ? 'migration' : 'migrations') . " to be reverted:</>\n"
+            "<fg=yellow>Total $n $migrationWord to be reverted:</>\n"
         );
 
         foreach ($migrations as $migration) {
@@ -95,7 +98,7 @@ final class DownCommand extends Command
         $helper = $this->getHelper('question');
 
         $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Revert the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
+            "\n<fg=cyan>Revert the above $migrationWord y/n: ",
             true
         );
 

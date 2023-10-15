@@ -357,6 +357,34 @@ abstract class AbstractUpdateCommandTest extends TestCase
         );
     }
 
+    public function testOptionAll(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->setInputs(['no'])->execute(['--all' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Total 2 new migrations to be applied:', $output);
+    }
+
     public function testOptionPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);

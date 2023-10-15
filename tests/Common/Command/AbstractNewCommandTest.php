@@ -103,7 +103,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('[ERROR] The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('[ERROR] The limit argument must be greater than 0.', $output);
         $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 
@@ -166,6 +166,34 @@ abstract class AbstractNewCommandTest extends TestCase
         $this->assertStringContainsString('[WARNING] Showing 2 out of 3 new migrations:', $output);
         $this->assertStringContainsString($classCreatePost, $output);
         $this->assertStringContainsString($classCreateUser, $output);
+    }
+
+    public function testOptionAll(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->execute(['--all' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Found 2 new migrations:', $output);
     }
 
     public function testOptionPath(): void

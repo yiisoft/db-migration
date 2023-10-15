@@ -29,6 +29,7 @@ use function strlen;
  * ```shell
  * ./yii migrate:up                                           # apply all new migrations
  * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
+ * ./yii migrate:up --all                                     # apply all new migrations
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
  * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
  *
@@ -52,7 +53,8 @@ final class UpdateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', '0')
+            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', 10)
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All new migrations.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to apply.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to apply.');
     }
@@ -79,7 +81,16 @@ final class UpdateCommand extends Command
             return Command::INVALID;
         }
 
-        $limit = (int) $input->getOption('limit');
+        $limit = !$input->getOption('all')
+            ? (int)$input->getOption('limit')
+            : null;
+
+        if ($limit !== null && $limit <= 0) {
+            $io->error('The limit argument must be greater than 0.');
+            $this->migrationService->databaseConnection();
+
+            return Command::INVALID;
+        }
 
         /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
@@ -92,24 +103,15 @@ final class UpdateCommand extends Command
             return Command::SUCCESS;
         }
 
-        $total = count($migrations);
-
-        if ($limit > 0) {
-            $migrations = array_slice($migrations, 0, $limit);
-        }
-
         $n = count($migrations);
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
-        if ($n === $total) {
-            $output->writeln(
-                "<fg=yellow>Total $n new " . ($n === 1 ? 'migration' : 'migrations') . ' to be ' .
-                "applied:</>\n"
-            );
+        if ($limit !== null && $n > $limit) {
+            $migrations = array_slice($migrations, 0, $limit);
+
+            $output->writeln("<fg=yellow>Total $limit out of $n new $migrationWord to be applied:</>\n");
         } else {
-            $output->writeln(
-                "<fg=yellow>Total $n out of $total new " . ($total === 1 ? 'migration' : 'migrations') .
-                " to be applied:</>\n"
-            );
+            $output->writeln("<fg=yellow>Total $n new $migrationWord to be applied:</>\n");
         }
 
         foreach ($migrations as $migration) {
