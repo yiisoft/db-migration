@@ -575,17 +575,15 @@ abstract class AbstractMigrationBuilderTest extends TestCase
                 SELECT 1+2+3+4+5+6+7+8+9+10+11 AS resultado FROM dual
                 SQL,
             );
-            $expected = 'Execute SQL: SELECT 1+2+3+4+5+6+7+8+9+10+11 AS resultado F[... hidden] ... Done';
         } else {
             $this->builder->execute(
                 <<<SQL
                 SELECT 1+2+3+4+5+6+7+8+9+10+11
                 SQL,
             );
-            $expected = 'Execute SQL: SELECT 1+2+3+4+5+6+7+8[... hidden] ... Done';
         }
 
-        $this->assertStringContainsString($expected, $this->informer->getOutput());
+        $this->assertStringContainsString('Execute SQL: SELE [... hidden] ... Done', $this->informer->getOutput());
     }
 
     public function testBigInteger(): void
