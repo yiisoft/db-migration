@@ -13,7 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Strings\Inflector;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -137,7 +136,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $name = $this->generateName($command, (new Inflector())->toPascalCase($table), $and);
+        $name = $this->generateName($command, $table, $and);
 
         /**
          * @var string $namespace

@@ -12,12 +12,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
-use Yiisoft\Strings\Inflector;
 use Yiisoft\Db\Migration\MigrationInterface;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 use function dirname;
+use function gmdate;
+use function preg_replace;
+use function str_replace;
+use function trim;
+use function ucwords;
 
 final class MigrationService
 {
@@ -310,7 +314,8 @@ final class MigrationService
             $namespace = $this->createNamespace;
         }
 
-        $class = 'M' . gmdate('ymdHis') . (new Inflector())->toPascalCase($name);
+        $class = 'M' . gmdate('ymdHis')
+            . str_replace(' ', '', ucwords(preg_replace('/[^a-z0-9]+/i', ' ', $name)));
 
         return [$namespace, $class];
     }

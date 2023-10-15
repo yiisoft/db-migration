@@ -12,8 +12,12 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
-use Yiisoft\Strings\StringHelper;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+
+use function implode;
+use function microtime;
+use function sprintf;
+use function substr;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
@@ -47,8 +51,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function execute(string $sql, array $params = []): void
     {
         $sqlOutput = $sql;
-        if ($this->maxSqlOutputLength > 0) {
-            $sqlOutput = StringHelper::truncateEnd($sql, $this->maxSqlOutputLength, '[... hidden]');
+        if (0 < $this->maxSqlOutputLength && $this->maxSqlOutputLength < strlen($sql)) {
+            $sqlOutput = substr($sql, 0, $this->maxSqlOutputLength - 12) . '[... hidden]';
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
