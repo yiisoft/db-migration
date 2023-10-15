@@ -52,7 +52,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     {
         $sqlOutput = $sql;
         if (0 < $this->maxSqlOutputLength && $this->maxSqlOutputLength < strlen($sql)) {
-            $sqlOutput = substr($sql, 0, $this->maxSqlOutputLength - 12) . '[... hidden]';
+            $sqlOutput = substr($sql, 0, $this->maxSqlOutputLength) . ' [... hidden]';
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
