@@ -103,7 +103,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('[ERROR] The limit argument must be greater than 0.', $output);
+        $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
         $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
     }
 

@@ -86,7 +86,7 @@ final class UpdateCommand extends Command
             : null;
 
         if ($limit !== null && $limit <= 0) {
-            $io->error('The limit argument must be greater than 0.');
+            $io->error('The limit option must be greater than 0.');
             $this->migrationService->databaseConnection();
 
             return Command::INVALID;

@@ -136,7 +136,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('The limit argument must be greater than 0.', $output);
+        $this->assertStringContainsString('The limit option must be greater than 0.', $output);
     }
 
     public function testWithoutNewMigrations(): void
