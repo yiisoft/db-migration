@@ -9,6 +9,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\MigrationInterface;
 use Yiisoft\Db\Migration\Migrator;
 
+use function microtime;
+use function sprintf;
+
 final class UpdateRunner
 {
     private ?SymfonyStyle $io = null;
@@ -38,6 +41,7 @@ final class UpdateRunner
         $this->migrator->up($migration);
 
         $time = microtime(true) - $start;
+
         $this->io->writeln(
             "\n\t<info>>>> [OK] - Applied $className (time: " . sprintf('%.3f', $time) . 's)</info>'
         );

@@ -9,6 +9,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
+use function microtime;
+use function sprintf;
+
 final class DownRunner
 {
     private ?SymfonyStyle $io = null;
@@ -38,6 +41,7 @@ final class DownRunner
         $this->migrator->down($migration);
 
         $time = microtime(true) - $start;
+
         $this->io->writeln(
             "\n\t<info>>>> [OK] - Reverted $className (time: " . sprintf('%.3f', $time) . 's)</info>'
         );
