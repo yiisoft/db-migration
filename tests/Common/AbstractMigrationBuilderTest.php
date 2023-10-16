@@ -706,7 +706,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertStringContainsString($string, $this->informer->getOutput());
     }
 
-    private function prepareVariables(int $maxSqlOutputLength = 0): void
+    private function prepareVariables(int|null $maxSqlOutputLength = null): void
     {
         $this->db = $this->container->get(ConnectionInterface::class);
 
