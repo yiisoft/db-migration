@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
+use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Definitions\ReferencesArray;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
@@ -32,6 +33,13 @@ final class MigrationContainer
                 'createPath()' => [''],
                 'updateNamespaces()' => [[]],
                 'updatePaths()' => [[]],
+            ],
+            Migrator::class => [
+                '__constructor()' => [
+                    'historyTable' => '{{%migration}}',
+                    'migrationNameLimit' => 180,
+                    'maxSqlOutputLength' => null,
+                ],
             ],
             MigrationInformerInterface::class => NullMigrationInformer::class,
         ];

@@ -9,7 +9,9 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
+use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
 
 abstract class AbstractMigratorTest extends TestCase
 {
@@ -80,5 +82,45 @@ abstract class AbstractMigratorTest extends TestCase
         $migrator->up(new StubMigration());
 
         $this->assertGreaterThan(180, $migrator->getMigrationNameLimit());
+    }
+
+    public function testMaxSqlOutputLength(): void
+    {
+        $informer = new StubMigrationInformer();
+
+        $migrator = new Migrator(
+            $this->container->get(ConnectionInterface::class),
+            $informer,
+            maxSqlOutputLength: 20,
+        );
+
+        $migrator->up(new M231015155500ExecuteSql());
+
+        $this->assertStringContainsString(
+            'Execute SQL: CREATE TABLE person [... hidden] ... Done',
+            $informer->getOutput(),
+        );
+
+        $migrator->down(new M231015155500ExecuteSql());
+    }
+
+    public function testZeroMaxSqlOutputLength(): void
+    {
+        $informer = new StubMigrationInformer();
+
+        $migrator = new Migrator(
+            $this->container->get(ConnectionInterface::class),
+            $informer,
+            maxSqlOutputLength: 0,
+        );
+
+        $migrator->up(new M231015155500ExecuteSql());
+
+        $this->assertStringContainsString(
+            'Execute SQL: [... hidden] ... Done',
+            $informer->getOutput(),
+        );
+
+        $migrator->down(new M231015155500ExecuteSql());
     }
 }

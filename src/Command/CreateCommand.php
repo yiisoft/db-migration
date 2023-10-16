@@ -17,9 +17,10 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
-use function file_exists;
 use function file_put_contents;
+use function implode;
 use function in_array;
+use function is_dir;
 use function preg_match;
 use function strlen;
 
@@ -63,6 +64,8 @@ use function strlen;
 #[AsCommand('migrate:create', 'Creates a new migration.')]
 final class CreateCommand extends Command
 {
+    private const AVAILABLE_COMMANDS = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
+
     public function __construct(
         private CreateService $createService,
         private MigrationService $migrationService,
@@ -109,15 +112,6 @@ final class CreateCommand extends Command
         /** @var string $table */
         $table = $input->getArgument('name');
 
-        /** @var string $command */
-        $command = $input->getOption('command');
-
-        $fields = $input->hasOption('fields') ? (string) $input->getOption('fields') : null;
-        $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
-
-        /** @var string $and */
-        $and = $input->getOption('and');
-
         if (!preg_match('/^[\w\\\\]+$/', $table)) {
             $io->error(
                 'The migration name should contain letters, digits, underscore and/or backslash characters only.'
@@ -126,16 +120,19 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $availableCommands = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
+        /** @var string $command */
+        $command = $input->getOption('command');
 
-        if (!in_array($command, $availableCommands, true)) {
+        if (!in_array($command, self::AVAILABLE_COMMANDS, true)) {
             $io->error(
-                "Command not found \"$command\". Available commands: " . implode(', ', $availableCommands) . '.'
+                "Command not found \"$command\". Available commands: " . implode(', ', self::AVAILABLE_COMMANDS) . '.'
             );
 
             return Command::INVALID;
         }
 
+        /** @var string $and */
+        $and = $input->getOption('and');
         $name = $this->generateName($command, $table, $and);
 
         /**
@@ -154,24 +151,24 @@ final class CreateCommand extends Command
 
         $migrationPath = $this->migrationService->findMigrationPath($namespace);
 
-        $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        if (!file_exists($migrationPath)) {
+        if (!is_dir($migrationPath)) {
             $io->error("Invalid path directory $migrationPath");
 
             return Command::INVALID;
         }
 
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Create new migration y/n: </>",
             false,
-            '/^(y)/i'
         );
 
         if ($helper->ask($input, $output, $question)) {
+            $fields = $input->hasOption('fields') ? (string) $input->getOption('fields') : null;
+            $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
+
             $content = $this->createService->run(
                 $command,
                 $table,
@@ -181,6 +178,8 @@ final class CreateCommand extends Command
                 $and,
                 $tableComment,
             );
+
+            $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
 
             file_put_contents($file, $content, LOCK_EX);
 

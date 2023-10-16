@@ -16,9 +16,19 @@ use Yiisoft\Db\Migration\MigrationInterface;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
+use function array_map;
+use function array_values;
+use function closedir;
 use function dirname;
 use function gmdate;
+use function is_dir;
+use function is_file;
+use function ksort;
+use function opendir;
+use function preg_match;
 use function preg_replace;
+use function readdir;
+use function str_contains;
 use function str_replace;
 use function trim;
 use function ucwords;
@@ -117,27 +127,28 @@ final class MigrationService
 
         $migrations = [];
         foreach ($migrationPaths as $item) {
-            [$updatePaths, $namespace] = $item;
-            $updatePaths = $this->aliases->get($updatePaths);
+            [$updatePath, $namespace] = $item;
+            $updatePath = $this->aliases->get($updatePath);
 
-            if (!file_exists($updatePaths)) {
+            if (!is_dir($updatePath)) {
                 continue;
             }
 
-            $handle = opendir($updatePaths);
+            $handle = opendir($updatePath);
             while (($file = readdir($handle)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
                 }
 
-                $path = $updatePaths . DIRECTORY_SEPARATOR . $file;
+                $path = $updatePath . DIRECTORY_SEPARATOR . $file;
 
-                if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) && is_file($path)) {
-                    $class = $matches[1];
+                if (is_file($path) && preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches)) {
+                    [, $class, $time] = $matches;
+
                     if (!empty($namespace)) {
                         $class = $namespace . '\\' . $class;
                     }
-                    $time = $matches[2];
+
                     if (!isset($applied[$class])) {
                         $migrations[$time . '\\' . $class] = $class;
                     }
@@ -215,6 +226,7 @@ final class MigrationService
     private function makeMigrationInstance(string $class): object
     {
         $class = trim($class, '\\');
+
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
             foreach ($this->updatePaths as $path) {
@@ -227,6 +239,7 @@ final class MigrationService
                     break;
                 }
             }
+
             if (!$isIncluded) {
                 throw new RuntimeException('Migration file not found.');
             }
@@ -259,7 +272,7 @@ final class MigrationService
     public function makeMigrations(array $classes): array
     {
         return array_map(
-            fn(string $class) => $this->makeMigration($class),
+            [$this, 'makeMigration'],
             $classes
         );
     }
@@ -285,7 +298,7 @@ final class MigrationService
     public function makeRevertibleMigrations(array $classes): array
     {
         return array_map(
-            fn(string $class) => $this->makeRevertibleMigration($class),
+            [$this, 'makeRevertibleMigration'],
             $classes
         );
     }
@@ -357,16 +370,13 @@ final class MigrationService
         /** @psalm-suppress UnresolvableInclude */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
-        /**
-         * @psalm-var array<string, array<int, string>> $map
-         */
+        /** @psalm-var array<string, array<int, string>> $map */
         foreach ($map as $namespace => $directories) {
             foreach ($directories as $directory) {
                 $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
             }
         }
 
-        /** @psalm-var array<string, string> $namespacesPath */
         return (new Aliases($namespacesPath))->get($path);
     }
 
