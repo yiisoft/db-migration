@@ -97,7 +97,25 @@ abstract class AbstractMigratorTest extends TestCase
         $migrator->up(new M231015155500ExecuteSql());
 
         $this->assertStringContainsString(
-            'Execute SQL: CREATE TABLE person  [... hidden] ... Done',
+            'Execute SQL: CREATE TABLE person [... hidden] ... Done',
+            $informer->getOutput(),
+        );
+    }
+
+    public function testZeroMaxSqlOutputLength(): void
+    {
+        $informer = new StubMigrationInformer();
+
+        $migrator = new Migrator(
+            $this->container->get(ConnectionInterface::class),
+            $informer,
+            maxSqlOutputLength: 0,
+        );
+
+        $migrator->up(new M231015155500ExecuteSql());
+
+        $this->assertStringContainsString(
+            'Execute SQL: [... hidden] ... Done',
             $informer->getOutput(),
         );
     }
