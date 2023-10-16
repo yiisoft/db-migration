@@ -78,11 +78,6 @@ final class Migrator
         return $this->migrationNameLimit = $limit;
     }
 
-    public function getMaxSqlOutputLength(): int
-    {
-        return $this->maxSqlOutputLength;
-    }
-
     public function getHistory(?int $limit = null): array
     {
         $this->checkMigrationHistoryTable();

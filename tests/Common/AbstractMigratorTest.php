@@ -94,8 +94,6 @@ abstract class AbstractMigratorTest extends TestCase
             maxSqlOutputLength: 20,
         );
 
-        $this->assertSame(20, $migrator->getMaxSqlOutputLength());
-
         $migrator->up(new M231015155500ExecuteSql());
 
         $this->assertStringContainsString(
