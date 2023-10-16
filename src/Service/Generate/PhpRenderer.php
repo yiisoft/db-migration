@@ -41,6 +41,7 @@ final class PhpRenderer
     private function renderer(string $file, array $params): void
     {
         extract($params);
+        /** @psalm-suppress UnresolvableInclude */
         require $file;
     }
 }

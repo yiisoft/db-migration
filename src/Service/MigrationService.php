@@ -111,6 +111,7 @@ final class MigrationService
     {
         $applied = [];
 
+        /** @psalm-var string $class */
         foreach ($this->migrator->getHistory() as $class => $time) {
             $applied[trim($class, '\\')] = true;
         }
