@@ -18,12 +18,13 @@ use function count;
  * Displays not yet applied migrations.
  *
  * This command will show the new migrations that have not been applied yet.
- * For example,
+ *
+ * For example:
  *
  * ```shell
  * ./yii migrate:new                                           # first 10 new migrations
- * ./yii migrate:new 5                                         # first 5 new migrations
- * ./yii migrate:new all                                       # all new migrations
+ * ./yii migrate:new --limit=5                                 # first 5 new migrations
+ * ./yii migrate:new --all                                     # all new migrations
  * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations # new migrations from the directory
  * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations # new migrations from the namespace
  *
@@ -43,7 +44,8 @@ final class NewCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to display.', '10')
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to display.', 10)
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All new migrations.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to display.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to display.');
     }
@@ -66,10 +68,12 @@ final class NewCommand extends Command
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
-        $limit = (int) $input->getOption('limit');
+        $limit = !$input->getOption('all')
+            ? (int)$input->getOption('limit')
+            : null;
 
-        if ($limit < 0) {
-            $io->error('The step argument must be greater than 0.');
+        if ($limit !== null && $limit <= 0) {
+            $io->error('The limit option must be greater than 0.');
             $this->migrationService->databaseConnection();
 
             return Command::INVALID;
@@ -88,7 +92,9 @@ final class NewCommand extends Command
         $n = count($migrations);
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
-        if ($limit && $n > $limit) {
+        if ($limit !== null && $n > $limit) {
+            $migrations = array_slice($migrations, 0, $limit);
+
             $io->warning("Showing $limit out of $n new $migrationWord:\n");
         } else {
             $io->section("Found $n new $migrationWord:");

@@ -403,6 +403,19 @@ abstract class AbstractUpdateCommandTest extends TestCase
         }
     }
 
+    public function testIncorrectLimit(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->execute(['-l' => -1]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::INVALID, $exitCode);
+        $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
+    }
+
     public function createCommand(ContainerInterface $container): CommandTester
     {
         return CommandHelper::getCommandTester($container, UpdateCommand::class);
