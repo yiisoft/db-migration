@@ -19,7 +19,7 @@ final class Migrator
         private MigrationInformerInterface $informer,
         private string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180,
-        private int $maxSqlOutputLength = 0,
+        private ?int $maxSqlOutputLength = null,
     ) {
     }
 
