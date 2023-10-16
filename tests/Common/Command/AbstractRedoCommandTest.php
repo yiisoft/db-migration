@@ -48,7 +48,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('2 migrations were redone.', $output);
+        $this->assertStringContainsString('1 migration was redone.', $output);
         $this->assertStringContainsString('Migration redone successfully.', $output);
         $this->assertExistsTables($this->container, 'post', 'user');
     }
@@ -79,7 +79,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('2 migrations were redone.', $output);
+        $this->assertStringContainsString('1 migration was redone.', $output);
         $this->assertStringContainsString('Migration redone successfully.', $output);
         $this->assertExistsTables($this->container, 'post', 'user');
     }
@@ -136,7 +136,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('The step argument must be greater than 0.', $output);
+        $this->assertStringContainsString('The limit option must be greater than 0.', $output);
     }
 
     public function testWithoutNewMigrations(): void
@@ -167,6 +167,34 @@ abstract class AbstractRedoCommandTest extends TestCase
             'Migration ' . StubMigration::class . ' does not implement RevertibleMigrationInterface.'
         );
         $command->execute([]);
+    }
+
+    public function testOptionAll(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->setInputs(['no'])->execute(['--all' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Total 2 migrations to be redone:', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
