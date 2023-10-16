@@ -27,7 +27,7 @@ use function strlen;
  * For example,
  *
  * ```shell
- * ./yii migrate:up                                           # apply all new migrations
+ * ./yii migrate:up                                           # apply 10 new migrations
  * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
  * ./yii migrate:up --all                                     # apply all new migrations
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
