@@ -420,7 +420,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     public function testCreateIndex(): void
     {
         $this->builder->createTable('test_table', ['id' => 'int']);
-        $this->builder->createIndex('test_table', 'unique_index', 'id', 'UNIQUE');
+        $this->builder->createIndex('test_table', 'unique_index', 'id', 'UNIQUE', 'BTREE');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table');
 
@@ -434,7 +434,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertTrue($index->isUnique());
         $this->assertFalse($index->isPrimary());
         $this->assertInformerOutputContains(
-            '    > Create UNIQUE index unique_index on test_table (id) ... Done in ',
+            '    > Create UNIQUE index unique_index on test_table (id) USING BTREE ... Done in ',
         );
 
         $this->builder->dropTable('test_table');
