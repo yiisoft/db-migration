@@ -490,7 +490,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
             'Create'
             . ($indexType !== null ? ' ' . $indexType : '')
             . " index $name on $table (" . implode(',', (array) $columns) . ')'
-            . ($indexMethod !== null ? ' USING ' . $indexMethod : '')
+            . ($indexMethod !== null ? ' using ' . $indexMethod : '')
         );
         $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);
