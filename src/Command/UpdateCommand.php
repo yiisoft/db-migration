@@ -27,9 +27,8 @@ use function strlen;
  * For example,
  *
  * ```shell
- * ./yii migrate:up                                           # apply 10 new migrations
+ * ./yii migrate:up                                           # apply all new migrations
  * ./yii migrate:up --limit=3                                 # apply the first 3 new migrations
- * ./yii migrate:up --all                                     # apply all new migrations
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations # apply new migrations from the directory
  * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations # apply new migrations from the namespace
  *
@@ -53,8 +52,7 @@ final class UpdateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to apply.', 10)
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All new migrations.')
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to apply.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to apply.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to apply.');
     }
@@ -81,15 +79,17 @@ final class UpdateCommand extends Command
             return Command::INVALID;
         }
 
-        $limit = !$input->getOption('all')
-            ? (int)$input->getOption('limit')
-            : null;
+        $limit = $input->getOption('limit');
 
-        if ($limit !== null && $limit <= 0) {
-            $io->error('The limit option must be greater than 0.');
-            $this->migrationService->databaseConnection();
+        if ($limit !== null) {
+            $limit = (int)$limit;
 
-            return Command::INVALID;
+            if ($limit <= 0) {
+                $io->error('The limit option must be greater than 0.');
+                $this->migrationService->databaseConnection();
+
+                return Command::INVALID;
+            }
         }
 
         /** @psalm-var class-string[] $migrations */

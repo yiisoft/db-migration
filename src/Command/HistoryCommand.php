@@ -42,7 +42,7 @@ final class HistoryCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('limit', 'l', InputOption::VALUE_OPTIONAL, 'Number of migrations to display.', 10)
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to display.', 10)
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
