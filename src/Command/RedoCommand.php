@@ -29,7 +29,7 @@ use function count;
  *
  * For example:
  *
- * ```
+ * ```shell
  * ./yii migrate:redo           # redo the last applied migration
  * ./yii migrate:redo --limit=3 # redo last 3 applied migrations
  * ./yii migrate:redo --all     # redo all migrations

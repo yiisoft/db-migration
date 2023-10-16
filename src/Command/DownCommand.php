@@ -25,7 +25,7 @@ use function count;
  *
  * For example:
  *
- * ```
+ * ```shell
  * ./yii migrate:down           # revert the last migration
  * ./yii migrate:down --limit=3 # revert the last 3 migrations
  * ./yii migrate:down --all     # revert all migrations

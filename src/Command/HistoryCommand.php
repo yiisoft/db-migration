@@ -23,7 +23,7 @@ use function date;
  *
  * For example:
  *
- * ```
+ * ```shell
  * ./yii migrate:history           # last 10 migrations
  * ./yii migrate:history --limit=5 # last 5 migrations
  * ./yii migrate:history --all     # whole history
