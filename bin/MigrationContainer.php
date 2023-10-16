@@ -38,7 +38,7 @@ final class MigrationContainer
                 '__constructor()' => [
                     'historyTable' => '{{%migration}}',
                     'migrationNameLimit' => 180,
-                    'maxSqlOutputLength' => 0,
+                    'maxSqlOutputLength' => null,
                 ],
             ],
             MigrationInformerInterface::class => NullMigrationInformer::class,
