@@ -234,8 +234,6 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
         $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
-
-        MigrationHelper::clearHistory($this->container);
     }
 
     public function testNotReverted(): void
