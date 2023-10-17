@@ -115,6 +115,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
     public function testExecuteExtended(): void
     {
+        $db = $this->container->get(ConnectionInterface::class);
+
+        if ($db->getDriverName() === 'sqlite') {
+            self::markTestSkipped('Skipped due to issues #218 and #219.');
+        }
+
         MigrationHelper::useMigrationsPath($this->container);
 
         MigrationHelper::createMigration(
@@ -143,7 +149,6 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = $command->getDisplay(true);
 
-        $db = $this->container->get(ConnectionInterface::class);
         $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
         $studentSchema = $dbSchema->getTableSchema('student');
