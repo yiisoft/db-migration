@@ -93,7 +93,6 @@ final class UpdateCommand extends Command
             }
         }
 
-        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {

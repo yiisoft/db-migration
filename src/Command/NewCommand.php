@@ -79,7 +79,6 @@ final class NewCommand extends Command
             return Command::INVALID;
         }
 
-        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
