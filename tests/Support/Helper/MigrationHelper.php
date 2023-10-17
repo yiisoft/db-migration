@@ -141,11 +141,4 @@ final class MigrationHelper
         $service->createNamespace('');
         $service->updateNamespaces([]);
     }
-
-    public static function clearHistory(ContainerInterface $container): void
-    {
-        $db = $container->get(ConnectionInterface::class);
-        $migrator = $container->get(Migrator::class);
-        $db->createCommand()->delete($migrator->getHistoryTable())->execute();
-    }
 }

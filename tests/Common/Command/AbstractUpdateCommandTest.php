@@ -12,6 +12,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Throwable;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
@@ -423,7 +424,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
     public function testPartiallyUpdated(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
-        MigrationHelper::createMigration(
+        $createBookClass = MigrationHelper::createMigration(
             $this->container,
             '1Create_Book',
             'table',
@@ -442,9 +443,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -453,13 +452,13 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Partially updated.', $output);
 
-        MigrationHelper::clearHistory($this->container);
+        $this->container->get(Migrator::class)->down(new $createBookClass());
     }
 
     public function testNotUpdated(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
-        MigrationHelper::createAndApplyMigration(
+        $createBookClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             '1Create_Book',
             'table',
@@ -478,9 +477,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -489,7 +486,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Not updated.', $output);
 
-        MigrationHelper::clearHistory($this->container);
+        $this->container->get(Migrator::class)->down(new $createBookClass());
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

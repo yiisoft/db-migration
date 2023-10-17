@@ -15,6 +15,7 @@ use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Db\Migration\Tests\Support\Migrations\M231017150317EmptyDown;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
@@ -224,10 +225,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         try {
-            $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+            $exitCode = $command->setInputs(['yes'])->execute(['-l' => 2]);
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -251,15 +250,13 @@ abstract class AbstractRedoCommandTest extends TestCase
         );
 
         $db = $this->container->get(ConnectionInterface::class);
-        $db->createCommand()->dropTable('book')->execute();
+        DbHelper::dropTable($db, 'book');
 
         $command = $this->createCommand($this->container);
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -267,14 +264,12 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
-
-        MigrationHelper::clearHistory($this->container);
     }
 
     public function testRevertedButPartiallyApplied(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
-        MigrationHelper::createAndApplyMigration(
+        $createBookClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             'Create_Book',
             'table',
@@ -289,9 +284,7 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -300,7 +293,9 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Reverted but partially applied.', $output);
 
-        MigrationHelper::clearHistory($this->container);
+        $this->container->get(Migrator::class)->down(new $createBookClass());
+        $db = $this->container->get(ConnectionInterface::class);
+        DbHelper::dropTable($db, 'chapter');
     }
 
     public function testRevertedButNotApplied(): void
@@ -312,9 +307,7 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -323,7 +316,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Reverted but not applied.', $output);
 
-        MigrationHelper::clearHistory($this->container);
+        $db = $this->container->get(ConnectionInterface::class);
+        DbHelper::dropTable($db, 'chapter');
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

@@ -298,10 +298,8 @@ abstract class AbstractDownCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         try {
-            $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+            $exitCode = $command->setInputs(['yes'])->execute(['-l' => 2]);
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -309,8 +307,6 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
         $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
-
-        MigrationHelper::clearHistory($this->container);
     }
 
     public function testNotReverted(): void
@@ -331,9 +327,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Throwable $e) {
-            while ($e = $e->getPrevious()) {
-            }
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -341,8 +335,6 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
-
-        MigrationHelper::clearHistory($this->container);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
