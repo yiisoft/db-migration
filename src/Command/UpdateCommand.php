@@ -145,7 +145,7 @@ final class UpdateCommand extends Command
                 try {
                     $this->updateRunner->run($instance);
                 } catch (\Throwable $e) {
-                    $io->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
+                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
                     $output->writeln("\n<fg=yellow> >>> Total $i out of $n new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
 
