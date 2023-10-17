@@ -133,19 +133,29 @@ final class UpdateCommand extends Command
         $helper = $this->getHelper('question');
 
         $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Apply the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
+            "\n<fg=cyan>Apply the above $migrationWord y/n: ",
             true
         );
 
         if ($helper->ask($input, $output, $question)) {
             $instances = $this->migrationService->makeMigrations($migrations);
-            foreach ($instances as $instance) {
-                $this->updateRunner->run($instance);
+            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+
+            foreach ($instances as $i => $instance) {
+                try {
+                    $this->updateRunner->run($instance);
+                } catch (\Throwable $e) {
+                    $io->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n new $migrationWas applied.</>\n");
+                    $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
+
+                    $this->getApplication()?->renderThrowable($e, $output);
+
+                    return Command::FAILURE;
+                }
             }
 
-            $output->writeln(
-                "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
-            );
+            $output->writeln("\n<fg=green> >>> Total $n new $migrationWas applied.</>\n");
             $io->success('Updated successfully.');
         }
 

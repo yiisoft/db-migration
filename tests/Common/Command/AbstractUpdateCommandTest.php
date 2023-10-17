@@ -71,7 +71,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('Apply the above migration y/n:', $output);
         $this->assertStringContainsString("Applying $className", $output);
         $this->assertStringContainsString(">>> [OK] - Applied $className", $output);
-        $this->assertStringContainsString('>>> 1 Migration was applied.', $output);
+        $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
     }
 
     public function testExecuteWithNamespace(): void
@@ -229,7 +229,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $output2 = $command2->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode1);
-        $this->assertStringContainsString('1 Migration was applied.', $output1);
+        $this->assertStringContainsString('Total 1 new migration was applied.', $output1);
 
         $this->assertSame(Command::SUCCESS, $exitCode2);
         $this->assertStringContainsString('No new migrations found.', $output2);
@@ -414,6 +414,55 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
+    }
+
+    public function testPartiallyUpdated()
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Wrong_Table_Name',
+            'table',
+            'sqlite_!@#$%^&*(+',
+            ['name:string(100)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->setInputs(['yes'])->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
+        $this->assertStringContainsString('[ERROR] Partially updated.', $output);
+    }
+
+    public function testNotUpdated()
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Wrong_Table_Name',
+            'table',
+            'sqlite_!@#$%^&*(+',
+            ['name:string(100)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $exitCode = $command->setInputs(['yes'])->execute([]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);
+        $this->assertStringContainsString('[ERROR] Not updated.', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
