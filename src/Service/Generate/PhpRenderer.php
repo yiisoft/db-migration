@@ -38,10 +38,11 @@ final class PhpRenderer
         }
     }
 
-    private function renderer(string $file, array $params): void
+    private function renderer(): void
     {
-        extract($params);
+        /** @psalm-suppress MixedArgument */
+        extract(func_get_arg(1));
         /** @psalm-suppress UnresolvableInclude */
-        require $file;
+        require func_get_arg(0);
     }
 }
