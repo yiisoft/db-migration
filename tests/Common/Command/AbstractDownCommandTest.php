@@ -299,7 +299,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         $output = $command->getDisplay(true);
@@ -327,7 +327,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         $output = $command->getDisplay(true);

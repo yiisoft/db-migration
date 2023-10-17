@@ -442,7 +442,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         $output = $command->getDisplay(true);
@@ -474,7 +474,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         $output = $command->getDisplay(true);
