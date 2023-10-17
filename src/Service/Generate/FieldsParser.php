@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Service\Generate;
 
+use function array_shift;
+use function array_unshift;
+use function explode;
 use function in_array;
+use function preg_match;
+use function preg_split;
+use function str_replace;
+use function str_starts_with;
 
 /**
  * @internal
@@ -33,7 +40,7 @@ final class FieldsParser
             /** @psalm-var string[] $fields */
             foreach ($fields as $field) {
                 $chunks = $this->splitFieldIntoChunks($field);
-                $property = (string) array_shift($chunks);
+                $column = (string) array_shift($chunks);
 
                 /** @psalm-var string[] $chunks */
                 foreach ($chunks as $i => $chunk) {
@@ -41,8 +48,8 @@ final class FieldsParser
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
                         $foreignKeys[] = $this->foreignKeyFactory->create(
                             $table,
-                            $property,
-                            $matches[1] ?? preg_replace('/_id$/', '', $property),
+                            $column,
+                            $matches[1] ?? preg_replace('/_id$/', '', $column),
                             empty($matches[2]) ? null : $matches[2]
                         );
 
@@ -50,13 +57,13 @@ final class FieldsParser
                         continue;
                     }
 
-                    if (!preg_match('/^(.+?)\(([^(]+)\)$/', $chunk)) {
+                    if (!preg_match('/\(([^(]+)\)$/', $chunk)) {
                         $chunks[$i] .= '()';
                     }
                 }
 
                 /** @psalm-var string[] $chunks */
-                $columns[] = new Column($property, $chunks);
+                $columns[] = new Column($column, $chunks);
             }
         }
 
@@ -71,21 +78,17 @@ final class FieldsParser
     {
         $defaultValue = '';
         $originalDefaultValue = '';
-        $hasDoubleQuotes = false;
 
-        preg_match_all('/defaultValue\(.*?:.*?\)/', $field, $matches);
-
-        if (isset($matches[0][0])) {
-            $hasDoubleQuotes = true;
-            $originalDefaultValue = $matches[0][0];
+        if (preg_match('/defaultValue\(.*?:.*?\)/', $field, $matches) === 1) {
+            $originalDefaultValue = $matches[0];
             $defaultValue = str_replace(':', '{{colon}}', $originalDefaultValue);
             $field = str_replace($originalDefaultValue, $defaultValue, $field);
         }
 
         /** @var string[] $chunks */
-        $chunks = preg_split('/\s?:\s?/', $field);
+        $chunks = preg_split('/\s?:\s?/', $field, -1, PREG_SPLIT_NO_EMPTY);
 
-        if ($hasDoubleQuotes) {
+        if ($defaultValue !== '') {
             foreach ($chunks as $key => $chunk) {
                 $chunks[$key] = str_replace($defaultValue, $originalDefaultValue, $chunk);
             }
@@ -107,9 +110,6 @@ final class FieldsParser
             }
         }
 
-        array_unshift(
-            $columns,
-            new Column('id', ['primaryKey()']),
-        );
+        array_unshift($columns, new Column('id', ['primaryKey()']));
     }
 }
