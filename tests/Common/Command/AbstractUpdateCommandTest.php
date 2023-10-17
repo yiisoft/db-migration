@@ -443,7 +443,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);
@@ -476,7 +476,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);

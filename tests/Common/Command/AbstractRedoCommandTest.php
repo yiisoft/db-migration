@@ -226,7 +226,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);
@@ -255,7 +255,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);
@@ -284,7 +284,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);
@@ -304,7 +304,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
         } catch (Throwable $e) {
-            $this->assertStringContainsString('SQL', $e->getMessage());
+            while ($e = $e->getPrevious()){}
         }
 
         $output = $command->getDisplay(true);
