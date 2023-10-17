@@ -112,7 +112,7 @@ final class MigrationService
         $applied = [];
 
         foreach ($this->migrator->getHistory() as $class => $time) {
-            $applied[trim((string) $class, '\\')] = true;
+            $applied[trim($class, '\\')] = true;
         }
 
         $migrationPaths = [];

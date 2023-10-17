@@ -37,8 +37,7 @@ final class ForeignKeyFactory
             $tablePrimaryKeys = $this->db->getSchema()->getTablePrimaryKey($relatedTable);
 
             if ($tablePrimaryKeys !== null) {
-                $columNames = $tablePrimaryKeys->getColumnNames() ?? [];
-                $primaryKeys = is_string($columNames) ? [$columNames] : $columNames;
+                $primaryKeys = (array) $tablePrimaryKeys->getColumnNames();
 
                 match (count($primaryKeys)) {
                     1 => $relatedColumn = (string) $primaryKeys[0],
