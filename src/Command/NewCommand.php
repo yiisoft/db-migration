@@ -100,8 +100,8 @@ final class NewCommand extends Command
             $io->section("Found $n new $migrationWord:");
         }
 
-        foreach ($migrations as $migration) {
-            $output->writeln("<info>\t{$migration}</info>");
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("<info>\t" . ($i + 1) . ". $migration</info>");
         }
 
         $this->migrationService->databaseConnection();

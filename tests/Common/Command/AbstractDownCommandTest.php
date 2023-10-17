@@ -11,6 +11,7 @@ use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
@@ -271,6 +272,67 @@ abstract class AbstractDownCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The limit option must be greater than 0.', $output);
+    }
+
+    public function testPartiallyReverted(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Chapter',
+            'table',
+            'chapter',
+            ['name:string(100)'],
+        );
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $db->createCommand()->dropTable('book')->execute();
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
+        } catch (Exception $e) {}
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
+        $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
+    }
+
+    public function testNotReverted(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $db->createCommand()->dropTable('book')->execute();
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute([]);
+        } catch (Exception $e) {}
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
+        $this->assertStringContainsString('[ERROR] Not reverted.', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

@@ -10,6 +10,7 @@ use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
@@ -419,51 +420,64 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
     }
 
-    public function testPartiallyUpdated()
+    public function testPartiallyUpdated(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
         MigrationHelper::createMigration(
             $this->container,
-            'Create_Book',
+            '1Create_Book',
             'table',
             'book',
             ['title:string(100)', 'author:string(80)'],
         );
         MigrationHelper::createMigration(
             $this->container,
-            'Create_Wrong_Table_Name',
+            '2Create_Book',
             'table',
-            'sqlite_!@#$%^&*(+',
-            ['*:string(100)'],
+            'book',
+            ['title:string(100)', 'author:string(80)'],
         );
 
         $command = $this->createCommand($this->container);
 
-        $exitCode = $command->setInputs(['yes'])->execute([]);
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute([]);
+        } catch (Exception $e) {}
+
         $output = $command->getDisplay(true);
 
-        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Partially updated.', $output);
     }
 
-    public function testNotUpdated()
+    public function testNotUpdated(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            '1Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
         MigrationHelper::createMigration(
             $this->container,
-            'Create_Wrong_Table_Name',
+            '2Create_Book',
             'table',
-            'sqlite_!@#$%^&*+/\|(){}[]',
-            ['*:string(100)'],
+            'book',
+            ['title:string(100)', 'author:string(80)'],
         );
 
         $command = $this->createCommand($this->container);
 
-        $exitCode = $command->setInputs(['yes'])->execute([]);
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute([]);
+        } catch (Exception $e) {}
+
         $output = $command->getDisplay(true);
 
-        $this->assertSame(Command::FAILURE, $exitCode);
+        $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Not updated.', $output);
     }

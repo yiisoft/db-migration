@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -114,7 +115,7 @@ final class UpdateCommand extends Command
             $output->writeln("<fg=yellow>Total $n new $migrationWord to be applied:</>\n");
         }
 
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $i => $migration) {
             $nameLimit = $this->migrator->getMigrationNameLimit();
 
             if (strlen($migration) > $nameLimit) {
@@ -126,7 +127,7 @@ final class UpdateCommand extends Command
                 return Command::INVALID;
             }
 
-            $output->writeln("\t<fg=yellow>$migration</>");
+            $output->writeln("\t<fg=yellow>" . ($i + 1) . ". $migration</>");
         }
 
         /** @var QuestionHelper $helper */
@@ -144,14 +145,12 @@ final class UpdateCommand extends Command
             foreach ($instances as $i => $instance) {
                 try {
                     $this->updateRunner->run($instance);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $output->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
                     $output->writeln("\n<fg=yellow> >>> Total $i out of $n new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
 
-                    $this->getApplication()?->renderThrowable($e, $output);
-
-                    return Command::FAILURE;
+                    throw $e;
                 }
             }
 
