@@ -7,7 +7,6 @@ namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
-use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
