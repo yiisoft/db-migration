@@ -428,8 +428,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
             $this->container,
             'Create_Wrong_Table_Name',
             'table',
-            'sqlite_!@#$%^&*+/\|(){}[]',
-            ['1:1'],
+            'sqlite_!@#$%^&*(+',
+            ['*:string(100)'],
         );
 
         $command = $this->createCommand($this->container);
@@ -450,7 +450,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'Create_Wrong_Table_Name',
             'table',
             'sqlite_!@#$%^&*+/\|(){}[]',
-            ['1:1'],
+            ['*:string(100)'],
         );
 
         $command = $this->createCommand($this->container);
