@@ -13,16 +13,11 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Migrator;
-use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
-use Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql;
 use Yiisoft\Db\Migration\Tests\Support\Migrations\M231017150317EmptyDown;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
-use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
-use function file_put_contents;
-use function gmdate;
 
 abstract class AbstractRedoCommandTest extends TestCase
 {
@@ -230,7 +225,8 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Exception $e) {}
+        } catch (Exception) {
+        }
 
         $output = $command->getDisplay(true);
 
@@ -257,7 +253,8 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception $e) {}
+        } catch (Exception) {
+        }
 
         $output = $command->getDisplay(true);
 
@@ -284,7 +281,8 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Exception $e) {}
+        } catch (Exception) {
+        }
 
         $output = $command->getDisplay(true);
 
@@ -302,7 +300,8 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception $e) {}
+        } catch (Exception) {
+        }
 
         $output = $command->getDisplay(true);
 
