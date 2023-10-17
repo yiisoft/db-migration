@@ -9,8 +9,8 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Throwable;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
@@ -442,7 +442,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -474,7 +474,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);

@@ -10,8 +10,8 @@ use ReflectionException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Throwable;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Exception\Exception;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
@@ -299,7 +299,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
@@ -327,7 +327,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         try {
             $exitCode = $command->setInputs(['yes'])->execute([]);
-        } catch (Exception) {
+        } catch (Throwable) {
         }
 
         $output = $command->getDisplay(true);
