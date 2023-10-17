@@ -7,6 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 use Closure;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Aliases\Aliases;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -139,5 +140,12 @@ final class MigrationHelper
         $service->updatePaths([]);
         $service->createNamespace('');
         $service->updateNamespaces([]);
+    }
+
+    public static function clearHistory(ContainerInterface $container): void
+    {
+        $db = $container->get(ConnectionInterface::class);
+        $migrator = $container->get(Migrator::class);
+        $db->createCommand()->delete($migrator->getHistoryTable())->execute();
     }
 }

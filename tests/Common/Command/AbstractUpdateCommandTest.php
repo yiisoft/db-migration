@@ -452,6 +452,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Partially updated.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function testNotUpdated(): void
@@ -486,6 +488,8 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Not updated.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

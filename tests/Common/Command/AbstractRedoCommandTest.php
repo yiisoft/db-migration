@@ -235,6 +235,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
         $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function testNotReverted(): void
@@ -265,6 +267,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function testRevertedButPartiallyApplied(): void
@@ -272,7 +276,7 @@ abstract class AbstractRedoCommandTest extends TestCase
         MigrationHelper::useMigrationsNamespace($this->container);
         MigrationHelper::createAndApplyMigration(
             $this->container,
-            '1Create_Book',
+            'Create_Book',
             'table',
             'book',
             ['title:string(100)', 'author:string(80)'],
@@ -295,6 +299,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Reverted but partially applied.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function testRevertedButNotApplied(): void
@@ -316,6 +322,8 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Reverted but not applied.', $output);
+
+        MigrationHelper::clearHistory($this->container);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
