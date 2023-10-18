@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -89,32 +90,50 @@ final class RedoCommand extends Command
         $migrations = array_keys($migrations);
 
         $n = count($migrations);
-        $output->writeln("<warning>Total $n " . ($n === 1 ? 'migration' : 'migrations') . " to be redone:</warning>\n");
+        $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
-        foreach ($migrations as $migration) {
-            $output->writeln("\t<info>$migration</info>");
+        $output->writeln("<warning>Total $n $migrationWord to be redone:</warning>\n");
+
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("\t<info>" . ($i + 1) . ". $migration</info>");
         }
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Redo the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
+            "\n<fg=cyan>Redo the above $migrationWord y/n: ",
             true
         );
 
         if ($helper->ask($input, $output, $question)) {
-            /** @psalm-var class-string[] $migrations */
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
-            foreach ($instances as $instance) {
-                $this->downRunner->run($instance);
-            }
-            foreach (array_reverse($instances) as $instance) {
-                $this->updateRunner->run($instance);
+            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+
+            foreach ($instances as $i => $instance) {
+                try {
+                    $this->downRunner->run($instance);
+                } catch (Throwable $e) {
+                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not reverted " . $instance::class . '</error>');
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas reverted.</>\n");
+                    $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
+
+                    throw $e;
+                }
             }
 
-            $output->writeln(
-                "\n<info> >>> $n " . ($n === 1 ? 'migration was' : 'migrations were') . " redone.</info>\n"
-            );
+            foreach (array_reverse($instances) as $i => $instance) {
+                try {
+                    $this->updateRunner->run($instance);
+                } catch (Throwable $e) {
+                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas applied.</>\n");
+                    $io->error($i > 0 ? 'Reverted but partially applied.' : 'Reverted but not applied.');
+
+                    throw $e;
+                }
+            }
+
+            $output->writeln("\n<info> >>> $n $migrationWas redone.</info>\n");
             $io->success('Migration redone successfully.');
         }
 

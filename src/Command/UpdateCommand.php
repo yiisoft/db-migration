@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -92,7 +93,6 @@ final class UpdateCommand extends Command
             }
         }
 
-        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
@@ -114,7 +114,7 @@ final class UpdateCommand extends Command
             $output->writeln("<fg=yellow>Total $n new $migrationWord to be applied:</>\n");
         }
 
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $i => $migration) {
             $nameLimit = $this->migrator->getMigrationNameLimit();
 
             if (strlen($migration) > $nameLimit) {
@@ -126,26 +126,34 @@ final class UpdateCommand extends Command
                 return Command::INVALID;
             }
 
-            $output->writeln("\t<fg=yellow>$migration</>");
+            $output->writeln("\t<fg=yellow>" . ($i + 1) . ". $migration</>");
         }
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Apply the above " . ($n === 1 ? 'migration y/n: ' : 'migrations y/n: '),
+            "\n<fg=cyan>Apply the above $migrationWord y/n: ",
             true
         );
 
         if ($helper->ask($input, $output, $question)) {
             $instances = $this->migrationService->makeMigrations($migrations);
-            foreach ($instances as $instance) {
-                $this->updateRunner->run($instance);
+            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+
+            foreach ($instances as $i => $instance) {
+                try {
+                    $this->updateRunner->run($instance);
+                } catch (Throwable $e) {
+                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not applied " . $instance::class . '</error>');
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n new $migrationWas applied.</>\n");
+                    $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
+
+                    throw $e;
+                }
             }
 
-            $output->writeln(
-                "\n<fg=green> >>> $n " . ($n === 1 ? 'Migration was' : 'Migrations were') . " applied.</>\n"
-            );
+            $output->writeln("\n<fg=green> >>> Total $n new $migrationWas applied.</>\n");
             $io->success('Updated successfully.');
         }
 

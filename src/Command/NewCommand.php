@@ -79,7 +79,6 @@ final class NewCommand extends Command
             return Command::INVALID;
         }
 
-        /** @psalm-var class-string[] $migrations */
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
@@ -100,8 +99,8 @@ final class NewCommand extends Command
             $io->section("Found $n new $migrationWord:");
         }
 
-        foreach ($migrations as $migration) {
-            $output->writeln("<info>\t{$migration}</info>");
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("<info>\t" . ($i + 1) . ". $migration</info>");
         }
 
         $this->migrationService->databaseConnection();

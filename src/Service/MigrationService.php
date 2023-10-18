@@ -106,6 +106,8 @@ final class MigrationService
      * Returns the migrations that are not applied.
      *
      * @return array List of new migrations.
+     *
+     * @psalm-return array<int, class-string>
      */
     public function getNewMigrations(): array
     {
@@ -158,6 +160,7 @@ final class MigrationService
         }
         ksort($migrations);
 
+        /** @psalm-var array<int, class-string> */
         return array_values($migrations);
     }
 

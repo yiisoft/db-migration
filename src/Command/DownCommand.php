@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -90,8 +91,8 @@ final class DownCommand extends Command
             "<fg=yellow>Total $n $migrationWord to be reverted:</>\n"
         );
 
-        foreach ($migrations as $migration) {
-            $output->writeln("\t<fg=yellow>$migration</>");
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("\t<fg=yellow>" . ($i + 1) . ". $migration</>");
         }
 
         /** @var QuestionHelper $helper */
@@ -103,15 +104,22 @@ final class DownCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            /** @psalm-var class-string[] $migrations */
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
-            foreach ($instances as $instance) {
-                $this->downRunner->run($instance);
+            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+
+            foreach ($instances as $i => $instance) {
+                try {
+                    $this->downRunner->run($instance);
+                } catch (Throwable $e) {
+                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not reverted " . $instance::class . '</error>');
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas reverted.</>\n");
+                    $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
+
+                    throw $e;
+                }
             }
 
-            $output->writeln(
-                "\n<fg=green> >>> [OK] $n " . ($n === 1 ? 'migration was' : 'migrations were') . " reverted.\n"
-            );
+            $output->writeln("\n<fg=green> >>> [OK] $n $migrationWas reverted.\n");
             $io->success('Migrated down successfully.');
         }
 

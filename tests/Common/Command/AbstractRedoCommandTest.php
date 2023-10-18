@@ -9,11 +9,15 @@ use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Throwable;
+use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
+use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Tests\Support\Migrations\M231017150317EmptyDown;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
 abstract class AbstractRedoCommandTest extends TestCase
@@ -195,6 +199,123 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations to be redone:', $output);
+    }
+
+    public function testPartiallyReverted(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Chapter',
+            'table',
+            'chapter',
+            ['name:string(100)'],
+        );
+
+        $db = $this->container->get(ConnectionInterface::class);
+        $db->createCommand()->dropTable('book')->execute();
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute(['-l' => 2]);
+        } catch (Throwable) {
+        }
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
+        $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
+    }
+
+    public function testNotReverted(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+
+        $db = $this->container->get(ConnectionInterface::class);
+        DbHelper::dropTable($db, 'book');
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute([]);
+        } catch (Throwable) {
+        }
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
+        $this->assertStringContainsString('[ERROR] Not reverted.', $output);
+    }
+
+    public function testRevertedButPartiallyApplied(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+        $createBookClass = MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Book',
+            'table',
+            'book',
+            ['title:string(100)', 'author:string(80)'],
+        );
+
+        $migrator = $this->container->get(Migrator::class);
+        $migrator->up(new M231017150317EmptyDown());
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute(['-a' => true]);
+        } catch (Throwable) {
+        }
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 1 out of 2 migrations were applied.', $output);
+        $this->assertStringContainsString('[ERROR] Reverted but partially applied.', $output);
+
+        $this->container->get(Migrator::class)->down(new $createBookClass());
+        $db = $this->container->get(ConnectionInterface::class);
+        DbHelper::dropTable($db, 'chapter');
+    }
+
+    public function testRevertedButNotApplied(): void
+    {
+        $migrator = $this->container->get(Migrator::class);
+        $migrator->up(new M231017150317EmptyDown());
+
+        $command = $this->createCommand($this->container);
+
+        try {
+            $exitCode = $command->setInputs(['yes'])->execute([]);
+        } catch (Throwable) {
+        }
+
+        $output = $command->getDisplay(true);
+
+        $this->assertFalse(isset($exitCode));
+        $this->assertStringContainsString('>>> Total 0 out of 1 migration was applied.', $output);
+        $this->assertStringContainsString('[ERROR] Reverted but not applied.', $output);
+
+        $db = $this->container->get(ConnectionInterface::class);
+        DbHelper::dropTable($db, 'chapter');
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
