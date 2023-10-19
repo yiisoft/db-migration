@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -38,11 +37,8 @@ final class DownCommand extends Command
     public function __construct(
         private DownRunner $downRunner,
         private MigrationService $migrationService,
-        private Migrator $migrator,
-        ConsoleMigrationInformer $informer
+        private Migrator $migrator
     ) {
-        $this->migrator->setInformer($informer);
-
         parent::__construct();
     }
 
@@ -56,7 +52,6 @@ final class DownCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
         $this->downRunner->setIO($io);
 

@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -44,8 +43,7 @@ final class UpdateCommand extends Command
     public function __construct(
         private UpdateRunner $updateRunner,
         private MigrationService $migrationService,
-        private Migrator $migrator,
-        ConsoleMigrationInformer $informer
+        private Migrator $migrator
     ) {
         parent::__construct();
     }

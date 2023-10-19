@@ -79,7 +79,6 @@ final class ContainerHelper
                     $container->get(UpdateRunner::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
-                    $container->get(ConsoleMigrationInformer::class),
                 );
 
             case DownCommand::class:
@@ -87,7 +86,6 @@ final class ContainerHelper
                     $container->get(DownRunner::class),
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
-                    $container->get(ConsoleMigrationInformer::class),
                 );
 
             case NewCommand::class:
@@ -105,7 +103,6 @@ final class ContainerHelper
                 return new RedoCommand(
                     $container->get(MigrationService::class),
                     $container->get(Migrator::class),
-                    $container->get(ConsoleMigrationInformer::class),
                     $container->get(DownRunner::class),
                     $container->get(UpdateRunner::class),
                 );
