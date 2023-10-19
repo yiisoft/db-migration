@@ -61,7 +61,7 @@ final class MigrationContainer
                 'updateNamespaces()' => [['Yii\\User\\Framework\\Migration']],
                 'updatePaths()' => [[]],
             ],
-            MigrationInformerInterface::class => NullMigrationInformer::class,
+            MigrationInformerInterface::class => ConsoleMigrationInformer::class,
         ];
     }
 
