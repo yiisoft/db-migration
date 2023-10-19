@@ -103,6 +103,8 @@ final class CreateCommand extends Command
         if ($path !== null || $namespace !== null) {
             $this->migrationService->createPath((string) $path);
             $this->migrationService->createNamespace((string) $namespace);
+        } else {
+            $namespace = $this->migrationService->getCreateNamespace();
         }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
@@ -135,12 +137,7 @@ final class CreateCommand extends Command
         $and = $input->getOption('and');
         $name = $this->generateName($command, $table, $and);
 
-        /**
-         * @var string $namespace
-         * @var string $className
-         */
-        [$namespace, $className] = $this->migrationService->generateClassName($namespace, $name);
-
+        $className = $this->migrationService->generateClassName($name);
         $nameLimit = $this->migrator->getMigrationNameLimit();
 
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
@@ -149,7 +146,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $migrationPath = $this->migrationService->findMigrationPath($namespace);
+        $migrationPath = $this->migrationService->findMigrationPath();
 
         if (!is_dir($migrationPath)) {
             $io->error("Invalid path directory $migrationPath");

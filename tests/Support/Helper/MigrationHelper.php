@@ -67,7 +67,8 @@ final class MigrationHelper
         $createService = $container->get(CreateService::class);
         $aliases = $container->get(Aliases::class);
 
-        [$namespace, $className] = $migrationService->generateClassName(null, $name);
+        $namespace = $migrationService->getCreateNamespace();
+        $className = $migrationService->generateClassName($name);
 
         $content = $createService->run(
             $command,
@@ -82,11 +83,11 @@ final class MigrationHelper
         }
 
         file_put_contents(
-            $aliases->get($migrationService->findMigrationPath($namespace)) . '/' . $className . '.php',
+            $aliases->get($migrationService->findMigrationPath()) . '/' . $className . '.php',
             $content
         );
 
-        return $namespace === null
+        return $namespace === ''
             ? $className
             : ($namespace . '\\' . $className);
     }

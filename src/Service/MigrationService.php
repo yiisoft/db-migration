@@ -317,39 +317,38 @@ final class MigrationService
     }
 
     /**
-     * Generates class base name and namespace from migration name from user input.
+     * Returns namespace to create migration
      *
-     * @param string|null $namespace Migration namespace from the user input.
-     * @param string $name Migration name from the user input.
-     *
-     * @return array List of 2 elements: 'namespace' and 'class base name'.
+     * @return string
      */
-    public function generateClassName(?string $namespace, string $name): array
+    public function getCreateNamespace(): string
     {
-        if (empty($this->createPath) && empty($namespace)) {
-            $namespace = $this->createNamespace;
-        }
-
-        $class = 'M' . gmdate('ymdHis')
-            . str_replace(' ', '', ucwords(preg_replace('/[^a-z0-9]+/i', ' ', $name)));
-
-        return [$namespace, $class];
+        return $this->createNamespace;
     }
 
     /**
-     * Finds the file path for the specified migration namespace.
+     * Generates class base name and namespace from migration name from user input.
      *
-     * @param string|null $namespace The migration namespace.
+     * @param string $name Migration name from the user input.
+     *
+     * @return string The class base name.
+     */
+    public function generateClassName(string $name): string
+    {
+        return 'M' . gmdate('ymdHis')
+            . str_replace(' ', '', ucwords(preg_replace('/[^a-z0-9]+/i', ' ', $name)));
+    }
+
+    /**
+     * Finds the file path for migration namespace or alias path.
      *
      * @return string The migration file path.
      */
-    public function findMigrationPath(?string $namespace): string
+    public function findMigrationPath(): string
     {
-        $namespace ??= $this->createNamespace;
-
-        return empty($namespace)
+        return empty($this->createNamespace)
             ? $this->aliases->get($this->createPath)
-            : $this->getNamespacePath($namespace);
+            : $this->getNamespacePath($this->createNamespace);
     }
 
     /**
