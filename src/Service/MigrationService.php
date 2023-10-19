@@ -327,7 +327,7 @@ final class MigrationService
     }
 
     /**
-     * Generates class base name and namespace from migration name from user input.
+     * Generates class base name from migration name from user input.
      *
      * @param string $name Migration name from the user input.
      *
