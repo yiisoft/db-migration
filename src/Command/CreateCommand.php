@@ -78,10 +78,10 @@ final class CreateCommand extends Command
     {
         $this
             ->addArgument('name', InputArgument::REQUIRED, 'Table name to generate migration for.')
-            ->addOption('command', 'c', InputOption::VALUE_OPTIONAL, 'Command to execute.', 'create')
-            ->addOption('fields', 'f', InputOption::VALUE_OPTIONAL, 'Table fields to generate.')
-            ->addOption('table-comment', null, InputOption::VALUE_OPTIONAL, 'Table comment.')
-            ->addOption('and', null, InputOption::VALUE_OPTIONAL, 'And junction.')
+            ->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'Command to execute.', 'create')
+            ->addOption('fields', 'f', InputOption::VALUE_REQUIRED, 'Table fields to generate.')
+            ->addOption('table-comment', null, InputOption::VALUE_REQUIRED, 'Table comment.')
+            ->addOption('and', null, InputOption::VALUE_REQUIRED, 'And junction.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
             ->setHelp('This command generates new migration file.');
@@ -131,7 +131,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        /** @var string $and */
+        /** @var string|null $and */
         $and = $input->getOption('and');
         $name = $this->generateName($command, $table, $and);
 
@@ -166,8 +166,10 @@ final class CreateCommand extends Command
         );
 
         if ($helper->ask($input, $output, $question)) {
-            $fields = $input->hasOption('fields') ? (string) $input->getOption('fields') : null;
-            $tableComment = $input->hasOption('table-comment') ? (string) $input->getOption('table-comment') : null;
+            /** @var string|null $fields */
+            $fields = $input->getOption('fields');
+            /** @var string|null $tableComment */
+            $tableComment = $input->getOption('table-comment');
 
             $content = $this->createService->run(
                 $command,
