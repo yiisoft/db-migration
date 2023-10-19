@@ -14,9 +14,9 @@ declare(strict_types=1);
 echo "        \$b->createTable('$table', [\n";
 foreach ($columns as $column) {
     if (!$column->hasDecorators()) {
-        echo "            '{$column->getProperty()}',\n";
+        echo "            '{$column->getName()}',\n";
     } else {
-        echo "            '{$column->getProperty()}' => \$b->{$column->getDecoratorsString()},\n";
+        echo "            '{$column->getName()}' => \$b->{$column->getDecoratorsString()},\n";
     }
 }
 echo "        ]);\n";
