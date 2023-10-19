@@ -15,5 +15,5 @@ echo $this->render(__DIR__ . '/_dropForeignKeys.php', [
 ]);
 
 foreach ($columns as $column) {
-    echo "        \$b->dropColumn('$table', '{$column->getProperty()}');\n";
+    echo "        \$b->dropColumn('$table', '{$column->getName()}');\n";
 }

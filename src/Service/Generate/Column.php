@@ -10,14 +10,14 @@ final class Column
      * @param string[] $decorators
      */
     public function __construct(
-        private string $property,
+        private string $name,
         private array $decorators = []
     ) {
     }
 
-    public function getProperty(): string
+    public function getName(): string
     {
-        return $this->property;
+        return $this->name;
     }
 
     public function getDecorators(): array

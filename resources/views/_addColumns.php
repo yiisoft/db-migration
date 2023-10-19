@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 
 foreach ($columns as $column) {
-    echo "        \$b->addColumn('$table', '{$column->getProperty()}', \$b->{$column->getDecoratorsString()});\n";
+    echo "        \$b->addColumn('$table', '{$column->getName()}', \$b->{$column->getDecoratorsString()});\n";
 }
 
 echo $this->render(__DIR__ . '/_addForeignKeys.php', [

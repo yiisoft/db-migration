@@ -40,7 +40,7 @@ final class FieldsParser
             /** @psalm-var string[] $fields */
             foreach ($fields as $field) {
                 $chunks = $this->splitFieldIntoChunks($field);
-                $column = (string) array_shift($chunks);
+                $columnName = (string) array_shift($chunks);
 
                 /** @psalm-var string[] $chunks */
                 foreach ($chunks as $i => $chunk) {
@@ -48,8 +48,8 @@ final class FieldsParser
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
                         $foreignKeys[] = $this->foreignKeyFactory->create(
                             $table,
-                            $column,
-                            $matches[1] ?? preg_replace('/_id$/', '', $column),
+                            $columnName,
+                            $matches[1] ?? preg_replace('/_id$/', '', $columnName),
                             empty($matches[2]) ? null : $matches[2]
                         );
 
@@ -63,7 +63,7 @@ final class FieldsParser
                 }
 
                 /** @psalm-var string[] $chunks */
-                $columns[] = new Column($column, $chunks);
+                $columns[] = new Column($columnName, $chunks);
             }
         }
 
