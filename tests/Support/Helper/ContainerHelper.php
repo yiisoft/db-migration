@@ -91,6 +91,7 @@ final class ContainerHelper
             case NewCommand::class:
                 return new NewCommand(
                     $container->get(MigrationService::class),
+                    $container->get(Migrator::class),
                 );
 
             case HistoryCommand::class:

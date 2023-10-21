@@ -55,7 +55,6 @@ final class MigrationService
     public function setIO(?SymfonyStyle $io): void
     {
         $this->io = $io;
-        $this->migrator->setIO($io);
     }
 
     /**
