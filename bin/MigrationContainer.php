@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
+use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Definitions\ReferencesArray;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
@@ -41,7 +41,7 @@ final class MigrationContainer
                     'maxSqlOutputLength' => null,
                 ],
             ],
-            MigrationInformerInterface::class => NullMigrationInformer::class,
+            MigrationInformerInterface::class => ConsoleMigrationInformer::class,
         ];
     }
 

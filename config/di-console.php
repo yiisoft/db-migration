@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 /** @var array $params */
@@ -17,5 +17,5 @@ return [
         'updatePaths()' => [$params['yiisoft/db-migration']['updatePaths']],
     ],
 
-    MigrationInformerInterface::class => NullMigrationInformer::class,
+    MigrationInformerInterface::class => ConsoleMigrationInformer::class,
 ];
