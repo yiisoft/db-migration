@@ -13,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -42,12 +41,9 @@ final class RedoCommand extends Command
     public function __construct(
         private MigrationService $migrationService,
         private Migrator $migrator,
-        ConsoleMigrationInformer $informer,
         private DownRunner $downRunner,
         private UpdateRunner $updateRunner
     ) {
-        $this->migrator->setInformer($informer);
-
         parent::__construct();
     }
 

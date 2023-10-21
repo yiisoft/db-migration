@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function count;
@@ -36,8 +37,10 @@ use function count;
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
 final class NewCommand extends Command
 {
-    public function __construct(private MigrationService $migrationService)
-    {
+    public function __construct(
+        private MigrationService $migrationService,
+        private Migrator $migrator
+    ) {
         parent::__construct();
     }
 
@@ -53,6 +56,7 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $this->migrator->setIO($io);
         $this->migrationService->setIO($io);
 
         /** @psalm-var string[] $paths */

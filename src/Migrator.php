@@ -23,11 +23,6 @@ final class Migrator
     ) {
     }
 
-    public function setInformer(MigrationInformerInterface $informer): void
-    {
-        $this->informer = $informer;
-    }
-
     public function setIO(?SymfonyStyle $io): void
     {
         $this->informer->setIO($io);
