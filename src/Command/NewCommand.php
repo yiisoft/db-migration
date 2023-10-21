@@ -40,8 +40,7 @@ final class NewCommand extends Command
     public function __construct(
         private MigrationService $migrationService,
         private Migrator $migrator
-    )
-    {
+    ) {
         parent::__construct();
     }
 
