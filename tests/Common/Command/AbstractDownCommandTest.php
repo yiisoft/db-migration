@@ -227,14 +227,14 @@ abstract class AbstractDownCommandTest extends TestCase
             'post',
             ['name:string(50)'],
         );
-        MigrationHelper::createAndApplyMigration(
+        $createTagClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             'Create_Tag',
             'table',
             'tag',
             ['name:string(50)'],
         );
-        MigrationHelper::createAndApplyMigration(
+        $createUserClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             'Create_User',
             'table',
@@ -249,6 +249,10 @@ abstract class AbstractDownCommandTest extends TestCase
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString("1. $createUserClass", $output);
+        $this->assertStringContainsString("2. $createTagClass", $output);
+        $this->assertStringContainsString("1. Reverting $createUserClass", $output);
+        $this->assertStringContainsString("2. Reverting $createTagClass", $output);
         $this->assertStringContainsString('[OK] 2 migrations were reverted.', $output);
     }
 

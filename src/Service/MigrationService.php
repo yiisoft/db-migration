@@ -65,18 +65,16 @@ final class MigrationService
      *
      * @return int Whether the action should continue to be executed.
      */
-    public function before(string $defaultName): int
+    public function before(string $commandName): int
     {
-        $result = Command::SUCCESS;
-
-        switch ($defaultName) {
+        switch ($commandName) {
             case 'migrate:create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     $this->io?->error(
                         'One of `createNamespace` or `createPath` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
 
                 if (!empty($this->createNamespace) && !empty($this->createPath)) {
@@ -84,7 +82,7 @@ final class MigrationService
                         'Only one of `createNamespace` or `createPath` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
                 break;
             case 'migrate:up':
@@ -93,12 +91,12 @@ final class MigrationService
                         'At least one of `updateNamespaces` or `updatePaths` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
                 break;
         }
 
-        return $result;
+        return Command::SUCCESS;
     }
 
     /**
@@ -267,9 +265,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param class-string[] $classes
+     * @psalm-param array<int, class-string> $classes
      *
      * @return MigrationInterface[]
+     *
+     * @psalm-return array<int, MigrationInterface>
      */
     public function makeMigrations(array $classes): array
     {
@@ -293,9 +293,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param class-string[] $classes
+     * @psalm-param array<int, class-string> $classes
      *
      * @return RevertibleMigrationInterface[]
+     *
+     * @psalm-return array<int, RevertibleMigrationInterface>
      */
     public function makeRevertibleMigrations(array $classes): array
     {

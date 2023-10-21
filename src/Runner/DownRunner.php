@@ -6,6 +6,7 @@ namespace Yiisoft\Db\Migration\Runner;
 
 use RuntimeException;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
@@ -23,27 +24,37 @@ final class DownRunner
     public function setIO(?SymfonyStyle $io): void
     {
         $this->io = $io;
-        $this->migrator->setIO($io);
     }
 
-    public function run(RevertibleMigrationInterface $migration): void
+    public function run(RevertibleMigrationInterface $migration, int|null $number = null): void
     {
         if ($this->io === null) {
             throw new RuntimeException('You need to set output decorator via `setIO()`.');
         }
 
+        $num = $number !== null ? $number . '. ' : '';
         $className = $migration::class;
 
-        $this->io->title("\nReverting $className");
+        $this->io->title("\n{$num}Reverting $className");
 
         $start = microtime(true);
 
-        $this->migrator->down($migration);
+        try {
+            $this->migrator->down($migration);
+        } catch (Throwable $e) {
+            $time = microtime(true) - $start;
+
+            $this->io->writeln(
+                "\n\n\t<error>>>> [ERROR] - Not reverted (time: " . sprintf('%.3f', $time) . 's)</error>'
+            );
+
+            throw $e;
+        }
 
         $time = microtime(true) - $start;
 
         $this->io->writeln(
-            "\n\t<info>>>> [OK] - Reverted $className (time: " . sprintf('%.3f', $time) . 's)</info>'
+            "\n\t<info>>>> [OK] - Reverted (time: " . sprintf('%.3f', $time) . 's)</info>'
         );
     }
 }

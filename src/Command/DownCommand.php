@@ -105,9 +105,8 @@ final class DownCommand extends Command
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $this->downRunner->run($instance);
+                    $this->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n\n\t<error>>>> [ERROR] - Not reverted " . $instance::class . '</error>');
                     $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
 
