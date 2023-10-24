@@ -265,11 +265,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param array<int, class-string> $classes
+     * @psalm-param list<class-string> $classes
      *
      * @return MigrationInterface[]
      *
-     * @psalm-return array<int, MigrationInterface>
+     * @psalm-return list<MigrationInterface>
      */
     public function makeMigrations(array $classes): array
     {
@@ -293,11 +293,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param array<int, class-string> $classes
+     * @psalm-param list<class-string> $classes
      *
      * @return RevertibleMigrationInterface[]
      *
-     * @psalm-return array<int, RevertibleMigrationInterface>
+     * @psalm-return list<RevertibleMigrationInterface>
      */
     public function makeRevertibleMigrations(array $classes): array
     {
