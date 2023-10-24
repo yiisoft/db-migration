@@ -104,7 +104,7 @@ final class MigrationService
      *
      * @return array List of new migrations.
      *
-     * @psalm-return array<int, class-string>
+     * @psalm-return list<class-string>
      */
     public function getNewMigrations(): array
     {
@@ -148,6 +148,8 @@ final class MigrationService
                         $class = $namespace . '\\' . $class;
                     }
 
+                    /** @psalm-var class-string $class */
+
                     if (!isset($applied[$class])) {
                         $migrations[$time . '\\' . $class] = $class;
                     }
@@ -157,7 +159,6 @@ final class MigrationService
         }
         ksort($migrations);
 
-        /** @psalm-var array<int, class-string> */
         return array_values($migrations);
     }
 
