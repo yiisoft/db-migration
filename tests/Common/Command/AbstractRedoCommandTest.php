@@ -92,14 +92,14 @@ abstract class AbstractRedoCommandTest extends TestCase
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        MigrationHelper::createAndApplyMigration(
+        $createPostClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             'Create_Post',
             'table',
             'post',
             ['name:string(50)'],
         );
-        MigrationHelper::createAndApplyMigration(
+        $createUserClass = MigrationHelper::createAndApplyMigration(
             $this->container,
             'Create_User',
             'table',
@@ -110,13 +110,21 @@ abstract class AbstractRedoCommandTest extends TestCase
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
-        $exitCode = $command->execute(['-l' => '1']);
+        $exitCode = $command->execute(['-l' => '2']);
         $output = $command->getDisplay(true);
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString("1. $createUserClass", $output);
+        $this->assertStringContainsString("2. $createPostClass", $output);
+        $this->assertStringContainsString("1. Reverting $createUserClass", $output);
         $this->assertStringContainsString('Drop table user', $output);
+        $this->assertStringContainsString("2. Reverting $createPostClass", $output);
+        $this->assertStringContainsString('Drop table post', $output);
+        $this->assertStringContainsString("2. Applying $createPostClass", $output);
+        $this->assertStringContainsString('create table post', $output);
+        $this->assertStringContainsString("1. Applying $createUserClass", $output);
         $this->assertStringContainsString('create table user', $output);
-        $this->assertStringContainsString('1 migration was redone.', $output);
+        $this->assertStringContainsString('2 migrations were redone.', $output);
         $this->assertStringContainsString('Migration redone successfully.', $output);
         $this->assertExistsTables($this->container, 'post', 'user');
     }

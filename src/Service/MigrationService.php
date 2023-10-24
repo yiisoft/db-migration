@@ -65,18 +65,16 @@ final class MigrationService
      *
      * @return int Whether the action should continue to be executed.
      */
-    public function before(string $defaultName): int
+    public function before(string $commandName): int
     {
-        $result = Command::SUCCESS;
-
-        switch ($defaultName) {
+        switch ($commandName) {
             case 'migrate:create':
                 if (empty($this->createNamespace) && empty($this->createPath)) {
                     $this->io?->error(
                         'One of `createNamespace` or `createPath` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
 
                 if (!empty($this->createNamespace) && !empty($this->createPath)) {
@@ -84,7 +82,7 @@ final class MigrationService
                         'Only one of `createNamespace` or `createPath` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
                 break;
             case 'migrate:up':
@@ -93,12 +91,12 @@ final class MigrationService
                         'At least one of `updateNamespaces` or `updatePaths` should be specified.'
                     );
 
-                    $result = Command::INVALID;
+                    return Command::INVALID;
                 }
                 break;
         }
 
-        return $result;
+        return Command::SUCCESS;
     }
 
     /**
@@ -106,7 +104,7 @@ final class MigrationService
      *
      * @return array List of new migrations.
      *
-     * @psalm-return array<int, class-string>
+     * @psalm-return list<class-string>
      */
     public function getNewMigrations(): array
     {
@@ -150,6 +148,8 @@ final class MigrationService
                         $class = $namespace . '\\' . $class;
                     }
 
+                    /** @psalm-var class-string $class */
+
                     if (!isset($applied[$class])) {
                         $migrations[$time . '\\' . $class] = $class;
                     }
@@ -159,7 +159,6 @@ final class MigrationService
         }
         ksort($migrations);
 
-        /** @psalm-var array<int, class-string> */
         return array_values($migrations);
     }
 
@@ -267,9 +266,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param class-string[] $classes
+     * @psalm-param list<class-string> $classes
      *
      * @return MigrationInterface[]
+     *
+     * @psalm-return list<MigrationInterface>
      */
     public function makeMigrations(array $classes): array
     {
@@ -293,9 +294,11 @@ final class MigrationService
     /**
      * @param string[] $classes
      *
-     * @psalm-param class-string[] $classes
+     * @psalm-param list<class-string> $classes
      *
      * @return RevertibleMigrationInterface[]
+     *
+     * @psalm-return list<RevertibleMigrationInterface>
      */
     public function makeRevertibleMigrations(array $classes): array
     {
