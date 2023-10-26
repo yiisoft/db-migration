@@ -41,4 +41,25 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $this->builder->dropTable('yii.test');
         $command->setSql('DROP SCHEMA yii')->execute();
     }
+
+    /** @link https://github.com/yiisoft/db-migration/issues/11 */
+    public function testAlterColumnWithConstraint()
+    {
+        $b = $this->builder;
+
+        $b->createTable('check_alter_column', ['id' => $b->primaryKey()]);
+
+        $b->addColumn('check_alter_column', 'field', $b->integer()->null());
+        $b->alterColumn('check_alter_column', 'field', $b->string(40)->notNull());
+
+        $tableSchema = $this->db->getTableSchema('check_alter_column', true);
+
+        $field = $tableSchema->getColumn('field');
+
+        $this->assertFalse($field->isAllowNull());
+        $this->assertNull($field->getDefaultValue());
+        $this->assertSame('nvarchar(40)', $field->getDbType());
+
+        $b->dropTable('check_alter_column');
+    }
 }
