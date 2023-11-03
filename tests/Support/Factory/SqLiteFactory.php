@@ -55,9 +55,10 @@ final class SqLiteFactory
     public static function clearDatabase(ContainerInterface $container): void
     {
         $db = $container->get(SqLiteConnection::class);
+        $command = $db->createCommand();
 
-        foreach ($db->getSchema()->getTableNames() as $tableName) {
-            $db->createCommand()->dropTable($tableName)->execute();
+        foreach ($db->getSchema()->getTableNames('', true) as $tableName) {
+            $command->dropTable($tableName)->execute();
         }
 
         $db->close();

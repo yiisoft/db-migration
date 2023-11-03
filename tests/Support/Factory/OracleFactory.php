@@ -17,6 +17,7 @@ use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
+use function array_intersect;
 use function dirname;
 
 final class OracleFactory
@@ -79,10 +80,11 @@ final class OracleFactory
             'chapter',
         ];
 
-        $tables = array_intersect($tables, $db->getSchema()->getTableNames());
+        $tables = array_intersect($tables, $db->getSchema()->getTableNames('', true));
+        $command = $db->createCommand();
 
         foreach ($tables as $table) {
-            $db->createCommand()->dropTable($table)->execute();
+            $command->dropTable($table)->execute();
         }
 
         $db->close();
