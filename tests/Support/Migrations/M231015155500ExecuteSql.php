@@ -17,10 +17,10 @@ final class M231015155500ExecuteSql implements RevertibleMigrationInterface, Tra
     {
         $b->execute(
             <<<SQL
-            CREATE TABLE person (
-                id INT,
-                first_name VARCHAR(100),
-                last_name VARCHAR(100)
+            CREATE TABLE {{person}} (
+                [[id]] INT,
+                [[first_name]] VARCHAR(100),
+                [[last_name]] VARCHAR(100)
             )
             SQL,
         );
@@ -28,6 +28,6 @@ final class M231015155500ExecuteSql implements RevertibleMigrationInterface, Tra
 
     public function down(MigrationBuilder $b): void
     {
-        $b->execute('DROP TABLE person');
+        $b->execute('DROP TABLE {{person}}');
     }
 }

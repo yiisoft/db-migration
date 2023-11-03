@@ -83,7 +83,7 @@ final class MysqlFactory
         $command = $db->createCommand();
 
         foreach ($tables as $table) {
-            $command->setSql('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
+            $command->setSql('DROP TABLE IF EXISTS ' . $table . ' CASCADE')->execute();
         }
 
         $db->close();
