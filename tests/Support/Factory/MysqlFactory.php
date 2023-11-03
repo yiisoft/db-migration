@@ -78,10 +78,10 @@ final class MysqlFactory
             'chapter',
         ];
 
+        $tables = array_intersect($tables, $db->getSchema()->getTableNames());
+
         foreach ($tables as $table) {
-            if ($db->getTableSchema($table)) {
-                $db->createCommand('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
-            }
+            $db->createCommand('DROP TABLE IF EXISTS ' . $table . ' CASCADE;')->execute();
         }
 
         $db->close();

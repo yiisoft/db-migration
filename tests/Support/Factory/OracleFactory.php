@@ -56,6 +56,7 @@ final class OracleFactory
 
     public static function clearDatabase(ContainerInterface $container): void
     {
+        /** @var OracleConnection $db */
         $db = $container->get(OracleConnection::class);
 
         $tables = [
@@ -78,10 +79,10 @@ final class OracleFactory
             'chapter',
         ];
 
+        $tables = array_intersect($tables, $db->getSchema()->getTableNames());
+
         foreach ($tables as $table) {
-            if ($db->getTableSchema($table) !== null) {
-                $db->createCommand()->dropTable($table)->execute();
-            }
+            $db->createCommand()->dropTable($table)->execute();
         }
 
         $db->close();
