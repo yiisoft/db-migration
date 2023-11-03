@@ -105,7 +105,9 @@ final class DownCommand extends Command
             }
         }
 
-        $migrations = array_slice($migrations, 0, $limit);
+        if ($limit !== null) {
+            $migrations = array_slice($migrations, 0, $limit);
+        }
 
         $n = count($migrations);
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
