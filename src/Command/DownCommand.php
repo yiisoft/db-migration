@@ -18,6 +18,7 @@ use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function array_keys;
+use function array_slice;
 use function count;
 
 /**
@@ -26,9 +27,15 @@ use function count;
  * For example:
  *
  * ```shell
- * ./yii migrate:down           # revert the last migration
- * ./yii migrate:down --limit=3 # revert the last 3 migrations
- * ./yii migrate:down --all     # revert all migrations
+ * ./yii migrate:down                                           # revert the last migration
+ * ./yii migrate:down --limit=3                                 # revert last 3 migrations
+ * ./yii migrate:down --all                                     # revert all migrations
+ * ./yii migrate:down --path=@vendor/yiisoft/rbac-db/migrations # revert the last migration from the directory
+ * ./yii migrate:down --namespace=Yiisoft\\Rbac\\Db\\Migrations # revert the last migration from the namespace
+ *
+ * # revert migrations from multiple directories and namespaces
+ * ./yii migrate:down --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
+ * ./yii migrate:down --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
  */
 #[AsCommand('migrate:down', 'Reverts the specified number of latest migrations.')]
@@ -46,7 +53,9 @@ final class DownCommand extends Command
     {
         $this
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to revert.', 1)
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Revert all migrations.');
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Revert all migrations.')
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to revert.')
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to revert.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -69,7 +78,7 @@ final class DownCommand extends Command
             return Command::INVALID;
         }
 
-        $migrations = $this->migrator->getHistory($limit);
+        $migrations = $this->migrator->getHistory();
 
         if (empty($migrations)) {
             $output->writeln("<fg=yellow> >>> Apply at least one migration first.</>\n");
@@ -79,6 +88,24 @@ final class DownCommand extends Command
         }
 
         $migrations = array_keys($migrations);
+
+        /** @psalm-var string[] $paths */
+        $paths = $input->getOption('path');
+
+        /** @psalm-var string[] $namespaces */
+        $namespaces = $input->getOption('namespace');
+
+        if (!empty($paths) || !empty($namespaces)) {
+            $migrations = $this->migrationService->filterMigrations($migrations, $namespaces, $paths);
+
+            if (empty($migrations)) {
+                $io->warning('No applied migrations found.');
+
+                return Command::FAILURE;
+            }
+        }
+
+        $migrations = array_slice($migrations, 0, $limit);
 
         $n = count($migrations);
         $migrationWord = $n === 1 ? 'migration' : 'migrations';

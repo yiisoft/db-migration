@@ -14,9 +14,11 @@ use Throwable;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
 abstract class AbstractDownCommandTest extends TestCase
@@ -339,6 +341,71 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
+    }
+
+    public function testOptionsNamespaceAndPath(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        $migrationService = $this->container->get(MigrationService::class);
+        $migrator = $this->container->get(Migrator::class);
+
+        $migration = $migrationService->makeMigration(M231015155500ExecuteSql::class);
+        $migrator->up($migration);
+
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $options = [
+            '--namespace' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '-ns' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '--path' => [dirname(__DIR__, 2) . '/Support/Migrations'],
+        ];
+
+        foreach ($options as $option => $value) {
+            $exitCode = $command->setInputs(['no'])->execute([$option => $value]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
+            $this->assertStringContainsString('1. ' . M231015155500ExecuteSql::class, $output);
+        }
+    }
+
+    public function testOptionsNamespaceAndPathWithoutMigrations(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $options = [
+            '--namespace' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '-ns' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '--path' => [dirname(__DIR__, 2) . '/Support/Migrations'],
+        ];
+
+        foreach ($options as $option => $value) {
+            $exitCode = $command->execute([$option => $value]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::FAILURE, $exitCode);
+            $this->assertStringContainsString('[WARNING] No applied migrations found.', $output);
+        }
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
