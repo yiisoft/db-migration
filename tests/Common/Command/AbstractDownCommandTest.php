@@ -21,6 +21,8 @@ use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 use Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
+use function dirname;
+
 abstract class AbstractDownCommandTest extends TestCase
 {
     use AssertTrait;
