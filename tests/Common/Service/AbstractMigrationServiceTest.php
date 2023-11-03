@@ -53,4 +53,17 @@ abstract class AbstractMigrationServiceTest extends TestCase
 
         $this->assertSame([$className], $migrations);
     }
+
+    public function testFilterMigrations(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $classes = $migrationService->filterMigrations(
+            ['Yiisoft\\Db\\Migration\\TestsRuntime\\Migrations\\M231015155500ExecuteSql'],
+            [],
+            [__DIR__], // not matching path
+        );
+
+        $this->assertSame([], $classes);
+    }
 }
