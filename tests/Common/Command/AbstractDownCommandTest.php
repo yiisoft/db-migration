@@ -352,8 +352,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $migrationService = $this->container->get(MigrationService::class);
         $migrator = $this->container->get(Migrator::class);
 
-        $migration = $migrationService->makeMigration(M231015155500ExecuteSql::class);
-        $migrator->up($migration);
+        $migrator->up(new M231015155500ExecuteSql());
 
         MigrationHelper::useMigrationsNamespace($this->container);
 
@@ -380,6 +379,8 @@ abstract class AbstractDownCommandTest extends TestCase
             $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
             $this->assertStringContainsString('1. ' . M231015155500ExecuteSql::class, $output);
         }
+
+        $migrator->down(new M231015155500ExecuteSql());
     }
 
     public function testOptionsNamespaceAndPathWithoutMigrations(): void
