@@ -61,7 +61,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $migrationService = $this->container->get(MigrationService::class);
 
         $classes = $migrationService->filterMigrations(
-            ['Yiisoft\\Db\\Migration\\Tests\\Support\\Migrations\\M231015155500ExecuteSql'],
+            [\Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql::class],
             [],
             [dirname(__DIR__, 4) . '/src'], // not matching path
         );
