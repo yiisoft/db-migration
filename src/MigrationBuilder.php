@@ -15,11 +15,11 @@ use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 
 use function implode;
-use function ltrim;
 use function microtime;
 use function rtrim;
 use function sprintf;
 use function substr;
+use function trim;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
@@ -52,13 +52,15 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      */
     public function execute(string $sql, array $params = []): void
     {
-        $sqlOutput = $sql;
-        if ($this->maxSqlOutputLength !== null && $this->maxSqlOutputLength < strlen($sql)) {
-            $sqlOutput = ltrim(rtrim(substr($sql, 0, $this->maxSqlOutputLength)) . ' [... hidden]');
+        $command = $this->db->createCommand($sql)->bindValues($params);
+        $sqlOutput = trim($command->getRawSql());
+
+        if ($this->maxSqlOutputLength !== null && $this->maxSqlOutputLength < strlen($sqlOutput)) {
+            $sqlOutput = rtrim(substr($sqlOutput, 0, $this->maxSqlOutputLength)) . ' [... hidden]';
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
-        $this->db->createCommand($sql)->bindValues($params)->execute();
+        $command->execute();
         $this->endCommand($time);
     }
 
