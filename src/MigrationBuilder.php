@@ -15,6 +15,7 @@ use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 
 use function implode;
+use function ltrim;
 use function microtime;
 use function rtrim;
 use function sprintf;
@@ -56,7 +57,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $sqlOutput = trim($command->getRawSql());
 
         if ($this->maxSqlOutputLength !== null && $this->maxSqlOutputLength < strlen($sqlOutput)) {
-            $sqlOutput = rtrim(substr($sqlOutput, 0, $this->maxSqlOutputLength)) . ' [... hidden]';
+            $sqlOutput = ltrim(rtrim(substr($sqlOutput, 0, $this->maxSqlOutputLength)) . ' [... hidden]');
         }
 
         $time = $this->beginCommand("Execute SQL: $sqlOutput");
