@@ -57,7 +57,7 @@ final class SqLiteFactory
         $db = $container->get(SqLiteConnection::class);
         $command = $db->createCommand();
 
-        foreach ($db->getSchema()->getTableNames('', true) as $tableName) {
+        foreach ($db->getSchema()->getTableNames() as $tableName) {
             $command->dropTable($tableName)->execute();
         }
 
