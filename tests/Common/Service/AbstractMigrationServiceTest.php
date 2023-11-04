@@ -10,6 +10,8 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
+use function dirname;
+
 abstract class AbstractMigrationServiceTest extends TestCase
 {
     protected ContainerInterface $container;
@@ -59,9 +61,9 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $migrationService = $this->container->get(MigrationService::class);
 
         $classes = $migrationService->filterMigrations(
-            ['Yiisoft\\Db\\Migration\\TestsRuntime\\Migrations\\M231015155500ExecuteSql'],
+            ['Yiisoft\\Db\\Migration\\Tests\\Support\\Migrations\\M231015155500ExecuteSql'],
             [],
-            [__DIR__], // not matching path
+            [dirname(__DIR__, 4) . '/src'], // not matching path
         );
 
         $this->assertSame([], $classes);
