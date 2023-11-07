@@ -79,7 +79,7 @@ final class MssqlFactory
             'chapter',
         ];
 
-        $tables = array_intersect($tables, $db->getSchema()->getTableNames('', true));
+        $tables = array_intersect($tables, $db->getSchema()->getTableNames());
         $command = $db->createCommand();
 
         foreach ($tables as $table) {

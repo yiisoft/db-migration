@@ -100,8 +100,6 @@ abstract class AbstractMigratorTest extends TestCase
             'Execute SQL: CREATE TABLE person [... hidden] ... Done',
             $informer->getOutput(),
         );
-
-        $migrator->down(new M231015155500ExecuteSql());
     }
 
     public function testZeroMaxSqlOutputLength(): void
@@ -120,7 +118,5 @@ abstract class AbstractMigratorTest extends TestCase
             'Execute SQL: [... hidden] ... Done',
             $informer->getOutput(),
         );
-
-        $migrator->down(new M231015155500ExecuteSql());
     }
 }
