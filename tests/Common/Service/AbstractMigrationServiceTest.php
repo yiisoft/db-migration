@@ -56,16 +56,41 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $this->assertSame([$className], $migrations);
     }
 
-    public function testFilterMigrations(): void
+    public function testGetNamespacesFromPathForNoHavingNamespacePath(): void
     {
         $migrationService = $this->container->get(MigrationService::class);
 
-        $classes = $migrationService->filterMigrations(
-            [\Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql::class],
-            [],
-            [dirname(__DIR__, 4) . '/src'], // not matching path
-        );
+        $getNamespaceFromPath = new \ReflectionMethod($migrationService, 'getNamespacesFromPath');
+        $getNamespaceFromPath->setAccessible(true);
 
-        $this->assertSame([], $classes);
+        // No having namespace path
+        $path = dirname(__DIR__, 3) . '/config';
+
+        $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
+    }
+
+    /**
+     * Test MigrationService::getNamespacesFromPath() returns namespaces corresponding to the longest subdirectory of a path.
+     * One path can match to several namespaces.
+     */
+    public function testGetNamespacesFromPathForLongestPath(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespaceFromPath = new \ReflectionMethod($migrationService, 'getNamespacesFromPath');
+        $getNamespaceFromPath->setAccessible(true);
+
+        /**
+         * Path corresponding to three namespaces:
+         * `Yiisoft\\Db\\Migration\\Tests\\`
+         * `Yiisoft\\Db\\Migration\\Tests\\Support\\`
+         * `Yiisoft\\Db\\Migration\\Tests\\ForTest\\`
+         */
+        $path = dirname(__DIR__, 2) . '/Support/Migrations';
+
+        $this->assertSame(
+            ['Yiisoft\Db\Migration\Tests\Support\Migrations', 'Yiisoft\Db\Migration\Tests\ForTest\Migrations'],
+            $getNamespaceFromPath->invoke($migrationService, $path),
+        );
     }
 }

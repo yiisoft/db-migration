@@ -78,24 +78,14 @@ final class DownCommand extends Command
             return Command::INVALID;
         }
 
-        $migrations = $this->migrator->getHistory();
-
-        if (empty($migrations)) {
-            $output->writeln("<fg=yellow> >>> Apply at least one migration first.</>\n");
-            $io->warning('No migration has been done before.');
-
-            return Command::FAILURE;
-        }
-
-        $migrations = array_keys($migrations);
-
         /** @psalm-var string[] $paths */
         $paths = $input->getOption('path');
-
         /** @psalm-var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
+            $migrations = $this->migrator->getHistory();
+            $migrations = array_keys($migrations);
             $migrations = $this->migrationService->filterMigrations($migrations, $namespaces, $paths);
 
             if (empty($migrations)) {
@@ -103,10 +93,21 @@ final class DownCommand extends Command
 
                 return Command::FAILURE;
             }
-        }
 
-        if ($limit !== null) {
-            $migrations = array_slice($migrations, 0, $limit);
+            if ($limit !== null) {
+                $migrations = array_slice($migrations, 0, $limit);
+            }
+        } else {
+            $migrations = $this->migrator->getHistory($limit);
+
+            if (empty($migrations)) {
+                $output->writeln("<fg=yellow> >>> Apply at least one migration first.</>\n");
+                $io->warning('No migration has been done before.');
+
+                return Command::FAILURE;
+            }
+
+            $migrations = array_keys($migrations);
         }
 
         $n = count($migrations);

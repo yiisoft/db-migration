@@ -25,16 +25,19 @@ use function gmdate;
 use function in_array;
 use function is_dir;
 use function is_file;
+use function krsort;
 use function ksort;
 use function opendir;
 use function preg_match;
 use function preg_replace;
 use function readdir;
 use function realpath;
+use function reset;
 use function str_contains;
 use function str_replace;
 use function str_starts_with;
 use function strlen;
+use function strrchr;
 use function strrpos;
 use function substr;
 use function trim;
@@ -373,15 +376,16 @@ final class MigrationService
      *
      * @psalm-return list<class-string>
      */
-    public function filterMigrations(array $classes, array $namespaces, array $paths = []): array
+    public function filterMigrations(array $classes, array $namespaces = [], array $paths = []): array
     {
         $result = [];
+        $pathNamespaces = [];
 
         foreach ($paths as $path) {
-            $pathNamespace = $this->getNamespaceFromPath($path);
+            $pathNamespaceList = $this->getNamespacesFromPath($path);
 
-            if ($pathNamespace !== null) {
-                $namespaces[] = $pathNamespace;
+            if (!empty($pathNamespaceList)) {
+                $pathNamespaces[$path] = $pathNamespaceList;
             }
         }
 
@@ -391,8 +395,28 @@ final class MigrationService
         foreach ($classes as $class) {
             $classNamespace = substr($class, 0, strrpos($class, '\\') ?: 0);
 
-            if ($classNamespace !== '' && in_array($classNamespace, $namespaces, true)) {
+            if ($classNamespace === '') {
+                continue;
+            }
+
+            if (in_array($classNamespace, $namespaces, true)) {
                 $result[] = $class;
+                continue;
+            }
+
+            foreach ($pathNamespaces as $path => $pathNamespaceList) {
+                /** @psalm-suppress RedundantCondition */
+                if (!in_array($classNamespace, $pathNamespaceList, true)) {
+                    continue;
+                }
+
+                $className = substr(strrchr($class, '\\'), 1);
+                $file = $path . DIRECTORY_SEPARATOR . $className . '.php';
+
+                if (is_file($file)) {
+                    $result[] = $class;
+                    break;
+                }
             }
         }
 
@@ -431,14 +455,15 @@ final class MigrationService
     }
 
     /**
-     * Returns the namespace matching the give file path.
+     * Returns the namespaces matching the give file path.
      *
      * @param string $path File path.
      *
-     * @return string|null Namespace.
+     * @return string[] Namespaces.
      */
-    private function getNamespaceFromPath(string $path): string|null
+    private function getNamespacesFromPath(string $path): array
     {
+        $namespaces = [];
         $path = realpath($this->aliases->get($path)) . DIRECTORY_SEPARATOR;
         /** @psalm-suppress UnresolvableInclude */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
@@ -449,12 +474,20 @@ final class MigrationService
                 $directory = realpath($directory) . DIRECTORY_SEPARATOR;
 
                 if (str_starts_with($path, $directory)) {
-                    return $namespace . str_replace('/', '\\', substr($path, strlen($directory)));
+                    $length = strlen($directory);
+                    $pathNamespace = $namespace . str_replace('/', '\\', substr($path, $length));
+                    $namespaces[$length][$namespace] = rtrim($pathNamespace, '\\');
                 }
             }
         }
 
-        return null;
+        if (empty($namespaces)) {
+            return [];
+        }
+
+        krsort($namespaces);
+
+        return array_values(reset($namespaces));
     }
 
     private function getVendorDir(): string
