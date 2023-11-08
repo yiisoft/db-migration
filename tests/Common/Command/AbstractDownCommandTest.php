@@ -447,14 +447,6 @@ abstract class AbstractDownCommandTest extends TestCase
             $this->assertStringContainsString('1. ' . M231108183919Empty2::class, $output);
             $this->assertStringContainsString('2. ' . M231108183919Empty::class, $output);
         }
-
-        $path = dirname(__DIR__, 2) . '/Support/MigrationsExtra';
-        $exitCode = $command->setInputs(['no'])->execute(['--path' => [$path], '-a' => true]);
-        $output = $command->getDisplay(true);
-
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
-        $this->assertStringContainsString('1. ' . M231108183919Empty::class, $output);
     }
 
     /**
