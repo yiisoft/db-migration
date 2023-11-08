@@ -17,7 +17,12 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Helper\CommandHelper;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
+use Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql;
+use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty;
+use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
+
+use function dirname;
 
 abstract class AbstractDownCommandTest extends TestCase
 {
@@ -339,6 +344,141 @@ abstract class AbstractDownCommandTest extends TestCase
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
+    }
+
+    public function testOptionsNamespaceAndPath(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        $migrator = $this->container->get(Migrator::class);
+        $migrator->up(new M231015155500ExecuteSql());
+        $migrator->up(new M231108183919Empty());
+
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $options = [
+            '--namespace' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '-ns' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '--path' => [dirname(__DIR__, 2) . '/Support/Migrations'],
+        ];
+
+        foreach ($options as $option => $value) {
+            $exitCode = $command->setInputs(['no'])->execute([$option => $value, '-a' => true]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
+            $this->assertStringContainsString('1. ' . M231015155500ExecuteSql::class, $output);
+        }
+    }
+
+    /**
+     * No migrations by the passed namespace and path.
+     */
+    public function testOptionsNamespaceAndPathWithoutMigrations(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $options = [
+            '--namespace' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '-ns' => ['Yiisoft\Db\Migration\Tests\Support\Migrations'],
+            '--path' => [dirname(__DIR__, 2) . '/Support/Migrations'],
+        ];
+
+        foreach ($options as $option => $value) {
+            $exitCode = $command->execute([$option => $value]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::FAILURE, $exitCode);
+            $this->assertStringContainsString('[WARNING] No applied migrations found.', $output);
+        }
+    }
+
+    /**
+     * Namespace `Yiisoft\Db\Migration\Tests\Support\MigrationsExtra` matches to two paths,
+     * all migrations by the passed namespace should be reverted.
+     */
+    public function testOptionsNamespaceWithDifferentPaths(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        $migrator = $this->container->get(Migrator::class);
+        $migrator->up(new M231108183919Empty());
+        $migrator->up(new M231108183919Empty2());
+
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $options = [
+            '--namespace' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra'],
+            '-ns' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra'],
+        ];
+
+        foreach ($options as $option => $value) {
+            $exitCode = $command->setInputs(['no'])->execute([$option => $value, '-a' => true]);
+            $output = $command->getDisplay(true);
+
+            $this->assertSame(Command::SUCCESS, $exitCode);
+            $this->assertStringContainsString('Total 2 migrations to be reverted:', $output);
+            $this->assertStringContainsString('1. ' . M231108183919Empty2::class, $output);
+            $this->assertStringContainsString('2. ' . M231108183919Empty::class, $output);
+        }
+    }
+
+    /**
+     * Namespace `Yiisoft\Db\Migration\Tests\Support\MigrationsExtra` matches to two paths,
+     * but only migrations by the specified path should be reverted.
+     */
+    public function testOptionsPathForNamespaceWithDifferentPaths(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        $migrator = $this->container->get(Migrator::class);
+        $migrator->up(new M231108183919Empty());
+        $migrator->up(new M231108183919Empty2());
+
+        MigrationHelper::useMigrationsNamespace($this->container);
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+
+        $path = dirname(__DIR__, 2) . '/Support/MigrationsExtra';
+        $exitCode = $command->setInputs(['no'])->execute(['--path' => [$path], '-a' => true]);
+        $output = $command->getDisplay(true);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
+        $this->assertStringContainsString('1. ' . M231108183919Empty::class, $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
