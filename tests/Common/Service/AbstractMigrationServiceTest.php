@@ -93,4 +93,11 @@ abstract class AbstractMigrationServiceTest extends TestCase
             $getNamespaceFromPath->invoke($migrationService, $path),
         );
     }
+
+    public function testFilterMigrationsWithoutNamespace(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $this->assertSame([], $migrationService->filterMigrations(['ClassNameWithoutNamespace']));
+    }
 }
