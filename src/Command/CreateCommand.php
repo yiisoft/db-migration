@@ -59,7 +59,7 @@ use function strlen;
  * ./yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
  *
- * In case {@see createPath} is not set and no namespace is provided, {@see createNamespace} will be used.
+ * In case {@see $createPath} is not set and no namespace is provided, {@see $createNamespace} will be used.
  */
 #[AsCommand('migrate:create', 'Creates a new migration.')]
 final class CreateCommand extends Command
@@ -101,8 +101,8 @@ final class CreateCommand extends Command
         $namespace = $input->getOption('namespace');
 
         if ($path !== null || $namespace !== null) {
-            $this->migrationService->createPath((string) $path);
-            $this->migrationService->createNamespace((string) $namespace);
+            $this->migrationService->setCreatePath((string) $path);
+            $this->migrationService->setCreateNamespace((string) $namespace);
         } else {
             $namespace = $this->migrationService->getCreateNamespace();
         }

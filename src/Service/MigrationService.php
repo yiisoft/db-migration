@@ -70,8 +70,8 @@ final class MigrationService
     /**
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
-     * It checks the existence of the {@see createPath}, {@see updatePaths}, {@see createNamespace},
-     * {@see updateNamespaces}.
+     * It checks the existence of the {@see $createPath}, {@see $updatePaths}, {@see $createNamespace},
+     * {@see $updateNamespaces}.
      *
      * @return int Whether the action should continue to be executed.
      */
@@ -182,7 +182,7 @@ final class MigrationService
      *
      * @psalm-param string[] $value
      */
-    public function updateNamespaces(array $value): void
+    public function setUpdateNamespaces(array $value): void
     {
         $this->updateNamespaces = $value;
     }
@@ -193,12 +193,12 @@ final class MigrationService
      * This can be either a [path alias](guide:concept-aliases) or a directory path.
      *
      * Migration classes located at this path should be declared without a namespace.
-     * Use {@see createNamespace} property in case you are using namespaced migrations.
+     * Use {@see $createNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {@see createNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see $createNamespace}, you may set this field to `null` in order to disable usage of  migrations
      * that are not namespaced.
      *
-     * In general, to load migrations from different locations, {@see createNamespace} is the preferable solution as the
+     * In general, to load migrations from different locations, {@see $createNamespace} is the preferable solution as the
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
@@ -207,7 +207,7 @@ final class MigrationService
      *
      * @psalm-param string[] $value
      */
-    public function updatePaths(array $value): void
+    public function setUpdatePaths(array $value): void
     {
         $this->updatePaths = $value;
     }
@@ -318,12 +318,12 @@ final class MigrationService
         );
     }
 
-    public function createNamespace(string $value): void
+    public function setCreateNamespace(string $value): void
     {
         $this->createNamespace = $value;
     }
 
-    public function createPath(string $value): void
+    public function setCreatePath(string $value): void
     {
         $this->createPath = $value;
     }

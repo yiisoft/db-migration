@@ -26,8 +26,8 @@ final class MigrationHelper
     {
         $service = $container->get(MigrationService::class);
 
-        $service->createPath(self::PATH_ALIAS);
-        $service->updatePaths([self::PATH_ALIAS]);
+        $service->setCreatePath(self::PATH_ALIAS);
+        $service->setUpdatePaths([self::PATH_ALIAS]);
 
         self::preparePaths($container);
 
@@ -41,8 +41,8 @@ final class MigrationHelper
     {
         $service = $container->get(MigrationService::class);
 
-        $service->createNamespace(self::NAMESPACE);
-        $service->updateNamespaces([self::NAMESPACE]);
+        $service->setCreateNamespace(self::NAMESPACE);
+        $service->setUpdateNamespaces([self::NAMESPACE]);
 
         self::preparePaths($container);
 
@@ -136,9 +136,9 @@ final class MigrationHelper
     {
         $service = $container->get(MigrationService::class);
 
-        $service->createPath('');
-        $service->updatePaths([]);
-        $service->createNamespace('');
-        $service->updateNamespaces([]);
+        $service->setCreatePath('');
+        $service->setUpdatePaths([]);
+        $service->setCreateNamespace('');
+        $service->setUpdateNamespaces([]);
     }
 }
