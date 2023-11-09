@@ -996,7 +996,7 @@ EOF;
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->createPath(__DIR__ . '/not-exists');
+        $this->container->get(MigrationService::class)->setCreatePath(__DIR__ . '/not-exists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1012,7 +1012,7 @@ EOF;
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->createPath('');
+        $this->container->get(MigrationService::class)->setCreatePath('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1032,7 +1032,7 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $this->container->get(MigrationService::class)
-            ->createNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
+            ->setCreateNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1048,7 +1048,7 @@ EOF;
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->createNamespace('');
+        $this->container->get(MigrationService::class)->setCreateNamespace('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);

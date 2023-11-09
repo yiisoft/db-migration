@@ -271,7 +271,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->updatePaths([]);
+        $this->container->get(MigrationService::class)->setUpdatePaths([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -290,7 +290,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->updateNamespaces([]);
+        $this->container->get(MigrationService::class)->setUpdateNamespaces([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
