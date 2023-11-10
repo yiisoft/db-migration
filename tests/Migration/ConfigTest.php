@@ -45,7 +45,7 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(UpdateCommand::class, $container->get(UpdateCommand::class));
 
         // Informer
-        $this->assertInstanceOf(NullMigrationInformer::class, $container->get(MigrationInformerInterface::class));
+        $this->assertInstanceOf(ConsoleMigrationInformer::class, $container->get(MigrationInformerInterface::class));
         $this->assertInstanceOf(NullMigrationInformer::class, $container->get(NullMigrationInformer::class));
         $this->assertInstanceOf(ConsoleMigrationInformer::class, $container->get(ConsoleMigrationInformer::class));
 
