@@ -40,7 +40,7 @@ final class OracleFactory
                 return match ($id) {
                     ConnectionInterface::class => new OracleConnection(
                         new OracleDriver(
-                            'oci:dbname=localhost:1521;charset=AL32UTF8',
+                            'oci:dbname=localhost:1521/XE;charset=AL32UTF8',
                             'system',
                             'root',
                         ),
@@ -83,7 +83,7 @@ final class OracleFactory
         $command = $db->createCommand();
 
         foreach ($tables as $table) {
-            $command->dropTable($table)->execute();
+            $command->setSql('DROP TABLE "' . $table . '" CASCADE CONSTRAINTS')->execute();
         }
 
         $db->close();
