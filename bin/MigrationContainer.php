@@ -29,10 +29,10 @@ final class MigrationContainer
             ],
             MigrationService::class => [
                 'class' => MigrationService::class,
-                'createNamespace()' => [''],
-                'createPath()' => [''],
-                'updateNamespaces()' => [[]],
-                'updatePaths()' => [[]],
+                'setCreateNamespace()' => [''],
+                'setCreatePath()' => [''],
+                'setUpdateNamespaces()' => [[]],
+                'setUpdatePaths()' => [[]],
             ],
             Migrator::class => [
                 '__constructor()' => [

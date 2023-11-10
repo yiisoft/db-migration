@@ -56,10 +56,10 @@ final class MigrationContainer
             ],
             MigrationService::class => [
                 'class' => MigrationService::class,
-                'createNamespace()' => [''],
-                'createPath()' => [''],
-                'updateNamespaces()' => [['Yii\\User\\Framework\\Migration']],
-                'updatePaths()' => [[]],
+                'serCreateNamespace()' => [''],
+                'setCreatePath()' => [''],
+                'setUpdateNamespaces()' => [['Yii\\User\\Framework\\Migration']],
+                'setUpdatePaths()' => [[]],
             ],
             MigrationInformerInterface::class => ConsoleMigrationInformer::class,
         ];
