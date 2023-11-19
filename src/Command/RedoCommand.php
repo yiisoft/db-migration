@@ -30,11 +30,9 @@ use function count;
  * For example:
  *
  * ```shell
- * ./yii migrate:redo                                           # redo the last applied migration
- * ./yii migrate:redo --limit=3                                 # redo last 3 applied migrations
- * ./yii migrate:redo --all                                     # redo all migrations
- * ./yii migrate:redo --path=@vendor/yiisoft/rbac-db/migrations # redo the last migration from the directory
- * ./yii migrate:redo --namespace=Yiisoft\\Rbac\\Db\\Migrations # redo the last migration from the namespace
+ * ./yii migrate:redo           # redo the last applied migration
+ * ./yii migrate:redo --limit=3 # redo last 3 applied migrations
+ * ./yii migrate:redo --all     # redo all migrations
  * ```
  */
 #[AsCommand('migrate:redo', 'Redoes the last few migrations.')]
@@ -53,9 +51,7 @@ final class RedoCommand extends Command
     {
         $this
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to redo.', 1)
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Redo all migrations.')
-            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to redo.')
-            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to redo.');
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -79,36 +75,15 @@ final class RedoCommand extends Command
             return Command::INVALID;
         }
 
-        /** @psalm-var string[] $paths */
-        $paths = $input->getOption('path');
-        /** @psalm-var string[] $namespaces */
-        $namespaces = $input->getOption('namespace');
+        $migrations = $this->migrator->getHistory($limit);
 
-        if (!empty($paths) || !empty($namespaces)) {
-            $migrations = $this->migrator->getHistory();
-            $migrations = array_keys($migrations);
-            $migrations = $this->migrationService->filterMigrations($migrations, $namespaces, $paths);
+        if (empty($migrations)) {
+            $io->warning('No migration has been done before.');
 
-            if (empty($migrations)) {
-                $io->warning('No applied migrations found.');
-
-                return Command::FAILURE;
-            }
-
-            if ($limit !== null) {
-                $migrations = array_slice($migrations, 0, $limit);
-            }
-        } else {
-            $migrations = $this->migrator->getHistory($limit);
-
-            if (empty($migrations)) {
-                $io->warning('No migration has been done before.');
-
-                return Command::FAILURE;
-            }
-
-            $migrations = array_keys($migrations);
+            return Command::FAILURE;
         }
+
+        $migrations = array_keys($migrations);
 
         $n = count($migrations);
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
