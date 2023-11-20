@@ -17,19 +17,29 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 use function array_map;
+use function array_unique;
 use function array_values;
 use function closedir;
 use function dirname;
 use function gmdate;
+use function in_array;
 use function is_dir;
 use function is_file;
+use function krsort;
 use function ksort;
 use function opendir;
 use function preg_match;
 use function preg_replace;
 use function readdir;
+use function realpath;
+use function reset;
 use function str_contains;
 use function str_replace;
+use function str_starts_with;
+use function strlen;
+use function strrchr;
+use function strrpos;
+use function substr;
 use function trim;
 use function ucwords;
 
@@ -60,8 +70,8 @@ final class MigrationService
     /**
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
-     * It checks the existence of the {@see createPath}, {@see updatePaths}, {@see createNamespace},
-     * {@see updateNamespaces}.
+     * It checks the existence of the {@see $createPath}, {@see $updatePaths}, {@see $createNamespace},
+     * {@see $updateNamespaces}.
      *
      * @return int Whether the action should continue to be executed.
      */
@@ -102,7 +112,7 @@ final class MigrationService
     /**
      * Returns the migrations that are not applied.
      *
-     * @return array List of new migrations.
+     * @return string[] List of new migrations.
      *
      * @psalm-return list<class-string>
      */
@@ -172,7 +182,7 @@ final class MigrationService
      *
      * @psalm-param string[] $value
      */
-    public function updateNamespaces(array $value): void
+    public function setUpdateNamespaces(array $value): void
     {
         $this->updateNamespaces = $value;
     }
@@ -183,12 +193,12 @@ final class MigrationService
      * This can be either a [path alias](guide:concept-aliases) or a directory path.
      *
      * Migration classes located at this path should be declared without a namespace.
-     * Use {@see createNamespace} property in case you are using namespaced migrations.
+     * Use {@see $createNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {@see createNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see $createNamespace}, you may set this field to `null` in order to disable usage of  migrations
      * that are not namespaced.
      *
-     * In general, to load migrations from different locations, {@see createNamespace} is the preferable solution as the
+     * In general, to load migrations from different locations, {@see $createNamespace} is the preferable solution as the
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
@@ -197,7 +207,7 @@ final class MigrationService
      *
      * @psalm-param string[] $value
      */
-    public function updatePaths(array $value): void
+    public function setUpdatePaths(array $value): void
     {
         $this->updatePaths = $value;
     }
@@ -308,12 +318,12 @@ final class MigrationService
         );
     }
 
-    public function createNamespace(string $value): void
+    public function setCreateNamespace(string $value): void
     {
         $this->createNamespace = $value;
     }
 
-    public function createPath(string $value): void
+    public function setCreatePath(string $value): void
     {
         $this->createPath = $value;
     }
@@ -354,6 +364,66 @@ final class MigrationService
     }
 
     /**
+     * Filters migrations by namespaces and paths.
+     *
+     * @param string[] $classes Migration classes to be filtered.
+     * @param string[] $namespaces Namespaces to filter by.
+     * @param string[] $paths Paths to filter by.
+     *
+     * @return string[] Filtered migration classes.
+     *
+     * @psalm-param list<class-string> $classes
+     *
+     * @psalm-return list<class-string>
+     */
+    public function filterMigrations(array $classes, array $namespaces = [], array $paths = []): array
+    {
+        $result = [];
+        $pathNamespaces = [];
+
+        foreach ($paths as $path) {
+            $pathNamespaceList = $this->getNamespacesFromPath($path);
+
+            if (!empty($pathNamespaceList)) {
+                $pathNamespaces[$path] = $pathNamespaceList;
+            }
+        }
+
+        $namespaces = array_map(static fn ($namespace) => trim($namespace, '\\'), $namespaces);
+        $namespaces = array_unique($namespaces);
+
+        foreach ($classes as $class) {
+            $classNamespace = substr($class, 0, strrpos($class, '\\') ?: 0);
+
+            if ($classNamespace === '') {
+                continue;
+            }
+
+            if (in_array($classNamespace, $namespaces, true)) {
+                $result[] = $class;
+                continue;
+            }
+
+            foreach ($pathNamespaces as $path => $pathNamespaceList) {
+                /** @psalm-suppress RedundantCondition */
+                if (!in_array($classNamespace, $pathNamespaceList, true)) {
+                    continue;
+                }
+
+                $className = substr(strrchr($class, '\\'), 1);
+                $file = $path . DIRECTORY_SEPARATOR . $className . '.php';
+
+                if (is_file($file)) {
+                    $result[] = $class;
+                    break;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns the file path matching the give namespace.
      *
      * @param string $namespace Namespace.
@@ -374,7 +444,7 @@ final class MigrationService
         /** @psalm-suppress UnresolvableInclude */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
-        /** @psalm-var array<string, array<int, string>> $map */
+        /** @psalm-var array<string, list<string>> $map */
         foreach ($map as $namespace => $directories) {
             foreach ($directories as $directory) {
                 $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
@@ -382,6 +452,42 @@ final class MigrationService
         }
 
         return (new Aliases($namespacesPath))->get($path);
+    }
+
+    /**
+     * Returns the namespaces matching the give file path.
+     *
+     * @param string $path File path.
+     *
+     * @return string[] Namespaces.
+     */
+    private function getNamespacesFromPath(string $path): array
+    {
+        $namespaces = [];
+        $path = realpath($this->aliases->get($path)) . DIRECTORY_SEPARATOR;
+        /** @psalm-suppress UnresolvableInclude */
+        $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
+
+        /** @psalm-var array<string, list<string>> $map */
+        foreach ($map as $namespace => $directories) {
+            foreach ($directories as $directory) {
+                $directory = realpath($directory) . DIRECTORY_SEPARATOR;
+
+                if (str_starts_with($path, $directory)) {
+                    $length = strlen($directory);
+                    $pathNamespace = $namespace . str_replace('/', '\\', substr($path, $length));
+                    $namespaces[$length][$namespace] = rtrim($pathNamespace, '\\');
+                }
+            }
+        }
+
+        if (empty($namespaces)) {
+            return [];
+        }
+
+        krsort($namespaces);
+
+        return array_values(reset($namespaces));
     }
 
     private function getVendorDir(): string

@@ -31,10 +31,14 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     public function testExecute(): void
     {
         $this->builder->createTable('test', ['id' => $this->builder->integer()]);
-        $this->builder->execute('DROP TABLE {{test}}');
+
+        $sql = 'DROP TABLE {{test}}';
+        $this->builder->execute($sql);
+
+        $sqlOutput = $this->db->getQuoter()->quoteSql($sql);
 
         $this->assertEmpty($this->db->getTableSchema('test_table'));
-        $this->assertInformerOutputContains('    > Execute SQL: DROP TABLE {{test}} ... Done in ');
+        $this->assertInformerOutputContains("    > Execute SQL: $sqlOutput ... Done in ");
     }
 
     public function testInsert(): void

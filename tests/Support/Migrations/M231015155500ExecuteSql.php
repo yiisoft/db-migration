@@ -17,7 +17,7 @@ final class M231015155500ExecuteSql implements RevertibleMigrationInterface, Tra
     {
         $b->execute(
             <<<SQL
-            CREATE TABLE person (
+              CREATE TABLE person (
                 id INT,
                 first_name VARCHAR(100),
                 last_name VARCHAR(100)

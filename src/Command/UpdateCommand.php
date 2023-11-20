@@ -70,8 +70,8 @@ final class UpdateCommand extends Command
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $this->migrationService->updatePaths($paths);
-            $this->migrationService->updateNamespaces($namespaces);
+            $this->migrationService->setUpdatePaths($paths);
+            $this->migrationService->setUpdateNamespaces($namespaces);
         }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {

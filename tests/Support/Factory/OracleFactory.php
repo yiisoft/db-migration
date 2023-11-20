@@ -17,6 +17,7 @@ use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
+use function array_intersect;
 use function dirname;
 
 final class OracleFactory
@@ -39,7 +40,7 @@ final class OracleFactory
                 return match ($id) {
                     ConnectionInterface::class => new OracleConnection(
                         new OracleDriver(
-                            'oci:dbname=localhost:1521;charset=AL32UTF8',
+                            'oci:dbname=localhost:1521/XE;charset=AL32UTF8',
                             'system',
                             'root',
                         ),
@@ -73,12 +74,16 @@ final class OracleFactory
             'test_table',
             'target_table',
             'new_table',
+            'PERSON',
+            'book',
+            'chapter',
         ];
 
+        $tables = array_intersect($tables, $db->getSchema()->getTableNames());
+        $command = $db->createCommand();
+
         foreach ($tables as $table) {
-            if ($db->getTableSchema($table) !== null) {
-                $db->createCommand()->dropTable($table)->execute();
-            }
+            $command->setSql('DROP TABLE "' . $table . '" CASCADE CONSTRAINTS')->execute();
         }
 
         $db->close();
