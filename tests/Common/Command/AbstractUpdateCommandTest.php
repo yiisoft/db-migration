@@ -200,13 +200,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         /** Check table student field dateofbirth */
         $this->assertSame('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());
-
-        if ($db->getDriverName() !== 'oci') {
-            $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
-        } else {
-            $this->assertSame('string', $studentSchema->getColumn('dateofbirth')->getType());
-        }
-
+        $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
         $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
     }
 
