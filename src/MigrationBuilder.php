@@ -143,7 +143,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table to be updated.
      * @param array $columns The column data (name => value) to be updated.
-     * @param array|string $condition The condition to put in the WHERE part. Please refer to
+     * @param array|string $condition The condition to put in the `WHERE` part. Please refer to
      * {@see QueryInterface::where()} on how to specify condition.
      * @param array $params The parameters to be bound to the query.
      *
