@@ -9,7 +9,6 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
-use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
@@ -91,13 +90,15 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table that new rows will be inserted into.
      * @param array $columns The column names.
-     * @param array $rows The rows to be batch inserted into the table
+     * @param iterable $rows The rows to be batch inserted into the table
+     *
+     * @psalm-param iterable<array-key, array<array-key, mixed>> $rows
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function batchInsert(string $table, array $columns, array $rows): void
+    public function batchInsert(string $table, array $columns, iterable $rows): void
     {
         $time = $this->beginCommand("Insert into $table");
         $this->db->createCommand()->batchInsert($table, $columns, $rows)->execute();
@@ -111,12 +112,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * The method will properly escape the column names, and bind the values to be inserted.
      *
      * @param string $table The table that new rows will be inserted into/updated in.
-     * @param array|Query $insertColumns The column data (name => value) to be inserted into the table or instance
-     * of {@see Query} to perform `INSERT INTO ... SELECT` SQL statement.
+     * @param array|QueryInterface $insertColumns The column data (name => value) to insert into the table or an
+     * instance of {@see QueryInterface} to perform `INSERT INTO ... SELECT` SQL statement.
      * @param array|bool $updateColumns The column data (name => value) to be updated if they already exist.
      * If `true` is passed, the column data will be updated to match the insert column data.
      * If `false` is passed, no update will be performed if the column data already exists.
      * @param array $params The parameters to be bound to the command.
+     *
+     * @psalm-param array<string, mixed>|QueryInterface $insertColumns
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -124,7 +127,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      */
     public function upsert(
         string $table,
-        array|Query $insertColumns,
+        array|QueryInterface $insertColumns,
         array|bool $updateColumns = true,
         array $params = []
     ): void {
@@ -140,8 +143,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table to be updated.
      * @param array $columns The column data (name => value) to be updated.
-     * @param array|string $condition The conditions that will be put in the WHERE part. Please refer to
-     * {@see Query::where} on how to specify conditions.
+     * @param array|string $condition The condition to put in the `WHERE` part. Please refer to
+     * {@see QueryInterface::where()} on how to specify condition.
      * @param array $params The parameters to be bound to the query.
      *
      * @throws Exception
@@ -159,8 +162,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * Creates and executes a DELETE SQL statement.
      *
      * @param string $table The table where the data will be deleted from.
-     * @param array|string $condition The conditions that will be put in the WHERE part. Please refer to
-     * {@see Query::where} on how to specify conditions.
+     * @param array|string $condition The condition to put in the `WHERE` part. Please refer to
+     * {@see QueryInterface::where()} on how to specify condition.
      * @param array $params The parameters to be bound to the query.
      *
      * @throws Exception
@@ -503,8 +506,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * Builds and executes a SQL statement for creating a view.
      *
      * @param string $viewName The name of the view to create.
-     * @param QueryInterface|string $subQuery The select statement which defines the view.
-     * This can be either a string or a {@see Query} object.
+     * @param QueryInterface|string $subQuery The select statement which defines the view. This can be either a string
+     * or a {@see QueryInterface}.
      *
      * @throws InvalidConfigException
      * @throws NotSupportedException If this isn't supported by the underlying DBMS.
