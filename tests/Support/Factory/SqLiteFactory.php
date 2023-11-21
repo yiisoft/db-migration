@@ -38,9 +38,7 @@ final class SqLiteFactory
             static function (string $id) use (&$container, $config): object {
                 return match ($id) {
                     ConnectionInterface::class => new SqLiteConnection(
-                        new SqLiteDriver(
-                            'sqlite:' . dirname(__DIR__, 2) . '/runtime/yiitest.sq3'
-                        ),
+                        new SqLiteDriver('sqlite::memory:'),
                         new SchemaCache(new MemorySimpleCache())
                     ),
                     SqLiteConnection::class => $container->get(ConnectionInterface::class),
