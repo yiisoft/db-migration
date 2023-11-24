@@ -59,9 +59,9 @@ final class UpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
-        $this->migrationService->setIO($io);
-        $this->updateRunner->setIO($io);
+        $this->migrator->setIo($io);
+        $this->migrationService->setIo($io);
+        $this->updateRunner->setIo($io);
 
         /** @psalm-var string[] $paths */
         $paths = $input->getOption('path');
@@ -101,15 +101,15 @@ final class UpdateCommand extends Command
             return Command::SUCCESS;
         }
 
-        $n = count($migrations);
-        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+        $migrationsCount = count($migrations);
+        $migrationWord = $migrationsCount === 1 ? 'migration' : 'migrations';
 
-        if ($limit !== null && $n > $limit) {
+        if ($limit !== null && $migrationsCount > $limit) {
             $migrations = array_slice($migrations, 0, $limit);
 
-            $output->writeln("<fg=yellow>Total $limit out of $n new $migrationWord to be applied:</>\n");
+            $output->writeln("<fg=yellow>Total $limit out of $migrationsCount new $migrationWord to be applied:</>\n");
         } else {
-            $output->writeln("<fg=yellow>Total $n new $migrationWord to be applied:</>\n");
+            $output->writeln("<fg=yellow>Total $migrationsCount new $migrationWord to be applied:</>\n");
         }
 
         foreach ($migrations as $i => $migration) {
@@ -137,20 +137,20 @@ final class UpdateCommand extends Command
 
         if ($helper->ask($input, $output, $question)) {
             $instances = $this->migrationService->makeMigrations($migrations);
-            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+            $migrationWas = ($migrationsCount === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
                     $this->updateRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n new $migrationWas applied.</>\n");
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $migrationsCount new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<fg=green> >>> Total $n new $migrationWas applied.</>\n");
+            $output->writeln("\n<fg=green> >>> Total $migrationsCount new $migrationWas applied.</>\n");
             $io->success('Updated successfully.');
         }
 

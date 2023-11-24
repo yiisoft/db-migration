@@ -15,7 +15,7 @@ final class NullMigrationInformerTest extends TestCase
         $io = $this->createMock(SymfonyStyle::class);
         $nullInformer = new NullMigrationInformer();
 
-        $nullInformer->setIO($io);
+        $nullInformer->setIo($io);
 
         $this->expectNotToPerformAssertions();
     }

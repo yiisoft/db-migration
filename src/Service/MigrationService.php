@@ -62,7 +62,7 @@ final class MigrationService
     ) {
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
         $this->io = $io;
     }

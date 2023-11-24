@@ -19,5 +19,5 @@ interface MigrationInformerInterface
 
     public function endCommand(string $message): void;
 
-    public function setIO(?SymfonyStyle $io): void;
+    public function setIo(?SymfonyStyle $io): void;
 }

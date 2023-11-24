@@ -33,7 +33,7 @@ final class ConsoleMigrationInformer implements MigrationInformerInterface
         $this->io?->writeln(' ' . $message);
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
         $this->io = $io;
     }

@@ -61,9 +61,9 @@ final class DownCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
-        $this->migrationService->setIO($io);
-        $this->downRunner->setIO($io);
+        $this->migrator->setIo($io);
+        $this->migrationService->setIo($io);
+        $this->downRunner->setIo($io);
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 

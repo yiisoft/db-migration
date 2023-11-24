@@ -23,9 +23,9 @@ final class Migrator
     ) {
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
-        $this->informer->setIO($io);
+        $this->informer->setIo($io);
     }
 
     public function up(MigrationInterface $migration): void

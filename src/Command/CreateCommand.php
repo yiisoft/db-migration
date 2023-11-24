@@ -90,9 +90,9 @@ final class CreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
-        $this->migrationService->setIO($io);
-        $this->createService->setIO($io);
+        $this->migrator->setIo($io);
+        $this->migrationService->setIo($io);
+        $this->createService->setIo($io);
 
         /** @var string|null $path */
         $path = $input->getOption('path');

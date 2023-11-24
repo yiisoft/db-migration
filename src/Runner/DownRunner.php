@@ -21,7 +21,7 @@ final class DownRunner
     {
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
         $this->io = $io;
     }
@@ -29,7 +29,7 @@ final class DownRunner
     public function run(RevertibleMigrationInterface $migration, int|null $number = null): void
     {
         if ($this->io === null) {
-            throw new RuntimeException('You need to set output decorator via `setIO()`.');
+            throw new RuntimeException('You need to set output decorator via `setIo()`.');
         }
 
         $num = $number !== null ? $number . '. ' : '';
