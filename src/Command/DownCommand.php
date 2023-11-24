@@ -78,9 +78,9 @@ final class DownCommand extends Command
             return Command::INVALID;
         }
 
-        /** @psalm-var string[] $paths */
+        /** @var string[] $paths */
         $paths = $input->getOption('path');
-        /** @psalm-var string[] $namespaces */
+        /** @var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {

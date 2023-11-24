@@ -59,10 +59,10 @@ final class NewCommand extends Command
         $this->migrator->setIo($io);
         $this->migrationService->setIo($io);
 
-        /** @psalm-var string[] $paths */
+        /** @var string[] $paths */
         $paths = $input->getOption('path');
 
-        /** @psalm-var string[] $namespaces */
+        /** @var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {

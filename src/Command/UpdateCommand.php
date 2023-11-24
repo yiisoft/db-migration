@@ -63,10 +63,10 @@ final class UpdateCommand extends Command
         $this->migrationService->setIo($io);
         $this->updateRunner->setIo($io);
 
-        /** @psalm-var string[] $paths */
+        /** @var string[] $paths */
         $paths = $input->getOption('path');
 
-        /** @psalm-var string[] $namespaces */
+        /** @var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {

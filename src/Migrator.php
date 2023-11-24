@@ -73,7 +73,9 @@ final class Migrator
         return $this->migrationNameLimit = $limit;
     }
 
-    /** @psalm-return array<class-string, int|string> */
+    /**
+     * @psalm-return array<class-string, int|string>
+     */
     public function getHistory(?int $limit = null): array
     {
         $this->checkMigrationHistoryTable();
