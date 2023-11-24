@@ -37,7 +37,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```shell
-composer require --prefer-dist yiisoft/db-migration
+composer require yiisoft/db-migration
 ```
 
 or add
