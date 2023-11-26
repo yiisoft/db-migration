@@ -19,6 +19,7 @@ use function microtime;
 use function rtrim;
 use function sprintf;
 use function substr;
+use function trim;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
