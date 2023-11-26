@@ -23,9 +23,9 @@ final class Migrator
     ) {
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
-        $this->informer->setIO($io);
+        $this->informer->setIo($io);
     }
 
     public function up(MigrationInterface $migration): void
@@ -73,7 +73,9 @@ final class Migrator
         return $this->migrationNameLimit = $limit;
     }
 
-    /** @psalm-return array<class-string, int|string> */
+    /**
+     * @psalm-return array<class-string, int|string>
+     */
     public function getHistory(?int $limit = null): array
     {
         $this->checkMigrationHistoryTable();

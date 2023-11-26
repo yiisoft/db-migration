@@ -56,13 +56,13 @@ final class NewCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
-        $this->migrationService->setIO($io);
+        $this->migrator->setIo($io);
+        $this->migrationService->setIo($io);
 
-        /** @psalm-var string[] $paths */
+        /** @var string[] $paths */
         $paths = $input->getOption('path');
 
-        /** @psalm-var string[] $namespaces */
+        /** @var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {

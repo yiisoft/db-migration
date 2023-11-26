@@ -197,6 +197,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @psalm-param array<string, string|ColumnInterface> $columns
      */
     public function createTable(string $table, array $columns, string|null $options = null): void
     {
@@ -204,7 +206,6 @@ final class MigrationBuilder extends AbstractMigrationBuilder
 
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
-        /** @psalm-var array<string, string> $columns */
         foreach ($columns as $column => $type) {
             if ($type instanceof ColumnInterface) {
                 $comment = $type->getComment();
@@ -661,7 +662,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
 
     private function hasIndex(string $table, string $column): bool
     {
-        /** @psalm-var Constraint[] $indexes */
+        /** @var Constraint[] $indexes */
         $indexes = $this->db->getSchema()->getTableIndexes($table);
 
         foreach ($indexes as $index) {

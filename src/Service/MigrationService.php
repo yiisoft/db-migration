@@ -47,9 +47,9 @@ final class MigrationService
 {
     private string $createNamespace = '';
     private string $createPath = '';
-    /** @psalm-var string[] */
+    /** @var string[] */
     private array $updateNamespaces = [];
-    /** @psalm-var string[] */
+    /** @var string[] */
     private array $updatePaths = [];
     private string $version = '1.0';
     private ?SymfonyStyle $io = null;
@@ -62,7 +62,7 @@ final class MigrationService
     ) {
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
         $this->io = $io;
     }
@@ -226,9 +226,6 @@ final class MigrationService
 
     /**
      * Creates a new migration instance.
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
      *
      * @param string $class The migration class name.
      *
@@ -441,10 +438,12 @@ final class MigrationService
     {
         $namespacesPath = [];
 
-        /** @psalm-suppress UnresolvableInclude */
+        /**
+         * @psalm-suppress UnresolvableInclude
+         * @psalm-var array<string, list<string>> $map
+         */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
-        /** @psalm-var array<string, list<string>> $map */
         foreach ($map as $namespace => $directories) {
             foreach ($directories as $directory) {
                 $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
@@ -465,10 +464,13 @@ final class MigrationService
     {
         $namespaces = [];
         $path = realpath($this->aliases->get($path)) . DIRECTORY_SEPARATOR;
-        /** @psalm-suppress UnresolvableInclude */
+
+        /**
+         * @psalm-suppress UnresolvableInclude
+         * @psalm-var array<string, list<string>> $map
+         */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
-        /** @psalm-var array<string, list<string>> $map */
         foreach ($map as $namespace => $directories) {
             foreach ($directories as $directory) {
                 $directory = realpath($directory) . DIRECTORY_SEPARATOR;

@@ -25,7 +25,7 @@ abstract class AbstractListTablesServiceTest extends TestCase
         );
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('You need to set output decorator via `setIO()`.');
+        $this->expectExceptionMessage('You need to set output decorator via `setIo()`.');
 
         $service->run();
     }

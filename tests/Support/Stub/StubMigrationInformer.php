@@ -36,7 +36,7 @@ final class StubMigrationInformer implements MigrationInformerInterface
         return $this->output;
     }
 
-    public function setIO(?SymfonyStyle $io): void
+    public function setIo(?SymfonyStyle $io): void
     {
         // do nothing
     }

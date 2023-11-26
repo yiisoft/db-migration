@@ -61,10 +61,10 @@ final class RedoCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIO($io);
-        $this->migrationService->setIO($io);
-        $this->downRunner->setIO($io);
-        $this->updateRunner->setIO($io);
+        $this->migrator->setIo($io);
+        $this->migrationService->setIo($io);
+        $this->downRunner->setIo($io);
+        $this->updateRunner->setIo($io);
 
         $this->migrationService->before(self::getDefaultName() ?? '');
 
@@ -79,9 +79,9 @@ final class RedoCommand extends Command
             return Command::INVALID;
         }
 
-        /** @psalm-var string[] $paths */
+        /** @var string[] $paths */
         $paths = $input->getOption('path');
-        /** @psalm-var string[] $namespaces */
+        /** @var string[] $namespaces */
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
