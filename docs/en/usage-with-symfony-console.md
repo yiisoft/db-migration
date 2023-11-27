@@ -81,8 +81,8 @@ final class MigrationContainer
 }
 ```
 
-3. Run the command `./vendor/bin/migration` to see the list of available migration commands.
+3. Run the console command to see the list of available migration commands.
 
 ```shell
-./vendor/bin/migration
+./vendor/bin/yii-db-migration
 ```
