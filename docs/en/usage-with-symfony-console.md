@@ -51,12 +51,12 @@ final class MigrationContainer
             ConnectionInterface::class => [
                 'class' => Connection::class,
                 '__construct()' => [
-                    new Driver('sqlite:' . './tests/_output/runtime/yiitest.sq3'),
+                    new Driver('sqlite:./tests/_output/runtime/yiitest.sq3'),
                 ],
             ],
             MigrationService::class => [
                 'class' => MigrationService::class,
-                'serCreateNamespace()' => [''],
+                'setCreateNamespace()' => [''],
                 'setCreatePath()' => [''],
                 'setUpdateNamespaces()' => [['Yii\\User\\Framework\\Migration']],
                 'setUpdatePaths()' => [[]],
