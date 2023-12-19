@@ -23,7 +23,7 @@
     "require": {
         "php": "^8.0",
         "ext-filter": "*",
-        "symfony/console": "^6.0",
+        "symfony/console": "^6.0|^7.0",
         "yiisoft/aliases": "^1.1|^2.0|^3.0",
         "yiisoft/db": "^1.1",
         "yiisoft/di": "^1.0",
