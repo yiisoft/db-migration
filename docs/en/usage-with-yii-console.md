@@ -1,4 +1,4 @@
-# Yii Console
+# Usage with Yii Console
 
 In this example we use [yiisoft/app](https://github.com/yiisoft/app).
 

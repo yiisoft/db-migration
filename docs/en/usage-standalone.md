@@ -1,4 +1,4 @@
-# Symfony Console
+# Standalone usage
 
 1. Copy configuration file `./vendor/yiisoft/db-migration/bin/MigrationContainer.php` to `root` folder of your project.
 
