@@ -9,6 +9,7 @@
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="bin" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
