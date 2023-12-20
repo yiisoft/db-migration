@@ -65,21 +65,14 @@ $migrationService->setCreatePath($params['createPath']);
 $migrationService->setUpdateNamespaces($params['updateNamespaces']);
 $migrationService->setUpdatePaths($params['updatePaths']);
 
-$createCommand = new CreateCommand($createService, $migrationService, $migrator);
-$downCommand = new DownCommand($downRunner, $migrationService, $migrator);
-$historyCommand = new HistoryCommand($migrationService, $migrator);
-$newCommand = new NewCommand($migrationService, $migrator);
-$redoCommand = new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner);
-$updateCommand = new UpdateCommand($updateRunner, $migrationService, $migrator);
-
 $application = new Application('Yii Database Migration Tool', '1.0.0');
 $application->addCommands([
-    $createCommand,
-    $downCommand,
-    $historyCommand,
-    $newCommand,
-    $redoCommand,
-    $updateCommand,
+    new CreateCommand($createService, $migrationService, $migrator),
+    new DownCommand($downRunner, $migrationService, $migrator),
+    new HistoryCommand($migrationService, $migrator),
+    new NewCommand($migrationService, $migrator),
+    new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner),
+    new UpdateCommand($updateRunner, $migrationService, $migrator),
 ]);
 
 $application->run();
