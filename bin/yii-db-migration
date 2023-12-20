@@ -27,6 +27,7 @@ $rootPath = dirname(__DIR__, 4);
 require $_composer_autoload_path ?? $rootPath . '/vendor/autoload.php';
 
 /**
+ * @psalm-suppress MissingFile
  * @psalm-var array{
  *     container: ContainerInterface|null,
  *     db: ConnectionInterface|null,
