@@ -48,13 +48,11 @@ or add
 
 to the `require` section of your `composer.json`.
 
-## Usage with Yii Console
+## Usage
 
-[Check the instructions](/docs/en/usage-with-yii-console.md) to learn about usage with Yii Console.
-
-## Usage with Symfony Console
-
-[Check the instructions](/docs/en/usage-with-symfony-console.md) to learn about usage with Symfony Console.
+- [Yii Console](/docs/en/usage-with-yii-console.md).
+- [Symfony application](/docs/en/usage-with-symfony.md).
+- [Standalone](/docs/en/usage-standalone.md).
 
 ## Command list
 
