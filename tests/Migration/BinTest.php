@@ -63,7 +63,7 @@ final class BinTest extends TestCase
 
     private function runYiiDbMigration(): array
     {
-        exec(__DIR__ . '/bin-runner.php', $output, $exitCode);
+        exec(__DIR__ . '/bin-runner.php 2>&1', $output, $exitCode);
         return [implode("\n", $output), $exitCode];
     }
 }
