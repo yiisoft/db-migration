@@ -35,6 +35,8 @@
     <source>
         <include>
             <directory>./src</directory>
+            <directory>./bin</directory>
+            <directory>./config</directory>
         </include>
         <exclude>
             <file>./src/Service/Generate/PhpRenderer.php</file>
