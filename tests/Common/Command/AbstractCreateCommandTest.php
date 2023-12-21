@@ -1054,7 +1054,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
