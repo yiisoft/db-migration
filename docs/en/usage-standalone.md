@@ -11,8 +11,8 @@ cp ./vendor/yiisoft/db-migration/bin/yii-db-migration.php ./yii-db-migration.php
     
 ```php
 'db' => new \Yiisoft\Db\Mysql\Connection(
- new \Yiisoft\Db\Mysql\Driver('mysql:host=mysql;dbname=mydb', 'user', 'q1w2e3r4'),
- new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Cache\ArrayCache()),
+    new \Yiisoft\Db\Mysql\Driver('mysql:host=mysql;dbname=mydb', 'user', 'q1w2e3r4'),
+    new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Cache\ArrayCache()),
 ),
 ```
     
