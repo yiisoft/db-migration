@@ -1,87 +1,24 @@
 # Standalone usage
 
-1. Copy configuration file `./vendor/yiisoft/db-migration/bin/MigrationContainer.php` to `root` folder of your project.
+1. Copy configuration file `./vendor/yiisoft/db-migration/bin/yii-db-migration.php` to root folder of your project:
 
 ```shell
-cp ./vendor/yiisoft/db-migration/bin/MigrationContainer.php ./
+cp ./vendor/yiisoft/db-migration/bin/yii-db-migration.php ./yii-db-migration.php
 ```
 
-2. Edit `./MigrationContainer.php` and add definitions for `Psr\SimpleCache\CacheInterface`
-   and `Yiisoft\Db\Connection\ConnectionInterface`.
-
-Also, configure `MigrationService::class` and `MigrationInformerInterface::class`.
-
-Here's a sample configuration.
-
+2. Define DB connection in configuration file (see 
+[Yii DB documentation](https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection)). For example, MySQL connection:
+    
 ```php
-<?php
-
-declare(strict_types=1);
-
-use Psr\SimpleCache\CacheInterface;
-use Symfony\Component\Console\Application;
-use Yiisoft\Cache\ArrayCache;
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Migration\Command\CreateCommand;
-use Yiisoft\Db\Migration\Command\DownCommand;
-use Yiisoft\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Db\Migration\Command\NewCommand;
-use Yiisoft\Db\Migration\Command\RedoCommand;
-use Yiisoft\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
-use Yiisoft\Db\Migration\Service\MigrationService;
-use Yiisoft\Db\Sqlite\Connection;
-use Yiisoft\Db\Sqlite\Driver;
-use Yiisoft\Definitions\ReferencesArray;
-
-final class MigrationContainer
-{
-    public static function definitions(): array
-    {
-        return [
-            Application::class => [
-                '__construct()' => [
-                    'name' => 'Yii Database Migration Tool',
-                    'version' => '1.0.0',
-                ],
-                'addCommands()' => [self::getCommands()],
-            ],
-            CacheInterface::class => ArrayCache::class,
-            ConnectionInterface::class => [
-                'class' => Connection::class,
-                '__construct()' => [
-                    new Driver('sqlite:./tests/_output/runtime/yiitest.sq3'),
-                ],
-            ],
-            MigrationService::class => [
-                'class' => MigrationService::class,
-                'setCreateNamespace()' => [''],
-                'setCreatePath()' => [''],
-                'setUpdateNamespaces()' => [['Yii\\User\\Framework\\Migration']],
-                'setUpdatePaths()' => [[]],
-            ],
-            MigrationInformerInterface::class => ConsoleMigrationInformer::class,
-        ];
-    }
-
-    public static function getCommands(): array
-    {
-        return ReferencesArray::from(
-            [
-                CreateCommand::class,
-                DownCommand::class,
-                HistoryCommand::class,
-                NewCommand::class,
-                RedoCommand::class,
-                UpdateCommand::class,
-            ]
-        );
-    }
-}
+'db' => new \Yiisoft\Db\Mysql\Connection(
+ new \Yiisoft\Db\Mysql\Driver('mysql:host=mysql;dbname=mydb', 'user', 'q1w2e3r4'),
+ new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Cache\ArrayCache()),
+),
 ```
+    
+3. Optionally, modify other options in configuration file. Each option has a comment with description.
 
-3. Run the console command without arguments to see the list of available migration commands:
+4. Run the console command without arguments to see the list of available migration commands:
 
 ```shell
 ./vendor/bin/yii-db-migration
