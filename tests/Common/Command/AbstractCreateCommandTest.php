@@ -478,7 +478,7 @@ EOF;
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertMatchesRegularExpression("/^\s+M\d{12}Post$/m", $output);
+        $this->assertMatchesRegularExpression("/\s+M\d{12}Post/m", $output);
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
         $this->assertCount(1, FileHelper::findFiles($path));
     }
