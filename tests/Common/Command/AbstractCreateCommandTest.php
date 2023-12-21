@@ -992,7 +992,7 @@ EOF;
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
-    public function testIncorrectCreatePath(): void
+    public function testIncorrectNewMigrationPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
@@ -1008,7 +1008,7 @@ EOF;
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
-    public function testWithoutCreatePath(): void
+    public function testWithoutNewMigrationPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
@@ -1063,7 +1063,7 @@ EOF;
         );
     }
 
-    public function testWithCreatePathAndNamespace(): void
+    public function testWithNewMigrationPathAndNamespace(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
         MigrationHelper::useMigrationsNamespace($this->container);
