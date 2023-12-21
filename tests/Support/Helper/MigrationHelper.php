@@ -6,7 +6,6 @@ namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 
 use Closure;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -16,8 +15,12 @@ use function dirname;
 
 final class MigrationHelper
 {
-    public const PATH_ALIAS = '@runtime/migration-path';
     public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
+
+    public static function getRuntimePath(): string
+    {
+        return dirname(__DIR__, 2) . '/runtime/migration-path';
+    }
 
     /**
      * @return string The migrations directory
@@ -26,12 +29,12 @@ final class MigrationHelper
     {
         $service = $container->get(MigrationService::class);
 
-        $service->setNewMigrationPath(self::PATH_ALIAS);
-        $service->setSourcePaths([self::PATH_ALIAS]);
+        $service->setNewMigrationPath(self::getRuntimePath());
+        $service->setSourcePaths([self::getRuntimePath()]);
 
-        self::preparePaths($container);
+        self::preparePaths();
 
-        return self::getPathForMigrationPath($container);
+        return self::getRuntimePath();
     }
 
     /**
@@ -44,7 +47,7 @@ final class MigrationHelper
         $service->setNewMigrationNamespace(self::NAMESPACE);
         $service->setSourceNamespaces([self::NAMESPACE]);
 
-        self::preparePaths($container);
+        self::preparePaths();
 
         return self::getPathForMigrationNamespace();
     }
@@ -65,7 +68,6 @@ final class MigrationHelper
     ): string {
         $migrationService = $container->get(MigrationService::class);
         $createService = $container->get(CreateService::class);
-        $aliases = $container->get(Aliases::class);
 
         $namespace = $migrationService->getNewMigrationNamespace();
         $className = $migrationService->generateClassName($name);
@@ -83,7 +85,7 @@ final class MigrationHelper
         }
 
         file_put_contents(
-            $aliases->get($migrationService->findMigrationPath()) . '/' . $className . '.php',
+            $migrationService->findMigrationPath() . '/' . $className . '.php',
             $content
         );
 
@@ -113,16 +115,11 @@ final class MigrationHelper
         return dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
     }
 
-    private static function getPathForMigrationPath(ContainerInterface $container): string
-    {
-        return $container->get(Aliases::class)->get(self::PATH_ALIAS);
-    }
-
-    private static function preparePaths(ContainerInterface $container): void
+    private static function preparePaths(): void
     {
         $paths = [
             self::getPathForMigrationNamespace(),
-            self::getPathForMigrationPath($container),
+            self::getRuntimePath(),
         ];
 
         foreach ($paths as $path) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration\Tests\Support\Helper;
 
 use Psr\Container\ContainerInterface;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\Container\Exception\NotFoundException;
@@ -51,7 +50,6 @@ final class ContainerHelper
 
             case MigrationService::class:
                 return new MigrationService(
-                    $container->get(Aliases::class),
                     $container->get(ConnectionInterface::class),
                     $container->get(Injector::class),
                     $container->get(Migrator::class),
@@ -59,7 +57,6 @@ final class ContainerHelper
 
             case CreateService::class:
                 return new CreateService(
-                    $container->get(Aliases::class),
                     $container->get(ConnectionInterface::class),
                     $config->useTablePrefix,
                 );

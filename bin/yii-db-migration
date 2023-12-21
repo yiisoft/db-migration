@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
@@ -45,7 +44,6 @@ $params = require $rootPath . '/yii-db-migration.php';
 
 $db = $params['db'] ?? throw new LogicException('DB connection is not configured.');
 
-$aliases = new Aliases();
 $injector = new Injector($params['container']);
 $migrationInformer = new ConsoleMigrationInformer();
 $migrator = new Migrator(
@@ -55,11 +53,11 @@ $migrator = new Migrator(
     $params['migrationNameLimit'],
     $params['maxSqlOutputLength']
 );
-$createService = new CreateService($aliases, $db, $params['useTablePrefix']);
+$createService = new CreateService($db, $params['useTablePrefix']);
 $downRunner = new DownRunner($migrator);
 $updateRunner = new UpdateRunner($migrator);
 
-$migrationService = new MigrationService($aliases, $db, $injector, $migrator);
+$migrationService = new MigrationService($db, $injector, $migrator);
 $migrationService->setNewMigrationNamespace($params['newMigrationNamespace']);
 $migrationService->setNewMigrationPath($params['newMigrationPath']);
 $migrationService->setSourceNamespaces($params['sourceNamespaces']);

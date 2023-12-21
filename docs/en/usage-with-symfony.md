@@ -13,9 +13,6 @@ Configure migrations and database connection in your `config/services.yml`:
 Yiisoft\Db\Migration\:
     resource: '../vendor/yiisoft/db-migration/src/'
 
-Yiisoft\Aliases\:
-    resource: '../vendor/yiisoft/aliases/src/'
-
 Yiisoft\Db\Migration\Informer\MigrationInformerInterface:
     class: 'Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer'
 
