@@ -92,7 +92,7 @@ abstract class AbstractMigrationBuilder
     /**
      * Creates a char column.
      *
-     * @param int|null $length the column size definition i.e. the maximum string length.
+     * @param int|null $length the column size definition, i.e., the maximum string length.
      *
      * This parameter will be ignored if not supported by the DBMS.
      *
@@ -132,11 +132,11 @@ abstract class AbstractMigrationBuilder
      * Creates a decimal column.
      *
      * @param int|null $precision The column value precision, which is usually the total number of digits.
-     * First parameter passed to the column type, e.g. DECIMAL(precision, scale).
+     * First parameter passed to the column type, e.g., DECIMAL(precision, scale).
      *
      * This parameter will be ignored if not supported by the DBMS.
      * @param int|null $scale The column value scale, which is usually the number of digits after the decimal point.
-     * Second parameter passed to the column type, e.g. DECIMAL(precision, scale).
+     * Second parameter passed to the column type, e.g., DECIMAL(precision, scale).
      *
      * This parameter will be ignored if not supported by the DBMS.
      *
@@ -215,11 +215,11 @@ abstract class AbstractMigrationBuilder
      * Creates a money column.
      *
      * @param int|null $precision The column value precision, which is usually the total number of digits. First
-     * parameter passed to the column type, e.g. DECIMAL(precision, scale).
+     * parameter passed to the column type, e.g., DECIMAL(precision, scale).
      *
      * This parameter will be ignored if not supported by the DBMS.
      * @param int|null $scale The column value scale, which is usually the number of digits after the decimal point.
-     * Second parameter passed to the column type, e.g. DECIMAL(precision, scale).
+     * Second parameter passed to the column type, e.g., DECIMAL(precision, scale).
      *
      * This parameter will be ignored if not supported by the DBMS.
      *
@@ -271,7 +271,7 @@ abstract class AbstractMigrationBuilder
     /**
      * Creates a string column.
      *
-     * @param int|null $length The column size definition i.e. the maximum string length.
+     * @param int|null $length The column size definition, i.e., the maximum string length.
      *
      * This parameter will be ignored if not supported by the DBMS.
      *

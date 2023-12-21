@@ -23,7 +23,7 @@ final class CreateService
 
     /**
      * @param bool $useTablePrefix Indicates whether the table names generated should consider the `tablePrefix` setting
-     * of the DB connection. For example, if the table name is `post` the generator will return `{{%post}}`.
+     * of the DB connection. For example, if the table name is `post`, the generator will return `{{%post}}`.
      */
     public function __construct(
         private ConnectionInterface $db,

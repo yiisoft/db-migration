@@ -16,8 +16,9 @@ All our packages have GitHub actions by default, so you can test your [contribut
 
 ## Docker images
 
-For greater ease it is recommended to use Docker containers for each DBMS, for this you can use
-the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) file that in the root directory of each package.
+For greater ease, it's recommended to use Docker containers for each DBMS.
+For this, you can use the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) file
+in the root directory of each package.
 
 - [MSSQL 2022](https://github.com/yiisoft/db-mssql/blob/master/docker-compose.yml)
 - [MySQL 8](https://github.com/yiisoft/db-mysql/blob/master/docker-compose.yml)
@@ -25,7 +26,7 @@ the [docker-compose.yml](https://docs.docker.com/compose/compose-file/) file tha
 - [Oracle 21](https://github.com/yiisoft/db-oracle/blob/master/docker-compose.yml)
 - [PostgreSQL 15](https://github.com/yiisoft/db-pgsql/blob/master/docker-compose.yml)
 
-For running the Docker containers you can use the following command:
+For running the Docker containers, you can use the following command:
 
 ```shell
 docker compose up -d

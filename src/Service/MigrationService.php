@@ -183,10 +183,10 @@ final class MigrationService
     /**
      * The directory containing the migration update classes.
      *
-     * Migration classes located at this path should be declared without a namespace.
+     * Migration classes located on this path should be declared without a namespace.
      * Use {@see $newMigrationNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {@see $newMigrationNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see $newMigrationNamespace}, you may set this field to `null` to disable usage of migrations
      * that are not namespaced.
      *
      * In general, to load migrations from different locations, {@see $newMigrationNamespace} is the preferable solution as the
