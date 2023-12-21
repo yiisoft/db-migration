@@ -432,7 +432,7 @@ final class MigrationService
             }
         }
 
-        throw new LogicException("Invalid namespace: $namespace.");
+        throw new LogicException("Invalid namespace: \"$namespace\".");
     }
 
     /**
