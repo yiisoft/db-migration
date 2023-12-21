@@ -98,7 +98,7 @@ final class FieldsParser
     }
 
     /**
-     * Adds default primary key to columns list if there's no primary key specified.
+     * Adds a default primary key to columns list if there's no primary key specified.
      *
      * @param Column[] $columns
      */

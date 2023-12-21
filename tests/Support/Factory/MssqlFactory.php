@@ -17,7 +17,6 @@ use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
 use function array_intersect;
-use function dirname;
 
 final class MssqlFactory
 {

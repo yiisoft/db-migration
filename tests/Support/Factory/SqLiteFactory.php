@@ -16,8 +16,6 @@ use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
 
-use function dirname;
-
 final class SqLiteFactory
 {
     public static function createContainer(?ContainerConfig $config = null): ContainerInterface

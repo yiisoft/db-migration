@@ -28,85 +28,58 @@ final class ContainerHelper
      */
     public static function get(ContainerInterface $container, string $id, ContainerConfig $config): object
     {
-        switch ($id) {
-            case Injector::class:
-                return new Injector($container);
-
-            case UpdateRunner::class:
-                return new UpdateRunner(
-                    $container->get(Migrator::class),
-                );
-
-            case DownRunner::class:
-                return new DownRunner(
-                    $container->get(Migrator::class),
-                );
-
-            case Migrator::class:
-                return new Migrator(
-                    $container->get(ConnectionInterface::class),
-                    $container->get(ConsoleMigrationInformer::class),
-                );
-
-            case MigrationService::class:
-                return new MigrationService(
-                    $container->get(ConnectionInterface::class),
-                    $container->get(Injector::class),
-                    $container->get(Migrator::class),
-                );
-
-            case CreateService::class:
-                return new CreateService(
-                    $container->get(ConnectionInterface::class),
-                    $config->useTablePrefix,
-                );
-
-            case ConsoleMigrationInformer::class:
-                return new ConsoleMigrationInformer();
-
-            case CreateCommand::class:
-                return new CreateCommand(
-                    $container->get(CreateService::class),
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case UpdateCommand::class:
-                return new UpdateCommand(
-                    $container->get(UpdateRunner::class),
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case DownCommand::class:
-                return new DownCommand(
-                    $container->get(DownRunner::class),
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case NewCommand::class:
-                return new NewCommand(
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case HistoryCommand::class:
-                return new HistoryCommand(
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                );
-
-            case RedoCommand::class:
-                return new RedoCommand(
-                    $container->get(MigrationService::class),
-                    $container->get(Migrator::class),
-                    $container->get(DownRunner::class),
-                    $container->get(UpdateRunner::class),
-                );
-
-            default:
-                throw new NotFoundException($id);
-        }
+        return match ($id) {
+            Injector::class => new Injector($container),
+            UpdateRunner::class => new UpdateRunner(
+                $container->get(Migrator::class),
+            ),
+            DownRunner::class => new DownRunner(
+                $container->get(Migrator::class),
+            ),
+            Migrator::class => new Migrator(
+                $container->get(ConnectionInterface::class),
+                $container->get(ConsoleMigrationInformer::class),
+            ),
+            MigrationService::class => new MigrationService(
+                $container->get(ConnectionInterface::class),
+                $container->get(Injector::class),
+                $container->get(Migrator::class),
+            ),
+            CreateService::class => new CreateService(
+                $container->get(ConnectionInterface::class),
+                $config->useTablePrefix,
+            ),
+            ConsoleMigrationInformer::class => new ConsoleMigrationInformer(),
+            CreateCommand::class => new CreateCommand(
+                $container->get(CreateService::class),
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+            ),
+            UpdateCommand::class => new UpdateCommand(
+                $container->get(UpdateRunner::class),
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+            ),
+            DownCommand::class => new DownCommand(
+                $container->get(DownRunner::class),
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+            ),
+            NewCommand::class => new NewCommand(
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+            ),
+            HistoryCommand::class => new HistoryCommand(
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+            ),
+            RedoCommand::class => new RedoCommand(
+                $container->get(MigrationService::class),
+                $container->get(Migrator::class),
+                $container->get(DownRunner::class),
+                $container->get(UpdateRunner::class),
+            ),
+            default => throw new NotFoundException($id),
+        };
     }
 }

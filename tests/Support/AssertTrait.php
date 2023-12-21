@@ -14,7 +14,7 @@ use Yiisoft\Db\Exception\NotSupportedException;
 trait AssertTrait
 {
     /**
-     * Asserting two strings equality ignoring line endings.
+     * Asserting two strings are equal ignoring line endings.
      *
      * @param string $expected Expected string.
      * @param string $actual Actual string.

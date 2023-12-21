@@ -28,7 +28,7 @@ final class ForeignKeyFactory
         string|null $relatedColumn
     ): ForeignKey {
         /**
-         * We're trying to get it from table schema.
+         * We're trying to get it from the table schema.
          *
          * {@see https://github.com/yiisoft/yii2/issues/12748}
          */

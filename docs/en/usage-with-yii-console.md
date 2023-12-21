@@ -1,6 +1,6 @@
 # Usage with Yii Console
 
-In this example we use [yiisoft/app](https://github.com/yiisoft/app).
+In this example, we use [yiisoft/app](https://github.com/yiisoft/app).
 
 First, configure DI container. Create `config/common/db.php` with the following content:
 

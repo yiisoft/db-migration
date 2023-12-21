@@ -67,7 +67,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Creates and executes an INSERT SQL statement.
      *
-     * The method will properly escape the column names, and bind the values to be inserted.
+     * The method will properly escape the column names and bind the values to be inserted.
      *
      * @param string $table The table that new rows will be inserted into.
      * @param array $columns The column data (name => value) to be inserted into the table.
@@ -86,7 +86,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Creates and executes a batch INSERT SQL statement.
      *
-     * The method will properly escape the column names, and bind the values to be inserted.
+     * The method will properly escape the column names and bind the values to be inserted.
      *
      * @param string $table The table that new rows will be inserted into.
      * @param array $columns The column names.
@@ -109,7 +109,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * Creates and executes a command to insert rows into a database table if they do not already exist (matching unique
      * constraints), or update them if they do.
      *
-     * The method will properly escape the column names, and bind the values to be inserted.
+     * The method will properly escape the column names and bind the values to be inserted.
      *
      * @param string $table The table that new rows will be inserted into/updated in.
      * @param array|QueryInterface $insertColumns The column data (name => value) to insert into the table or an
@@ -219,7 +219,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for renaming a DB table.
+     * Builds and executes an SQL statement for renaming a DB table.
      *
      * @param string $table The table to be renamed. The name will be properly quoted by the method.
      * @param string $newName The new table name. The name will be properly quoted by the method.
@@ -232,7 +232,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for dropping a DB table.
+     * Builds and executes an SQL statement for dropping a DB table.
      *
      * @param string $table The table to be dropped. The name will be properly quoted by the method.
      *
@@ -248,7 +248,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for truncating a DB table.
+     * Builds and executes an SQL statement for truncating a DB table.
      *
      * @param string $table The table to be truncated. The name will be properly quoted by the method.
      */
@@ -260,14 +260,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for adding a new DB column.
+     * Builds and executes an SQL statement for adding a new DB column.
      *
      * @param string $table The table that the new column will be added to.
      * The table name will be properly quoted by the method.
      * @param string $column The name of the new column. The name will be properly quoted by the method.
      * @param ColumnInterface|string $type The column type. The {@see QueryBuilder::getColumnType()} method
-     * will be invoked to convert abstract column type (if any) into the physical one. Anything that is not
-     * recognized as abstract type will be kept in the generated SQL. For example, 'string' will be turned
+     * will be invoked to convert an abstract column type (if any) into the physical one. Anything not
+     * recognized as an abstract type will be kept in the generated SQL. For example, 'string' will be turned
      * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      */
     public function addColumn(string $table, string $column, ColumnInterface|string $type): void
@@ -287,7 +287,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for dropping a DB column.
+     * Builds and executes an SQL statement for dropping a DB column.
      *
      * @param string $table The table whose column is to be dropped. The name will be properly quoted by the method.
      * @param string $column The name of the column to be dropped. The name will be properly quoted by the method.
@@ -300,7 +300,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for renaming a column.
+     * Builds and executes an SQL statement for renaming a column.
      *
      * @param string $table The table whose column is to be renamed. The name will be properly quoted by the method.
      * @param string $name The old name of the column. The name will be properly quoted by the method.
@@ -318,14 +318,13 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for changing the definition of a column.
+     * Builds and executes an SQL statement for changing the definition of a column.
      *
-     * @param string $table The table whose column is to be changed. The table name will be properly quoted by the
-     * method.
+     * @param string $table The table whose column is to be changed. The method will properly quote the table name.
      * @param string $column The name of the column to be changed. The name will be properly quoted by the method.
      * @param ColumnInterface|string $type The new column type.
-     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert abstract column
-     * type (if any) into the physical one. Anything that is not recognized as abstract type will be kept in the
+     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert an abstract column
+     * type (if any) into the physical one. Anything not recognized as an abstract type will be kept in the
      * generated SQL. For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become
      * 'varchar(255) not null'.
      *
@@ -355,7 +354,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for creating a primary key.
+     * Builds and executes an SQL statement for creating a primary key.
      *
      * The method will properly quote the table and column names.
      *
@@ -379,7 +378,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for dropping a primary key.
+     * Builds and executes an SQL statement for dropping a primary key.
      *
      * @param string $table The table that the primary key constraint will be removed from.
      * @param string $name The name of the primary key constraint to be removed.
@@ -396,7 +395,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds a SQL statement for adding a foreign key constraint to an existing table.
+     * Builds an SQL statement for adding a foreign key constraint to an existing table.
      *
      * The method will properly quote the table and column names.
      *
@@ -407,10 +406,10 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $refTable The table that the foreign key references to.
      * @param array|string $refColumns The name of the column that the foreign key references to. If there are multiple
      * columns, separate them with commas or use an array.
-     * @param string|null $delete The ON DELETE option. Most DBMS support these options: RESTRICT, CASCADE, NO ACTION,
-     * SET DEFAULT, SET NULL.
-     * @param string|null $update The ON UPDATE option. Most DBMS support these options: RESTRICT, CASCADE, NO ACTION,
-     * SET DEFAULT, SET NULL.
+     * @param string|null $delete The `ON DELETE` option. Most DBMS support these options: `RESTRICT`, `CASCADE`,
+     * `NO ACTION`, `SET DEFAULT`, `SET NULL`.
+     * @param string|null $update The `ON UPDATE` option. Most DBMS support these options: `RESTRICT`, `CASCADE`,
+     * `NO ACTION`, `SET DEFAULT`, `SET NULL`.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -450,11 +449,10 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds a SQL statement for dropping a foreign key constraint.
+     * Builds an SQL statement for dropping a foreign key constraint.
      *
      * @param string $table The table whose foreign is to be dropped. The name will be properly quoted by the method.
-     * @param string $name The name of the foreign key constraint to be dropped. The name will be properly quoted by the
-     * method.
+     * @param string $name The name of the foreign key constraint to be dropped. The method will properly quote the name.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -468,7 +466,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for creating a new index.
+     * Builds and executes an SQL statement for creating a new index.
      *
      * @param string $table The table that the new index will be created for. The table name will be properly quoted by
      * the method.
@@ -476,8 +474,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param array|string $columns The column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
-     * @param string|null $indexType Type of index supported DBMS - for example: UNIQUE, FULLTEXT, SPATIAL, BITMAP or
-     * `null` as default.
+     * @param string|null $indexType Type of index supported DBMS - for example, `UNIQUE`, `FULLTEXT`, `SPATIAL`,
+     * `BITMAP` or `null` as default.
      * @param string|null $indexMethod For setting index organization method (with 'USING', not all DBMS).
      *
      * @throws Exception
@@ -504,7 +502,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for creating a view.
+     * Builds and executes an SQL statement for creating a view.
      *
      * @param string $viewName The name of the view to create.
      * @param QueryInterface|string $subQuery The select statement which defines the view. This can be either a string
@@ -524,7 +522,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for dropping an index.
+     * Builds and executes an SQL statement for dropping an index.
      *
      * @param string $table The table whose index is to be dropped. The name will be properly quoted by the method.
      * @param string $name The name of the index to be dropped. The name will be properly quoted by the method.
@@ -547,7 +545,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for dropping a DB view.
+     * Builds and executes an SQL statement for dropping a DB view.
      *
      * @param string $viewName The name of the view to be dropped.
      *
@@ -567,10 +565,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Builds and execute a SQL statement for adding comment to column.
      *
-     * @param string $table The table whose column is to be commented. The table name will be properly quoted by the
-     * method.
-     * @param string $column The name of the column to be commented. The column name will be properly quoted by the
-     * method.
+     * @param string $table The table whose column is to be commented. The method will properly quote the table name.
+     * @param string $column The name of the column to be commented. The method will properly quote the column name.
      * @param string $comment The text of the comment to be added. The comment will be properly quoted by the method.
      *
      * @throws Exception
@@ -585,7 +581,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds a SQL statement for adding comment to table.
+     * Builds an SQL statement for adding comment to table.
      *
      * @param string $table The table to be commented. The table name will be properly quoted by the method.
      * @param string $comment The text of the comment to be added. The comment will be properly quoted by the method.
@@ -604,10 +600,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Builds and execute a SQL statement for dropping comment from column.
      *
-     * @param string $table The table whose column is to be commented. The table name will be properly quoted by the
-     * method.
-     * @param string $column The name of the column to be commented. The column name will be properly quoted by the
-     * method.
+     * @param string $table The table whose column is to be commented. The method will properly quote the table name.
+     * @param string $column The name of the column to be commented. The method will properly quote the column name.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -623,8 +617,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     /**
      * Builds a SQL statement for dropping comment from table.
      *
-     * @param string $table The table whose column is to be commented. The table name will be properly quoted by the
-     * method.
+     * @param string $table The table whose column is to be commented. The method will properly quote the table name.
      *
      * @throws Exception
      * @throws InvalidConfigException

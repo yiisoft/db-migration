@@ -19,8 +19,8 @@ final class ColumnTypes extends AbstractMigrationBuilder
     }
 
     /**
-     * This is not used as a dataprovider for testGetColumnType to speed up the test when used as dataprovider every
-     * single line will cause a reconnect with the database which is not needed here.
+     * This is not used as a data provider for `testGetColumnType` to speed up the test when used as data provider every
+     * single line will cause a reconnecting with the database which is not needed here.
      */
     public function getColumnTypes(): array
     {
