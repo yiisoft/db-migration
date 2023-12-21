@@ -35,10 +35,10 @@ require $_composer_autoload_path ?? $rootPath . '/vendor/autoload.php';
  *     historyTable: string,
  *     migrationNameLimit: int|null,
  *     maxSqlOutputLength: int|null,
- *     createNamespace: string,
- *     createPath: string,
- *     updateNamespaces: list<string>,
- *     updatePaths: list<string>,
+ *     newMigrationNamespace: string,
+ *     newMigrationPath: string,
+ *     sourceNamespaces: list<string>,
+ *     sourcePaths: list<string>,
  * } $params
  */
 $params = require $rootPath . '/yii-db-migration.php';
@@ -60,10 +60,10 @@ $downRunner = new DownRunner($migrator);
 $updateRunner = new UpdateRunner($migrator);
 
 $migrationService = new MigrationService($aliases, $db, $injector, $migrator);
-$migrationService->setCreateNamespace($params['createNamespace']);
-$migrationService->setCreatePath($params['createPath']);
-$migrationService->setUpdateNamespaces($params['updateNamespaces']);
-$migrationService->setUpdatePaths($params['updatePaths']);
+$migrationService->setNewMigrationNamespace($params['newMigrationNamespace']);
+$migrationService->setNewMigrationPath($params['newMigrationPath']);
+$migrationService->setSourceNamespaces($params['sourceNamespaces']);
+$migrationService->setSourcePaths($params['sourcePaths']);
 
 $application = new Application('Yii Database Migration Tool', '1.0.0');
 $application->addCommands([

@@ -25,10 +25,10 @@ Yiisoft\Injector\Injector:
 
 Yiisoft\Db\Migration\Service\MigrationService:
     calls:
-      - setCreateNamespace: ['App\Migrations']
-      - setCreatePath: ['']
-      - setUpdateNamespaces: [['App\Migrations']]
-      - setUpdatePaths: [[]]
+      - setNewMigrationNamespace: ['App\Migrations']
+      - setNewMigrationPath: ['']
+      - setSourceNamespaces: [['App\Migrations']]
+      - setSourcePaths: [[]]
         
 Yiisoft\Db\:
   resource: '../vendor/yiisoft/db/src/'

@@ -996,7 +996,7 @@ EOF;
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setCreatePath(__DIR__ . '/not-exists');
+        $this->container->get(MigrationService::class)->setNewMigrationPath(__DIR__ . '/not-exists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1012,7 +1012,7 @@ EOF;
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setCreatePath('');
+        $this->container->get(MigrationService::class)->setNewMigrationPath('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1022,17 +1022,17 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'One of `createNamespace` or `createPath` should be specified.',
+            'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
 
-    public function testIncorrectCreateNamespace(): void
+    public function testIncorrectNewMigrationNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $this->container->get(MigrationService::class)
-            ->setCreateNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
+            ->setNewMigrationNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1044,11 +1044,11 @@ EOF;
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
-    public function testWithoutCreateNamespace(): void
+    public function testWithoutNewMigrationNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->setCreateNamespace('');
+        $this->container->get(MigrationService::class)->setNewMigrationNamespace('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -1058,7 +1058,7 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'One of `createNamespace` or `createPath` should be specified.',
+            'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
@@ -1076,7 +1076,7 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'Only one of `createNamespace` or `createPath` should be specified.',
+            'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
@@ -1095,7 +1095,7 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'Only one of `createNamespace` or `createPath` should be specified.',
+            'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }

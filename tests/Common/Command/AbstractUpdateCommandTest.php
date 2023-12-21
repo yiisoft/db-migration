@@ -261,11 +261,11 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->execute([]);
     }
 
-    public function testWithoutUpdatePath(): void
+    public function testWithoutSourcePath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setUpdatePaths([]);
+        $this->container->get(MigrationService::class)->setSourcePaths([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -275,16 +275,16 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
             $output
         );
     }
 
-    public function testWithoutUpdateNamespaces(): void
+    public function testWithoutSourceNamespaces(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->setUpdateNamespaces([]);
+        $this->container->get(MigrationService::class)->setSourceNamespaces([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
@@ -294,7 +294,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
             $output
         );
     }

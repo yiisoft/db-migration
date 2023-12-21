@@ -45,12 +45,12 @@ use function ucwords;
 
 final class MigrationService
 {
-    private string $createNamespace = '';
-    private string $createPath = '';
+    private string $newMigrationNamespace = '';
+    private string $newMigrationPath = '';
     /** @var string[] */
-    private array $updateNamespaces = [];
+    private array $sourceNamespaces = [];
     /** @var string[] */
-    private array $updatePaths = [];
+    private array $sourcePaths = [];
     private string $version = '1.0';
     private ?SymfonyStyle $io = null;
 
@@ -70,8 +70,8 @@ final class MigrationService
     /**
      * This method is invoked right before an action is to be executed (after all possible filters.)
      *
-     * It checks the existence of the {@see $createPath}, {@see $updatePaths}, {@see $createNamespace},
-     * {@see $updateNamespaces}.
+     * It checks the existence of the {@see $newMigrationPath}, {@see $sourcePaths}, {@see $newMigrationNamespace},
+     * {@see $sourceNamespaces}.
      *
      * @return int Whether the action should continue to be executed.
      */
@@ -79,26 +79,26 @@ final class MigrationService
     {
         switch ($commandName) {
             case 'migrate:create':
-                if (empty($this->createNamespace) && empty($this->createPath)) {
+                if (empty($this->newMigrationNamespace) && empty($this->newMigrationPath)) {
                     $this->io?->error(
-                        'One of `createNamespace` or `createPath` should be specified.'
+                        'One of `newMigrationNamespace` or `newMigrationPath` should be specified.'
                     );
 
                     return Command::INVALID;
                 }
 
-                if (!empty($this->createNamespace) && !empty($this->createPath)) {
+                if (!empty($this->newMigrationNamespace) && !empty($this->newMigrationPath)) {
                     $this->io?->error(
-                        'Only one of `createNamespace` or `createPath` should be specified.'
+                        'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.'
                     );
 
                     return Command::INVALID;
                 }
                 break;
             case 'migrate:up':
-                if (empty($this->updateNamespaces) && empty($this->updatePaths)) {
+                if (empty($this->sourceNamespaces) && empty($this->sourcePaths)) {
                     $this->io?->error(
-                        'At least one of `updateNamespaces` or `updatePaths` should be specified.'
+                        'At least one of `sourceNamespaces` or `sourcePaths` should be specified.'
                     );
 
                     return Command::INVALID;
@@ -126,30 +126,30 @@ final class MigrationService
 
         $migrationPaths = [];
 
-        foreach ($this->updatePaths as $path) {
+        foreach ($this->sourcePaths as $path) {
             $migrationPaths[] = [$path, ''];
         }
 
-        foreach ($this->updateNamespaces as $namespace) {
+        foreach ($this->sourceNamespaces as $namespace) {
             $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
         }
 
         $migrations = [];
         foreach ($migrationPaths as $item) {
-            [$updatePath, $namespace] = $item;
-            $updatePath = $this->aliases->get($updatePath);
+            [$sourcePath, $namespace] = $item;
+            $sourcePath = $this->aliases->get($sourcePath);
 
-            if (!is_dir($updatePath)) {
+            if (!is_dir($sourcePath)) {
                 continue;
             }
 
-            $handle = opendir($updatePath);
+            $handle = opendir($sourcePath);
             while (($file = readdir($handle)) !== false) {
                 if ($file === '.' || $file === '..') {
                     continue;
                 }
 
-                $path = $updatePath . DIRECTORY_SEPARATOR . $file;
+                $path = $sourcePath . DIRECTORY_SEPARATOR . $file;
 
                 if (is_file($path) && preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches)) {
                     [, $class, $time] = $matches;
@@ -182,9 +182,9 @@ final class MigrationService
      *
      * @psalm-param string[] $value
      */
-    public function setUpdateNamespaces(array $value): void
+    public function setSourceNamespaces(array $value): void
     {
-        $this->updateNamespaces = $value;
+        $this->sourceNamespaces = $value;
     }
 
     /**
@@ -193,23 +193,23 @@ final class MigrationService
      * This can be either a [path alias](guide:concept-aliases) or a directory path.
      *
      * Migration classes located at this path should be declared without a namespace.
-     * Use {@see $createNamespace} property in case you are using namespaced migrations.
+     * Use {@see $newMigrationNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {@see $createNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see $newMigrationNamespace}, you may set this field to `null` in order to disable usage of  migrations
      * that are not namespaced.
      *
-     * In general, to load migrations from different locations, {@see $createNamespace} is the preferable solution as the
+     * In general, to load migrations from different locations, {@see $newMigrationNamespace} is the preferable solution as the
      * migration name contains the origin of the migration in the history, which is not the case when using multiple
      * migration paths.
      *
      *
-     * {@see $createNamespace}
+     * {@see $newMigrationNamespace}
      *
      * @psalm-param string[] $value
      */
-    public function setUpdatePaths(array $value): void
+    public function setSourcePaths(array $value): void
     {
-        $this->updatePaths = $value;
+        $this->sourcePaths = $value;
     }
 
     public function version(): string
@@ -237,7 +237,7 @@ final class MigrationService
 
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
-            foreach ($this->updatePaths as $path) {
+            foreach ($this->sourcePaths as $path) {
                 $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
@@ -315,14 +315,14 @@ final class MigrationService
         );
     }
 
-    public function setCreateNamespace(string $value): void
+    public function setNewMigrationNamespace(string $value): void
     {
-        $this->createNamespace = $value;
+        $this->newMigrationNamespace = $value;
     }
 
-    public function setCreatePath(string $value): void
+    public function setNewMigrationPath(string $value): void
     {
-        $this->createPath = $value;
+        $this->newMigrationPath = $value;
     }
 
     /**
@@ -330,9 +330,9 @@ final class MigrationService
      *
      * @return string
      */
-    public function getCreateNamespace(): string
+    public function getNewMigrationNamespace(): string
     {
-        return $this->createNamespace;
+        return $this->newMigrationNamespace;
     }
 
     /**
@@ -355,9 +355,9 @@ final class MigrationService
      */
     public function findMigrationPath(): string
     {
-        return empty($this->createNamespace)
-            ? $this->aliases->get($this->createPath)
-            : $this->getNamespacePath($this->createNamespace);
+        return empty($this->newMigrationNamespace)
+            ? $this->aliases->get($this->newMigrationPath)
+            : $this->getNamespacePath($this->newMigrationNamespace);
     }
 
     /**
