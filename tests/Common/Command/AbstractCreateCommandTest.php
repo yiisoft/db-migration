@@ -31,7 +31,7 @@ abstract class AbstractCreateCommandTest extends TestCase
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
@@ -81,7 +81,7 @@ EOF;
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -151,7 +151,7 @@ EOF;
                 'category_id:integer:foreignKey,' .
                 'category_id2:integer:foreignKey(category id2)',
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -340,7 +340,7 @@ EOF;
                 '--fields' => 'name:string,user_id:integer:foreignKey',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -425,7 +425,7 @@ EOF;
             $command->setInputs(['yes']);
 
             $exitCode = $command->execute(['name' => 'post', $option => MigrationHelper::NAMESPACE]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $className = MigrationHelper::findMigrationClassNameInOutput($output);
             $namespace = MigrationHelper::NAMESPACE;
@@ -474,7 +474,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
@@ -491,7 +491,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post?']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
@@ -508,7 +508,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'noExist']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
@@ -528,7 +528,7 @@ EOF;
         $exitCode = $command->execute([
             'name' => str_repeat('x', 200),
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The migration name is too long.', $output);
@@ -542,7 +542,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'addColumn', '--fields' => 'position:integer']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -593,7 +593,7 @@ EOF;
             '--command' => 'dropColumn',
             '--fields' => 'position:integer',
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -646,7 +646,7 @@ EOF;
                 '--fields' => 'title:string(12):notNull:unique,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -703,7 +703,7 @@ EOF;
                 '--fields' => 'title:string,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -762,7 +762,7 @@ EOF;
                     'category_id:integer:defaultValue(1):foreignKey,title:string,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -885,7 +885,7 @@ EOF;
                 '--fields' => 'created_at:dateTime',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -1002,7 +1002,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
@@ -1018,7 +1018,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
@@ -1038,7 +1038,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
@@ -1072,7 +1072,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
@@ -1091,7 +1091,7 @@ EOF;
             '--path' => MigrationHelper::PATH_ALIAS,
             '--namespace' => MigrationHelper::NAMESPACE,
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
