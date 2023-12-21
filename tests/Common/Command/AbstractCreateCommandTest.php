@@ -473,7 +473,7 @@ EOF;
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
-        $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
+        $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::getRuntimePath()]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
@@ -1088,7 +1088,7 @@ EOF;
 
         $exitCode = $command->execute([
             'name' => 'post',
-            '--path' => MigrationHelper::PATH_ALIAS,
+            '--path' => MigrationHelper::getRuntimePath(),
             '--namespace' => MigrationHelper::NAMESPACE,
         ]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
