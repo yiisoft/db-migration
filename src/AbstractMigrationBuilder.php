@@ -66,6 +66,56 @@ abstract class AbstractMigrationBuilder
     }
 
     /**
+     * Creates an unsigned big primary key column.
+     *
+     * @param int|null $length The column size or precision definition.
+     *
+     * This parameter will be ignored if not supported by the DBMS.
+     *
+     * @return ColumnInterface The column instance which can be further customized.
+     */
+    public function bigPrimaryKeyUnsigned(int $length = null): ColumnInterface
+    {
+        return $this->schema->createColumn(SchemaInterface::TYPE_UBIGPK, $length);
+    }
+
+    /**
+     * Creates a UUID primary key column.
+     *
+     * This parameter will be ignored if not supported by the DBMS.
+     *
+     * @return ColumnInterface The column instance which can be further customized.
+     */
+    public function uuidPrimaryKey(): ColumnInterface
+    {
+        return $this->schema->createColumn(SchemaInterface::TYPE_UUID_PK);
+    }
+
+    /**
+     * Creates a UUID primary key column with a sequence.
+     *
+     * This parameter will be ignored if not supported by the DBMS.
+     *
+     * @return ColumnInterface The column instance which can be further customized.
+     */
+    public function uuidPrimaryKeySequenced(): ColumnInterface
+    {
+        return $this->schema->createColumn(SchemaInterface::TYPE_UUID_PK_SEQ);
+    }
+
+    /**
+     * Creates a UUID column.
+     *
+     * This parameter will be ignored if not supported by the DBMS.
+     *
+     * @return ColumnInterface The column instance which can be further customized.
+     */
+    public function uuid(): ColumnInterface
+    {
+        return $this->schema->createColumn(SchemaInterface::TYPE_UUID);
+    }
+
+    /**
      * Creates a binary column.
      *
      * @param int|null $length The column size or precision definition.
@@ -252,6 +302,20 @@ abstract class AbstractMigrationBuilder
     public function primaryKey(int $length = null): ColumnInterface
     {
         return $this->schema->createColumn(SchemaInterface::TYPE_PK, $length);
+    }
+
+    /**
+     * Creates an unsigned primary key column.
+     *
+     * @param int|null $length The column size or precision definition.
+     *
+     * This parameter will be ignored if not supported by the DBMS.
+     *
+     * @return ColumnInterface The column instance which can be further customized.
+     */
+    public function primaryKeyUnsigned(int $length = null): ColumnInterface
+    {
+        return $this->schema->createColumn(SchemaInterface::TYPE_UPK, $length);
     }
 
     /**
