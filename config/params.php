@@ -23,8 +23,8 @@ return [
 
     'yiisoft/db-migration' => [
         'newMigrationNamespace' => '',
-        'sourcePath' => '',
-        'newMigrationNamespaces' => [],
+        'mewMigrationPath' => '',
+        'sourceNamespaces' => [],
         'sourcePaths' => [],
     ],
 ];

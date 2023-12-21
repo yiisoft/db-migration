@@ -178,9 +178,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds and executes a SQL statement for creating a new DB table.
+     * Builds and executes an SQL statement for creating a new DB table.
      *
-     * The columns in the new  table should be specified as name-definition pairs (e.g. 'name' => 'string'), where name
+     * The columns in the new table should be specified as name-definition pairs (e.g. 'name' => 'string'), where name
      * stands for a column name which will be properly quoted by the method, and definition stands for the column type
      * which can contain an abstract DB type.
      *
