@@ -20,24 +20,25 @@ return [
     /**
      * Namespace of new migration classes.
      */
-    'createNamespace' => '',
+    'newMigrationNamespace' => '',
 
     /**
      * List of namespaces containing the migration classes.
      */
-    'updateNamespaces' => [],
+    'sourceNamespaces' => [],
 
     /**
      * Path to the directory for new migration classes. This path is used when you are using migrations without
      * namespaces.
      */
-    'createPath' => '',
+    'newMigrationPath' => '',
 
     /**
-     * List of directories containing the migration classes. Migration classes located at this paths should be declared
-     * without a namespace. Use "updateNamespaces" option in case you are using namespaced migrations.
+     * List of directories containing the migration classes.
+     * Migration classes located at these paths should be declared without a namespace.
+     * Use the "sourceNamespaces" option in case you are using namespaced migrations.
      */
-    'updatePaths' => [],
+    'sourcePaths' => [],
 
     /**
      * The name of the database table for storing migration history information.
@@ -51,7 +52,7 @@ return [
 
     /**
      * Indicates whether the table names generated should consider the `tablePrefix` setting of the DB connection.
-     * For example, if the table name is `post` the generator will return `{{%post}}`.
+     * For example, if the table name is `post`, the generator will return `{{%post}}`.
      */
     'useTablePrefix' => true,
 
@@ -61,7 +62,7 @@ return [
     'container' => null,
 
     /**
-     * The maximum length of a SQL output in console.
+     * The maximum length of an SQL output in console.
      */
     'maxSqlOutputLength' => null,
 ];

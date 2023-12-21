@@ -38,7 +38,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertEquals(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);
@@ -68,7 +68,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['-l' => '1']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Last 1 applied migration:', $output);
@@ -90,7 +90,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['-l' => -1]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The limit option must be greater than 0.', $output);
@@ -103,7 +103,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('[WARNING] No migration has been done before.', $output);
@@ -131,7 +131,7 @@ abstract class AbstractHistoryCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['--all' => true]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 2 migrations have been applied before:', $output);

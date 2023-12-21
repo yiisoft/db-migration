@@ -47,7 +47,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Found 2 new migrations:', $output);
@@ -87,7 +87,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Found 2 new migrations:', $output);
@@ -100,7 +100,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['-l' => -1]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
@@ -122,7 +122,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::FAILURE, $exitCode);
         $this->assertStringContainsString('[WARNING] No new migrations found. Your system is up-to-date', $output);
@@ -160,7 +160,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['--limit' => 2]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('[WARNING] Showing 2 out of 3 new migrations:', $output);
@@ -190,7 +190,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['--all' => true]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Found 2 new migrations:', $output);
@@ -211,7 +211,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['--path' => [MigrationHelper::PATH_ALIAS]]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Found 1 new migration:', $output);
@@ -233,7 +233,7 @@ abstract class AbstractNewCommandTest extends TestCase
         $command = $this->createCommand($this->container);
         foreach (['--namespace', '-ns'] as $option) {
             $exitCode = $command->execute([$option => [MigrationHelper::NAMESPACE]]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $this->assertSame(Command::SUCCESS, $exitCode);
             $this->assertStringContainsString('Found 1 new migration:', $output);

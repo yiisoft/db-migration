@@ -53,7 +53,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
@@ -84,7 +84,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('1 migration was reverted.', $output);
@@ -146,7 +146,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['--all' => true]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('2 migrations were reverted.', $output);
@@ -251,7 +251,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['-l' => '2']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString("1. $createUserClass", $output);
@@ -277,7 +277,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['--limit' => $limit]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The limit option must be greater than 0.', $output);
@@ -311,7 +311,7 @@ abstract class AbstractDownCommandTest extends TestCase
         } catch (Throwable) {
         }
 
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
@@ -339,7 +339,7 @@ abstract class AbstractDownCommandTest extends TestCase
         } catch (Throwable) {
         }
 
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
@@ -372,7 +372,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         foreach ($options as $option => $value) {
             $exitCode = $command->setInputs(['no'])->execute([$option => $value, '-a' => true]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $this->assertSame(Command::SUCCESS, $exitCode);
             $this->assertStringContainsString('Total 1 migration to be reverted:', $output);
@@ -404,7 +404,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         foreach ($options as $option => $value) {
             $exitCode = $command->execute([$option => $value]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $this->assertSame(Command::FAILURE, $exitCode);
             $this->assertStringContainsString('[WARNING] No applied migrations found.', $output);
@@ -440,7 +440,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         foreach ($options as $option => $value) {
             $exitCode = $command->setInputs(['no'])->execute([$option => $value, '-a' => true]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $this->assertSame(Command::SUCCESS, $exitCode);
             $this->assertStringContainsString('Total 2 migrations to be reverted:', $output);
@@ -474,7 +474,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         $path = dirname(__DIR__, 2) . '/Support/MigrationsExtra';
         $exitCode = $command->setInputs(['no'])->execute(['--path' => [$path], '-a' => true]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 migration to be reverted:', $output);

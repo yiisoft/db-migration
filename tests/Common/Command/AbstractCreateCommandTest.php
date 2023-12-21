@@ -31,7 +31,7 @@ abstract class AbstractCreateCommandTest extends TestCase
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
@@ -81,7 +81,7 @@ EOF;
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -151,7 +151,7 @@ EOF;
                 'category_id:integer:foreignKey,' .
                 'category_id2:integer:foreignKey(category id2)',
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -340,7 +340,7 @@ EOF;
                 '--fields' => 'name:string,user_id:integer:foreignKey',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -425,7 +425,7 @@ EOF;
             $command->setInputs(['yes']);
 
             $exitCode = $command->execute(['name' => 'post', $option => MigrationHelper::NAMESPACE]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $className = MigrationHelper::findMigrationClassNameInOutput($output);
             $namespace = MigrationHelper::NAMESPACE;
@@ -474,11 +474,11 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::PATH_ALIAS]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Create new migration y/n:', $output);
-        $this->assertMatchesRegularExpression("/^\s+M\d{12}Post$/m", $output);
+        $this->assertMatchesRegularExpression("/\s+M\d{12}Post/m", $output);
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
         $this->assertCount(1, FileHelper::findFiles($path));
     }
@@ -491,7 +491,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post?']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
@@ -508,7 +508,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'noExist']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
@@ -528,7 +528,7 @@ EOF;
         $exitCode = $command->execute([
             'name' => str_repeat('x', 200),
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('The migration name is too long.', $output);
@@ -542,7 +542,7 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'addColumn', '--fields' => 'position:integer']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -593,7 +593,7 @@ EOF;
             '--command' => 'dropColumn',
             '--fields' => 'position:integer',
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -646,7 +646,7 @@ EOF;
                 '--fields' => 'title:string(12):notNull:unique,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -703,7 +703,7 @@ EOF;
                 '--fields' => 'title:string,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -762,7 +762,7 @@ EOF;
                     'category_id:integer:defaultValue(1):foreignKey,title:string,body:text',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -885,7 +885,7 @@ EOF;
                 '--fields' => 'created_at:dateTime',
             ]
         );
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
         $namespace = MigrationHelper::NAMESPACE;
@@ -992,78 +992,78 @@ EOF;
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
-    public function testIncorrectCreatePath(): void
+    public function testIncorrectNewMigrationPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setCreatePath(__DIR__ . '/not-exists');
+        $this->container->get(MigrationService::class)->setNewMigrationPath(__DIR__ . '/not-exists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
-    public function testWithoutCreatePath(): void
+    public function testWithoutNewMigrationPath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setCreatePath('');
+        $this->container->get(MigrationService::class)->setNewMigrationPath('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'One of `createNamespace` or `createPath` should be specified.',
+            'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
 
-    public function testIncorrectCreateNamespace(): void
+    public function testIncorrectNewMigrationNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $this->container->get(MigrationService::class)
-            ->setCreateNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
+            ->setNewMigrationNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('Invalid path directory', $output);
     }
 
-    public function testWithoutCreateNamespace(): void
+    public function testWithoutNewMigrationNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->setCreateNamespace('');
+        $this->container->get(MigrationService::class)->setNewMigrationNamespace('');
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'One of `createNamespace` or `createPath` should be specified.',
+            'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
 
-    public function testWithCreatePathAndNamespace(): void
+    public function testWithNewMigrationPathAndNamespace(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
         MigrationHelper::useMigrationsNamespace($this->container);
@@ -1072,11 +1072,11 @@ EOF;
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'Only one of `createNamespace` or `createPath` should be specified.',
+            'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }
@@ -1091,11 +1091,11 @@ EOF;
             '--path' => MigrationHelper::PATH_ALIAS,
             '--namespace' => MigrationHelper::NAMESPACE,
         ]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
-            'Only one of `createNamespace` or `createPath` should be specified.',
+            'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
     }

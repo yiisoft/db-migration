@@ -42,7 +42,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $db = $this->container->get(ConnectionInterface::class);
         $dbSchema = $db->getSchema();
@@ -150,7 +150,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $dbSchema = $db->getSchema();
         $departmentSchema = $dbSchema->getTableSchema('department');
@@ -220,13 +220,13 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command1->setInputs(['yes']);
 
         $exitCode1 = $command1->execute([]);
-        $output1 = $command1->getDisplay(true);
+        $output1 = preg_replace('/(\R|\s)+/', ' ', $command1->getDisplay(true));
 
         $command2 = $this->createCommand($this->container);
         $command2->setInputs(['yes']);
 
         $exitCode2 = $command2->execute([]);
-        $output2 = $command2->getDisplay(true);
+        $output2 = preg_replace('/(\R|\s)+/', ' ', $command2->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode1);
         $this->assertStringContainsString('Total 1 new migration was applied.', $output1);
@@ -261,40 +261,40 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->execute([]);
     }
 
-    public function testWithoutUpdatePath(): void
+    public function testWithoutSourcePath(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
-        $this->container->get(MigrationService::class)->setUpdatePaths([]);
+        $this->container->get(MigrationService::class)->setSourcePaths([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
             $output
         );
     }
 
-    public function testWithoutUpdateNamespaces(): void
+    public function testWithoutSourceNamespaces(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
 
-        $this->container->get(MigrationService::class)->setUpdateNamespaces([]);
+        $this->container->get(MigrationService::class)->setSourceNamespaces([]);
 
         $command = $this->createCommand($this->container);
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `updateNamespaces` or `updatePaths` should be specified.',
+            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
             $output
         );
     }
@@ -323,7 +323,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['-l' => 1]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 out of 2 new migrations to be applied:', $output);
@@ -348,7 +348,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command->setInputs(['yes']);
 
         $exitCode = $command->execute([]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
@@ -372,7 +372,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->setInputs(['no'])->execute(['--path' => [MigrationHelper::PATH_ALIAS]]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
@@ -395,7 +395,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         foreach (['--namespace', '-ns'] as $option) {
             $exitCode = $command->setInputs(['no'])->execute([$option => [MigrationHelper::NAMESPACE]]);
-            $output = $command->getDisplay(true);
+            $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
             $this->assertSame(Command::SUCCESS, $exitCode);
             $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
@@ -410,7 +410,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $command = $this->createCommand($this->container);
 
         $exitCode = $command->execute(['-l' => -1]);
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString('[ERROR] The limit option must be greater than 0.', $output);
@@ -441,7 +441,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         } catch (Throwable) {
         }
 
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
@@ -475,7 +475,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         } catch (Throwable) {
         }
 
-        $output = $command->getDisplay(true);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
         $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);

@@ -27,8 +27,8 @@ Add to `config/params.php`:
 ```php
 ...
 'yiisoft/db-migration' => [
-    'createNamespace' => 'App\\Migration',
-    'updateNamespaces' => ['App\\Migration'],
+    'newMigrationNamespace' => 'App\\Migration',
+    'sourceNamespaces' => ['App\\Migration'],
 ],
 ...
 ```

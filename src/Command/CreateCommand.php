@@ -29,14 +29,14 @@ use function strlen;
  *
  * This command creates a new migration using the available migration template.
  *
- * To use it, configure migrations paths (`createPath` and `updatePaths`) in `params.php` file, in your application.
+ * To use it, configure migrations paths (`newMigrationPath` and `sourcePaths`) in `params.php` file, in your application.
  *
  * ```php
  * 'yiisoft/db-migration' => [
- *     'createNamespace' => '',
- *     'createPath' => '',
- *     'updateNamespaces' => [],
- *     'updatePaths' => [],
+ *     'newMigrationNamespace' => '',
+ *     'newMigrationPath' => '',
+ *     'sourceNamespaces' => [],
+ *     'sourcePaths' => [],
  * ],
  * ```
  *
@@ -47,7 +47,7 @@ use function strlen;
  * ./yii migrate:create table --command=table
  * ```
  *
- * In order to generate a namespaced migration, you should specify a namespace before the migration's name.
+ * To generate a namespaced migration, you should specify a namespace before the migration's name.
  *
  * Note that backslash (`\`) is usually considered a special character in the shell, so you need to escape it properly
  * to avoid shell errors or incorrect behavior.
@@ -59,7 +59,8 @@ use function strlen;
  * ./yii migrate:create post --command=table --path=@root/migrations/blog
  * ```
  *
- * In case {@see $createPath} is not set and no namespace is provided, {@see $createNamespace} will be used.
+ * In case {@see MigrationService::$newMigrationPath} is not set, and no namespace is provided,
+ * {@see MigrationService::$newMigrationNamespace} will be used.
  */
 #[AsCommand('migrate:create', 'Creates a new migration.')]
 final class CreateCommand extends Command
@@ -101,10 +102,10 @@ final class CreateCommand extends Command
         $namespace = $input->getOption('namespace');
 
         if ($path !== null || $namespace !== null) {
-            $this->migrationService->setCreatePath((string) $path);
-            $this->migrationService->setCreateNamespace((string) $namespace);
+            $this->migrationService->setNewMigrationPath((string) $path);
+            $this->migrationService->setNewMigrationNamespace((string) $namespace);
         } else {
-            $namespace = $this->migrationService->getCreateNamespace();
+            $namespace = $this->migrationService->getNewMigrationNamespace();
         }
 
         if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
