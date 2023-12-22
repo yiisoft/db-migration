@@ -16,7 +16,7 @@
         "issues": "https://github.com/yiisoft/db-migration/issues?state=open",
         "forum": "https://www.yiiframework.com/forum/",
         "wiki": "https://www.yiiframework.com/wiki/",
-        "irc": "irc://irc.freenode.net/yii",
+        "irc": "ircs://irc.libera.chat:6697/yii",
         "chat": "https://t.me/yii3en",
         "source": "https://github.com/yiisoft/db-migration"
     },
@@ -24,7 +24,6 @@
         "php": "^8.0",
         "ext-filter": "*",
         "symfony/console": "^6.0|^7.0",
-        "yiisoft/aliases": "^1.1|^2.0|^3.0",
         "yiisoft/db": "^1.1",
         "yiisoft/injector": "^1.2"
     },
@@ -55,9 +54,6 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
-        },
         "config-plugin-options": {
             "source-directory": "config"
         },

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration\Service;
 
 use Composer\Autoload\ClassLoader;
+use LogicException;
 use ReflectionClass;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Db\Migration\MigrationInterface;
@@ -55,7 +55,6 @@ final class MigrationService
     private ?SymfonyStyle $io = null;
 
     public function __construct(
-        private Aliases $aliases,
         private ConnectionInterface $db,
         private Injector $injector,
         private Migrator $migrator
@@ -137,7 +136,6 @@ final class MigrationService
         $migrations = [];
         foreach ($migrationPaths as $item) {
             [$sourcePath, $namespace] = $item;
-            $sourcePath = $this->aliases->get($sourcePath);
 
             if (!is_dir($sourcePath)) {
                 continue;
@@ -175,11 +173,6 @@ final class MigrationService
     /**
      * List of namespaces containing the migration update classes.
      *
-     * Migration namespaces should be resolvable as a [path alias](guide:concept-aliases) if prefixed with `@`, e.g.
-     * if you specify the namespace `app\migrations`, the code `$this->aliases->get('@app/migrations')` should be able
-     * to return the file path to the directory this namespace refers to.
-     * This corresponds with the [autoloading conventions](guide:concept-autoloading) of Yii.
-     *
      * @psalm-param string[] $value
      */
     public function setSourceNamespaces(array $value): void
@@ -190,12 +183,10 @@ final class MigrationService
     /**
      * The directory containing the migration update classes.
      *
-     * This can be either a [path alias](guide:concept-aliases) or a directory path.
-     *
-     * Migration classes located at this path should be declared without a namespace.
+     * Migration classes located on this path should be declared without a namespace.
      * Use {@see $newMigrationNamespace} property in case you are using namespaced migrations.
      *
-     * If you have set up {@see $newMigrationNamespace}, you may set this field to `null` in order to disable usage of  migrations
+     * If you have set up {@see $newMigrationNamespace}, you may set this field to `null` to disable usage of migrations
      * that are not namespaced.
      *
      * In general, to load migrations from different locations, {@see $newMigrationNamespace} is the preferable solution as the
@@ -238,7 +229,7 @@ final class MigrationService
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
             foreach ($this->sourcePaths as $path) {
-                $file = $this->aliases->get($path) . DIRECTORY_SEPARATOR . $class . '.php';
+                $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
                     /** @psalm-suppress UnresolvableInclude */
@@ -349,14 +340,14 @@ final class MigrationService
     }
 
     /**
-     * Finds the file path for migration namespace or alias path.
+     * Finds the file path for migration namespace or path.
      *
      * @return string The migration file path.
      */
     public function findMigrationPath(): string
     {
         return empty($this->newMigrationNamespace)
-            ? $this->aliases->get($this->newMigrationPath)
+            ? $this->newMigrationPath
             : $this->getNamespacePath($this->newMigrationNamespace);
     }
 
@@ -429,28 +420,19 @@ final class MigrationService
      */
     private function getNamespacePath(string $namespace): string
     {
-        $aliases = '@' . str_replace('\\', '/', $namespace);
-
-        return $this->getPathFromNamespace($aliases);
-    }
-
-    private function getPathFromNamespace(string $path): string
-    {
-        $namespacesPath = [];
-
         /**
          * @psalm-suppress UnresolvableInclude
          * @psalm-var array<string, list<string>> $map
          */
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
-        foreach ($map as $namespace => $directories) {
-            foreach ($directories as $directory) {
-                $namespacesPath[str_replace('\\', '/', trim($namespace, '\\'))] = $directory;
+        foreach ($map as $mapNamespace => $mapDirectories) {
+            if (str_starts_with($namespace, trim($mapNamespace, '\\'))) {
+                return reset($mapDirectories) . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
             }
         }
 
-        return (new Aliases($namespacesPath))->get($path);
+        throw new LogicException("Invalid namespace: \"$namespace\".");
     }
 
     /**
@@ -463,7 +445,7 @@ final class MigrationService
     private function getNamespacesFromPath(string $path): array
     {
         $namespaces = [];
-        $path = realpath($this->aliases->get($path)) . DIRECTORY_SEPARATOR;
+        $path = realpath($path) . DIRECTORY_SEPARATOR;
 
         /**
          * @psalm-suppress UnresolvableInclude

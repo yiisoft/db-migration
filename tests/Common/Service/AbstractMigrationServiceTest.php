@@ -6,6 +6,7 @@ namespace Yiisoft\Db\Migration\Tests\Common\Service;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use ReflectionMethod;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
@@ -60,7 +61,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
     {
         $migrationService = $this->container->get(MigrationService::class);
 
-        $getNamespaceFromPath = new \ReflectionMethod($migrationService, 'getNamespacesFromPath');
+        $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
         $getNamespaceFromPath->setAccessible(true);
 
         // No having namespace path
@@ -77,7 +78,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
     {
         $migrationService = $this->container->get(MigrationService::class);
 
-        $getNamespaceFromPath = new \ReflectionMethod($migrationService, 'getNamespacesFromPath');
+        $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
         $getNamespaceFromPath->setAccessible(true);
 
         /**

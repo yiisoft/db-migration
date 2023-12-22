@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration\Service\Generate;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Exception\InvalidConfigException;
 
@@ -24,10 +23,9 @@ final class CreateService
 
     /**
      * @param bool $useTablePrefix Indicates whether the table names generated should consider the `tablePrefix` setting
-     * of the DB connection. For example, if the table name is `post` the generator will return `{{%post}}`.
+     * of the DB connection. For example, if the table name is `post`, the generator will return `{{%post}}`.
      */
     public function __construct(
-        private Aliases $aliases,
         private ConnectionInterface $db,
         private bool $useTablePrefix = true
     ) {
@@ -77,7 +75,7 @@ final class CreateService
         }
 
         return $this->phpRenderer->render(
-            $this->aliases->get($templateFile),
+            $templateFile,
             [
                 'table' => $table,
                 'className' => $className,
@@ -105,17 +103,17 @@ final class CreateService
     /**
      * Set of template paths for generating migration code automatically.
      *
-     * The key is the template type, the value is a path or the alias.
+     * The key is the template type, the value is a path.
      *
      * Supported types are:
      *
      * ```php
-     *   'create' => '@yiisoft/yii/db/migration/resources/views/migration.php',
-     *   'table' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php',
-     *   'dropTable' => '@yiisoft/yii/db/migration/resources/views/dropTableMigration.php',
-     *   'addColumn' => '@yiisoft/yii/db/migration/resources/views/addColumnMigration.php',
-     *   'dropColumn' => '@yiisoft/yii/db/migration/resources/views/dropColumnMigration.php',
-     *   'junction' => '@yiisoft/yii/db/migration/resources/views/createTableMigration.php'
+     *   'create' => 'vendor/yiisoft/db-migration/resources/views/migration.php',
+     *   'table' => vendor/yiisoft/db-migration/resources/views/createTableMigration.php',
+     *   'dropTable' => 'vendor/yiisoft/db-migration/resources/views/dropTableMigration.php',
+     *   'addColumn' => 'vendor/yiisoft/db-migration/resources/views/addColumnMigration.php',
+     *   'dropColumn' => 'vendor/yiisoft/db-migration/resources/views/dropColumnMigration.php',
+     *   'junction' => 'vendor/yiisoft/db-migration/resources/views/createTableMigration.php'
      *```
      */
     public function setTemplate(string $key, string $value): void

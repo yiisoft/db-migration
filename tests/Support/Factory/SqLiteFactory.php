@@ -7,7 +7,6 @@ namespace Yiisoft\Db\Migration\Tests\Support\Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Yiisoft\Aliases\Aliases;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
@@ -16,8 +15,6 @@ use Yiisoft\Test\Support\Container\SimpleContainer;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerConfig;
 use Yiisoft\Db\Migration\Tests\Support\Helper\ContainerHelper;
-
-use function dirname;
 
 final class SqLiteFactory
 {
@@ -29,11 +26,6 @@ final class SqLiteFactory
             [
                 LoggerInterface::class => new NullLogger(),
                 SchemaCache::class => new SchemaCache(new MemorySimpleCache()),
-                Aliases::class => new Aliases(
-                    [
-                        '@runtime' => dirname(__DIR__, 2) . '/runtime',
-                    ],
-                ),
             ],
             static function (string $id) use (&$container, $config): object {
                 return match ($id) {

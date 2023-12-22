@@ -371,7 +371,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $command = $this->createCommand($this->container);
 
-        $exitCode = $command->setInputs(['no'])->execute(['--path' => [MigrationHelper::PATH_ALIAS]]);
+        $exitCode = $command->setInputs(['no'])->execute(['--path' => [MigrationHelper::getRuntimePath()]]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
