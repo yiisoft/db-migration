@@ -700,6 +700,21 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame('tinyint', $this->builder->tinyInteger()->asString());
     }
 
+    public function testUuid(): void
+    {
+        $this->assertSame('uuid', $this->builder->uuid()->asString());
+    }
+
+    public function testUuidPrimaryKey(): void
+    {
+        $this->assertSame('uuid_pk', $this->builder->uuidPrimaryKey()->asString());
+    }
+
+    public function testUuidPrimaryKeySequenced(): void
+    {
+        $this->assertSame('uuid_pk_seq', $this->builder->uuidPrimaryKeySequenced()->asString());
+    }
+
     public function testGetDb(): void
     {
         $this->assertSame($this->db, $this->builder->getDb());
