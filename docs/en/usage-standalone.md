@@ -38,8 +38,8 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Injector\Injector;
 
-$migrator = new Migrator($this->getDatabase(), new NullMigrationInformer());
 /** @var ConnectionInterface $database */
+$migrator = new Migrator($database, new NullMigrationInformer());
 $migrationService = new MigrationService($database, new Injector(), $migrator);
 $migrationService->setSourcePaths([dirname(__DIR__, 2), 'migrations']);
 ```
