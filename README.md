@@ -22,7 +22,7 @@ Supports the following databases out of the box:
 - [MySQL](https://www.mysql.com/) of versions **5.7–8.0**.
 - [MariaDB](https://mariadb.org/) of versions **10.4–10.9**.
 - [Oracle](https://www.oracle.com/database/) of versions **12c–21c**.
-- [PostgreSQL](https://www.postgresql.org/) of versions **9.6–15**. 
+- [PostgreSQL](https://www.postgresql.org/) of versions **9.6–15**.
 - [SQLite](https://www.sqlite.org/index.html) of version **3.3 and above**.
 
 ## Requirements
@@ -32,7 +32,7 @@ Supports the following databases out of the box:
 
 ## Installation
 
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
 Either run
 

@@ -2,7 +2,7 @@
 
 Require migrations and DB driver. Let's use SQLite for this example:
 
-```
+```shell
 composer require yiisoft/db-migration
 composer require yiisoft/db-sqlite
 ```
