@@ -62,14 +62,14 @@ The create command allows defining fields for the table being created.
 ## Documentation
 
 - [English](docs/guide/en/readme.md)
-- [Portuguese - Brazil](docs/guide/pt-BR/readme.md)
+- [Português - Brasil](docs/guide/pt-BR/readme.md)
 
 Testing:
 
 - [English](docs/guide/en/testing.md)
-- [Portuguese - Brazil](docs/guide/pt-BR/testing.md)
+- [Português - Brasil](docs/guide/pt-BR/testing.md)
 
-- More information can be found in the [Internals.](docs/internals.md)
+- [Internals](docs/internals.md)
 
 ## Support
 
