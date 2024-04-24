@@ -28,7 +28,7 @@ in the root directory of each package.
 
 For running the Docker containers, you can use the following command:
 
-```dockerfile
+```shell
 docker compose up -d
 ```
 
