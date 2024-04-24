@@ -8,23 +8,24 @@
     cp ./vendor/yiisoft/db-migration/bin/yii-db-migration.php ./yii-db-migration.php
     ```
 
-2. Define DB connection in configuration file (see 
+2. Define DB connection in configuration file (see
    [Yii DB documentation](https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection)).
-   For example, MySQL connection: 
+   For example, MySQL connection:
+
     ```php
     'db' => new \Yiisoft\Db\Mysql\Connection(
         new \Yiisoft\Db\Mysql\Driver('mysql:host=mysql;dbname=mydb', 'user', 'q1w2e3r4'),
         new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Cache\ArrayCache()),
     ),
     ```
-   
+
 3. Optionally, modify other options in the configuration file. Each option has a comment with description.
 4. Run the console command without arguments to see the list of available migration commands:
 
     ```shell
     ./vendor/bin/yii-db-migration
     ```
-   
+
 ## Without configuration file
 
 This can be useful in testing environment and/or when multiple RDBMS are used.

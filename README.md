@@ -22,7 +22,7 @@ Supports the following databases out of the box:
 - [MySQL](https://www.mysql.com/) of versions **5.7–8.0**.
 - [MariaDB](https://mariadb.org/) of versions **10.4–10.9**.
 - [Oracle](https://www.oracle.com/database/) of versions **12c–21c**.
-- [PostgreSQL](https://www.postgresql.org/) of versions **9.6–15**. 
+- [PostgreSQL](https://www.postgresql.org/) of versions **9.6–15**.
 - [SQLite](https://www.sqlite.org/index.html) of version **3.3 and above**.
 
 ## Requirements
@@ -32,31 +32,23 @@ Supports the following databases out of the box:
 
 ## Installation
 
-The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
+The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
 
-Either run
+Either run:
 
 ```shell
 composer require yiisoft/db-migration
 ```
 
-or add
+or add to the `require` section of your `composer.json`:
 
 ```json
 "yiisoft/db-migration": "^1.0"
 ```
 
-to the `require` section of your `composer.json`.
-
-## Usage
-
-- [Yii Console](/docs/en/usage-with-yii-console.md).
-- [Symfony application](/docs/en/usage-with-symfony.md).
-- [Standalone](/docs/en/usage-standalone.md).
-
 ## Command list
 
-```
+```shell
 migrate:create   Creates a new migration.
 migrate:down     Reverts the specified number of latest migrations.
 migrate:history  Displays the migration history.
@@ -67,21 +59,19 @@ migrate:up       Applies new migrations.
 
 The create command allows defining fields for the table being created.
 
+## Documentation
+
+- [English](docs/guide/en/readme.md)
+- [Português - Brasil](docs/guide/pt-BR/readme.md)
+
+Testing:
+
+- [Internals](docs/internals.md)
+
 ## Support
 
-If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/db/68) is a good place for that.
+If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
 You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
-
-## Testing
-
-[Check the testing instructions](/docs/en/testing.md) to learn about testing.
-
-## License
-
-The Yii Db Migration is free software. It is released under the terms of the BSD License.
-Please see [`LICENSE`](./LICENSE.md) for more information.
-
-Maintained by [Yii Software](https://www.yiiframework.com/).
 
 ## Support the project
 
@@ -94,3 +84,10 @@ Maintained by [Yii Software](https://www.yiiframework.com/).
 [![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=flat&logo=telegram)](https://t.me/yii3en)
 [![Facebook](https://img.shields.io/badge/facebook-join-1DA1F2?style=flat&logo=facebook&logoColor=ffffff)](https://www.facebook.com/groups/yiitalk)
 [![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=flat&logo=slack)](https://yiiframework.com/go/slack)
+
+## License
+
+The Yii Db Migration is free software. It is released under the terms of the BSD License.
+Please see [`LICENSE`](./LICENSE.md) for more information.
+
+Maintained by [Yii Software](https://www.yiiframework.com/).
