@@ -66,9 +66,6 @@ The create command allows defining fields for the table being created.
 
 Testing:
 
-- [English](docs/guide/en/testing.md)
-- [Português - Brasil](docs/guide/pt-BR/testing.md)
-
 - [Internals](docs/internals.md)
 
 ## Support
