@@ -34,7 +34,7 @@ docker compose up -d
 
 ### Global testing
 
-The following steps are required to run the tests.
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 
 1. Run all Docker containers for each dbms.
 2. Install the dependencies of the project with composer.
@@ -46,7 +46,7 @@ vendor/bin/phpunit
 
 ### Individual testing
 
-The following steps are required to run the tests.
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
 
 1. Run the Docker container for the dbms you want to test.
 2. Install the dependencies of the project with composer.
@@ -63,14 +63,6 @@ Suites available:
 - Oracle
 - Pgsql
 - Sqlite
-
-## Unit testing
-
-The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
-
-```shell
-./vendor/bin/phpunit
-```
 
 ## Mutation testing
 
