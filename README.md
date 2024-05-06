@@ -32,7 +32,7 @@ Supports the following databases out of the box:
 
 ## Installation
 
-The package could be installed with [composer](https://getcomposer.org/download/)
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
 composer require yiisoft/db-migration
