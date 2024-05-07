@@ -5,6 +5,10 @@ In this example, we use [yiisoft/app](https://github.com/yiisoft/app).
 First, configure DI container. Create `config/common/db.php` with the following content:
 
 ```php
+<?php
+
+declare(strict_types=1);
+
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqliteConnection;
 

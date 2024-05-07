@@ -32,23 +32,15 @@ Supports the following databases out of the box:
 
 ## Installation
 
-The preferred way to install this extension is through [composer](https://getcomposer.org/download/).
-
-Either run:
+The package could be installed with [Composer](https://getcomposer.org):
 
 ```shell
 composer require yiisoft/db-migration
 ```
 
-or add to the `require` section of your `composer.json`:
-
-```json
-"yiisoft/db-migration": "^1.0"
-```
-
 ## Command list
 
-```shell
+```text
 migrate:create   Creates a new migration.
 migrate:down     Reverts the specified number of latest migrations.
 migrate:history  Displays the migration history.
@@ -61,17 +53,18 @@ The create command allows defining fields for the table being created.
 
 ## Documentation
 
-- [English](docs/guide/en/readme.md)
-- [Português - Brasil](docs/guide/pt-BR/readme.md)
-
-Testing:
-
+- [Guide](docs/guide/en/README.md)
 - [Internals](docs/internals.md)
-
-## Support
 
 If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
 You may also check out other [Yii Community Resources](https://www.yiiframework.com/community).
+
+## License
+
+The Yii DB Migration is free software. It is released under the terms of the BSD License.
+Please see [`LICENSE`](./LICENSE.md) for more information.
+
+Maintained by [Yii Software](https://www.yiiframework.com/).
 
 ## Support the project
 
@@ -84,10 +77,3 @@ You may also check out other [Yii Community Resources](https://www.yiiframework.
 [![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=flat&logo=telegram)](https://t.me/yii3en)
 [![Facebook](https://img.shields.io/badge/facebook-join-1DA1F2?style=flat&logo=facebook&logoColor=ffffff)](https://www.facebook.com/groups/yiitalk)
 [![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=flat&logo=slack)](https://yiiframework.com/go/slack)
-
-## License
-
-The Yii Db Migration is free software. It is released under the terms of the BSD License.
-Please see [`LICENSE`](./LICENSE.md) for more information.
-
-Maintained by [Yii Software](https://www.yiiframework.com/).
