@@ -40,7 +40,7 @@ composer require yiisoft/db-migration
 
 ## Command list
 
-```shell
+```text
 migrate:create   Creates a new migration.
 migrate:down     Reverts the specified number of latest migrations.
 migrate:history  Displays the migration history.
@@ -53,7 +53,7 @@ The create command allows defining fields for the table being created.
 
 ## Documentation
 
-- Guide: [English](docs/guide/en/README.md), [Português - Brasil](docs/guide/pt-BR/README.md)
+- [Guide](docs/guide/en/README.md)
 - [Internals](docs/internals.md)
 
 If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.
@@ -61,7 +61,7 @@ You may also check out other [Yii Community Resources](https://www.yiiframework.
 
 ## License
 
-The Yii Db Migration is free software. It is released under the terms of the BSD License.
+The Yii DB Migration is free software. It is released under the terms of the BSD License.
 Please see [`LICENSE`](./LICENSE.md) for more information.
 
 Maintained by [Yii Software](https://www.yiiframework.com/).
