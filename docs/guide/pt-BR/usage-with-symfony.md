@@ -1,13 +1,13 @@
-# Usage with Symfony
+# Uso com Symfony
 
-Require db-migration and DB driver. Let's use SQLite for this example:
+Requer db-migration e driver de banco de dados. Vamos usar SQLite para este exemplo:
 
 ```shell
 composer require yiisoft/db-migration
 composer require yiisoft/db-sqlite
 ```
 
-Configure migrations and database connection in your `config/services.yml`:
+Configure migrações e conexão de banco de dados em seu `config/services.yml`:
 
 ```yaml
 Yiisoft\Db\Migration\:
@@ -52,4 +52,4 @@ sqlite_driver:
     - 'sqlite:./var/migrations.sq3'
 ```
 
-That's it. Now you can use `bin/console migrate:*` commands.
+É isso. Agora você pode usar os comandos `bin/console migrate:*`.
