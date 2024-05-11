@@ -1,13 +1,21 @@
 # Uso com Symfony
 
+<<<<<<< Updated upstream
 Requer db-migration e driver de banco de dados. Vamos usar SQLite para este exemplo:
+=======
+Requer [Yii DB Migration](https://github.com/yiisoft/db-migration) e driver de banco de dados. Vamos usar [Yii DB SQLite](https://github.com/yiisoft/db-sqlite) para este exemplo:
+>>>>>>> Stashed changes
 
 ```shell
 composer require yiisoft/db-migration
 composer require yiisoft/db-sqlite
 ```
 
+<<<<<<< Updated upstream
 Configure migrações e conexão de banco de dados em seu `config/services.yml`:
+=======
+Configure migração e a conexão de banco de dados em seu `config/services.yml`:
+>>>>>>> Stashed changes
 
 ```yaml
 Yiisoft\Db\Migration\:
