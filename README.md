@@ -42,12 +42,6 @@ composer require yiisoft/db-migration
 
 ## Command list
 
-```shell
-./yii list
-```
-
-Result:
-
 ```text
 migrate:create   Creates a new migration.
 migrate:down     Reverts the specified number of latest migrations.
