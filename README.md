@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="100px">
+        <img src="https://yiisoft.github.io/docs/images/yii_logo.svg" height="100px" alt="Yii">
     </a>
     <h1 align="center">Yii DB Migration</h1>
     <br>
@@ -18,12 +18,14 @@ Yii DB Migration allows you to manage database schema using migrations.
 
 Supports the following databases out of the box:
 
-- [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-2019) of versions **2017, 2019, 2022**.
-- [MySQL](https://www.mysql.com/) of versions **5.7–8.0**.
-- [MariaDB](https://mariadb.org/) of versions **10.4–10.9**.
-- [Oracle](https://www.oracle.com/database/) of versions **12c–21c**.
-- [PostgreSQL](https://www.postgresql.org/) of versions **9.6–15**.
-- [SQLite](https://www.sqlite.org/index.html) of version **3.3 and above**.
+| DBMS | Version |
+|----|----------|
+| [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-2019) | **2017, 2019, 2022** |
+| [MySQL](https://www.mysql.com/) | **5.7–8.0** |
+| [MariaDB](https://mariadb.org/) | **10.4–10.9** |
+| [Oracle](https://www.oracle.com/database/) | **12c–21c** |
+| [PostgreSQL](https://www.postgresql.org/) |  **9.6–15** |
+| [SQLite](https://www.sqlite.org) | **3.3 and above** |
 
 ## Requirements
 
@@ -53,7 +55,7 @@ The create command allows defining fields for the table being created.
 
 ## Documentation
 
-- [Guide](docs/guide/en/README.md)
+- Guide: [English](docs/guide/en/README.md), [Português - Brasil](docs/guide/pt-BR/README.md)
 - [Internals](docs/internals.md)
 
 If you need help or have a question, the [Yii Forum](https://forum.yiiframework.com/c/yii-3-0/63) is a good place for that.

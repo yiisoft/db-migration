@@ -1,16 +1,16 @@
 # Standalone usage
 
-## With configuration file
+## Com arquivo de configuração
 
-1. Copy configuration file `./vendor/yiisoft/db-migration/bin/yii-db-migration.php` to root folder of your project:
+1. Copie o arquivo de configuração `./vendor/yiisoft/db-migration/bin/yii-db-migration.php` para a pasta raiz do seu projeto:
 
     ```shell
     cp ./vendor/yiisoft/db-migration/bin/yii-db-migration.php ./yii-db-migration.php
     ```
 
-2. Define DB connection in configuration file (see
-   [Yii DB documentation](https://github.com/yiisoft/db/blob/master/docs/guide/en/README.md#create-connection)).
-   For example, MySQL connection:
+2. Defina a conexão do banco de dados no arquivo de configuração (consulte a 
+    [documentação do Yii DB](https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection)).
+    Por exemplo, conexão MySQL:
 
     ```php
     'db' => new \Yiisoft\Db\Mysql\Connection(
@@ -19,19 +19,19 @@
     ),
     ```
 
-3. Optionally, modify other options in the configuration file. Each option has a comment with description.
+3. Opcionalmente, modifique outras opções no arquivo de configuração. Cada opção possui um comentário com descrição.
 
-4. Run the console command without arguments to see the list of available migration commands:
+4. Execute o comando do console sem argumentos para ver a lista de comandos de migração disponíveis:
 
     ```shell
     ./vendor/bin/yii-db-migration
     ```
 
-## Without configuration file
+## Sem arquivo de configuração
 
-This can be useful in testing environment and/or when multiple RDBMS are used.
+Isso pode ser útil em ambientes de teste e/ou quando vários RDBMS são usados.
 
-Configure all dependencies manually:
+Configure todas as dependências manualmente:
 
 ```php
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -46,7 +46,7 @@ $migrationService = new MigrationService($database, new Injector(), $migrator);
 $migrationService->setSourcePaths([dirname(__DIR__, 2), 'migrations']);
 ```
 
-Then initialize the command for using without CLI. For example, for applying migrations it will be `UpdateCommand`:
+Em seguida, inicialize o comando para usar sem CLI. Por exemplo, para aplicar migrações será `UpdateCommand`:
 
 ```php
 use Symfony\Component\Console\Helper\HelperSet;
@@ -58,7 +58,7 @@ $command = new UpdateCommand(new UpdateRunner($migrator), $migrationService, $mi
 $command->setHelperSet(new HelperSet(['queestion' => new QuestionHelper()]));
 ```
 
-And, finally, run the command:
+E, por fim, execute o comando:
 
 ```php
 use Symfony\Component\Console\Input\ArrayInput;
