@@ -18,7 +18,7 @@ Yii DB Migration allows you to manage database schema using migrations.
 
 Supports the following databases out of the box:
 
-| DB | Version |
+| DBMS | Version |
 |----|----------|
 | [MSSQL](https://www.microsoft.com/en-us/sql-server/sql-server-2019) | **2017, 2019, 2022** |
 | [MySQL](https://www.mysql.com/) | **5.7–8.0** |
