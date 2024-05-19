@@ -1,6 +1,6 @@
 # Usage with Symfony
 
-Require db-migration and DB driver. Let's use SQLite for this example:
+Require migrations package and DB driver. Let's use SQLite for this example:
 
 ```shell
 composer require yiisoft/db-migration
