@@ -42,8 +42,6 @@ composer require yiisoft/db-migration
 
 ## Command list
 
-View the list of available commands with:
-
 ```shell
 ./yii list
 ```
