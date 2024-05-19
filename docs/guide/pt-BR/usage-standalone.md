@@ -8,13 +8,8 @@
     cp ./vendor/yiisoft/db-migration/bin/yii-db-migration.php ./yii-db-migration.php
     ```
 
-<<<<<<< Updated upstream
-2. Defina a conexão do banco de dados no arquivo de configuração (consulte
-    [Documentação do banco de dados Yii](https://github.com/yiisoft/db/blob/master/docs/guide/pt-BR/README.md#criar-conexão)).
-=======
 2. Defina a conexão do banco de dados no arquivo de configuração (consulte a 
     [documentação do Yii DB](https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection)).
->>>>>>> Stashed changes
     Por exemplo, conexão MySQL:
 
     ```php

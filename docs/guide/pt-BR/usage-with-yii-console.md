@@ -33,19 +33,11 @@ Adicione em `config/params.php`:
 ...
 ```
 
-<<<<<<< Updated upstream
-Agora o `MigrationService::class` usa o `View` da aplicação que já está cadastrada em `yiisoft/view`.
-
-Execute `composer du` no console para reconstruir a configuração.
-
-Agora temos o pacote `yiisoft/db-migration` configurado e ele pode ser chamado no console.
-=======
 Agora o `MigrationService::class` usa o `View` da aplicação que já está registrada em `yiisoft/view`.
 
 Execute `composer du` no console para reconstruir a configuração.
 
 Agora temos o pacote [`yiisoft/db-migration`](https://github.com/yiisoft/db-migration) configurado e ele pode ser chamado no console.
->>>>>>> Stashed changes
 
 Veja a lista de comandos disponíveis com `./yii list`:
 
