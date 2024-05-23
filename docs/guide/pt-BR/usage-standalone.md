@@ -9,7 +9,7 @@
     ```
 
 2. Defina a conexão do banco de dados no arquivo de configuração (consulte a 
-    [documentação do Yii DB](https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection)).
+    [documentação do Yii DB](https://github.com/yiisoft/db/blob/master/docs/guide/en/README.md#create-connection)).
     Por exemplo, conexão MySQL:
 
     ```php

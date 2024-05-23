@@ -13,7 +13,7 @@ return [
      * ),
      * ```
      *
-     * @see https://github.com/yiisoft/db/blob/master/docs/en/README.md#create-connection
+     * @see https://github.com/yiisoft/db/blob/master/docs/guide/en/README.md#create-connection
      */
     'db' => null,
 
