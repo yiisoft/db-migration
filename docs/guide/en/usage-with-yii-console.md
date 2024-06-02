@@ -33,8 +33,6 @@ Add to `config/params.php`:
 ...
 ```
 
-Now the `MigrationService::class` uses the `View` of the application that is already registered in `yiisoft/view`.
-
 Execute `composer du` in console to rebuild the configuration.
 
 Now we have the `yiisoft/db-migration` package configured and it can be called in the console.
