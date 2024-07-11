@@ -138,6 +138,9 @@ final class Migrator
 
     private function createMigrationHistoryTable(): void
     {
+        /**
+         * @psalm-suppress DeprecatedMethod We use it before Yii DB 2.0 release
+         */
         $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
