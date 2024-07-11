@@ -9,6 +9,8 @@ on:
       - 'psalm.xml'
 
   push:
+    branches:
+      - master
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -72,6 +74,6 @@ jobs:
 
       - name: Run infection.
         run: |
-          vendor/bin/roave-infection-static-analysis-plugin -j2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql"
+          vendor/bin/roave-infection-static-analysis-plugin --threads=2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql"
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
