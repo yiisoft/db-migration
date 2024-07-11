@@ -139,9 +139,12 @@ final class Migrator
     private function createMigrationHistoryTable(): void
     {
         /**
-         * @psalm-suppress DeprecatedMethod We use it before Yii DB 2.0 release
+         * Remove these annotations after raise Yii DB version to 2.0
+         *
+         * @psalm-suppress UndefinedInterfaceMethod
+         * @var string $tableName
          */
-        $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
+        $tableName = $this->db->getQuoter()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
         $b = $this->createBuilder(new NullMigrationInformer());
