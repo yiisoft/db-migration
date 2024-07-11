@@ -138,7 +138,7 @@ final class Migrator
 
     private function createMigrationHistoryTable(): void
     {
-        $tableName = $this->db->getSchema()->getRawTableName($this->historyTable);
+        $tableName = $this->db->getQuoter()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
         $b = $this->createBuilder(new NullMigrationInformer());
