@@ -2,7 +2,7 @@
 
 ## 1.1.1 under development
 
-- no changes in this release.
+- Enh #268: Don't use Yii DB deprecated methods in `Migrator` (@BaBL86, @vjik) 
 
 ## 1.1.0 December 24, 2023
 
