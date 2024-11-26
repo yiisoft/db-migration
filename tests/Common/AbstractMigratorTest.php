@@ -66,7 +66,12 @@ abstract class AbstractMigratorTest extends TestCase
             'text'
         )->execute();
 
-        $this->assertNull($migrator->getMigrationNameLimit());
+        $limit = $migrator->getMigrationNameLimit();
+
+        match ($db->getDriverName()) {
+            'sqlsrv' => $this->assertSame(2147483647, $limit),
+            default => $this->assertNull($limit),
+        };
     }
 
     public function testGetMigrationNameLimitFromSchema(): void

@@ -6,12 +6,15 @@ namespace Yiisoft\Db\Migration;
 
 use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Constant\ColumnType;
+use Yiisoft\Db\Constant\PseudoType;
 use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Schema\Column\ColumnSchemaInterface;
 
 use function implode;
 use function ltrim;
@@ -191,14 +194,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * generated SQL.
      *
      * @param string $table The name of the table to be created. The name will be properly quoted by the method.
-     * @param array $columns The columns (name => definition) in the new table.
+     * @param (string|ColumnSchemaInterface)[] $columns The columns (name => definition) in the new table.
      * @param string|null $options Additional SQL fragment that will be appended to the generated SQL.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * @psalm-param array<string, string|ColumnInterface> $columns
+     * @psalm-param array<string, string|ColumnSchemaInterface> $columns
      */
     public function createTable(string $table, array $columns, string|null $options = null): void
     {
@@ -207,7 +210,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
         foreach ($columns as $column => $type) {
-            if ($type instanceof ColumnInterface) {
+            if ($type instanceof ColumnInterface || $type instanceof ColumnSchemaInterface) {
                 $comment = $type->getComment();
                 if ($comment !== null) {
                     $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
@@ -265,24 +268,29 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table The table that the new column will be added to.
      * The table name will be properly quoted by the method.
      * @param string $column The name of the new column. The name will be properly quoted by the method.
-     * @param ColumnInterface|string $type The column type. The {@see QueryBuilder::getColumnType()} method
-     * will be invoked to convert an abstract column type (if any) into the physical one. Anything not
-     * recognized as an abstract type will be kept in the generated SQL. For example, 'string' will be turned
-     * into 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     * @param ColumnSchemaInterface|string $type TThe column type. The {@see QueryBuilder::buildColumnDefinition()}
+     * method will convert the column type into the column definition. Any column type not recognized as a database type
+     * will be recognized as one of an {@see ColumnType abstract} or {@see PseudoType pseudo} type, or as a 'string'
+     * abstract type by default to generate column definition. For example, 'string' will be generated into
+     * 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      */
-    public function addColumn(string $table, string $column, ColumnInterface|string $type): void
+    public function addColumn(string $table, string $column, ColumnInterface|ColumnSchemaInterface|string $type): void
     {
-        $comment = null;
-        if ($type instanceof ColumnInterface) {
+        if (is_string($type)) {
+            $comment = null;
+        } else {
             $comment = $type->getComment();
-            $type = $type->asString();
         }
 
-        $time = $this->beginCommand("add column $column $type to table $table");
+        $typeAsString = $this->db->getQueryBuilder()->buildColumnDefinition($type);
+
+        $time = $this->beginCommand("add column $column $typeAsString to table $table");
         $this->db->createCommand()->addColumn($table, $column, $type)->execute();
+
         if ($comment !== null) {
             $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
         }
+
         $this->endCommand($time);
     }
 
@@ -322,25 +330,25 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table whose column is to be changed. The method will properly quote the table name.
      * @param string $column The name of the column to be changed. The name will be properly quoted by the method.
-     * @param ColumnInterface|string $type The new column type.
-     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert an abstract column
-     * type (if any) into the physical one. Anything not recognized as an abstract type will be kept in the
-     * generated SQL. For example, 'string' will be turned into 'varchar(255)', while 'string not null' will become
-     * 'varchar(255) not null'.
+     * @param ColumnSchemaInterface|string $type TThe column type. The {@see QueryBuilder::buildColumnDefinition()}
+     * method will convert the column type into the column definition. Any column type not recognized as a database type
+     * will be recognized as one of an {@see ColumnType abstract} or {@see PseudoType pseudo} type, or as a 'string'
+     * abstract type by default to generate column definition. For example, 'string' will be generated into
+     * 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, ColumnInterface|string $type): void
+    public function alterColumn(string $table, string $column, ColumnInterface|ColumnSchemaInterface|string $type): void
     {
-        $comment = null;
-        $typeAsString = $type;
-
-        if ($typeAsString instanceof ColumnInterface) {
-            $comment = $typeAsString->getComment();
-            $typeAsString = $typeAsString->asString();
+        if (is_string($type)) {
+            $comment = null;
+        } else {
+            $comment = $type->getComment();
         }
+
+        $typeAsString = $this->db->getQueryBuilder()->buildColumnDefinition($type);
 
         $time = $this->beginCommand("Alter column $column in table $table to $typeAsString");
 
