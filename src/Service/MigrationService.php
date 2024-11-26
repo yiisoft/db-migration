@@ -273,7 +273,7 @@ final class MigrationService
     public function makeMigrations(array $classes): array
     {
         return array_map(
-            [$this, 'makeMigration'],
+            $this->makeMigration(...),
             $classes
         );
     }
@@ -301,7 +301,7 @@ final class MigrationService
     public function makeRevertibleMigrations(array $classes): array
     {
         return array_map(
-            [$this, 'makeRevertibleMigration'],
+            $this->makeRevertibleMigration(...),
             $classes
         );
     }
