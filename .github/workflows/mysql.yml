@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.mysql }}
+    name: PHP ${{ matrix.php }}
 
     env:
       COMPOSER_ROOT_VERSION: dev-master

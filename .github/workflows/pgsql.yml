@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-pgsql-${{ matrix.pgsql }}
+    name: PHP ${{ matrix.php }}-pgsql
 
     env:
       COMPOSER_ROOT_VERSION: dev-master

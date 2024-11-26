@@ -22,18 +22,15 @@ concurrency:
 
 jobs:
   mutation:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: PHP ${{ matrix.php }}
 
     env:
       extensions: pdo, pdo_pgsql, pdo_sqlite
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-
         php:
           - 8.3
 
