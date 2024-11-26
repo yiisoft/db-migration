@@ -1,23 +1,18 @@
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'psalm.xml'
+    paths:
+      - 'src/**'
+      - '.github/workflows/mutation.yml'
+      - 'composer.json'
+      - 'infection.json.dist'
 
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'psalm.xml'
+    branches: ['master']
+    paths:
+      - 'src/**'
+      - '.github/workflows/mutation.yml'
+      - 'composer.json'
+      - 'infection.json.dist'
 
 name: mutation test
 
@@ -44,7 +39,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root
@@ -55,7 +50,7 @@ jobs:
 
     steps:
       - name: Checkout.
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install PHP.
         uses: shivammathur/setup-php@v2
@@ -64,13 +59,24 @@ jobs:
           extensions: ${{ env.extensions }}
           ini-values: date.timezone='UTC'
           coverage: pcov
-          tools: composer:v2
 
       - name: Update composer.
         run: composer self-update
 
-      - name: Install dependencies.
-        run: composer require yiisoft/db-pgsql:^1.1 yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+      - name: Set environment variables pull request linux.
+        uses: yiisoft/actions/db/environment-linux@master
+
+      - name: Install db-pgsql.
+        uses: yiisoft/actions/db/subpackage-install@master
+        with:
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
+          CURRENT_PACKAGE: db-pgsql
+          FULL_BRANCH_NAME: ${{ env.FULL_BRANCH_NAME }}
+          WORK_PACKAGE_URL: ${{ env.WORK_PACKAGE_URL }}
+
+      - name: Install dependencies with composer.
+        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run infection.
         run: |

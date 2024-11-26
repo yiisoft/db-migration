@@ -10,10 +10,6 @@
     <projectFiles>
         <directory name="src" />
         <directory name="bin" />
-        <file name="bin/yii-db-migration" />
-        <ignoreFiles>
-            <directory name="vendor" />
-        </ignoreFiles>
     </projectFiles>
     <issueHandlers>
         <MixedAssignment errorLevel="suppress" />

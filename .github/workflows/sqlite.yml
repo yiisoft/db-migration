@@ -1,24 +1,22 @@
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    paths:
+      - 'resources/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/sqlite.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
 
   push:
     branches: ['master']
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    paths:
+      - 'resources/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/sqlite.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
 
 name: sqlite
 
@@ -28,9 +26,10 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: PHP ${{ matrix.php }}-sqlite-${{ matrix.os }}
 
     env:
+      COMPOSER_ROOT_VERSION: dev-master
       extensions: pdo, pdo_sqlite
 
     runs-on: ${{ matrix.os }}
@@ -42,13 +41,13 @@ jobs:
           - windows-latest
 
         php:
-          - '8.1'
-          - '8.2'
-          - '8.3'
+          - 8.1
+          - 8.2
+          - 8.3
 
     steps:
       - name: Checkout.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install PHP with extensions.
         uses: shivammathur/setup-php@v2
@@ -57,20 +56,36 @@ jobs:
           extensions: ${{ env.extensions }}
           ini-values: date.timezone='UTC'
           coverage: pcov
-          tools: composer:v2
 
       - name: Update composer.
         run: composer self-update
 
+      - name: Set environment variables pull request linux.
+        if: matrix.os == 'ubuntu-latest'
+        uses: yiisoft/actions/db/environment-linux@master
+
+      - name: Set environment variables pull request windows.
+        if: matrix.os == 'windows-latest'
+        uses: yiisoft/actions/db/environment-windows@master
+
       - name: Install db-sqlite.
-        run: composer require yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        uses: yiisoft/actions/db/subpackage-install@master
+        with:
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
+          CURRENT_PACKAGE: db-sqlite
+          FULL_BRANCH_NAME: ${{ env.FULL_BRANCH_NAME }}
+          WORK_PACKAGE_URL: ${{ env.WORK_PACKAGE_URL }}
+
+      - name: Install dependencies with composer.
+        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Sqlite --coverage-clover=coverage.xml --colors=always
 
       - name: Upload coverage to Codecov.
         if: matrix.php == '8.3'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
