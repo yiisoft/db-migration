@@ -89,10 +89,10 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * The method will properly escape the column names and bind the values to be inserted.
      *
      * @param string $table The table that new rows will be inserted into.
-     * @param array $columns The column names.
+     * @param string[] $columns The column names.
      * @param iterable $rows The rows to be batch inserted into the table
      *
-     * @psalm-param iterable<array-key, array<array-key, mixed>> $rows
+     * @psalm-param iterable<iterable<array-key, mixed>> $rows
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -101,7 +101,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function batchInsert(string $table, array $columns, iterable $rows): void
     {
         $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->batchInsert($table, $columns, $rows)->execute();
+        $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
         $this->endCommand($time);
     }
 

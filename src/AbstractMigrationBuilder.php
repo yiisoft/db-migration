@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration;
 
+use Yiisoft\Db\Constant\ColumnType;
+use Yiisoft\Db\Constant\PseudoType;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Schema\SchemaInterface;
 
@@ -30,6 +32,8 @@ use Yiisoft\Db\Schema\SchemaInterface;
  *     ],
  * );
  * ```
+ *
+ * @psalm-suppress DeprecatedMethod
  */
 abstract class AbstractMigrationBuilder
 {
@@ -48,7 +52,7 @@ abstract class AbstractMigrationBuilder
      */
     public function bigInteger(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_BIGINT, $length);
+        return $this->schema->createColumn(ColumnType::BIGINT, $length);
     }
 
     /**
@@ -62,7 +66,7 @@ abstract class AbstractMigrationBuilder
      */
     public function bigPrimaryKey(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_BIGPK, $length);
+        return $this->schema->createColumn(PseudoType::BIGPK, $length);
     }
 
     /**
@@ -74,7 +78,7 @@ abstract class AbstractMigrationBuilder
      */
     public function uuidPrimaryKey(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_UUID_PK);
+        return $this->schema->createColumn(PseudoType::UUID_PK);
     }
 
     /**
@@ -86,7 +90,7 @@ abstract class AbstractMigrationBuilder
      */
     public function uuidPrimaryKeySequenced(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_UUID_PK_SEQ);
+        return $this->schema->createColumn(PseudoType::UUID_PK_SEQ);
     }
 
     /**
@@ -98,7 +102,7 @@ abstract class AbstractMigrationBuilder
      */
     public function uuid(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_UUID);
+        return $this->schema->createColumn(ColumnType::UUID);
     }
 
     /**
@@ -112,7 +116,7 @@ abstract class AbstractMigrationBuilder
      */
     public function binary(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_BINARY, $length);
+        return $this->schema->createColumn(ColumnType::BINARY, $length);
     }
 
     /**
@@ -122,7 +126,7 @@ abstract class AbstractMigrationBuilder
      */
     public function boolean(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_BOOLEAN);
+        return $this->schema->createColumn(ColumnType::BOOLEAN);
     }
 
     /**
@@ -136,7 +140,7 @@ abstract class AbstractMigrationBuilder
      */
     public function char(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_CHAR, $length);
+        return $this->schema->createColumn(ColumnType::CHAR, $length);
     }
 
     /**
@@ -146,7 +150,7 @@ abstract class AbstractMigrationBuilder
      */
     public function date(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_DATE);
+        return $this->schema->createColumn(ColumnType::DATE);
     }
 
     /**
@@ -161,7 +165,7 @@ abstract class AbstractMigrationBuilder
      */
     public function dateTime(int $precision = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_DATETIME, $precision);
+        return $this->schema->createColumn(ColumnType::DATETIME, $precision);
     }
 
     /**
@@ -190,7 +194,7 @@ abstract class AbstractMigrationBuilder
             $length[] = $scale;
         }
 
-        return $this->schema->createColumn(SchemaInterface::TYPE_DECIMAL, $length);
+        return $this->schema->createColumn(ColumnType::DECIMAL, $length);
     }
 
     /**
@@ -205,7 +209,7 @@ abstract class AbstractMigrationBuilder
      */
     public function double(int $precision = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_DOUBLE, $precision);
+        return $this->schema->createColumn(ColumnType::DOUBLE, $precision);
     }
 
     /**
@@ -220,7 +224,7 @@ abstract class AbstractMigrationBuilder
      */
     public function float(int $precision = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_FLOAT, $precision);
+        return $this->schema->createColumn(ColumnType::FLOAT, $precision);
     }
 
     /**
@@ -234,7 +238,7 @@ abstract class AbstractMigrationBuilder
      */
     public function integer(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_INTEGER, $length);
+        return $this->schema->createColumn(ColumnType::INTEGER, $length);
     }
 
     /**
@@ -244,7 +248,7 @@ abstract class AbstractMigrationBuilder
      */
     public function json(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_JSON);
+        return $this->schema->createColumn(ColumnType::JSON);
     }
 
     /**
@@ -273,7 +277,7 @@ abstract class AbstractMigrationBuilder
             $length[] = $scale;
         }
 
-        return $this->schema->createColumn(SchemaInterface::TYPE_MONEY, $length);
+        return $this->schema->createColumn(ColumnType::MONEY, $length);
     }
 
     /**
@@ -287,7 +291,7 @@ abstract class AbstractMigrationBuilder
      */
     public function primaryKey(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_PK, $length);
+        return $this->schema->createColumn(PseudoType::PK, $length);
     }
 
     /**
@@ -301,7 +305,7 @@ abstract class AbstractMigrationBuilder
      */
     public function smallInteger(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_SMALLINT, $length);
+        return $this->schema->createColumn(ColumnType::SMALLINT, $length);
     }
 
     /**
@@ -315,7 +319,7 @@ abstract class AbstractMigrationBuilder
      */
     public function string(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_STRING, $length);
+        return $this->schema->createColumn(ColumnType::STRING, $length);
     }
 
     /**
@@ -325,7 +329,7 @@ abstract class AbstractMigrationBuilder
      */
     public function text(): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_TEXT);
+        return $this->schema->createColumn(ColumnType::TEXT);
     }
 
     /**
@@ -340,7 +344,7 @@ abstract class AbstractMigrationBuilder
      */
     public function time(int $precision = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_TIME, $precision);
+        return $this->schema->createColumn(ColumnType::TIME, $precision);
     }
 
     /**
@@ -355,7 +359,7 @@ abstract class AbstractMigrationBuilder
      */
     public function timestamp(int $precision = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_TIMESTAMP, $precision);
+        return $this->schema->createColumn(ColumnType::TIMESTAMP, $precision);
     }
 
     /**
@@ -369,6 +373,6 @@ abstract class AbstractMigrationBuilder
      */
     public function tinyInteger(int $length = null): ColumnInterface
     {
-        return $this->schema->createColumn(SchemaInterface::TYPE_TINYINT, $length);
+        return $this->schema->createColumn(ColumnType::TINYINT, $length);
     }
 }
