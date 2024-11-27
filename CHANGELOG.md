@@ -4,6 +4,7 @@
 
 - Enh #268: Don't use Yii DB deprecated methods in `Migrator` (@BaBL86, @vjik)
 - Enh #272: Raise minimum PHP version to `^8.1` with minor refactoring (@Tigrov)
+- Enh #274: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
 
 ## 1.1.0 December 24, 2023
 
