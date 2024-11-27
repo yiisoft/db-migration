@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 1.2.1 under development
+
+- no changes in this release.
+
 ## 1.2.0 November 27, 2024
 
 - Enh #268: Don't use Yii DB deprecated methods in `Migrator` (@BaBL86, @vjik)
