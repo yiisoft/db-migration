@@ -33,7 +33,6 @@
 /docker-compose.yml     export-ignore
 /psalm.xml              export-ignore
 /rector.php             export-ignore
-/tests                  export-ignore
 /docs                   export-ignore
 
 # Avoid merge conflicts in CHANGELOG
