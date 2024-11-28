@@ -1,24 +1,26 @@
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    paths:
+      - 'bin/**'
+      - 'config/**'
+      - 'resources/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/build.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
 
   push:
     branches: ['master']
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    paths:
+      - 'bin/**'
+      - 'config/**'
+      - 'resources/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/build.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
 
 name: build
 
@@ -28,23 +30,23 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: PHP ${{ matrix.php }}
 
-    runs-on: ${{ matrix.os }}
+    env:
+      COMPOSER_ROOT_VERSION: dev-master
+
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-
         php:
-          - '8.1'
-          - '8.2'
-          - '8.3'
+          - 8.1
+          - 8.2
+          - 8.3
 
     steps:
       - name: Checkout.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install PHP with extensions.
         uses: shivammathur/setup-php@v2
@@ -52,20 +54,28 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
           coverage: pcov
-          tools: composer:v2
 
       - name: Update composer.
         run: composer self-update
 
+      - name: Set environment variables pull request linux.
+        uses: yiisoft/actions/db/environment-linux@master
+
       - name: Install db-sqlite.
-        run: composer require yiisoft/db-sqlite:^1.0 --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        uses: yiisoft/actions/db/subpackage-install@master
+        with:
+          BRANCH_NAME: ${{ env.BRANCH_NAME }}
+          COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
+          CURRENT_PACKAGE: db-sqlite
+          FULL_BRANCH_NAME: ${{ env.FULL_BRANCH_NAME }}
+          WORK_PACKAGE_URL: ${{ env.WORK_PACKAGE_URL }}
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Migration --coverage-clover=coverage.xml --colors=always
 
       - name: Upload coverage to Codecov.
         if: matrix.php == '8.3'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml

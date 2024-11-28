@@ -2,7 +2,7 @@
 
 ## 1.2.1 under development
 
-- no changes in this release.
+- Enh #274: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 

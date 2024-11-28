@@ -20,6 +20,12 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         parent::setUp();
     }
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        MssqlFactory::clearDatabase($this->container);
+    }
+
     public function testCreateTableAnotherSchema(): void
     {
         $db = $this->container->get(ConnectionInterface::class);

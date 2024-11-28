@@ -1,26 +1,24 @@
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'phpunit.xml.dist'
-      - 'psalm.xml'
+    paths:
+      - 'bin/**'
+      - 'config/**'
+      - 'resources/**'
+      - 'src/**'
+      - '.github/workflows/composer-require-checker.yml'
+      - 'composer.json'
+      - 'composer-require-checker.json'
 
   push:
     branches: ['master']
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'phpunit.xml.dist'
-      - 'psalm.xml'
+    paths:
+      - 'bin/**'
+      - 'config/**'
+      - 'resources/**'
+      - 'src/**'
+      - '.github/workflows/composer-require-checker.yml'
+      - 'composer.json'
+      - 'composer-require-checker.json'
 
 name: Composer require checker
 

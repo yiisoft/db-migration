@@ -211,7 +211,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             }
         }
 
-        if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
+        if ($expectedComment === null && $this->db->getDriverName() === 'mysql') {
             $expectedComment = '';
         }
 
@@ -291,7 +291,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             }
         }
 
-        if ($expectedComment === null && in_array($this->db->getDriverName(), ['mysql', 'sqlsrv'], true)) {
+        if ($expectedComment === null && $this->db->getDriverName() === 'mysql') {
             $expectedComment = '';
         }
 
