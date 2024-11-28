@@ -70,6 +70,19 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
     }
 
+    public function testGetNamespacesFromPathForNoExistsDirectory(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
+        $getNamespaceFromPath->setAccessible(true);
+
+        // There is a path to the namespace, but the directory does not exist
+        $path = dirname(__DIR__, 3) . '/non-exists-directory';
+
+        $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
+    }
+
     /**
      * Test MigrationService::getNamespacesFromPath() returns namespaces corresponding to the longest subdirectory of a path.
      * One path can match to several namespaces.
