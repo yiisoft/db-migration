@@ -62,10 +62,21 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $migrationService = $this->container->get(MigrationService::class);
 
         $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
-        $getNamespaceFromPath->setAccessible(true);
 
         // No having namespace path
         $path = dirname(__DIR__, 3) . '/config';
+
+        $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
+    }
+
+    public function testGetNamespacesFromPathForNoExistsDirectory(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
+
+        // There is a path to the namespace, but the directory does not exist
+        $path = dirname(__DIR__, 2) . '/non-exists-directory';
 
         $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
     }
@@ -79,7 +90,6 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $migrationService = $this->container->get(MigrationService::class);
 
         $getNamespaceFromPath = new ReflectionMethod($migrationService, 'getNamespacesFromPath');
-        $getNamespaceFromPath->setAccessible(true);
 
         /**
          * Path corresponding to three namespaces:

@@ -3,6 +3,7 @@
 ## 1.2.1 under development
 
 - Enh #274: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
+- Bug #277: Fix when there is a namespace but the directory does not exist (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 

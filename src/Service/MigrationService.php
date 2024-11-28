@@ -455,6 +455,10 @@ final class MigrationService
 
         foreach ($map as $namespace => $directories) {
             foreach ($directories as $directory) {
+                if (!is_dir($directory)) {
+                    continue;
+                }
+
                 $directory = realpath($directory) . DIRECTORY_SEPARATOR;
 
                 if (str_starts_with($path, $directory)) {
