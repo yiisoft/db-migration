@@ -78,7 +78,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $getNamespaceFromPath->setAccessible(true);
 
         // There is a path to the namespace, but the directory does not exist
-        $path = dirname(__DIR__, 3) . '/non-exists-directory';
+        $path = dirname(__DIR__, 2) . '/non-exists-directory';
 
         $this->assertSame([], $getNamespaceFromPath->invoke($migrationService, $path));
     }
