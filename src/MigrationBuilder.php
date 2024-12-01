@@ -194,7 +194,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * generated SQL.
      *
      * @param string $table The name of the table to be created. The name will be properly quoted by the method.
-     * @param (string|ColumnSchemaInterface)[] $columns The columns (name => definition) in the new table.
+     * @param (ColumnSchemaInterface|string)[] $columns The columns (name => definition) in the new table.
      * @param string|null $options Additional SQL fragment that will be appended to the generated SQL.
      *
      * @throws Exception
