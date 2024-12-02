@@ -9,6 +9,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 final class Migrator
 {
@@ -150,9 +151,9 @@ final class Migrator
         $b = $this->createBuilder(new NullMigrationInformer());
 
         $b->createTable($this->historyTable, [
-            'id' => $b->primaryKey(),
-            'name' => $b->string($this->migrationNameLimit)->notNull(),
-            'apply_time' => $b->integer()->notNull(),
+            'id' => ColumnBuilder::primaryKey(),
+            'name' => ColumnBuilder::string($this->migrationNameLimit)->notNull(),
+            'apply_time' => ColumnBuilder::integer()->notNull(),
         ]);
 
         $this->informer->endCreateHistoryTable('Done.');
