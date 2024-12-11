@@ -33,7 +33,7 @@ final class MssqlFactory
                 return match ($id) {
                     ConnectionInterface::class => new MssqlConnection(
                         new MssqlDriver(
-                            'sqlsrv:Server=127.0.0.1,1433;Database=yiitest',
+                            'sqlsrv:Server=127.0.0.1,1433;Database=yiitest;Encrypt=no',
                             'SA',
                             'YourStrong!Passw0rd',
                         ),
