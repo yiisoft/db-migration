@@ -25,6 +25,7 @@ jobs:
     name: PHP ${{ matrix.php }}
 
     env:
+      COMPOSER_ROOT_VERSION: dev-master
       extensions: pdo, pdo_pgsql, pdo_sqlite
 
     runs-on: ubuntu-latest
@@ -64,7 +65,7 @@ jobs:
         uses: yiisoft/actions/db/environment-linux@master
 
       - name: Install db.
-        uses: yiisoft/actions/db/subpackage-install@master
+        uses: yiisoft/actions/db/subpackage-install@add-as-version
         with:
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
           COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
