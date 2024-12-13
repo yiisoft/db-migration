@@ -12,8 +12,10 @@ use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\QueryInterface;
+use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
 use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 use Yiisoft\Db\Schema\Column\ColumnSchemaInterface;
 
 use function implode;
@@ -184,11 +186,32 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * Builds and executes an SQL statement for creating a new DB table.
      *
      * The columns in the new table should be specified as name-definition pairs (e.g. 'name' => 'string'), where name
-     * stands for a column name which will be properly quoted by the method, and definition stands for the column type
-     * which can contain an abstract DB type.
+     * is the name of the column which will be properly quoted by the method, and definition is the type of the column
+     * which can contain a native database column type, {@see ColumnType abstract} or {@see PseudoType pseudo} type,
+     * or can be represented as instance of {@see ColumnSchemaInterface}.
      *
-     * The {@see \Yiisoft\Db\Query\QueryBuilder::getColumnType()} method will be invoked to convert any abstract type
-     * into a physical one.
+     * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
+     * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
+     * and `pk` to `PRIMARY KEY AUTO_INCREMENT` (for MySQL).
+     *
+     * The preferred method is to use {@see ColumnBuilder} to generate column definitions as instances of
+     * {@see ColumnSchemaInterface}.
+     *
+     * ```php
+     * $this->createTable(
+     *     'example_table',
+     *     [
+     *         'id' => ColumnBuilder::primaryKey(),
+     *         'name' => ColumnBuilder::string(64)->notNull(),
+     *         'type' => ColumnBuilder::integer()->notNull()->defaultValue(10),
+     *         'description' => ColumnBuilder::text(),
+     *         'rule_name' => ColumnBuilder::string(64),
+     *         'data' => ColumnBuilder::text(),
+     *         'created_at' => ColumnBuilder::datetime()->notNull(),
+     *         'updated_at' => ColumnBuilder::datetime(),
+     *     ],
+     * );
+     * ```
      *
      * If a column is specified with definition only (e.g. 'PRIMARY KEY (name, type)'), it will be directly put into the
      * generated SQL.
