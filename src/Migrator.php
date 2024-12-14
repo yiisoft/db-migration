@@ -8,7 +8,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 final class Migrator
