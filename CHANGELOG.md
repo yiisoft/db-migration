@@ -4,7 +4,7 @@
 
 - Enh #274: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
 - Bug #277: Fix when there is a namespace but the directory does not exist (@Tigrov)
-- Enh #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
+- Chg #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 
