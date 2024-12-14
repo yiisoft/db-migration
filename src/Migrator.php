@@ -147,6 +147,8 @@ final class Migrator
         $tableName = $this->db->getQuoter()->getRawTableName($this->historyTable);
         $this->informer->beginCreateHistoryTable('Creating migration history table "' . $tableName . '"...');
 
+        $b = $this->createBuilder(new NullMigrationInformer());
+
         $b->createTable($this->historyTable, [
             'id' => ColumnBuilder::primaryKey(),
             'name' => ColumnBuilder::string($this->migrationNameLimit)->notNull(),
