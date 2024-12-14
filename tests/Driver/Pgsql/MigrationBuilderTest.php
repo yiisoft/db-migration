@@ -7,6 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Driver\Pgsql;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\PostgreSqlFactory;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 /**
  * @group pgsql
@@ -27,7 +28,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 
         $command->setSql('CREATE SCHEMA yii')->execute();
 
-        $this->builder->createTable('yii.test', ['id' => $this->builder->primaryKey()]);
+        $this->builder->createTable('yii.test', ['id' => ColumnBuilder::primaryKey()]);
         $tableSchema = $db->getSchema()->getTableSchema('yii.test');
         $column = $tableSchema->getColumn('id');
 

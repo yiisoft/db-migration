@@ -11,6 +11,7 @@ use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 abstract class AbstractMigrationBuilderTest extends TestCase
 {
@@ -30,7 +31,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testExecute(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
 
         $sql = 'DROP TABLE {{test}}';
         $this->builder->execute($sql);
@@ -43,7 +44,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testInsert(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->insert('test', ['id' => 1]);
 
         $this->assertEquals(
@@ -57,7 +58,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testBatchInsert(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->batchInsert('test', ['id'], [['id' => 1], ['id' => 2]]);
 
         $this->assertEquals(
@@ -71,7 +72,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testUpsertWithoutRow(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->primaryKey(), 'name' => $this->builder->string()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
         $this->builder->insert('test', ['name' => 'Ivan']);
         $this->builder->upsert('test', ['name' => 'Petr'], false);
 
@@ -89,7 +90,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testUpdate(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->primaryKey(), 'name' => $this->builder->string()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
         $this->builder->insert('test', ['name' => 'Ivan']);
         $this->builder->update('test', ['name' => 'Petr'], '[[id]]=:id', ['id' => 1]);
 
@@ -106,7 +107,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDelete(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->insert('test', ['id' => 1]);
         $this->builder->delete('test', '[[id]]=:id', ['id' => 1]);
 
@@ -118,7 +119,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testCreateTable(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->primaryKey()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey()]);
         $tableSchema = $this->db->getTableSchema('test');
         $column = $tableSchema->getColumn('id');
 
@@ -197,17 +198,23 @@ abstract class AbstractMigrationBuilderTest extends TestCase
      */
     public function testAddColumn(string $type, string $expectedComment = null): void
     {
-        $expectedOutputString = '    > add column code string(4) to table test ... Done in';
+        $expectedOutputString = match ($this->db->getDriverName()) {
+            'sqlite' => '    > add column code varchar(4) to table test ... Done in',
+            'pgsql' => '    > add column code varchar(4) to table test ... Done in',
+            'mysql' => '    > add column code varchar(4) to table test ... Done in',
+            'sqlsrv' => '    > add column code nvarchar(4) to table test ... Done in',
+            'oci' => '    > add column code varchar2(4) to table test ... Done in',
+        };
 
         if ($type === 'build-string(4)') {
-            $type = $this->builder->string(4);
+            $type = ColumnBuilder::string(4);
         }
 
         if ($type === 'build-string(4)-with-comment') {
-            $type = $this->builder->string(4)->comment('test comment');
+            $type = ColumnBuilder::string(4)->comment('test comment');
 
             if ($this->db->getDriverName() === 'mysql') {
-                $expectedOutputString = "    > add column code string(4) COMMENT 'test comment' to table test ... Done in";
+                $expectedOutputString = "    > add column code varchar(4) COMMENT 'test comment' to table test ... Done in";
             }
         }
 
@@ -233,7 +240,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropColumn(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->primaryKey(), 'name' => $this->builder->string()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
         $this->builder->dropColumn('test', 'name');
 
         $tableSchema = $this->db->getTableSchema('test');
@@ -246,7 +253,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testRenameColumn(): void
     {
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->renameColumn('test', 'id', 'id_new');
 
         $tableSchema = $this->db->getTableSchema('test');
@@ -275,27 +282,35 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $expectedOutputString = '    > Alter column id in table test to string(4) ... Done in';
 
         if ($type === 'build-string(4)') {
-            $type = $this->builder->string(4);
+            $type = ColumnBuilder::string(4);
         }
 
         if ($type === 'string(4)-defaultValue') {
-            $type = $this->builder->string(4)->defaultValue($defaultValue);
+            $type = ColumnBuilder::string(4)->defaultValue($defaultValue);
             $expectedOutputString = "    > Alter column id in table test to string(4) DEFAULT '$defaultValue' ... Done in";
         }
 
         if ($type === 'build-string(4)-with-comment') {
-            $type = $this->builder->string(4)->comment('test comment');
+            $type = ColumnBuilder::string(4)->comment('test comment');
 
             if ($this->db->getDriverName() === 'mysql') {
                 $expectedOutputString = "    > Alter column id in table test to string(4) COMMENT 'test comment' ... Done in";
             }
         }
 
+        $expectedOutputString = match ($this->db->getDriverName()) {
+            'sqlite' => str_replace('string(4)', 'varchar(4)', $expectedOutputString),
+            'pgsql' => str_replace('string(4)', 'varchar(4)', $expectedOutputString),
+            'mysql' => str_replace('string(4)', 'varchar(4)', $expectedOutputString),
+            'sqlsrv' => str_replace('string(4)', 'nvarchar(4)', $expectedOutputString),
+            'oci' => str_replace('string(4)', 'varchar2(4)', $expectedOutputString),
+        };
+
         if ($expectedComment === null && $this->db->getDriverName() === 'mysql') {
             $expectedComment = '';
         }
 
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->alterColumn('test', 'id', $type);
 
         $tableSchema = $this->db->getTableSchema('test');
@@ -318,10 +333,10 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testAddPrimaryKey(): void
     {
-        $fieldType = $this->builder->integer();
+        $fieldType = ColumnBuilder::integer();
 
         if ($this->db->getDriverName() === 'sqlsrv') {
-            $fieldType = $this->builder->integer()->notNull();
+            $fieldType = ColumnBuilder::integer()->notNull();
         }
 
         $this->builder->createTable('test', ['id' => $fieldType]);
@@ -342,12 +357,12 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         if ($this->db->getDriverName() === 'sqlite') {
             $this->builder->createTable(
                 'test',
-                ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => $this->builder->string()],
+                ['id' => 'int CONSTRAINT test_pk PRIMARY KEY', 'name' => ColumnBuilder::string()],
             );
         } else {
             $this->builder->createTable(
                 'test',
-                ['id' => $this->builder->integer()->notNull(), 'name' => $this->builder->string()],
+                ['id' => ColumnBuilder::integer()->notNull(), 'name' => ColumnBuilder::string()],
             );
             $this->builder->addPrimaryKey('test', 'test_pk', 'id');
         }
@@ -369,7 +384,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('target_table', ['id' => 'int unique']);
         $this->builder->createTable(
             'test_table',
-            ['id' => $this->builder->integer(), 'foreign_id' => $this->builder->integer()],
+            ['id' => ColumnBuilder::integer(), 'foreign_id' => ColumnBuilder::integer()],
         );
 
         $update = 'CASCADE';
@@ -448,7 +463,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     {
         $schema = $this->db->getSchema();
 
-        $this->builder->createTable('test', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->createView('test_view', 'SELECT * FROM {{test}}');
 
         $viewNames = $schema->getViewNames(refresh: true);
@@ -468,7 +483,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropIndex(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->createIndex('test_table', 'test_index', 'id');
         $this->builder->dropIndex('test_table', 'test_index');
 
@@ -482,7 +497,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropIndexNoExist(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->dropIndex('test_table', 'test_index');
 
         $indexes = $this->db->getSchema()->getTableIndexes('test_table');
@@ -495,7 +510,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropIndexUnique(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->createIndex('test_table', 'test_index', 'id', 'UNIQUE');
         $this->builder->dropIndex('test_table', 'test_index');
 
@@ -509,7 +524,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testAddCommentOnColumn(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->addCommentOnColumn('test_table', 'id', 'test comment');
 
         $tableSchema = $this->db->getTableSchema('test_table');
@@ -523,7 +538,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testAddCommentOnTable(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->addCommentOnTable('test_table', 'test comment');
 
         $tableSchema = $this->builder->getDb()->getTableSchema('test_table');
@@ -536,7 +551,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropCommentFromColumn(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->addCommentOnColumn('test_table', 'id', 'comment');
         $this->builder->dropCommentFromColumn('test_table', 'id');
 
@@ -544,7 +559,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $column = $tableSchema->getColumn('id');
 
         match ($this->builder->getDb()->getDriverName()) {
-            'mysql', 'oci', 'sqlsrv' => $this->assertEmpty($column->getComment()),
+            'mysql' => $this->assertEmpty($column->getComment()),
             default => $this->assertNull($column->getComment()),
         };
 
@@ -555,7 +570,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
     public function testDropCommentFromTable(): void
     {
-        $this->builder->createTable('test_table', ['id' => $this->builder->integer()]);
+        $this->builder->createTable('test_table', ['id' => ColumnBuilder::integer()]);
         $this->builder->addCommentOnTable('test_table', 'comment');
         $this->builder->dropCommentFromTable('test_table');
 
@@ -588,131 +603,6 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         }
 
         $this->assertStringContainsString('Execute SQL: SELE [... hidden] ... Done', $this->informer->getOutput());
-    }
-
-    public function testBigInteger(): void
-    {
-        $this->assertSame('bigint', $this->builder->bigInteger()->asString());
-    }
-
-    public function testBigPrimaryKey(): void
-    {
-        $this->assertSame('bigpk', $this->builder->bigPrimaryKey()->asString());
-    }
-
-    public function testBinary(): void
-    {
-        $this->assertSame('binary', $this->builder->binary()->asString());
-    }
-
-    public function testBoolean(): void
-    {
-        $this->assertSame('boolean', $this->builder->boolean()->asString());
-    }
-
-    public function testChar(): void
-    {
-        $this->assertSame('char', $this->builder->char()->asString());
-    }
-
-    public function testDate(): void
-    {
-        $this->assertSame('date', $this->builder->date()->asString());
-    }
-
-    public function testDateTime(): void
-    {
-        $this->assertSame('datetime', $this->builder->dateTime()->asString());
-    }
-
-    public function testDecimal(): void
-    {
-        $this->assertSame('decimal', $this->builder->decimal()->asString());
-    }
-
-    public function testDecimalWithPrecisionAndScale(): void
-    {
-        $this->assertSame('decimal(10,2)', $this->builder->decimal(10, 2)->asString());
-    }
-
-    public function testDouble(): void
-    {
-        $this->assertSame('double', $this->builder->double()->asString());
-    }
-
-    public function testFloat(): void
-    {
-        $this->assertSame('float', $this->builder->float()->asString());
-    }
-
-    public function testInteger(): void
-    {
-        $this->assertSame('integer', $this->builder->integer()->asString());
-    }
-
-    public function testJson(): void
-    {
-        $this->assertSame('json', $this->builder->json()->asString());
-    }
-
-    public function testMoney(): void
-    {
-        $this->assertSame('money', $this->builder->money()->asString());
-    }
-
-    public function testMoneyWithPrecisionAndScale(): void
-    {
-        $this->assertSame('money(10,2)', $this->builder->money(10, 2)->asString());
-    }
-
-    public function testPrimaryKey(): void
-    {
-        $this->assertSame('pk', $this->builder->primaryKey()->asString());
-    }
-
-    public function testSmallInteger(): void
-    {
-        $this->assertSame('smallint', $this->builder->smallInteger()->asString());
-    }
-
-    public function testString(): void
-    {
-        $this->assertSame('string', $this->builder->string()->asString());
-    }
-
-    public function testText(): void
-    {
-        $this->assertSame('text', $this->builder->text()->asString());
-    }
-
-    public function testTime(): void
-    {
-        $this->assertSame('time', $this->builder->time()->asString());
-    }
-
-    public function testTimestamp(): void
-    {
-        $this->assertSame('timestamp', $this->builder->timestamp()->asString());
-    }
-
-    public function testTinyInteger(): void
-    {
-        $this->assertSame('tinyint', $this->builder->tinyInteger()->asString());
-    }
-
-    public function testUuid(): void
-    {
-        $this->assertSame('uuid', $this->builder->uuid()->asString());
-    }
-
-    public function testUuidPrimaryKey(): void
-    {
-        $this->assertSame('uuid_pk', $this->builder->uuidPrimaryKey()->asString());
-    }
-
-    public function testUuidPrimaryKeySequenced(): void
-    {
-        $this->assertSame('uuid_pk_seq', $this->builder->uuidPrimaryKeySequenced()->asString());
     }
 
     public function testGetDb(): void
