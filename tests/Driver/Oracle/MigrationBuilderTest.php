@@ -7,6 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Driver\Oracle;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\OracleFactory;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 /**
  * @group oracle
@@ -27,7 +28,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 
         $command->setSql('CREATE USER yii IDENTIFIED BY yiiSCHEMA')->execute();
 
-        $this->builder->createTable('YII.test', ['id' => $this->builder->primaryKey()]);
+        $this->builder->createTable('YII.test', ['id' => ColumnBuilder::primaryKey()]);
         $tableSchema = $db->getSchema()->getTableSchema('YII.test');
         $column = $tableSchema->getColumn('id');
 
