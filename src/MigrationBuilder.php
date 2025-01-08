@@ -13,7 +13,6 @@ use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
-use Yiisoft\Db\Schema\Builder\ColumnInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 use Yiisoft\Db\Schema\Column\ColumnSchemaInterface;
@@ -194,7 +193,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
      * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
      *
-     * The preferred method is to use {@see ColumnBuilder} to generate column definitions as instances of
+     * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
      * {@see ColumnSchemaInterface}.
      *
      * ```php
@@ -233,7 +232,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
         foreach ($columns as $column => $type) {
-            if ($type instanceof ColumnInterface || $type instanceof ColumnSchemaInterface) {
+            if ($type instanceof ColumnSchemaInterface) {
                 $comment = $type->getComment();
                 if ($comment !== null) {
                     $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
@@ -291,13 +290,18 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table The table that the new column will be added to.
      * The table name will be properly quoted by the method.
      * @param string $column The name of the new column. The name will be properly quoted by the method.
-     * @param ColumnSchemaInterface|string $type TThe column type. The {@see QueryBuilder::buildColumnDefinition()}
-     * method will convert the column type into the column definition. Any column type not recognized as a database type
-     * will be recognized as one of an {@see ColumnType abstract} or {@see PseudoType pseudo} type, or as a 'string'
-     * abstract type by default to generate column definition. For example, 'string' will be generated into
-     * 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     * @param ColumnSchemaInterface|string $type The column type which can contain a native database column type,
+     * {@see ColumnType abstract} or {@see PseudoType pseudo} type, or can be represented as instance of
+     * {@see ColumnSchemaInterface}.
+     *
+     * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
+     * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
+     * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
+     *
+     * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
+     * {@see ColumnSchemaInterface}.
      */
-    public function addColumn(string $table, string $column, ColumnInterface|ColumnSchemaInterface|string $type): void
+    public function addColumn(string $table, string $column, ColumnSchemaInterface|string $type): void
     {
         if (is_string($type)) {
             $comment = null;
@@ -353,17 +357,22 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table whose column is to be changed. The method will properly quote the table name.
      * @param string $column The name of the column to be changed. The name will be properly quoted by the method.
-     * @param ColumnSchemaInterface|string $type TThe column type. The {@see QueryBuilder::buildColumnDefinition()}
-     * method will convert the column type into the column definition. Any column type not recognized as a database type
-     * will be recognized as one of an {@see ColumnType abstract} or {@see PseudoType pseudo} type, or as a 'string'
-     * abstract type by default to generate column definition. For example, 'string' will be generated into
-     * 'varchar(255)', while 'string not null' will become 'varchar(255) not null'.
+     * @param ColumnSchemaInterface|string $type The column type which can contain a native database column type,
+     * {@see ColumnType abstract} or {@see PseudoType pseudo} type, or can be represented as instance of
+     * {@see ColumnSchemaInterface}.
+     *
+     * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
+     * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
+     * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
+     *
+     * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
+     * {@see ColumnSchemaInterface}.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, ColumnInterface|ColumnSchemaInterface|string $type): void
+    public function alterColumn(string $table, string $column, ColumnSchemaInterface|string $type): void
     {
         if (is_string($type)) {
             $comment = null;
