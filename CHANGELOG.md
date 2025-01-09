@@ -6,6 +6,7 @@
 - Bug #277: Fix when there is a namespace but the directory does not exist (@Tigrov)
 - Chg #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
 - Enh #282: Remove `ColumnInterface` (@Tigrov)
+- Enh #283: Rename `ColumnSchemaInterface` to `ColumnInterface` (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 
