@@ -15,7 +15,7 @@ use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
-use Yiisoft\Db\Schema\Column\ColumnSchemaInterface;
+use Yiisoft\Db\Schema\Column\ColumnInterface;
 
 use function implode;
 use function ltrim;
@@ -187,14 +187,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * The columns in the new table should be specified as name-definition pairs (e.g. 'name' => 'string'), where name
      * is the name of the column which will be properly quoted by the method, and definition is the type of the column
      * which can contain a native database column type, {@see ColumnType abstract} or {@see PseudoType pseudo} type,
-     * or can be represented as instance of {@see ColumnSchemaInterface}.
+     * or can be represented as instance of {@see ColumnInterface}.
      *
      * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
      * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
      * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
      *
      * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
-     * {@see ColumnSchemaInterface}.
+     * {@see ColumnInterface}.
      *
      * ```php
      * $this->createTable(
@@ -216,14 +216,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * generated SQL.
      *
      * @param string $table The name of the table to be created. The name will be properly quoted by the method.
-     * @param (ColumnSchemaInterface|string)[] $columns The columns (name => definition) in the new table.
+     * @param (ColumnInterface|string)[] $columns The columns (name => definition) in the new table.
      * @param string|null $options Additional SQL fragment that will be appended to the generated SQL.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * @psalm-param array<string, string|ColumnSchemaInterface> $columns
+     * @psalm-param array<string, string|ColumnInterface> $columns
      */
     public function createTable(string $table, array $columns, string|null $options = null): void
     {
@@ -232,7 +232,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $this->db->createCommand()->createTable($table, $columns, $options)->execute();
 
         foreach ($columns as $column => $type) {
-            if ($type instanceof ColumnSchemaInterface) {
+            if ($type instanceof ColumnInterface) {
                 $comment = $type->getComment();
                 if ($comment !== null) {
                     $this->db->createCommand()->addCommentOnColumn($table, $column, $comment)->execute();
@@ -290,18 +290,18 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table The table that the new column will be added to.
      * The table name will be properly quoted by the method.
      * @param string $column The name of the new column. The name will be properly quoted by the method.
-     * @param ColumnSchemaInterface|string $type The column type which can contain a native database column type,
+     * @param ColumnInterface|string $type The column type which can contain a native database column type,
      * {@see ColumnType abstract} or {@see PseudoType pseudo} type, or can be represented as instance of
-     * {@see ColumnSchemaInterface}.
+     * {@see ColumnInterface}.
      *
      * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
      * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
      * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
      *
      * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
-     * {@see ColumnSchemaInterface}.
+     * {@see ColumnInterface}.
      */
-    public function addColumn(string $table, string $column, ColumnSchemaInterface|string $type): void
+    public function addColumn(string $table, string $column, ColumnInterface|string $type): void
     {
         if (is_string($type)) {
             $comment = null;
@@ -357,22 +357,22 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table whose column is to be changed. The method will properly quote the table name.
      * @param string $column The name of the column to be changed. The name will be properly quoted by the method.
-     * @param ColumnSchemaInterface|string $type The column type which can contain a native database column type,
+     * @param ColumnInterface|string $type The column type which can contain a native database column type,
      * {@see ColumnType abstract} or {@see PseudoType pseudo} type, or can be represented as instance of
-     * {@see ColumnSchemaInterface}.
+     * {@see ColumnInterface}.
      *
      * The {@see QueryBuilderInterface::buildColumnDefinition()} method will be invoked to convert column definitions
      * into SQL representation. For example, it will convert `string not null` to `varchar(255) not null`
      * and `pk` to `int PRIMARY KEY AUTO_INCREMENT` (for MySQL).
      *
      * The preferred way is to use {@see ColumnBuilder} to generate column definitions as instances of
-     * {@see ColumnSchemaInterface}.
+     * {@see ColumnInterface}.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function alterColumn(string $table, string $column, ColumnSchemaInterface|string $type): void
+    public function alterColumn(string $table, string $column, ColumnInterface|string $type): void
     {
         if (is_string($type)) {
             $comment = null;
