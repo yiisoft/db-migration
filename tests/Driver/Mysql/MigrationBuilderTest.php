@@ -45,6 +45,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $this->builder->dropTable('yii.test');
         $command->setSql('DROP SCHEMA yii')->execute();
     }
+
     public function testCreateIndexWithMethod(): void
     {
         $this->builder->createTable('test_table', ['id' => 'int']);
