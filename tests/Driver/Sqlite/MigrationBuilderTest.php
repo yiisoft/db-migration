@@ -41,7 +41,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     /**
      * @dataProvider dataAddColumn
      */
-    public function testAddColumn(string $type, string $expectedComment = null): void
+    public function testAddColumn(string $type, ?string $expectedComment = null): void
     {
         if ($expectedComment === 'test comment') {
             $this->expectException(NotSupportedException::class);
@@ -86,7 +86,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn(string $type, string|null $defaultValue = null, string $expectedComment = null): void
+    public function testAlterColumn(string $type, string|null $defaultValue = null, ?string $expectedComment = null): void
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
