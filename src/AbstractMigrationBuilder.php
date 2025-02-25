@@ -49,7 +49,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::bigint()} instead. Will be removed in 2.0.0.
      */
-    public function bigInteger(int $length = null): ColumnInterface
+    public function bigInteger(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::bigint($length);
     }
@@ -65,7 +65,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::bigPrimaryKey()} instead. Will be removed in 2.0.0.
      */
-    public function bigPrimaryKey(int $length = null): ColumnInterface
+    public function bigPrimaryKey(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::bigPrimaryKey()->size($length);
     }
@@ -123,7 +123,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::binary()} instead. Will be removed in 2.0.0.
      */
-    public function binary(int $length = null): ColumnInterface
+    public function binary(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::binary($length);
     }
@@ -151,7 +151,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::char()} instead. Will be removed in 2.0.0.
      */
-    public function char(int $length = null): ColumnInterface
+    public function char(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::char($length);
     }
@@ -180,7 +180,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::datetime()} instead. Will be removed in 2.0.0.
      */
-    public function dateTime(int $precision = null): ColumnInterface
+    public function dateTime(?int $precision = null): ColumnInterface
     {
         return ColumnBuilder::datetime($precision);
     }
@@ -201,7 +201,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::decimal()} instead. Will be removed in 2.0.0.
      */
-    public function decimal(int $precision = null, int $scale = null): ColumnInterface
+    public function decimal(?int $precision = null, ?int $scale = null): ColumnInterface
     {
         return ColumnBuilder::decimal($precision, $scale);
     }
@@ -218,7 +218,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::double()} instead. Will be removed in 2.0.0.
      */
-    public function double(int $precision = null): ColumnInterface
+    public function double(?int $precision = null): ColumnInterface
     {
         return ColumnBuilder::double($precision);
     }
@@ -235,7 +235,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::float()} instead. Will be removed in 2.0.0.
      */
-    public function float(int $precision = null): ColumnInterface
+    public function float(?int $precision = null): ColumnInterface
     {
         return ColumnBuilder::float($precision);
     }
@@ -251,7 +251,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::integer()} instead. Will be removed in 2.0.0.
      */
-    public function integer(int $length = null): ColumnInterface
+    public function integer(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::integer($length);
     }
@@ -284,7 +284,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::money()} instead. Will be removed in 2.0.0.
      */
-    public function money(int $precision = null, int $scale = null): ColumnInterface
+    public function money(?int $precision = null, ?int $scale = null): ColumnInterface
     {
         return ColumnBuilder::money($precision, $scale);
     }
@@ -300,7 +300,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::primaryKey()} instead. Will be removed in 2.0.0.
      */
-    public function primaryKey(int $length = null): ColumnInterface
+    public function primaryKey(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::primaryKey()->size($length);
     }
@@ -316,7 +316,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::smallint()} instead. Will be removed in 2.0.0.
      */
-    public function smallInteger(int $length = null): ColumnInterface
+    public function smallInteger(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::smallint($length);
     }
@@ -332,7 +332,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::string()} instead. Will be removed in 2.0.0.
      */
-    public function string(int $length = null): ColumnInterface
+    public function string(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::string($length);
     }
@@ -361,7 +361,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::time()} instead. Will be removed in 2.0.0.
      */
-    public function time(int $precision = null): ColumnInterface
+    public function time(?int $precision = null): ColumnInterface
     {
         return ColumnBuilder::time($precision);
     }
@@ -378,7 +378,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::timestamp()} instead. Will be removed in 2.0.0.
      */
-    public function timestamp(int $precision = null): ColumnInterface
+    public function timestamp(?int $precision = null): ColumnInterface
     {
         return ColumnBuilder::timestamp($precision);
     }
@@ -394,7 +394,7 @@ abstract class AbstractMigrationBuilder
      *
      * @deprecated Use {@see ColumnBuilder::tinyint()} instead. Will be removed in 2.0.0.
      */
-    public function tinyInteger(int $length = null): ColumnInterface
+    public function tinyInteger(?int $length = null): ColumnInterface
     {
         return ColumnBuilder::tinyint($length);
     }

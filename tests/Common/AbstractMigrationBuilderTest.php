@@ -197,7 +197,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAddColumn
      */
-    public function testAddColumn(string $type, string $expectedComment = null): void
+    public function testAddColumn(string $type, ?string $expectedComment = null): void
     {
         $expectedOutputString = match ($this->db->getDriverName()) {
             'sqlite' => '    > add column code varchar(4) to table test ... Done in',
@@ -278,7 +278,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn(string $type, string|null $defaultValue = null, string $expectedComment = null): void
+    public function testAlterColumn(string $type, string|null $defaultValue = null, ?string $expectedComment = null): void
     {
         $expectedOutputString = '    > Alter column id in table test to string(4) ... Done in';
 
