@@ -27,6 +27,7 @@ final class PhpRenderer
 
         try {
             $this->renderer($file, $params);
+            /** @var string */
             return ob_get_clean();
         } catch (Throwable $e) {
             while (ob_get_level() > $obInitialLevel) {
@@ -40,7 +41,7 @@ final class PhpRenderer
 
     private function renderer(): void
     {
-        /** @psalm-suppress MixedArgument */
+        /** @psalm-suppress MixedArgument, PossiblyFalseArgument */
         extract(func_get_arg(1));
         /** @psalm-suppress UnresolvableInclude */
         require func_get_arg(0);
