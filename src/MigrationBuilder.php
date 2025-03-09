@@ -442,10 +442,10 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The name of the table to add foreign key constraint to.
      * @param string $name The name of the foreign key constraint.
-     * @param string[]|string $columns The name of the column to add foreign key constraint to. If there are
+     * @param string|string[] $columns The name of the column to add foreign key constraint to. If there are
      * many columns, separate them with commas.
      * @param string $referenceTable The name of the table that the foreign key references to.
-     * @param string[]|string $referenceColumns The name of the column that the foreign key references to. If there are
+     * @param string|string[] $referenceColumns The name of the column that the foreign key references to. If there are
      * many columns, separate them with commas.
      * @param string|null $delete The `ON DELETE` option. See {@see ReferentialAction} class for possible values.
      * @param string|null $update The `ON UPDATE` option. See {@see ReferentialAction} class for possible values.
@@ -467,7 +467,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         string|null $update = null
     ): void {
         $time = $this->beginCommand(
-            "Add foreign key $name: $table (" . implode(',', (array) $columns) . ")"
+            "Add foreign key $name: $table (" . implode(',', (array) $columns) . ')'
             . " references $referenceTable (" . implode(',', (array) $referenceColumns) . ')'
         );
         $this->db->createCommand()->addForeignKey(
@@ -505,7 +505,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table The table that the new index will be created for. The table name will be properly quoted by
      * the method.
      * @param string $name The name of the index. The name will be properly quoted by the method.
-     * @param string[]|string $columns The column(s) that should be included in the index. If there are multiple columns,
+     * @param string|string[] $columns The column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
      * @param string|null $indexType The type of the index supported by DBMS {@see IndexType} - for example: `UNIQUE`,
