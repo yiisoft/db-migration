@@ -51,7 +51,7 @@ final class FieldsParser
                             $table,
                             $columnName,
                             $matches[1] ?? preg_replace('/_id$/', '', $columnName),
-                            $matches[2] ?? null
+                            empty($matches[2]) ? null : $matches[2]
                         );
 
                         unset($chunks[$i]);
