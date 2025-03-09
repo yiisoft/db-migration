@@ -40,6 +40,7 @@ jobs:
           - 8.1
           - 8.2
           - 8.3
+          - 8.4
 
     services:
       oci:
@@ -96,7 +97,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=Oracle --coverage-clover=coverage.xml --colors=always
 
       - name: Upload coverage to Codecov.
-        if: matrix.php == '8.3'
+        if: matrix.php == '8.4'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
