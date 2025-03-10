@@ -7,6 +7,8 @@
 - Chg #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
 - Enh #282, #283: Adapt to Yii DB changes (@Tigrov)
 - Bug #286: Explicitly mark nullable parameters (@vjik)
+- Chg #287: Change supported PHP versions to `8.1 - 8.4` (@Tigrov)
+- Enh #287: Minor refactoring (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 
