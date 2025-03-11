@@ -141,6 +141,7 @@ final class MigrationService
                 continue;
             }
 
+            /** @var resource $handle */
             $handle = opendir($sourcePath);
             while (($file = readdir($handle)) !== false) {
                 if ($file === '.' || $file === '..') {
@@ -335,8 +336,9 @@ final class MigrationService
      */
     public function generateClassName(string $name): string
     {
-        return 'M' . gmdate('ymdHis')
-            . str_replace(' ', '', ucwords(preg_replace('/[^a-z0-9]+/i', ' ', $name)));
+        /** @var string $words */
+        $words = preg_replace('/[^a-z0-9]+/i', ' ', $name);
+        return 'M' . gmdate('ymdHis') . str_replace(' ', '', ucwords($words));
     }
 
     /**
@@ -398,7 +400,9 @@ final class MigrationService
                     continue;
                 }
 
-                $className = substr(strrchr($class, '\\'), 1);
+                /** @var string $className */
+                $className = strrchr($class, '\\');
+                $className = substr($className, 1);
                 $file = $path . DIRECTORY_SEPARATOR . $className . '.php';
 
                 if (is_file($file)) {
@@ -428,7 +432,9 @@ final class MigrationService
 
         foreach ($map as $mapNamespace => $mapDirectories) {
             if (str_starts_with($namespace, trim($mapNamespace, '\\'))) {
-                return reset($mapDirectories) . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
+                /** @var string $mapDirectory */
+                $mapDirectory = reset($mapDirectories);
+                return $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
             }
         }
 
@@ -445,7 +451,9 @@ final class MigrationService
     private function getNamespacesFromPath(string $path): array
     {
         $namespaces = [];
-        $path = realpath($path) . DIRECTORY_SEPARATOR;
+        /** @var string $path */
+        $path = realpath($path);
+        $path .= DIRECTORY_SEPARATOR;
 
         /**
          * @psalm-suppress UnresolvableInclude
@@ -459,7 +467,9 @@ final class MigrationService
                     continue;
                 }
 
-                $directory = realpath($directory) . DIRECTORY_SEPARATOR;
+                /** @var string $directory */
+                $directory = realpath($directory);
+                $directory .= DIRECTORY_SEPARATOR;
 
                 if (str_starts_with($path, $directory)) {
                     $length = strlen($directory);

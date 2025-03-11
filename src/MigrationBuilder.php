@@ -7,7 +7,9 @@ namespace Yiisoft\Db\Migration;
 use Exception;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constant\ColumnType;
+use Yiisoft\Db\Constant\IndexType;
 use Yiisoft\Db\Constant\PseudoType;
+use Yiisoft\Db\Constant\ReferentialAction;
 use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
@@ -435,53 +437,45 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     }
 
     /**
-     * Builds an SQL statement for adding a foreign key constraint to an existing table.
+     * Builds and executes an SQL statement for adding a foreign key constraint to an existing table.
+     * The method will quote the `name`, `table`, `referenceTable` parameters before using them in the generated SQL.
      *
-     * The method will properly quote the table and column names.
-     *
-     * @param string $table The table that the foreign key constraint will be added to.
+     * @param string $table The name of the table to add foreign key constraint to.
      * @param string $name The name of the foreign key constraint.
-     * @param array|string $columns The name of the column to that the constraint will be added on. If there are
-     * multiple columns, separate them with commas or use an array.
-     * @param string $refTable The table that the foreign key references to.
-     * @param array|string $refColumns The name of the column that the foreign key references to. If there are multiple
-     * columns, separate them with commas or use an array.
-     * @param string|null $delete The `ON DELETE` option. Most DBMS support these options: `RESTRICT`, `CASCADE`,
-     * `NO ACTION`, `SET DEFAULT`, `SET NULL`.
-     * @param string|null $update The `ON UPDATE` option. Most DBMS support these options: `RESTRICT`, `CASCADE`,
-     * `NO ACTION`, `SET DEFAULT`, `SET NULL`.
+     * @param string|string[] $columns The name of the column to add foreign key constraint to. If there are
+     * many columns, separate them with commas.
+     * @param string $referenceTable The name of the table that the foreign key references to.
+     * @param string|string[] $referenceColumns The name of the column that the foreign key references to. If there are
+     * many columns, separate them with commas.
+     * @param string|null $delete The `ON DELETE` option. See {@see ReferentialAction} class for possible values.
+     * @param string|null $update The `ON UPDATE` option. See {@see ReferentialAction} class for possible values.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * @psalm-param string[]|string $columns
-     * @psalm-param string[]|string $refColumns
+     * @psalm-param ReferentialAction::*|null $delete
+     * @psalm-param ReferentialAction::*|null $update
      */
     public function addForeignKey(
         string $table,
         string $name,
         array|string $columns,
-        string $refTable,
-        array|string $refColumns,
+        string $referenceTable,
+        array|string $referenceColumns,
         string|null $delete = null,
         string|null $update = null
     ): void {
         $time = $this->beginCommand(
-            "Add foreign key $name: $table (" . implode(
-                ',',
-                (array) $columns
-            ) . ") references $refTable (" . implode(
-                ',',
-                (array) $refColumns
-            ) . ')'
+            "Add foreign key $name: $table (" . implode(',', (array) $columns) . ')'
+            . " references $referenceTable (" . implode(',', (array) $referenceColumns) . ')'
         );
         $this->db->createCommand()->addForeignKey(
             $table,
             $name,
             $columns,
-            $refTable,
-            $refColumns,
+            $referenceTable,
+            $referenceColumns,
             $delete,
             $update
         )->execute();
@@ -511,18 +505,18 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param string $table The table that the new index will be created for. The table name will be properly quoted by
      * the method.
      * @param string $name The name of the index. The name will be properly quoted by the method.
-     * @param array|string $columns The column(s) that should be included in the index. If there are multiple columns,
+     * @param string|string[] $columns The column(s) that should be included in the index. If there are multiple columns,
      * please separate them by commas or use an array. Each column name will be properly quoted by the method. Quoting
      * will be skipped for column names that include a left parenthesis "(".
-     * @param string|null $indexType Type of index supported DBMS - for example, `UNIQUE`, `FULLTEXT`, `SPATIAL`,
-     * `BITMAP` or `null` as default.
-     * @param string|null $indexMethod For setting index organization method (with 'USING', not all DBMS).
+     * @param string|null $indexType The type of the index supported by DBMS {@see IndexType} - for example: `UNIQUE`,
+     * `FULLTEXT`, `SPATIAL`, `BITMAP` or null as default.
+     * @param string|null $indexMethod The index organization method (with `USING`, not all DBMS).
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * @psalm-param string[]|string $columns
+     * @psalm-param IndexType::*|null $indexType
      */
     public function createIndex(
         string $table,

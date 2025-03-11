@@ -46,6 +46,7 @@ final class FieldsParser
                 foreach ($chunks as $i => $chunk) {
                     if (str_starts_with($chunk, 'foreignKey')) {
                         preg_match('/foreignKey\((\w*)\s?(\w*)\)/', $chunk, $matches);
+                        /** @psalm-suppress PossiblyNullArgument */
                         $foreignKeys[] = $this->foreignKeyFactory->create(
                             $table,
                             $columnName,
