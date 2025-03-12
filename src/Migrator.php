@@ -34,11 +34,9 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $migration->up($this->createBuilder())),
-            false => $migration->up($this->createBuilder()),
+            true => $this->db->transaction(fn () => $this->migrationUp($migration)),
+            false => $this->migrationUp($migration),
         };
-
-        $this->addMigrationToHistory($migration);
     }
 
     public function down(RevertibleMigrationInterface $migration): void
@@ -46,11 +44,9 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $migration->down($this->createBuilder())),
-            false => $migration->down($this->createBuilder()),
+            true => $this->db->transaction(fn () => $this->migrationDown($migration)),
+            false => $this->migrationDown($migration),
         };
-
-        $this->removeMigrationFromHistory($migration);
     }
 
     public function getMigrationNameLimit(): ?int
@@ -166,5 +162,17 @@ final class Migrator
             $informer ?? $this->informer,
             $this->maxSqlOutputLength,
         );
+    }
+
+    private function migrationUp(MigrationInterface $migration): void
+    {
+        $migration->up($this->createBuilder());
+        $this->addMigrationToHistory($migration);
+    }
+
+    private function migrationDown(RevertibleMigrationInterface $migration): void
+    {
+        $migration->down($this->createBuilder());
+        $this->removeMigrationFromHistory($migration);
     }
 }
