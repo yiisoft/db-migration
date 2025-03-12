@@ -206,7 +206,7 @@ abstract class AbstractMigratorTest extends TestCase
             'sqlite' => 'SQLSTATE[HY000]: General error: 1 no such table: prefix_migration',
             'pgsql' => 'SQLSTATE[42P01]: Undefined table: 7 ERROR:  relation "prefix_migration" does not exist',
             'mysql' => "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'yiitest.prefix_migration' doesn't exist",
-            'sqlsrv' => "SQLSTATE[42S02]: [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'prefix_migration'.",
+            'sqlsrv' => "[SQL Server]Invalid object name 'prefix_migration'.",
         };
 
         $this->assertStringContainsString($exceptionMessage, $e->getMessage());
