@@ -34,8 +34,8 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $this->migrationUp($migration)),
-            false => $this->migrationUp($migration),
+            true => $this->db->transaction(fn () => $this->migrateUp($migration)),
+            false => $this->migrateUp($migration),
         };
     }
 
@@ -44,8 +44,8 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $this->migrationDown($migration)),
-            false => $this->migrationDown($migration),
+            true => $this->db->transaction(fn () => $this->migrateDown($migration)),
+            false => $this->migrateDown($migration),
         };
     }
 
@@ -164,13 +164,13 @@ final class Migrator
         );
     }
 
-    private function migrationUp(MigrationInterface $migration): void
+    private function migrateUp(MigrationInterface $migration): void
     {
         $migration->up($this->createBuilder());
         $this->addMigrationToHistory($migration);
     }
 
-    private function migrationDown(RevertibleMigrationInterface $migration): void
+    private function migrateDown(RevertibleMigrationInterface $migration): void
     {
         $migration->down($this->createBuilder());
         $this->removeMigrationFromHistory($migration);
