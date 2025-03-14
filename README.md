@@ -30,7 +30,6 @@ Supports the following databases out of the box:
 ## Requirements
 
 - PHP 8.1 - 8.4.
-- `Filter` PHP extension.
 
 ## Installation
 
