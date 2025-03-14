@@ -9,6 +9,7 @@
 - Bug #286: Explicitly mark nullable parameters (@vjik)
 - Chg #287: Change supported PHP versions to `8.1 - 8.4` (@Tigrov)
 - Enh #287: Minor refactoring (@Tigrov)
+- Enh #289: Revert transactional migration when adding migration to history fails (@Tigrov)
 - Chg #290: Remove `ext-filter` from `require` section of `composer.json` (@Tigrov) 
 
 ## 1.2.0 November 27, 2024
