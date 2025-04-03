@@ -219,10 +219,6 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             }
         }
 
-        if ($expectedComment === null && $this->db->getDriverName() === 'mysql') {
-            $expectedComment = '';
-        }
-
         $this->builder->createTable('test', ['id' => 'int']);
         $this->builder->addColumn('test', 'code', $type);
 
@@ -306,10 +302,6 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             'sqlsrv' => str_replace('string(4)', 'nvarchar(4)', $expectedOutputString),
             'oci' => str_replace('string(4)', 'varchar2(4)', $expectedOutputString),
         };
-
-        if ($expectedComment === null && $this->db->getDriverName() === 'mysql') {
-            $expectedComment = '';
-        }
 
         $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
         $this->builder->alterColumn('test', 'id', $type);
