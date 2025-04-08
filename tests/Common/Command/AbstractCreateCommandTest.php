@@ -440,19 +440,16 @@ namespace $namespace;
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
-/**
- * Class $className
- */
 final class $className implements RevertibleMigrationInterface
 {
     public function up(MigrationBuilder \$b): void
     {
-
+        // TODO: Implement the logic to apply the migration.
     }
 
     public function down(MigrationBuilder \$b): void
     {
-
+        // TODO: Implement the logic to revert the migration.
     }
 }
 

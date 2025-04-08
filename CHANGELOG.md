@@ -10,7 +10,8 @@
 - Chg #287: Change supported PHP versions to `8.1 - 8.4` (@Tigrov)
 - Enh #287: Minor refactoring (@Tigrov)
 - Enh #289: Revert transactional migration when adding migration to history fails (@Tigrov)
-- Chg #290: Remove `ext-filter` from `require` section of `composer.json` (@Tigrov) 
+- Chg #290: Remove `ext-filter` from `require` section of `composer.json` (@Tigrov)
+- Enh #292: Improve base migration template (@vjik)
 
 ## 1.2.0 November 27, 2024
 
