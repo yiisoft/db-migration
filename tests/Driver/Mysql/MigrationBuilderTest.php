@@ -61,7 +61,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $this->assertSame('unique_index', $index->getName());
         $this->assertSame(['id'], $index->getColumnNames());
         $this->assertTrue($index->isUnique());
-        $this->assertFalse($index->isPrimary());
+        $this->assertFalse($index->isPrimaryKey());
         $this->assertInformerOutputContains(
             '    > Create UNIQUE index unique_index on test_table (id) using BTREE ... Done in ',
         );

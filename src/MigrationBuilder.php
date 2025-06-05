@@ -123,7 +123,6 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param array|bool $updateColumns The column data (name => value) to be updated if they already exist.
      * If `true` is passed, the column data will be updated to match the insert column data.
      * If `false` is passed, no update will be performed if the column data already exists.
-     * @param array $params The parameters to be bound to the command.
      *
      * @psalm-param array<string, mixed>|QueryInterface $insertColumns
      *
@@ -135,10 +134,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         string $table,
         array|QueryInterface $insertColumns,
         array|bool $updateColumns = true,
-        array $params = []
     ): void {
         $time = $this->beginCommand("Upsert into $table");
-        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
+        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns)->execute();
         $this->endCommand($time);
     }
 
