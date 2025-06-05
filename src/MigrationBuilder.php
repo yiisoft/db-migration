@@ -10,7 +10,6 @@ use Yiisoft\Db\Constant\ColumnType;
 use Yiisoft\Db\Constant\IndexType;
 use Yiisoft\Db\Constant\PseudoType;
 use Yiisoft\Db\Constant\ReferentialAction;
-use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\QueryInterface;
@@ -687,7 +686,6 @@ final class MigrationBuilder extends AbstractMigrationBuilder
 
     private function hasIndex(string $table, string $column): bool
     {
-        /** @var Constraint[] $indexes */
         $indexes = $this->db->getSchema()->getTableIndexes($table);
 
         foreach ($indexes as $index) {
