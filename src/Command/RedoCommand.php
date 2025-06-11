@@ -55,7 +55,8 @@ final class RedoCommand extends Command
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to redo.', 1)
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Redo all migrations.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to redo.')
-            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to redo.');
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to redo.')
+            ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -119,14 +120,7 @@ final class RedoCommand extends Command
             $output->writeln("\t<info>" . ($i + 1) . ". $migration</info>");
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Redo the above $migrationWord y/n: ",
-            true
-        );
-
-        if ($helper->ask($input, $output, $question)) {
+        if ($this->confirm($input, $output, $migrationWord)) {
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
 
@@ -159,5 +153,23 @@ final class RedoCommand extends Command
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
+    }
+
+    private function confirm(InputInterface $input, OutputInterface $output, string $migrationWord): bool
+    {
+        if ($input->getOption('force-yes')) {
+            return true;
+        }
+
+        $question = new ConfirmationQuestion(
+            "\n<fg=cyan>Redo the above $migrationWord y/n: ",
+            true
+        );
+
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
+        /** @var bool */
+        return $helper->ask($input, $output, $question);
     }
 }
