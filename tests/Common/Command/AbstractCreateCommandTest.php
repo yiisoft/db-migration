@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -1095,6 +1096,24 @@ EOF;
             'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output
         );
+    }
+
+    #[TestWith(['--force-yes'])]
+    #[TestWith(['-y'])]
+    public function testForceYes(string $arg): void
+    {
+        $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['no']);
+
+        $exitCode = $command->execute(['name' => 'post', $arg => true]);
+
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
+        $className = MigrationHelper::findMigrationClassNameInOutput($output);
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertFileExists($migrationsPath . '/' . $className . '.php');
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

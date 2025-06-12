@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -482,6 +483,30 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('[ERROR] Not updated.', $output);
 
         $this->container->get(Migrator::class)->down(new $createBookClass());
+    }
+
+    #[TestWith(['--force-yes'])]
+    #[TestWith(['-y'])]
+    public function testForceYes(string $arg): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        MigrationHelper::createMigration(
+            $this->container,
+            'Create_Department',
+            'table',
+            'department',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['no']);
+
+        $exitCode = $command->execute([$arg => true]);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
