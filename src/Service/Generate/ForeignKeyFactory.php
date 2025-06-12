@@ -37,10 +37,10 @@ final class ForeignKeyFactory
             $tablePrimaryKeys = $this->db->getSchema()->getTablePrimaryKey($relatedTable);
 
             if ($tablePrimaryKeys !== null) {
-                $primaryKeys = (array) $tablePrimaryKeys->getColumnNames();
+                $primaryKeys = $tablePrimaryKeys->getColumnNames();
 
                 match (count($primaryKeys)) {
-                    1 => $relatedColumn = (string) $primaryKeys[0],
+                    1 => $relatedColumn = $primaryKeys[0],
                     default => $this->io?->writeln(
                         "<fg=yellow> Related table for field \"$column\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
                     ),
