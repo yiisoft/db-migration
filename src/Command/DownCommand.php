@@ -55,7 +55,8 @@ final class DownCommand extends Command
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Number of migrations to revert.', 1)
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Revert all migrations.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Path to migrations to revert.')
-            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to revert.');
+            ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to revert.')
+            ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -121,15 +122,7 @@ final class DownCommand extends Command
             $output->writeln("\t<fg=yellow>" . ($i + 1) . ". $migration</>");
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Revert the above $migrationWord y/n: ",
-            true
-        );
-
-        if ($helper->ask($input, $output, $question)) {
+        if ($this->confirm($input, $output, $migrationWord)) {
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
 
@@ -151,5 +144,23 @@ final class DownCommand extends Command
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
+    }
+
+    private function confirm(InputInterface $input, OutputInterface $output, string $migrationWord): bool
+    {
+        if ($input->getOption('force-yes')) {
+            return true;
+        }
+
+        $question = new ConfirmationQuestion(
+            "\n<fg=cyan>Revert the above $migrationWord y/n: ",
+            true
+        );
+
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
+        /** @var bool */
+        return $helper->ask($input, $output, $question);
     }
 }

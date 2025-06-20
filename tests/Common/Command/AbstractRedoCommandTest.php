@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -462,6 +463,37 @@ abstract class AbstractRedoCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Total 1 migration to be redone:', $output);
         $this->assertStringContainsString('1. ' . M231108183919Empty::class, $output);
+    }
+
+    #[TestWith(['--force-yes'])]
+    #[TestWith(['-y'])]
+    public function testForceYes(string $arg): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_Post',
+            'table',
+            'post',
+            ['name:string(50)'],
+        );
+        MigrationHelper::createAndApplyMigration(
+            $this->container,
+            'Create_User',
+            'table',
+            'user',
+            ['name:string(50)'],
+        );
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['no']);
+
+        $exitCode = $command->execute([$arg => true]);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
+
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Migration redone successfully.', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

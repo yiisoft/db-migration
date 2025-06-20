@@ -12,6 +12,8 @@
 - Enh #289: Revert transactional migration when adding migration to history fails (@Tigrov)
 - Chg #290: Remove `ext-filter` from `require` section of `composer.json` (@Tigrov)
 - Enh #292: Improve base migration template (@vjik)
+- New #295: Add `--force-yes` (`-y`) option to `migrate:create`, `migrate:up`, `migrate:down` and `migrate:redo`
+  commands to skip confirmation prompts (@vjik)
 
 ## 1.2.0 November 27, 2024
 

@@ -85,6 +85,7 @@ final class CreateCommand extends Command
             ->addOption('and', null, InputOption::VALUE_REQUIRED, 'And junction.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
+            ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.')
             ->setHelp('This command generates new migration file.');
     }
 
@@ -155,15 +156,7 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Create new migration y/n: </>",
-            false,
-        );
-
-        if ($helper->ask($input, $output, $question)) {
+        if ($this->confirm($input, $output)) {
             /** @var string|null $fields */
             $fields = $input->getOption('fields');
             /** @var string|null $tableComment */
@@ -191,6 +184,24 @@ final class CreateCommand extends Command
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
+    }
+
+    private function confirm(InputInterface $input, OutputInterface $output): bool
+    {
+        if ($input->getOption('force-yes')) {
+            return true;
+        }
+
+        $question = new ConfirmationQuestion(
+            "\n<fg=cyan>Create new migration y/n: </>",
+            false,
+        );
+
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
+        /** @var bool */
+        return $helper->ask($input, $output, $question);
     }
 
     private function generateName(string $command, string $name, string|null $and): string
