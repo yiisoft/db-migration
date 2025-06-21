@@ -10,7 +10,6 @@ use Yiisoft\Db\Constant\ColumnType;
 use Yiisoft\Db\Constant\IndexType;
 use Yiisoft\Db\Constant\PseudoType;
 use Yiisoft\Db\Constant\ReferentialAction;
-use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Query\QueryInterface;
@@ -123,7 +122,6 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @param array|bool $updateColumns The column data (name => value) to be updated if they already exist.
      * If `true` is passed, the column data will be updated to match the insert column data.
      * If `false` is passed, no update will be performed if the column data already exists.
-     * @param array $params The parameters to be bound to the command.
      *
      * @psalm-param array<string, mixed>|QueryInterface $insertColumns
      *
@@ -135,10 +133,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         string $table,
         array|QueryInterface $insertColumns,
         array|bool $updateColumns = true,
-        array $params = []
     ): void {
         $time = $this->beginCommand("Upsert into $table");
-        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns, $params)->execute();
+        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns)->execute();
         $this->endCommand($time);
     }
 
@@ -689,7 +686,6 @@ final class MigrationBuilder extends AbstractMigrationBuilder
 
     private function hasIndex(string $table, string $column): bool
     {
-        /** @var Constraint[] $indexes */
         $indexes = $this->db->getSchema()->getTableIndexes($table);
 
         foreach ($indexes as $index) {
