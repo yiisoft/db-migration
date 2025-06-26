@@ -59,11 +59,11 @@ jobs:
           sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
-      - name: Checkout.
-        uses: actions/checkout@v4
-
       - name: Create MS SQL Database.
         run: docker exec -i mssql /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U SA -P 'YourStrong!Passw0rd' -Q 'CREATE DATABASE yiitest'
+
+      - name: Checkout.
+        uses: actions/checkout@v4
 
       - name: Install PHP with extensions.
         uses: shivammathur/setup-php@v2
@@ -76,26 +76,11 @@ jobs:
       - name: Update composer.
         run: composer self-update
 
-      - name: Set environment variables pull request linux.
-        uses: yiisoft/actions/db/environment-linux@master
-
-      - name: Install db.
-        uses: yiisoft/actions/db/subpackage-install@master
+      - name: Install db and db-mssql.
+        uses: yiisoft/actions/install-packages@master
         with:
-          BRANCH_NAME: ${{ env.BRANCH_NAME }}
-          COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
-          CURRENT_PACKAGE: db
-          FULL_BRANCH_NAME: ${{ env.FULL_BRANCH_NAME }}
-          WORK_PACKAGE_URL: ${{ env.WORK_PACKAGE_URL }}
-
-      - name: Install db-mssql.
-        uses: yiisoft/actions/db/subpackage-install@master
-        with:
-          BRANCH_NAME: ${{ env.BRANCH_NAME }}
-          COMPOSER_ROOT_VERSION: ${{ env.COMPOSER_ROOT_VERSION }}
-          CURRENT_PACKAGE: db-mssql
-          FULL_BRANCH_NAME: ${{ env.FULL_BRANCH_NAME }}
-          WORK_PACKAGE_URL: ${{ env.WORK_PACKAGE_URL }}
+          packages: >-
+            ['db', 'db-mssql']
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Mssql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
