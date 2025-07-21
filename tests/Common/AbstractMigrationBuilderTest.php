@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constant\IndexType;
-use Yiisoft\Db\Constraint\IndexConstraint;
+use Yiisoft\Db\Constraint\Index;
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigrationInformer;
@@ -434,17 +434,11 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createTable('test_table', ['id' => 'int']);
         $this->builder->createIndex('test_table', 'unique_index', 'id', IndexType::UNIQUE);
 
-        $indexes = $this->db->getSchema()->getTableIndexes('test_table');
+        $this->assertEquals(
+            [new Index('unique_index', ['id'], true)],
+            $this->db->getSchema()->getTableIndexes('test_table'),
+        );
 
-        $this->assertCount(1, $indexes);
-
-        /** @var IndexConstraint $index */
-        $index = $indexes[0];
-
-        $this->assertSame('unique_index', $index->getName());
-        $this->assertSame(['id'], $index->getColumnNames());
-        $this->assertTrue($index->isUnique());
-        $this->assertFalse($index->isPrimaryKey());
         $this->assertInformerOutputContains(
             '    > Create UNIQUE index unique_index on test_table (id) ... Done in ',
         );
