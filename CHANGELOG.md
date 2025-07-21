@@ -2,7 +2,7 @@
 
 ## 2.0.0 under development
 
-- Enh #274: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
+- Enh #274, #297: Refactor for compatibility with `yiisoft/db` package (@Tigrov)
 - Bug #277: Fix when there is a namespace but the directory does not exist (@Tigrov)
 - Chg #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
 - Enh #282, #283, #293: Adapt to Yii DB changes (@Tigrov)
