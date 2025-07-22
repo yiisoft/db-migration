@@ -689,7 +689,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         $indexes = $this->db->getSchema()->getTableIndexes($table);
 
         foreach ($indexes as $index) {
-            if ($index->getName() === $column) {
+            if ($index->name === $column) {
                 return true;
             }
         }
