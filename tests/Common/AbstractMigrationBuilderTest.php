@@ -402,7 +402,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $foreingKeys = $this->db->getTableSchema('test_table')->getForeignKeys();
 
         $defaultSchema = $this->db->getSchema()->getDefaultSchema();
-        $onUpdate =  $this->db->getDriverName() !== 'oci' ? ReferentialAction::CASCADE : null;
+        $onUpdate = $this->db->getDriverName() !== 'oci' ? ReferentialAction::CASCADE : null;
 
         $this->assertEquals(
             ['fk' => new ForeignKey('fk', ['foreign_id'], $defaultSchema, 'target_table', ['id'], ReferentialAction::CASCADE, $onUpdate)],
