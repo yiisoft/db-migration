@@ -52,7 +52,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $this->builder->createIndex('test_table', 'unique_index', 'id', IndexType::UNIQUE, IndexMethod::BTREE);
 
         $this->assertEquals(
-            [new Index('unique_index', ['id'], true)],
+            ['unique_index' => new Index('unique_index', ['id'], true)],
             $this->db->getSchema()->getTableIndexes('test_table'),
         );
 
