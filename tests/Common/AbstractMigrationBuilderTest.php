@@ -6,6 +6,7 @@ namespace Yiisoft\Db\Migration\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Yiisoft\Db\Expression\Expression;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constant\IndexType;
 use Yiisoft\Db\Constraint\Index;
@@ -93,7 +94,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     {
         $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
         $this->builder->insert('test', ['name' => 'Ivan']);
-        $this->builder->update('test', ['name' => 'Petr'], '[[id]]=:id', ['id' => 1]);
+        $this->builder->update('test', ['name' => 'Petr'], new Expression('[[id]]=:id', ['id' => 1]));
 
         $this->assertEquals(
             [

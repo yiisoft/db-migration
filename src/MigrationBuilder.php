@@ -12,6 +12,7 @@ use Yiisoft\Db\Constant\PseudoType;
 use Yiisoft\Db\Constant\ReferentialAction;
 use Yiisoft\Db\Exception\InvalidConfigException;
 use Yiisoft\Db\Exception\NotSupportedException;
+use Yiisoft\Db\Expression\ExpressionInterface;
 use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
@@ -146,18 +147,23 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @param string $table The table to be updated.
      * @param array $columns The column data (name => value) to be updated.
-     * @param array|string $condition The condition to put in the `WHERE` part. Please refer to
+     * @param array|ExpressionInterface|string $condition The condition to put in the `WHERE` part. Please refer to
      * {@see QueryInterface::where()} on how to specify condition.
-     * @param array $params The parameters to be bound to the query.
+     * @param array|ExpressionInterface|string|null $from The condition to put in the `FROM` part. Please refer to
+     * {@see QueryInterface::from()} on how to specify condition.
      *
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
      */
-    public function update(string $table, array $columns, array|string $condition = '', array $params = []): void
-    {
+    public function update(
+        string $table,
+        array $columns,
+        array|ExpressionInterface|string $condition = '',
+        array|ExpressionInterface|string|null $from = null
+    ): void {
         $time = $this->beginCommand("Update $table");
-        $this->db->createCommand()->update($table, $columns, $condition, $params)->execute();
+        $this->db->createCommand()->update($table, $columns, $condition, $from)->execute();
         $this->endCommand($time);
     }
 
