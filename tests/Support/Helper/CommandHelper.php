@@ -16,16 +16,17 @@ final class CommandHelper
      */
     public static function getCommandTester(ContainerInterface $container, string $commandClass): CommandTester
     {
+        $commandName = $commandClass::getDefaultName();
         $application = new Application();
         $application->setCommandLoader(
             new CommandLoader(
                 $container,
-                ['test-command' => $commandClass]
+                [$commandName => $commandClass]
             )
         );
 
         return new CommandTester(
-            $application->find('test-command')
+            $application->find($commandName)
         );
     }
 }
