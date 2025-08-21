@@ -70,7 +70,7 @@ final class NewCommand extends Command
             $this->migrationService->setSourceNamespaces($namespaces);
         }
 
-        $this->migrationService->before(self::getDefaultName() ?? '');
+        $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int)$input->getOption('limit')

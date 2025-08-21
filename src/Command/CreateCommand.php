@@ -109,7 +109,7 @@ final class CreateCommand extends Command
             $namespace = $this->migrationService->getNewMigrationNamespace();
         }
 
-        if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
+        if ($this->migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 

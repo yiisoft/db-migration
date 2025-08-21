@@ -75,7 +75,7 @@ final class UpdateCommand extends Command
             $this->migrationService->setSourceNamespaces($namespaces);
         }
 
-        if ($this->migrationService->before(self::getDefaultName() ?? '') === Command::INVALID) {
+        if ($this->migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 
