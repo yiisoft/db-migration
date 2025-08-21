@@ -64,7 +64,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('name', $departmentSchema->getColumn('name')->getName());
         $this->assertSame(50, $departmentSchema->getColumn('name')->getSize());
         $this->assertSame('string', $departmentSchema->getColumn('name')->getType());
-        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+        $this->assertFalse($departmentSchema->getColumn('name')->isNotNull());
 
         // check title
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
@@ -114,7 +114,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertEquals('name', $departmentSchema->getColumn('name')->getName());
         $this->assertEquals(50, $departmentSchema->getColumn('name')->getSize());
         $this->assertEquals('string', $departmentSchema->getColumn('name')->getType());
-        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+        $this->assertFalse($departmentSchema->getColumn('name')->isNotNull());
     }
 
     public function testExecuteExtended(): void
@@ -172,7 +172,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('name', $departmentSchema->getColumn('name')->getName());
         $this->assertSame(50, $departmentSchema->getColumn('name')->getSize());
         $this->assertSame('string', $departmentSchema->getColumn('name')->getType());
-        $this->assertTrue($departmentSchema->getColumn('name')->isAllowNull());
+        $this->assertFalse($departmentSchema->getColumn('name')->isNotNull());
 
         /** Check create table student columns*/
         $this->assertCount(4, $studentSchema->getColumns());
@@ -187,22 +187,23 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame('name', $studentSchema->getColumn('name')->getName());
         $this->assertSame('string', $studentSchema->getColumn('name')->getType());
         $this->assertSame(50, $studentSchema->getColumn('name')->getSize());
-        $this->assertTrue($studentSchema->getColumn('name')->isAllowNull());
+        $this->assertFalse($studentSchema->getColumn('name')->isNotNull());
 
         /** Check table student field department_id */
         $this->assertSame('department_id', $studentSchema->getColumn('department_id')->getName());
         $this->assertSame('integer', $studentSchema->getColumn('department_id')->getType());
         $this->assertSame('Student Name', $studentSchema->getColumn('name')->getComment());
-        $this->assertFalse($studentSchema->getColumn('department_id')->isAllowNull());
+        $this->assertTrue($studentSchema->getColumn('department_id')->isNotNull());
+
         $this->assertSame(
             ['department_id'],
-            $dbSchema->getTableForeignKeys('student')[0]->columnNames
+            $dbSchema->getTableForeignKeys('student')['fk-student-department_id']->columnNames
         );
 
         /** Check table student field dateofbirth */
         $this->assertSame('dateofbirth', $studentSchema->getColumn('dateofbirth')->getName());
         $this->assertSame('date', $studentSchema->getColumn('dateofbirth')->getType());
-        $this->asserttrue($studentSchema->getColumn('dateofbirth')->isAllowNull());
+        $this->assertFalse($studentSchema->getColumn('dateofbirth')->isNotNull());
     }
 
     public function testExecuteAgain(): void

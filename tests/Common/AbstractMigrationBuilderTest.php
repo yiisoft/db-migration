@@ -9,6 +9,8 @@ use Psr\Container\ContainerInterface;
 use Yiisoft\Db\Expression\Expression;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constant\IndexType;
+use Yiisoft\Db\Constant\ReferentialAction;
+use Yiisoft\Db\Constraint\ForeignKey;
 use Yiisoft\Db\Constraint\Index;
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\Tests\Support\AssertTrait;
@@ -40,7 +42,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $sqlOutput = $this->db->getQuoter()->quoteSql($sql);
 
-        $this->assertEmpty($this->db->getTableSchema('test_table'));
+        $this->assertEmpty($this->db->getTableSchema('test'));
         $this->assertInformerOutputContains("    > Execute SQL: $sqlOutput ... Done in ");
     }
 
@@ -400,11 +402,13 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $foreingKeys = $this->db->getTableSchema('test_table')->getForeignKeys();
 
-        if ($this->db->getDriverName() !== 'oci') {
-            $this->assertSame(['fk' => ['target_table', 'foreign_id' => 'id']], $foreingKeys);
-        } else {
-            $this->assertSame([['target_table', 'foreign_id' => 'id']], $foreingKeys);
-        }
+        $defaultSchema = $this->db->getSchema()->getDefaultSchema();
+        $onUpdate = $this->db->getDriverName() !== 'oci' ? ReferentialAction::CASCADE : null;
+
+        $this->assertEquals(
+            ['fk' => new ForeignKey('fk', ['foreign_id'], $defaultSchema, 'target_table', ['id'], ReferentialAction::CASCADE, $onUpdate)],
+            $foreingKeys,
+        );
 
         $this->assertInformerOutputContains(
             '    > Add foreign key fk: test_table (foreign_id) references target_table (id) ... Done in',
@@ -436,7 +440,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->createIndex('test_table', 'unique_index', 'id', IndexType::UNIQUE);
 
         $this->assertEquals(
-            [new Index('unique_index', ['id'], true)],
+            ['unique_index' => new Index('unique_index', ['id'], true)],
             $this->db->getSchema()->getTableIndexes('test_table'),
         );
 
