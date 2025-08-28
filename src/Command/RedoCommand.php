@@ -67,7 +67,7 @@ final class RedoCommand extends Command
         $this->downRunner->setIo($io);
         $this->updateRunner->setIo($io);
 
-        $this->migrationService->before(self::getDefaultName() ?? '');
+        $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int)$input->getOption('limit')
