@@ -14,6 +14,7 @@
 - Enh #292: Improve base migration template (@vjik)
 - New #295: Add `--force-yes` (`-y`) option to `migrate:create`, `migrate:up`, `migrate:down` and `migrate:redo`
   commands to skip confirmation prompts (@vjik)
+- Chg #300: Replace deprecated `self::getDefaultName()` with `$this->getName()` (@Tigrov)
 
 ## 1.2.0 November 27, 2024
 
