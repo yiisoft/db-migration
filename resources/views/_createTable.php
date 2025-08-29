@@ -11,12 +11,13 @@ declare(strict_types=1);
  * @var $foreignKeys array Foreign keys.
  */
 
+echo "        \$columnBuilder = \$b->columnBuilder();\n\n";
 echo "        \$b->createTable('$table', [\n";
 foreach ($columns as $column) {
     if (!$column->hasDecorators()) {
         echo "            '{$column->getName()}',\n";
     } else {
-        echo "            '{$column->getName()}' => \$b->{$column->getDecoratorsString()},\n";
+        echo "            '{$column->getName()}' => \$columnBuilder::{$column->getDecoratorsString()},\n";
     }
 }
 echo "        ]);\n";

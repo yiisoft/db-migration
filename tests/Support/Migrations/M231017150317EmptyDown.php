@@ -12,9 +12,11 @@ final class M231017150317EmptyDown implements RevertibleMigrationInterface, Tran
 {
     public function up(MigrationBuilder $b): void
     {
+        $columnBuilder = $b->columnBuilder();
+
         $b->createTable('chapter', [
-            'id' => $b->primaryKey(),
-            'name' => $b->string(100),
+            'id' => $columnBuilder::primaryKey(),
+            'name' => $columnBuilder::string(100),
         ]);
     }
 

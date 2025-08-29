@@ -52,8 +52,10 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
+            'id' => \$columnBuilder::primaryKey(),
         ]);
     }
 
@@ -105,8 +107,10 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
+            'id' => \$columnBuilder::primaryKey(),
         ]);
     }
 
@@ -181,13 +185,15 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'uid' => \$b->primaryKey(),
-            'name' => \$b->string()->defaultValue("test:name"),
-            'user_id' => \$b->integer(),
-            'tag_id' => \$b->integer(),
-            'category_id' => \$b->integer(),
-            'category_id2' => \$b->integer(),
+            'uid' => \$columnBuilder::primaryKey(),
+            'name' => \$columnBuilder::string()->defaultValue("test:name"),
+            'user_id' => \$columnBuilder::integer(),
+            'tag_id' => \$columnBuilder::integer(),
+            'category_id' => \$columnBuilder::integer(),
+            'category_id2' => \$columnBuilder::integer(),
         ]);
 
         // creates index for column `user_id`
@@ -367,10 +373,12 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-            'name' => \$b->string(),
-            'user_id' => \$b->integer(),
+            'id' => \$columnBuilder::primaryKey(),
+            'name' => \$columnBuilder::string(),
+            'user_id' => \$columnBuilder::integer(),
         ]);
 
         // creates index for column `user_id`
@@ -671,10 +679,12 @@ final class $className implements RevertibleMigrationInterface
 
     public function down(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-            'title' => \$b->string(12)->notNull()->unique(),
-            'body' => \$b->text(),
+            'id' => \$columnBuilder::primaryKey(),
+            'title' => \$columnBuilder::string(12)->notNull()->unique(),
+            'body' => \$columnBuilder::text(),
         ]);
     }
 }
@@ -724,10 +734,12 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-            'title' => \$b->string(),
-            'body' => \$b->text(),
+            'id' => \$columnBuilder::primaryKey(),
+            'title' => \$columnBuilder::string(),
+            'body' => \$columnBuilder::text(),
         ]);
     }
 
@@ -787,12 +799,14 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post', [
-            'id' => \$b->primaryKey(),
-            'author_id' => \$b->integer()->notNull(),
-            'category_id' => \$b->integer()->defaultValue(1),
-            'title' => \$b->string(),
-            'body' => \$b->text(),
+            'id' => \$columnBuilder::primaryKey(),
+            'author_id' => \$columnBuilder::integer()->notNull(),
+            'category_id' => \$columnBuilder::integer()->defaultValue(1),
+            'title' => \$columnBuilder::string(),
+            'body' => \$columnBuilder::text(),
         ]);
 
         // creates index for column `author_id`
@@ -910,10 +924,12 @@ final class $className implements RevertibleMigrationInterface, TransactionalMig
 {
     public function up(MigrationBuilder \$b): void
     {
+        \$columnBuilder = \$b->columnBuilder();
+
         \$b->createTable('post_tag', [
-            'post_id' => \$b->integer(),
-            'tag_id' => \$b->integer(),
-            'created_at' => \$b->dateTime(),
+            'post_id' => \$columnBuilder::integer(),
+            'tag_id' => \$columnBuilder::integer(),
+            'created_at' => \$columnBuilder::dateTime(),
             'PRIMARY KEY(post_id, tag_id)',
         ]);
 
