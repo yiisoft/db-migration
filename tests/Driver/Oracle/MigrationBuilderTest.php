@@ -7,7 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Driver\Oracle;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\OracleFactory;
-use Yiisoft\Db\Schema\Column\ColumnBuilder;
+use Yiisoft\Db\Oracle\Column\ColumnBuilder;
 
 /**
  * @group oracle
@@ -42,5 +42,10 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         $this->builder->dropTable('YII.test');
 
         $command->setSql('DROP USER yii CASCADE')->execute();
+    }
+
+    public function testColumnBuilder(): void
+    {
+        $this->assertSame(ColumnBuilder::class, $this->builder->columnBuilder());
     }
 }
