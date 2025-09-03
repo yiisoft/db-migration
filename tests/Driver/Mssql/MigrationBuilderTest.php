@@ -7,7 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Driver\Mssql;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\MssqlFactory;
-use Yiisoft\Db\Schema\Column\ColumnBuilder;
+use Yiisoft\Db\Mssql\Column\ColumnBuilder;
 
 /**
  * @group mssql
@@ -47,5 +47,10 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
 
         $this->builder->dropTable('yii.test');
         $command->setSql('DROP SCHEMA yii')->execute();
+    }
+
+    public function testColumnBuilder(): void
+    {
+        $this->assertSame(ColumnBuilder::class, $this->builder->columnBuilder());
     }
 }

@@ -602,6 +602,11 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertSame($this->db, $this->builder->getDb());
     }
 
+    public function testColumnBuilder(): void
+    {
+        $this->assertSame(ColumnBuilder::class, $this->builder->columnBuilder());
+    }
+
     protected function assertInformerOutputContains(string $string): void
     {
         $this->assertStringContainsString($string, $this->informer->getOutput());

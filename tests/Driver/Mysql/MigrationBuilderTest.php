@@ -8,9 +8,9 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constraint\Index;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\MysqlFactory;
+use Yiisoft\Db\Mysql\Column\ColumnBuilder;
 use Yiisoft\Db\Mysql\IndexType;
 use Yiisoft\Db\Mysql\IndexMethod;
-use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
 /**
  * @group mysql
@@ -61,5 +61,10 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         );
 
         $this->builder->dropTable('test_table');
+    }
+
+    public function testColumnBuilder(): void
+    {
+        $this->assertSame(ColumnBuilder::class, $this->builder->columnBuilder());
     }
 }

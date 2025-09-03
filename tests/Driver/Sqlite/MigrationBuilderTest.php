@@ -9,6 +9,7 @@ use Yiisoft\Db\Exception\NotSupportedException;
 use Yiisoft\Db\Migration\Tests\Common\AbstractMigrationBuilderTest;
 use Yiisoft\Db\Migration\Tests\Support\Factory\SqLiteFactory;
 use Yiisoft\Db\Migration\Tests\Support\Helper\DbHelper;
+use Yiisoft\Db\Sqlite\Column\ColumnBuilder;
 
 /**
  * @group sqlite
@@ -164,5 +165,10 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         );
 
         parent::testRenameColumn();
+    }
+
+    public function testColumnBuilder(): void
+    {
+        $this->assertSame(ColumnBuilder::class, $this->builder->columnBuilder());
     }
 }

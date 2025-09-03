@@ -29,12 +29,20 @@ use function trim;
 
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
+    /** @psalm-var class-string<ColumnBuilder> */
+    private string|null $columnBuilderClass = null;
+
     public function __construct(
         private ConnectionInterface $db,
         private MigrationInformerInterface $informer,
         private ?int $maxSqlOutputLength = null,
     ) {
-        parent::__construct($this->db->getSchema());
+    }
+
+    /** @psalm-return class-string<ColumnBuilder> */
+    public function columnBuilder(): string
+    {
+        return $this->columnBuilderClass ??= $this->db->getColumnBuilderClass();
     }
 
     public function getDb(): ConnectionInterface
