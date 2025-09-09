@@ -6,7 +6,6 @@ namespace Yiisoft\Db\Migration\Tests\Common;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yiisoft\Db\Expression\Expression;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Constant\IndexType;
 use Yiisoft\Db\Constant\ReferentialAction;
