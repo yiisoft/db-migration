@@ -159,6 +159,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * {@see QueryInterface::where()} on how to specify condition.
      * @param array|ExpressionInterface|string|null $from The condition to put in the `FROM` part. Please refer to
      * {@see QueryInterface::from()} on how to specify condition.
+     * @param array $params The parameters to be bound to the query.
      *
      * @throws Exception
      * @throws InvalidConfigException
@@ -168,10 +169,11 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         string $table,
         array $columns,
         array|ExpressionInterface|string $condition = '',
-        array|ExpressionInterface|string|null $from = null
+        array|ExpressionInterface|string|null $from = null,
+        array $params = []
     ): void {
         $time = $this->beginCommand("Update $table");
-        $this->db->createCommand()->update($table, $columns, $condition, $from)->execute();
+        $this->db->createCommand()->update($table, $columns, $condition, $from, $params)->execute();
         $this->endCommand($time);
     }
 
