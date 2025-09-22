@@ -95,8 +95,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     {
         $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
         $this->builder->insert('test', ['name' => 'Ivan']);
-        $this->builder->update('test', ['name' => 'Petr'], '[[id]]=:id', ['id' => 1]);
-
+        $this->builder->update('test', ['name' => 'Petr'], '[[id]]=:id', null, ['id' => 1]);
         $this->assertEquals(
             [
                 ['id' => '1', 'name' => 'Petr'],
