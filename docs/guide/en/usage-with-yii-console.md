@@ -22,7 +22,7 @@ return [
 ];
 ```
 
-Add to `config/params.php`:
+Add to `config/console/params.php`:
 
 ```php
 ...
