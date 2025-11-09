@@ -27,6 +27,9 @@ use function sprintf;
 use function substr;
 use function trim;
 
+/**
+ * @psalm-import-type RawFrom from QueryInterface
+ */
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
     /** @psalm-var class-string<ColumnBuilder> */
@@ -164,6 +167,8 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws Exception
      * @throws InvalidConfigException
      * @throws NotSupportedException
+     *
+     * @psalm-param RawFrom|null $from
      */
     public function update(
         string $table,
