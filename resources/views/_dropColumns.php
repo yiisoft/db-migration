@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\Column;
+use Yiisoft\Db\Migration\Service\Generate\ForeignKey;
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $table string The table name.
- * @var $columns \Yiisoft\Db\Migration\Service\Generate\Column[] Fields.
- * @var $foreignKeys \Yiisoft\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
+ * @var PhpRenderer $this
+ * @var string $table The table name.
+ * @var Column[] $columns Fields.
+ * @var ForeignKey[] $foreignKeys Foreign keys.
  */
 
 echo $this->render(__DIR__ . '/_dropForeignKeys.php', [

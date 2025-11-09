@@ -2,17 +2,21 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\Column;
+use Yiisoft\Db\Migration\Service\Generate\ForeignKey;
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
  * This view is used by {@see Yiisoft\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $className string The new migration class name without namespace.
- * @var $namespace string The new migration class namespace.
- * @var $table string The table name.
- * @var $columns \Yiisoft\Db\Migration\Service\Generate\Column[] Fields.
- * @var $foreignKeys \Yiisoft\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
+ * @var PhpRenderer $this
+ * @var string $className The new migration class name without namespace.
+ * @var string $namespace The new migration class namespace.
+ * @var string $table The table name.
+ * @var Column[] $columns Fields.
+ * @var ForeignKey[] $foreignKeys Foreign keys.
  */
 
 echo "<?php\n";

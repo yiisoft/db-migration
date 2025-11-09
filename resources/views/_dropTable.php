@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
  * Creates a call for the method `Yiisoft\Db\Migration\MigrationBuilder::dropTable()`.
  *
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $table string The table name.
- * @var $foreignKeys array Foreign keys.
+ * @var PhpRenderer $this
+ * @var string $table The table name.
+ * @var array $foreignKeys Foreign keys.
  */
 
 echo $this->render(__DIR__ . '/_dropForeignKeys.php', [
