@@ -102,7 +102,7 @@ abstract class AbstractDownCommandTest extends TestCase
             'Create_Department',
             'table',
             'department',
-            ['name:string(50)']
+            ['name:string(50)'],
         );
 
         $command1 = $this->createCommand($this->container);
@@ -217,7 +217,7 @@ abstract class AbstractDownCommandTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'Migration ' . StubMigration::class . ' does not implement RevertibleMigrationInterface.'
+            'Migration ' . StubMigration::class . ' does not implement RevertibleMigrationInterface.',
         );
         $command->execute([]);
     }

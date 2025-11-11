@@ -70,7 +70,7 @@ final class CreateCommand extends Command
     public function __construct(
         private CreateService $createService,
         private MigrationService $migrationService,
-        private Migrator $migrator
+        private Migrator $migrator,
     ) {
         parent::__construct();
     }
@@ -118,7 +118,7 @@ final class CreateCommand extends Command
 
         if (!preg_match('/^[\w\\\\]+$/', $table)) {
             $io->error(
-                'The migration name should contain letters, digits, underscore and/or backslash characters only.'
+                'The migration name should contain letters, digits, underscore and/or backslash characters only.',
             );
 
             return Command::INVALID;
@@ -129,7 +129,7 @@ final class CreateCommand extends Command
 
         if (!in_array($command, self::AVAILABLE_COMMANDS, true)) {
             $io->error(
-                "Command not found \"$command\". Available commands: " . implode(', ', self::AVAILABLE_COMMANDS) . '.'
+                "Command not found \"$command\". Available commands: " . implode(', ', self::AVAILABLE_COMMANDS) . '.',
             );
 
             return Command::INVALID;
@@ -204,7 +204,7 @@ final class CreateCommand extends Command
         return $helper->ask($input, $output, $question);
     }
 
-    private function generateName(string $command, string $name, string|null $and): string
+    private function generateName(string $command, string $name, ?string $and): string
     {
         $result = '';
 

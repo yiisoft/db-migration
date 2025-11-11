@@ -27,7 +27,7 @@ final class CreateService
      */
     public function __construct(
         private ConnectionInterface $db,
-        private bool $useTablePrefix = true
+        private bool $useTablePrefix = true,
     ) {
         $this->phpRenderer = new PhpRenderer();
     }
@@ -36,10 +36,10 @@ final class CreateService
         string $command,
         string $table,
         string $className,
-        string|null $namespace = null,
-        string|null $fields = null,
-        string|null $and = null,
-        string|null $tableComment = null
+        ?string $namespace = null,
+        ?string $fields = null,
+        ?string $and = null,
+        ?string $tableComment = null,
     ): string {
         $templateFile = $this->getTemplate($command);
 
@@ -52,7 +52,7 @@ final class CreateService
         [$columns, $foreignKeys] = (new FieldsParser($foreignKeyFactory))->parse(
             $table,
             $fields,
-            in_array($command, ['table', 'dropTable'], true)
+            in_array($command, ['table', 'dropTable'], true),
         );
 
         if ($command === 'junction') {
@@ -83,7 +83,7 @@ final class CreateService
                 'columns' => $columns,
                 'foreignKeys' => $foreignKeys,
                 'tableComment' => $tableComment,
-            ]
+            ],
         );
     }
 

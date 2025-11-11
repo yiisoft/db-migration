@@ -64,7 +64,7 @@ final class MigrationHelper
         string $command,
         string $table,
         array $fields = [],
-        Closure|null $callback = null
+        ?Closure $callback = null,
     ): string {
         $migrationService = $container->get(MigrationService::class);
         $createService = $container->get(CreateService::class);
@@ -77,7 +77,7 @@ final class MigrationHelper
             $table,
             $className,
             $namespace,
-            implode(',', $fields)
+            implode(',', $fields),
         );
 
         if ($callback) {
@@ -86,7 +86,7 @@ final class MigrationHelper
 
         file_put_contents(
             $migrationService->findMigrationPath() . '/' . $className . '.php',
-            $content
+            $content,
         );
 
         return $namespace === ''
@@ -100,7 +100,7 @@ final class MigrationHelper
         string $command,
         string $table,
         array $fields = [],
-        ?Closure $callback = null
+        ?Closure $callback = null,
     ): string {
         $className = self::createMigration($container, $name, $command, $table, $fields, $callback);
 
@@ -115,6 +115,16 @@ final class MigrationHelper
         return dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
     }
 
+    public static function resetPathAndNamespace(ContainerInterface $container): void
+    {
+        $service = $container->get(MigrationService::class);
+
+        $service->setNewMigrationPath('');
+        $service->setSourcePaths([]);
+        $service->setNewMigrationNamespace('');
+        $service->setSourceNamespaces([]);
+    }
+
     private static function preparePaths(): void
     {
         $paths = [
@@ -127,15 +137,5 @@ final class MigrationHelper
                 ? FileHelper::clearDirectory($path)
                 : mkdir($path);
         }
-    }
-
-    public static function resetPathAndNamespace(ContainerInterface $container): void
-    {
-        $service = $container->get(MigrationService::class);
-
-        $service->setNewMigrationPath('');
-        $service->setSourcePaths([]);
-        $service->setNewMigrationNamespace('');
-        $service->setSourceNamespaces([]);
     }
 }

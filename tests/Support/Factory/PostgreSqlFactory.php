@@ -40,7 +40,7 @@ final class PostgreSqlFactory
                     PgSqlConnection::class => $container->get(ConnectionInterface::class),
                     default => ContainerHelper::get($container, $id, $config),
                 };
-            }
+            },
         );
 
         return $container;

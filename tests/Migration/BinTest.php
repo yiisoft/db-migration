@@ -35,7 +35,7 @@ final class BinTest extends TestCase
                 new \Yiisoft\Db\Sqlite\Driver('sqlite::memory:'),
                 new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
             ),
-            PHP
+            PHP,
         );
 
         [$output, $exitCode] = $this->runYiiDbMigration();
@@ -57,7 +57,7 @@ final class BinTest extends TestCase
         $file = dirname(__DIR__) . '/runtime/bin/yii-db-migration.php';
         file_put_contents(
             $file,
-            str_replace($search, $replace, file_get_contents($file))
+            str_replace($search, $replace, file_get_contents($file)),
         );
     }
 

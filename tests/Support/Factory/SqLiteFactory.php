@@ -31,12 +31,12 @@ final class SqLiteFactory
                 return match ($id) {
                     ConnectionInterface::class => new SqLiteConnection(
                         new SqLiteDriver('sqlite::memory:'),
-                        new SchemaCache(new MemorySimpleCache())
+                        new SchemaCache(new MemorySimpleCache()),
                     ),
                     SqLiteConnection::class => $container->get(ConnectionInterface::class),
                     default => ContainerHelper::get($container, $id, $config),
                 };
-            }
+            },
         );
 
         return $container;

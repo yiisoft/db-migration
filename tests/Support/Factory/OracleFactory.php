@@ -42,7 +42,7 @@ final class OracleFactory
                     OracleConnection::class => $container->get(ConnectionInterface::class),
                     default => ContainerHelper::get($container, $id, $config),
                 };
-            }
+            },
         );
 
         return $container;

@@ -44,7 +44,7 @@ final class DownCommand extends Command
     public function __construct(
         private DownRunner $downRunner,
         private MigrationService $migrationService,
-        private Migrator $migrator
+        private Migrator $migrator,
     ) {
         parent::__construct();
     }
@@ -69,7 +69,7 @@ final class DownCommand extends Command
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
-            ? (int)$input->getOption('limit')
+            ? (int) $input->getOption('limit')
             : null;
 
         if ($limit !== null && $limit <= 0) {
@@ -115,7 +115,7 @@ final class DownCommand extends Command
         $migrationWord = $n === 1 ? 'migration' : 'migrations';
 
         $output->writeln(
-            "<fg=yellow>Total $n $migrationWord to be reverted:</>\n"
+            "<fg=yellow>Total $n $migrationWord to be reverted:</>\n",
         );
 
         foreach ($migrations as $i => $migration) {
@@ -154,7 +154,7 @@ final class DownCommand extends Command
 
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Revert the above $migrationWord y/n: ",
-            true
+            true,
         );
 
         /** @var QuestionHelper $helper */

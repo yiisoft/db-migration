@@ -21,8 +21,7 @@ final class Migrator
         private string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180,
         private ?int $maxSqlOutputLength = null,
-    ) {
-    }
+    ) {}
 
     public function setIo(?SymfonyStyle $io): void
     {
@@ -34,7 +33,7 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $this->migrateUp($migration)),
+            true => $this->db->transaction(fn() => $this->migrateUp($migration)),
             false => $this->migrateUp($migration),
         };
     }
@@ -44,7 +43,7 @@ final class Migrator
         $this->checkMigrationHistoryTable();
 
         match ($migration instanceof TransactionalMigrationInterface) {
-            true => $this->db->transaction(fn () => $this->migrateDown($migration)),
+            true => $this->db->transaction(fn() => $this->migrateDown($migration)),
             false => $this->migrateDown($migration),
         };
     }
@@ -103,7 +102,7 @@ final class Migrator
             [
                 'name' => $this->getMigrationName($migration),
                 'apply_time' => time(),
-            ]
+            ],
         )->execute();
     }
 

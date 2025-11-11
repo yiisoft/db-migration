@@ -33,14 +33,13 @@ use function trim;
 final class MigrationBuilder extends AbstractMigrationBuilder
 {
     /** @psalm-var class-string<ColumnBuilder> */
-    private string|null $columnBuilderClass = null;
+    private ?string $columnBuilderClass = null;
 
     public function __construct(
         private ConnectionInterface $db,
         private MigrationInformerInterface $informer,
         private ?int $maxSqlOutputLength = null,
-    ) {
-    }
+    ) {}
 
     /** @psalm-return class-string<ColumnBuilder> */
     public function columnBuilder(): string
@@ -175,7 +174,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         array $columns,
         array|ExpressionInterface|string $condition = '',
         array|ExpressionInterface|string|null $from = null,
-        array $params = []
+        array $params = [],
     ): void {
         $time = $this->beginCommand("Update $table");
         $this->db->createCommand()->update($table, $columns, $condition, $from, $params)->execute();
@@ -245,7 +244,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      *
      * @psalm-param array<string, string|ColumnInterface> $columns
      */
-    public function createTable(string $table, array $columns, string|null $options = null): void
+    public function createTable(string $table, array $columns, ?string $options = null): void
     {
         $time = $this->beginCommand("create table $table");
 
@@ -431,7 +430,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function addPrimaryKey(string $table, string $name, array|string $columns): void
     {
         $time = $this->beginCommand(
-            "Add primary key $name on $table (" . implode(',', (array) $columns) . ')'
+            "Add primary key $name on $table (" . implode(',', (array) $columns) . ')',
         );
         $this->db->createCommand()->addPrimaryKey($table, $name, $columns)->execute();
         $this->endCommand($time);
@@ -481,12 +480,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         array|string $columns,
         string $referenceTable,
         array|string $referenceColumns,
-        string|null $delete = null,
-        string|null $update = null
+        ?string $delete = null,
+        ?string $update = null,
     ): void {
         $time = $this->beginCommand(
             "Add foreign key $name: $table (" . implode(',', (array) $columns) . ')'
-            . " references $referenceTable (" . implode(',', (array) $referenceColumns) . ')'
+            . " references $referenceTable (" . implode(',', (array) $referenceColumns) . ')',
         );
         $this->db->createCommand()->addForeignKey(
             $table,
@@ -495,7 +494,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
             $referenceTable,
             $referenceColumns,
             $delete,
-            $update
+            $update,
         )->execute();
         $this->endCommand($time);
     }
@@ -540,14 +539,14 @@ final class MigrationBuilder extends AbstractMigrationBuilder
         string $table,
         string $name,
         array|string $columns,
-        string|null $indexType = null,
-        string|null $indexMethod = null
+        ?string $indexType = null,
+        ?string $indexMethod = null,
     ): void {
         $time = $this->beginCommand(
             'Create'
             . ($indexType !== null ? ' ' . $indexType : '')
             . " index $name on $table (" . implode(',', (array) $columns) . ')'
-            . ($indexMethod !== null ? ' using ' . $indexMethod : '')
+            . ($indexMethod !== null ? ' using ' . $indexMethod : ''),
         );
         $this->db->createCommand()->createIndex($table, $name, $columns, $indexType, $indexMethod)->execute();
         $this->endCommand($time);

@@ -47,7 +47,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
         if ($expectedComment === 'test comment') {
             $this->expectException(NotSupportedException::class);
             $this->expectExceptionMessage(
-                'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.'
+                'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.',
             );
         }
 
@@ -58,7 +58,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.',
         );
 
         parent::testAddCommentOnColumn();
@@ -68,7 +68,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnTable is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnTable is not supported by SQLite.',
         );
 
         parent::testAddCommentOnTable();
@@ -78,7 +78,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addPrimaryKey is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addPrimaryKey is not supported by SQLite.',
         );
 
         parent::testAddPrimaryKey();
@@ -87,11 +87,11 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn(string $type, string|null $defaultValue = null, ?string $expectedComment = null): void
+    public function testAlterColumn(string $type, ?string $defaultValue = null, ?string $expectedComment = null): void
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::alterColumn is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::alterColumn is not supported by SQLite.',
         );
 
         parent::testAlterColumn($type, $defaultValue, $expectedComment);
@@ -101,7 +101,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addForeignKey is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addForeignKey is not supported by SQLite.',
         );
 
         parent::testAddForeignKey();
@@ -111,7 +111,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::dropColumn is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::dropColumn is not supported by SQLite.',
         );
 
         parent::testDropColumn();
@@ -121,7 +121,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnColumn is not supported by SQLite.',
         );
 
         parent::testDropCommentFromColumn();
@@ -131,7 +131,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnTable is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addCommentOnTable is not supported by SQLite.',
         );
 
         parent::testDropCommentFromTable();
@@ -141,7 +141,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addForeignKey is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::addForeignKey is not supported by SQLite.',
         );
 
         parent::testDropForeignKey();
@@ -151,7 +151,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::dropPrimaryKey is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::dropPrimaryKey is not supported by SQLite.',
         );
 
         parent::testDropPrimaryKey();
@@ -161,7 +161,7 @@ final class MigrationBuilderTest extends AbstractMigrationBuilderTest
     {
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage(
-            'Yiisoft\Db\Sqlite\DDLQueryBuilder::renameColumn is not supported by SQLite.'
+            'Yiisoft\Db\Sqlite\DDLQueryBuilder::renameColumn is not supported by SQLite.',
         );
 
         parent::testRenameColumn();

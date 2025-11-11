@@ -9,7 +9,5 @@ use Yiisoft\Db\Migration\MigrationInterface;
 
 final class StubMigration implements MigrationInterface
 {
-    public function up(MigrationBuilder $b): void
-    {
-    }
+    public function up(MigrationBuilder $b): void {}
 }

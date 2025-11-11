@@ -44,7 +44,7 @@ final class RedoCommand extends Command
         private MigrationService $migrationService,
         private Migrator $migrator,
         private DownRunner $downRunner,
-        private UpdateRunner $updateRunner
+        private UpdateRunner $updateRunner,
     ) {
         parent::__construct();
     }
@@ -70,7 +70,7 @@ final class RedoCommand extends Command
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
-            ? (int)$input->getOption('limit')
+            ? (int) $input->getOption('limit')
             : null;
 
         if ($limit !== null && $limit <= 0) {
@@ -163,7 +163,7 @@ final class RedoCommand extends Command
 
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Redo the above $migrationWord y/n: ",
-            true
+            true,
         );
 
         /** @var QuestionHelper $helper */

@@ -149,12 +149,12 @@ EOF;
             'name' => 'post',
             '--command' => 'table',
             '--table-comment' => "test 'comment'",
-            '--fields' => 'uid:primaryKey,' .
-                'name:string:defaultValue("test:name"),' .
-                'user_id:integer:foreignKey,' .
-                'tag_id:integer:foreignKey,' .
-                'category_id:integer:foreignKey,' .
-                'category_id2:integer:foreignKey(category id2)',
+            '--fields' => 'uid:primaryKey,'
+                . 'name:string:defaultValue("test:name"),'
+                . 'user_id:integer:foreignKey,'
+                . 'tag_id:integer:foreignKey,'
+                . 'category_id:integer:foreignKey,'
+                . 'category_id2:integer:foreignKey(category id2)',
         ]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -345,7 +345,7 @@ EOF;
                 'name' => 'post',
                 '--command' => 'table',
                 '--fields' => 'name:string,user_id:integer:foreignKey',
-            ]
+            ],
         );
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -502,7 +502,7 @@ EOF;
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'The migration name should contain letters, digits, underscore and/or backslash characters only.',
-            $output
+            $output,
         );
     }
 
@@ -518,9 +518,9 @@ EOF;
 
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
-            'Command not found "noExist". Available commands: ' .
-            'create, table, dropTable, addColumn, dropColumn, junction.',
-            $output
+            'Command not found "noExist". Available commands: '
+            . 'create, table, dropTable, addColumn, dropColumn, junction.',
+            $output,
         );
     }
 
@@ -650,7 +650,7 @@ EOF;
                 'name' => 'post',
                 '--command' => 'dropTable',
                 '--fields' => 'title:string(12):notNull:unique,body:text',
-            ]
+            ],
         );
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -709,7 +709,7 @@ EOF;
                 'name' => 'post',
                 '--command' => 'table',
                 '--fields' => 'title:string,body:text',
-            ]
+            ],
         );
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -768,9 +768,9 @@ EOF;
             [
                 'name' => 'post',
                 '--command' => 'table',
-                '--fields' => 'author_id:integer:notNull:foreignKey(user),' .
-                    'category_id:integer:defaultValue(1):foreignKey,title:string,body:text',
-            ]
+                '--fields' => 'author_id:integer:notNull:foreignKey(user),'
+                    . 'category_id:integer:defaultValue(1):foreignKey,title:string,body:text',
+            ],
         );
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -895,7 +895,7 @@ EOF;
                 '--command' => 'junction',
                 '--and' => 'tag',
                 '--fields' => 'created_at:dateTime',
-            ]
+            ],
         );
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -1037,7 +1037,7 @@ EOF;
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
-            $output
+            $output,
         );
     }
 
@@ -1073,7 +1073,7 @@ EOF;
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
-            $output
+            $output,
         );
     }
 
@@ -1091,7 +1091,7 @@ EOF;
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
-            $output
+            $output,
         );
     }
 
@@ -1110,7 +1110,7 @@ EOF;
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
-            $output
+            $output,
         );
     }
 

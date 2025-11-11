@@ -30,7 +30,7 @@ abstract class AbstractMigratorTest extends TestCase
             $this->container->get(ConnectionInterface::class),
             new NullMigrationInformer(),
             '{{%migration}}',
-            42
+            42,
         );
 
         $this->assertSame(42, $migrator->getMigrationNameLimit());
@@ -42,7 +42,7 @@ abstract class AbstractMigratorTest extends TestCase
             $this->container->get(ConnectionInterface::class),
             new NullMigrationInformer(),
             '{{%migration}}',
-            null
+            null,
         );
 
         $this->assertNull($migrator->getMigrationNameLimit());
@@ -60,7 +60,7 @@ abstract class AbstractMigratorTest extends TestCase
             $db,
             new NullMigrationInformer(),
             '{{%migration}}',
-            null
+            null,
         );
 
         // For create migration history table
@@ -70,7 +70,7 @@ abstract class AbstractMigratorTest extends TestCase
         $db->createCommand()->alterColumn(
             $migrator->getHistoryTable(),
             'name',
-            'text'
+            'text',
         )->execute();
 
         $limit = $migrator->getMigrationNameLimit();
@@ -87,7 +87,7 @@ abstract class AbstractMigratorTest extends TestCase
             $this->container->get(ConnectionInterface::class),
             new NullMigrationInformer(),
             '{{%migration}}',
-            null
+            null,
         );
 
         // For create migration history table

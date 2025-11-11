@@ -197,7 +197,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         $this->assertSame(
             ['department_id'],
-            $dbSchema->getTableForeignKeys('student')['fk-student-department_id']->columnNames
+            $dbSchema->getTableForeignKeys('student')['fk-student-department_id']->columnNames,
         );
 
         /** Check table student field dateofbirth */
@@ -248,10 +248,10 @@ abstract class AbstractUpdateCommandTest extends TestCase
             'table',
             'department',
             ['name:string(50)'],
-            static fn (string $content) => str_replace(
+            static fn(string $content) => str_replace(
                 'implements RevertibleMigrationInterface, TransactionalMigrationInterface',
                 '',
-                $content
+                $content,
             ),
         );
 
@@ -278,7 +278,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
-            $output
+            $output,
         );
     }
 
@@ -297,7 +297,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsStringCollapsingSpaces(
             'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
-            $output
+            $output,
         );
     }
 
@@ -355,7 +355,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertSame(Command::INVALID, $exitCode);
         $this->assertStringContainsString(
             'is too long. Its not possible to apply this migration.',
-            $output
+            $output,
         );
     }
 
