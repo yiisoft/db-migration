@@ -11,7 +11,7 @@
 [![Build status](https://github.com/yiisoft/db-migration/actions/workflows/build.yml/badge.svg)](https://github.com/yiisoft/db-migration/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/yiisoft/db-migration/graph/badge.svg?token=CCRKELEOHP)](https://codecov.io/gh/yiisoft/db-migration)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Fdb-migration%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/db-migration/master)
-[![static analysis](https://github.com/yiisoft/db-migration/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/db-migration/actions?query=workflow%3A%22static+analysis%22)
+[![Static analysis](https://github.com/yiisoft/db-migration/actions/workflows/static.yml/badge.svg?branch=master)](https://github.com/yiisoft/db-migration/actions/workflows/static.yml?query=branch%3Amaster)
 [![type-coverage](https://shepherd.dev/github/yiisoft/db-migration/coverage.svg)](https://shepherd.dev/github/yiisoft/db-migration)
 
 Yii DB Migration allows you to manage database schema using migrations.
