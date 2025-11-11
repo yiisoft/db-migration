@@ -21,7 +21,7 @@ final class MigrationServiceTest extends TestCase
     {
         $db = new Connection(
             new Driver('sqlite::memory:'),
-            new SchemaCache(new MemorySimpleCache())
+            new SchemaCache(new MemorySimpleCache()),
         );
         $service = new MigrationService(
             $db,

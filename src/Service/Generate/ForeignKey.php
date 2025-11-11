@@ -11,9 +11,8 @@ final class ForeignKey
         private string $foreignKeyName,
         private ?string $column,
         private string $relatedTable,
-        private string $relatedColumn
-    ) {
-    }
+        private string $relatedColumn,
+    ) {}
 
     public function getIndexName(): string
     {

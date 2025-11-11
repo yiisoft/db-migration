@@ -34,9 +34,7 @@ use Yiisoft\Db\Schema\SchemaInterface;
  */
 abstract class AbstractMigrationBuilder
 {
-    public function __construct(private SchemaInterface $schema)
-    {
-    }
+    public function __construct(private SchemaInterface $schema) {}
 
     /**
      * Creates a bigint column.

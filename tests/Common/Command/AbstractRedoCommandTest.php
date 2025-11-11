@@ -180,7 +180,7 @@ abstract class AbstractRedoCommandTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'Migration ' . StubMigration::class . ' does not implement RevertibleMigrationInterface.'
+            'Migration ' . StubMigration::class . ' does not implement RevertibleMigrationInterface.',
         );
         $command->execute([]);
     }

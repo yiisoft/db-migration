@@ -42,7 +42,7 @@ final class MssqlFactory
                     MssqlConnection::class => $container->get(ConnectionInterface::class),
                     default => ContainerHelper::get($container, $id, $config),
                 };
-            }
+            },
         );
 
         return $container;

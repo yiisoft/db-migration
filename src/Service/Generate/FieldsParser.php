@@ -18,9 +18,7 @@ use function str_starts_with;
  */
 final class FieldsParser
 {
-    public function __construct(private ForeignKeyFactory $foreignKeyFactory)
-    {
-    }
+    public function __construct(private ForeignKeyFactory $foreignKeyFactory) {}
 
     /**
      * @return array[]
@@ -30,7 +28,7 @@ final class FieldsParser
     public function parse(
         string $table,
         ?string $value,
-        bool $addDefaultPrimaryKey
+        bool $addDefaultPrimaryKey,
     ): array {
         $columns = [];
         $foreignKeys = [];
@@ -51,7 +49,7 @@ final class FieldsParser
                             $table,
                             $columnName,
                             $matches[1] ?? preg_replace('/_id$/', '', $columnName),
-                            empty($matches[2]) ? null : $matches[2]
+                            empty($matches[2]) ? null : $matches[2],
                         );
 
                         unset($chunks[$i]);

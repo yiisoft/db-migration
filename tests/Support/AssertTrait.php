@@ -13,6 +13,17 @@ use Yiisoft\Db\Exception\NotSupportedException;
 
 trait AssertTrait
 {
+    public function assertStringContainsStringCollapsingSpaces(
+        string $needle,
+        string $haystack,
+        string $message = '',
+    ): void {
+        $needle = $this->collapseSpaces($needle);
+        $haystack = $this->collapseSpaces($haystack);
+
+        static::assertThat($haystack, new StringContains($needle, false), $message);
+    }
+
     /**
      * Asserting two strings are equal ignoring line endings.
      *
@@ -51,17 +62,6 @@ trait AssertTrait
         foreach ($tables as $table) {
             $this->assertNotContains($table, $existsTables);
         }
-    }
-
-    public function assertStringContainsStringCollapsingSpaces(
-        string $needle,
-        string $haystack,
-        string $message = ''
-    ): void {
-        $needle = $this->collapseSpaces($needle);
-        $haystack = $this->collapseSpaces($haystack);
-
-        static::assertThat($haystack, new StringContains($needle, false), $message);
     }
 
     private function collapseSpaces(string $value): string

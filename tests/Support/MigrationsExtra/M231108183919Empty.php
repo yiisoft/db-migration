@@ -10,11 +10,7 @@ use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 final class M231108183919Empty implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
-    public function up(MigrationBuilder $b): void
-    {
-    }
+    public function up(MigrationBuilder $b): void {}
 
-    public function down(MigrationBuilder $b): void
-    {
-    }
+    public function down(MigrationBuilder $b): void {}
 }

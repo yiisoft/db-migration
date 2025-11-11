@@ -57,9 +57,8 @@ final class MigrationService
     public function __construct(
         private ConnectionInterface $db,
         private Injector $injector,
-        private Migrator $migrator
-    ) {
-    }
+        private Migrator $migrator,
+    ) {}
 
     public function setIo(?SymfonyStyle $io): void
     {
@@ -80,7 +79,7 @@ final class MigrationService
             case 'migrate:create':
                 if (empty($this->newMigrationNamespace) && empty($this->newMigrationPath)) {
                     $this->io?->error(
-                        'One of `newMigrationNamespace` or `newMigrationPath` should be specified.'
+                        'One of `newMigrationNamespace` or `newMigrationPath` should be specified.',
                     );
 
                     return Command::INVALID;
@@ -88,7 +87,7 @@ final class MigrationService
 
                 if (!empty($this->newMigrationNamespace) && !empty($this->newMigrationPath)) {
                     $this->io?->error(
-                        'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.'
+                        'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
                     );
 
                     return Command::INVALID;
@@ -97,7 +96,7 @@ final class MigrationService
             case 'migrate:up':
                 if (empty($this->sourceNamespaces) && empty($this->sourcePaths)) {
                     $this->io?->error(
-                        'At least one of `sourceNamespaces` or `sourcePaths` should be specified.'
+                        'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
                     );
 
                     return Command::INVALID;
@@ -212,43 +211,8 @@ final class MigrationService
     public function databaseConnection(): void
     {
         $this->io?->writeln(
-            "<fg=cyan>\nDatabase connection: {$this->db->getDriverName()}.</>"
+            "<fg=cyan>\nDatabase connection: {$this->db->getDriverName()}.</>",
         );
-    }
-
-    /**
-     * Creates a new migration instance.
-     *
-     * @param string $class The migration class name.
-     *
-     * @return object The migration instance.
-     */
-    private function makeMigrationInstance(string $class): object
-    {
-        $class = trim($class, '\\');
-
-        if (!str_contains($class, '\\')) {
-            $isIncluded = false;
-            foreach ($this->sourcePaths as $path) {
-                $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
-
-                if (is_file($file)) {
-                    /** @psalm-suppress UnresolvableInclude */
-                    require_once $file;
-                    $isIncluded = true;
-                    break;
-                }
-            }
-
-            if (!$isIncluded) {
-                throw new RuntimeException('Migration file not found.');
-            }
-        }
-
-        /** @var class-string $class */
-        $class = '\\' . $class;
-
-        return $this->injector->make($class);
     }
 
     public function makeMigration(string $class): MigrationInterface
@@ -275,7 +239,7 @@ final class MigrationService
     {
         return array_map(
             $this->makeMigration(...),
-            $classes
+            $classes,
         );
     }
 
@@ -303,7 +267,7 @@ final class MigrationService
     {
         return array_map(
             $this->makeRevertibleMigration(...),
-            $classes
+            $classes,
         );
     }
 
@@ -379,7 +343,7 @@ final class MigrationService
             }
         }
 
-        $namespaces = array_map(static fn ($namespace) => trim($namespace, '\\'), $namespaces);
+        $namespaces = array_map(static fn($namespace) => trim($namespace, '\\'), $namespaces);
         $namespaces = array_unique($namespaces);
 
         foreach ($classes as $class) {
@@ -413,6 +377,41 @@ final class MigrationService
         }
 
         return $result;
+    }
+
+    /**
+     * Creates a new migration instance.
+     *
+     * @param string $class The migration class name.
+     *
+     * @return object The migration instance.
+     */
+    private function makeMigrationInstance(string $class): object
+    {
+        $class = trim($class, '\\');
+
+        if (!str_contains($class, '\\')) {
+            $isIncluded = false;
+            foreach ($this->sourcePaths as $path) {
+                $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
+
+                if (is_file($file)) {
+                    /** @psalm-suppress UnresolvableInclude */
+                    require_once $file;
+                    $isIncluded = true;
+                    break;
+                }
+            }
+
+            if (!$isIncluded) {
+                throw new RuntimeException('Migration file not found.');
+            }
+        }
+
+        /** @var class-string $class */
+        $class = '\\' . $class;
+
+        return $this->injector->make($class);
     }
 
     /**

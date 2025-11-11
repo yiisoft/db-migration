@@ -34,7 +34,7 @@ final class HistoryCommand extends Command
 {
     public function __construct(
         private MigrationService $migrationService,
-        private Migrator $migrator
+        private Migrator $migrator,
     ) {
         parent::__construct();
     }
@@ -55,7 +55,7 @@ final class HistoryCommand extends Command
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
-            ? (int)$input->getOption('limit')
+            ? (int) $input->getOption('limit')
             : null;
 
         if ($limit !== null && $limit <= 0) {

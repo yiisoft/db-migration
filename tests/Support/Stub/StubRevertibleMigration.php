@@ -9,11 +9,7 @@ use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 final class StubRevertibleMigration implements RevertibleMigrationInterface
 {
-    public function up(MigrationBuilder $b): void
-    {
-    }
+    public function up(MigrationBuilder $b): void {}
 
-    public function down(MigrationBuilder $b): void
-    {
-    }
+    public function down(MigrationBuilder $b): void {}
 }

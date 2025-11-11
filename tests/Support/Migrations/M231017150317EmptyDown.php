@@ -20,7 +20,5 @@ final class M231017150317EmptyDown implements RevertibleMigrationInterface, Tran
         ]);
     }
 
-    public function down(MigrationBuilder $b): void
-    {
-    }
+    public function down(MigrationBuilder $b): void {}
 }

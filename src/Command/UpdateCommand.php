@@ -43,7 +43,7 @@ final class UpdateCommand extends Command
     public function __construct(
         private UpdateRunner $updateRunner,
         private MigrationService $migrationService,
-        private Migrator $migrator
+        private Migrator $migrator,
     ) {
         parent::__construct();
     }
@@ -82,7 +82,7 @@ final class UpdateCommand extends Command
         $limit = $input->getOption('limit');
 
         if ($limit !== null) {
-            $limit = (int)$limit;
+            $limit = (int) $limit;
 
             if ($limit <= 0) {
                 $io->error('The limit option must be greater than 0.');
@@ -118,8 +118,8 @@ final class UpdateCommand extends Command
 
             if (strlen($migration) > $nameLimit) {
                 $output->writeln(
-                    "\n<fg=red>The migration name '$migration' is too long. Its not possible to apply " .
-                    'this migration.</>'
+                    "\n<fg=red>The migration name '$migration' is too long. Its not possible to apply "
+                    . 'this migration.</>',
                 );
 
                 return Command::INVALID;
@@ -160,7 +160,7 @@ final class UpdateCommand extends Command
 
         $question = new ConfirmationQuestion(
             "\n<fg=cyan>Apply the above $migrationWord y/n: ",
-            true
+            true,
         );
 
         /** @var QuestionHelper $helper */

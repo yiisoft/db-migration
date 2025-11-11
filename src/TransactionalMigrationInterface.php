@@ -7,6 +7,4 @@ namespace Yiisoft\Db\Migration;
 /**
  * Allowing to use transaction in migration.
  */
-interface TransactionalMigrationInterface extends MigrationInterface
-{
-}
+interface TransactionalMigrationInterface extends MigrationInterface {}

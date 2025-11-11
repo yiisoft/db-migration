@@ -22,12 +22,12 @@ final class CommandHelper
         $application->setCommandLoader(
             new CommandLoader(
                 $container,
-                [$commandName => $commandClass]
-            )
+                [$commandName => $commandClass],
+            ),
         );
 
         return new CommandTester(
-            $application->find($commandName)
+            $application->find($commandName),
         );
     }
 }

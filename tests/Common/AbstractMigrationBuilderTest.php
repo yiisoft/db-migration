@@ -52,7 +52,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->assertEquals(
             '1',
-            $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] = 1')->queryScalar()
+            $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] = 1')->queryScalar(),
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
 
@@ -66,7 +66,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
 
         $this->assertEquals(
             '2',
-            $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar()
+            $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar(),
         );
         $this->assertInformerOutputContains('    > Insert into test ... Done in ');
 
@@ -84,7 +84,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
                 ['id' => 1, 'name' => 'Ivan'],
                 ['id' => 2, 'name' => 'Petr'],
             ],
-            $this->db->createCommand('SELECT * FROM {{test}}')->queryAll()
+            $this->db->createCommand('SELECT * FROM {{test}}')->queryAll(),
         );
         $this->assertInformerOutputContains('    > Upsert into test ... Done in ');
 
@@ -100,7 +100,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             [
                 ['id' => '1', 'name' => 'Petr'],
             ],
-            $this->db->createCommand('SELECT * FROM {{test}}')->queryAll()
+            $this->db->createCommand('SELECT * FROM {{test}}')->queryAll(),
         );
         $this->assertInformerOutputContains('    > Update test ... Done in ');
 
@@ -275,7 +275,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
     /**
      * @dataProvider dataAlterColumn
      */
-    public function testAlterColumn(string $type, string|null $defaultValue = null, ?string $expectedComment = null): void
+    public function testAlterColumn(string $type, ?string $defaultValue = null, ?string $expectedComment = null): void
     {
         $expectedOutputString = '    > Alter column id in table test to string(4) ... Done in';
 
@@ -610,7 +610,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->assertStringContainsString($string, $this->informer->getOutput());
     }
 
-    private function prepareVariables(int|null $maxSqlOutputLength = null): void
+    private function prepareVariables(?int $maxSqlOutputLength = null): void
     {
         $this->db = $this->container->get(ConnectionInterface::class);
 

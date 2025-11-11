@@ -32,3 +32,6 @@ phpunit.phar
 
 # Phan
 analysis.txt
+
+# PHP CS Fixer
+/.php-cs-fixer.cache

@@ -17,16 +17,14 @@ final class UpdateRunner
 {
     private ?SymfonyStyle $io = null;
 
-    public function __construct(private Migrator $migrator)
-    {
-    }
+    public function __construct(private Migrator $migrator) {}
 
     public function setIo(?SymfonyStyle $io): void
     {
         $this->io = $io;
     }
 
-    public function run(MigrationInterface $migration, int|null $number = null): void
+    public function run(MigrationInterface $migration, ?int $number = null): void
     {
         if ($this->io === null) {
             throw new RuntimeException('You need to set output decorator via `setIo()`.');
@@ -45,7 +43,7 @@ final class UpdateRunner
             $time = microtime(true) - $start;
 
             $this->io->writeln(
-                "\n\n\t<error>>>> [ERROR] - Not applied (time: " . sprintf('%.3f', $time) . 's)</error>'
+                "\n\n\t<error>>>> [ERROR] - Not applied (time: " . sprintf('%.3f', $time) . 's)</error>',
             );
 
             throw $e;
@@ -54,7 +52,7 @@ final class UpdateRunner
         $time = microtime(true) - $start;
 
         $this->io->writeln(
-            "\n\t<info>>>> [OK] - Applied (time: " . sprintf('%.3f', $time) . 's)</info>'
+            "\n\t<info>>>> [OK] - Applied (time: " . sprintf('%.3f', $time) . 's)</info>',
         );
     }
 }

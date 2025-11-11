@@ -17,15 +17,14 @@ final class ForeignKeyFactory
     public function __construct(
         private ConnectionInterface $db,
         private ?SymfonyStyle $io,
-        private bool $useTablePrefix
-    ) {
-    }
+        private bool $useTablePrefix,
+    ) {}
 
     public function create(
         string $table,
         string $column,
         string $relatedTable,
-        string|null $relatedColumn
+        ?string $relatedColumn,
     ): ForeignKey {
         /**
          * We're trying to get it from the table schema.
@@ -42,12 +41,12 @@ final class ForeignKeyFactory
                 match (count($primaryKeys)) {
                     1 => $relatedColumn = $primaryKeys[0],
                     default => $this->io?->writeln(
-                        "<fg=yellow> Related table for field \"$column\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n"
+                        "<fg=yellow> Related table for field \"$column\" exists, but primary key is composite. Default name \"id\" will be used for related field</>\n",
                     ),
                 };
             } else {
                 $this->io?->writeln(
-                    "<fg=yellow> Related table for field \"$column\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n"
+                    "<fg=yellow> Related table for field \"$column\" exists, but does not have a primary key. Default name \"id\" will be used for related field.</>\n",
                 );
             }
         }
