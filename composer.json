@@ -37,6 +37,7 @@
         "yiisoft/injector": "^1.2"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.89.2",
         "maglnet/composer-require-checker": "^4.7.1",
         "phpunit/phpunit": "^10.5.45",
         "rector/rector": "^2.0.10",
