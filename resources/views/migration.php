@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
  * This view is used by {@see Yiisoft\Db\Migration\Command\CreateCommand}.
  *
  * The following variables are available in this view:
  *
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $className string The new migration class name without namespace.
- * @var $namespace string The new migration class namespace.
+ * @var PhpRenderer $this
+ * @var string $className The new migration class name without namespace.
+ * @var string $namespace The new migration class namespace.
  */
 
 echo "<?php\n";

@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
  * Creates a call for the method `Yiisoft\Db\Migration\MigrationBuilder::addCommentOnTable()`.
  *
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $table string The table name.
- * @var $tableComment string The table comment.
+ * @var PhpRenderer $this
+ * @var string $table The table name.
+ * @var string $tableComment The table comment.
  */
 ?>
 

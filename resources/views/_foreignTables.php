@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\ForeignKey;
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $foreignKeys \Yiisoft\Db\Migration\Service\Generate\ForeignKey[] Foreign keys.
+ * @var PhpRenderer $this
+ * @var ForeignKey[] $foreignKeys Foreign keys.
  */
 
 if (!empty($foreignKeys)) {

@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
+use Yiisoft\Db\Migration\Service\Generate\Column;
+use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+
 /**
  * Creates a call for the method `Yiisoft\Db\Migration\MigrationBuilder::createTable()`.
  *
- * @var $this \Yiisoft\Db\Migration\Service\Generate\PhpRenderer
- * @var $table string The table name.
- * @var $columns \Yiisoft\Db\Migration\Service\Generate\Column[] Fields.
- * @var $foreignKeys array Foreign keys.
+ * @var PhpRenderer $this
+ * @var string $table The table name.
+ * @var Column[] $columns Fields.
+ * @var array $foreignKeys Foreign keys.
  */
 
 echo "        \$columnBuilder = \$b->columnBuilder();\n\n";
