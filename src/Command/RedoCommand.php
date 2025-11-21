@@ -111,10 +111,10 @@ final class RedoCommand extends Command
             $migrations = array_keys($migrations);
         }
 
-        $n = count($migrations);
-        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+        $countMigrations = count($migrations);
+        $migrationWord = $countMigrations === 1 ? 'migration' : 'migrations';
 
-        $output->writeln("<warning>Total $n $migrationWord to be redone:</warning>\n");
+        $output->writeln("<warning>Total $countMigrations $migrationWord to be redone:</warning>\n");
 
         foreach ($migrations as $i => $migration) {
             $output->writeln("\t<info>" . ($i + 1) . ". $migration</info>");
@@ -122,13 +122,13 @@ final class RedoCommand extends Command
 
         if ($this->confirm($input, $output, $migrationWord)) {
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
-            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+            $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
                     $this->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas reverted.</>\n");
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
 
                     throw $e;
@@ -137,16 +137,16 @@ final class RedoCommand extends Command
 
             foreach (array_reverse($instances) as $i => $instance) {
                 try {
-                    $this->updateRunner->run($instance, $n - $i);
+                    $this->updateRunner->run($instance, $countMigrations - $i);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas applied.</>\n");
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Reverted but partially applied.' : 'Reverted but not applied.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<info> >>> $n $migrationWas redone.</info>\n");
+            $output->writeln("\n<info> >>> $countMigrations $migrationWas redone.</info>\n");
             $io->success('Migration redone successfully.');
         }
 

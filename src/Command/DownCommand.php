@@ -111,11 +111,11 @@ final class DownCommand extends Command
             $migrations = array_keys($migrations);
         }
 
-        $n = count($migrations);
-        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+        $countMigrations = count($migrations);
+        $migrationWord = $countMigrations === 1 ? 'migration' : 'migrations';
 
         $output->writeln(
-            "<fg=yellow>Total $n $migrationWord to be reverted:</>\n",
+            "<fg=yellow>Total $countMigrations $migrationWord to be reverted:</>\n",
         );
 
         foreach ($migrations as $i => $migration) {
@@ -124,20 +124,20 @@ final class DownCommand extends Command
 
         if ($this->confirm($input, $output, $migrationWord)) {
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
-            $migrationWas = ($n === 1 ? 'migration was' : 'migrations were');
+            $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
                     $this->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $n $migrationWas reverted.</>\n");
+                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<fg=green> >>> [OK] $n $migrationWas reverted.\n");
+            $output->writeln("\n<fg=green> >>> [OK] $countMigrations $migrationWas reverted.\n");
             $io->success('Migrated down successfully.');
         }
 
