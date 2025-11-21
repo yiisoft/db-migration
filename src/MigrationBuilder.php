@@ -24,6 +24,7 @@ use function ltrim;
 use function microtime;
 use function rtrim;
 use function sprintf;
+use function strlen;
 use function substr;
 use function trim;
 
@@ -64,12 +65,12 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * {@see \Yiisoft\Db\Command\Command::execute()} for more details.
+     * @see \Yiisoft\Db\Command\CommandInterface::execute() for more details.
      */
     public function execute(string $sql, array $params = []): void
     {
         $command = $this->db->createCommand($sql)->bindValues($params);
-        $sqlOutput = trim($command->getRawSql());
+        $sqlOutput = $command->getRawSql();
 
         if ($this->maxSqlOutputLength !== null && $this->maxSqlOutputLength < strlen($sqlOutput)) {
             $sqlOutput = ltrim(rtrim(substr($sqlOutput, 0, $this->maxSqlOutputLength)) . ' [... hidden]');

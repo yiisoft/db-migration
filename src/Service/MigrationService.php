@@ -359,7 +359,6 @@ final class MigrationService
             }
 
             foreach ($pathNamespaces as $path => $pathNamespaceList) {
-                /** @psalm-suppress RedundantCondition */
                 if (!in_array($classNamespace, $pathNamespaceList, true)) {
                     continue;
                 }
