@@ -24,8 +24,8 @@ use function ltrim;
 use function microtime;
 use function rtrim;
 use function sprintf;
+use function strlen;
 use function substr;
-use function trim;
 
 /**
  * @psalm-import-type RawFrom from QueryInterface
@@ -64,7 +64,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * {@see \Yiisoft\Db\Command\Command::execute()} for more details.
+     * @see \Yiisoft\Db\Command\CommandInterface::execute() for more details.
      */
     public function execute(string $sql, array $params = []): void
     {

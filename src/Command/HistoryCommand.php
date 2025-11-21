@@ -73,12 +73,12 @@ final class HistoryCommand extends Command
             return Command::FAILURE;
         }
 
-        $n = count($migrations);
+        $countMigrations = count($migrations);
 
-        if ($limit === $n) {
-            $io->section("Last $n applied " . ($n === 1 ? 'migration' : 'migrations') . ':');
+        if ($limit === $countMigrations) {
+            $io->section("Last $countMigrations applied " . ($countMigrations === 1 ? 'migration' : 'migrations') . ':');
         } else {
-            $io->section("Total $n " . ($n === 1 ? 'migration has' : 'migrations have') . ' been applied before:');
+            $io->section("Total $countMigrations " . ($countMigrations === 1 ? 'migration has' : 'migrations have') . ' been applied before:');
         }
 
         foreach ($migrations as $version => $time) {

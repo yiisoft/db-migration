@@ -13,6 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
+use function array_slice;
 use function count;
 
 /**
@@ -92,15 +93,15 @@ final class NewCommand extends Command
             return Command::FAILURE;
         }
 
-        $n = count($migrations);
-        $migrationWord = $n === 1 ? 'migration' : 'migrations';
+        $countMigrations = count($migrations);
+        $migrationWord = $countMigrations === 1 ? 'migration' : 'migrations';
 
-        if ($limit !== null && $n > $limit) {
+        if ($limit !== null && $countMigrations > $limit) {
             $migrations = array_slice($migrations, 0, $limit);
 
-            $io->warning("Showing $limit out of $n new $migrationWord:\n");
+            $io->warning("Showing $limit out of $countMigrations new $migrationWord:\n");
         } else {
-            $io->section("Found $n new $migrationWord:");
+            $io->section("Found $countMigrations new $migrationWord:");
         }
 
         foreach ($migrations as $i => $migration) {
