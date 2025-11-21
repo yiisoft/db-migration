@@ -26,7 +26,6 @@ use function rtrim;
 use function sprintf;
 use function strlen;
 use function substr;
-use function trim;
 
 /**
  * @psalm-import-type RawFrom from QueryInterface
