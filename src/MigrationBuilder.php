@@ -70,7 +70,7 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     public function execute(string $sql, array $params = []): void
     {
         $command = $this->db->createCommand($sql)->bindValues($params);
-        $sqlOutput = $command->getRawSql();
+        $sqlOutput = trim($command->getRawSql());
 
         if ($this->maxSqlOutputLength !== null && $this->maxSqlOutputLength < strlen($sqlOutput)) {
             $sqlOutput = ltrim(rtrim(substr($sqlOutput, 0, $this->maxSqlOutputLength)) . ' [... hidden]');
