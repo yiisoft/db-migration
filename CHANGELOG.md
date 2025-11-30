@@ -7,7 +7,7 @@
 - Chg #279: Use `ColumnBuilder` class to create table column definitions (@Tigrov)
 - Enh #282, #283, #293: Adapt to Yii DB changes (@Tigrov)
 - Bug #286: Explicitly mark nullable parameters (@vjik)
-- Chg #287: Change supported PHP versions to `8.1 - 8.4` (@Tigrov)
+- Chg #287, #308: Change supported PHP versions to `8.1 - 8.5` (@Tigrov, @vjik)
 - Enh #287: Minor refactoring (@Tigrov)
 - Enh #289: Revert transactional migration when adding migration to history fails (@Tigrov)
 - Chg #290: Remove `ext-filter` from `require` section of `composer.json` (@Tigrov)
