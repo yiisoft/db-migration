@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         php:
-          - 8.4
+          - 8.5
 
     services:
       postgres:
@@ -58,8 +58,8 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Update composer.
-        run: composer self-update
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
 
       - name: Install db and db-pgsql.
         uses: yiisoft/actions/install-packages@master
@@ -69,6 +69,6 @@ jobs:
 
       - name: Run infection.
         run: |
-          vendor/bin/roave-infection-static-analysis-plugin --threads=2 --ignore-msi-with-no-mutations --only-covered --test-framework-options="--testsuite=Pgsql"
+          vendor/bin/infection --threads=2 --ignore-msi-with-no-mutations --test-framework-options="--testsuite=Pgsql"
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
