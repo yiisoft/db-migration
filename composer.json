@@ -33,7 +33,7 @@
     "require": {
         "php": "8.1 - 8.5",
         "symfony/console": "^6.0|^7.0",
-        "yiisoft/db": "dev-master",
+        "yiisoft/db": "^2.0",
         "yiisoft/injector": "^1.2"
     },
     "require-dev": {
