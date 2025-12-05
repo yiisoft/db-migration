@@ -58,14 +58,8 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Update composer.
-        run: composer self-update
-
-      - name: Install db and db-sqlite.
-        uses: yiisoft/actions/install-packages@master
-        with:
-          packages: >-
-            ['db', 'db-sqlite']
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Sqlite --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations

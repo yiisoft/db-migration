@@ -60,11 +60,8 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
 
-      - name: Install db and db-pgsql.
-        uses: yiisoft/actions/install-packages@master
-        with:
-          packages: >-
-            ['db', 'db-pgsql']
+      - name: Install "yiisoft/db-pgsql" package
+        run: composer require yiisoft/db-pgsql
 
       - name: Run infection.
         run: |

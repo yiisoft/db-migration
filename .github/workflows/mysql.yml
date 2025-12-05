@@ -65,14 +65,11 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Update composer.
-        run: composer self-update
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
 
-      - name: Install db and db-mysql.
-        uses: yiisoft/actions/install-packages@master
-        with:
-          packages: >-
-            ['db', 'db-mysql']
+      - name: Install "yiisoft/db-mysql" package
+        run: composer require yiisoft/db-mysql
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Mysql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
