@@ -54,8 +54,8 @@ jobs:
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
           coverage: pcov
 
-      - name: Update composer.
-        run: composer self-update
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Migration --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
