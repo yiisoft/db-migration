@@ -32,9 +32,6 @@ jobs:
   tests:
     name: PHP ${{ matrix.php }}
 
-    env:
-      COMPOSER_ROOT_VERSION: dev-master
-
     runs-on: ubuntu-latest
 
     strategy:

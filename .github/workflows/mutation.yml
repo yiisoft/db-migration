@@ -25,7 +25,6 @@ jobs:
     name: PHP ${{ matrix.php }}
 
     env:
-      COMPOSER_ROOT_VERSION: dev-master
       extensions: pdo, pdo_pgsql, pdo_sqlite
 
     runs-on: ubuntu-latest

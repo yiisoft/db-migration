@@ -29,7 +29,6 @@ jobs:
     name: PHP ${{ matrix.php }}-pgsql
 
     env:
-      COMPOSER_ROOT_VERSION: dev-master
       extensions: pdo, pdo_pgsql
 
     runs-on: ubuntu-latest
