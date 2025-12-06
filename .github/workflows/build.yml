@@ -58,10 +58,10 @@ jobs:
           coverage: pcov
 
       - name: Install db and db-sqlite.
-          uses: yiisoft/actions/install-packages@master
-          with:
-            packages: >-
-              ['db', 'db-sqlite']
+        uses: yiisoft/actions/install-packages@master
+        with:
+          packages: >-
+            ['db', 'db-sqlite']
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Migration --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
