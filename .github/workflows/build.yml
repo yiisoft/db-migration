@@ -33,7 +33,7 @@ jobs:
     name: PHP ${{ matrix.php }}
 
     env:
-      COMPOSER_ROOT_VERSION: dev-master
+      COMPOSER_ROOT_VERSION: 2.0
 
     runs-on: ubuntu-latest
 
@@ -56,9 +56,6 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
           coverage: pcov
-
-      - name: Update composer.
-        run: composer self-update
 
       - name: Install db and db-sqlite.
         uses: yiisoft/actions/install-packages@master
