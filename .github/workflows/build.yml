@@ -54,7 +54,7 @@ jobs:
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
           coverage: pcov
 
-      - name: Install Composer dependencies and yiisoft/db and yiisoft/db-sqlite
+      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-sqlite
         uses: yiisoft/actions/install-packages@master
         with:
           composer-root-version: 2.0.0

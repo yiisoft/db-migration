@@ -73,11 +73,12 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Install "yiisoft/db-mssql" package
-        run: composer require yiisoft/db-mssql
+      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-mssql
+        uses: yiisoft/actions/install-packages@master
+        with:
+          composer-root-version: 2.0.0
+          packages: >-
+            ['db', 'db-mssql']
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Mssql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations

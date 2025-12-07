@@ -69,11 +69,12 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Install "yiisoft/db-oracle" package
-        run: composer require yiisoft/db-oracle
+      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-oracle
+        uses: yiisoft/actions/install-packages@master
+        with:
+          composer-root-version: 2.0.0
+          packages: >-
+            ['db', 'db-oracle']
 
       - name: Run tests with phpunit.
         run: vendor/bin/phpunit --testsuite=Oracle --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
