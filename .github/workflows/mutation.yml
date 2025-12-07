@@ -57,7 +57,10 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-pgsql
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Install required yiisoft/db and yiisoft/db-pgsql
         uses: yiisoft/actions/install-packages@master
         with:
           composer-root-version: 2.0.0
