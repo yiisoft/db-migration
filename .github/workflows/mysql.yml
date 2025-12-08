@@ -29,7 +29,6 @@ jobs:
     name: PHP ${{ matrix.php }}
 
     env:
-      COMPOSER_ROOT_VERSION: dev-master
       extensions: pdo, pdo_mysql
 
     runs-on: ubuntu-latest
@@ -66,12 +65,10 @@ jobs:
           ini-values: date.timezone='UTC'
           coverage: pcov
 
-      - name: Update composer.
-        run: composer self-update
-
-      - name: Install db and db-mysql.
+      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-mysql
         uses: yiisoft/actions/install-packages@master
         with:
+          composer-root-version: 2.0.0
           packages: >-
             ['db', 'db-mysql']
 
