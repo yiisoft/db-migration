@@ -15,7 +15,6 @@ final class ColumnTypes extends AbstractMigrationBuilder
 {
     public function __construct(private PdoConnectionInterface $db)
     {
-        parent::__construct($this->db->getSchema());
     }
 
     /**

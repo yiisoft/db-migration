@@ -20,8 +20,7 @@ final class FieldsParser
 {
     public function __construct(
         private readonly ForeignKeyFactory $foreignKeyFactory,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array[]
