@@ -16,11 +16,11 @@ final class Migrator
     private bool $checkMigrationHistoryTable = true;
 
     public function __construct(
-        private ConnectionInterface $db,
-        private MigrationInformerInterface $informer,
-        private string $historyTable = '{{%migration}}',
+        private readonly ConnectionInterface $db,
+        private readonly MigrationInformerInterface $informer,
+        private readonly string $historyTable = '{{%migration}}',
         private ?int $migrationNameLimit = 180,
-        private ?int $maxSqlOutputLength = null,
+        private readonly ?int $maxSqlOutputLength = null,
     ) {}
 
     public function setIo(?SymfonyStyle $io): void

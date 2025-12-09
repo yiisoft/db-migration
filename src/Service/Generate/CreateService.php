@@ -26,8 +26,8 @@ final class CreateService
      * of the DB connection. For example, if the table name is `post`, the generator will return `{{%post}}`.
      */
     public function __construct(
-        private ConnectionInterface $db,
-        private bool $useTablePrefix = true,
+        private readonly ConnectionInterface $db,
+        private readonly bool $useTablePrefix = true,
     ) {
         $this->phpRenderer = new PhpRenderer();
     }

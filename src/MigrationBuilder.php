@@ -36,9 +36,9 @@ final class MigrationBuilder extends AbstractMigrationBuilder
     private ?string $columnBuilderClass = null;
 
     public function __construct(
-        private ConnectionInterface $db,
-        private MigrationInformerInterface $informer,
-        private ?int $maxSqlOutputLength = null,
+        private readonly ConnectionInterface $db,
+        private readonly MigrationInformerInterface $informer,
+        private readonly ?int $maxSqlOutputLength = null,
     ) {}
 
     /** @psalm-return class-string<ColumnBuilder> */

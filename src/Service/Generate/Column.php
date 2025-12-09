@@ -10,8 +10,8 @@ final class Column
      * @param string[] $decorators
      */
     public function __construct(
-        private string $name,
-        private array $decorators = [],
+        private readonly string $name,
+        private readonly array $decorators = [],
     ) {}
 
     public function getName(): string

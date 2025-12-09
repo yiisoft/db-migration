@@ -39,8 +39,8 @@ use function count;
 final class NewCommand extends Command
 {
     public function __construct(
-        private MigrationService $migrationService,
-        private Migrator $migrator,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
     ) {
         parent::__construct();
     }

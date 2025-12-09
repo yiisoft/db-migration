@@ -6,10 +6,9 @@ namespace Yiisoft\Db\Migration;
 
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 use Yiisoft\Db\Schema\Column\ColumnInterface;
-use Yiisoft\Db\Schema\SchemaInterface;
 
 /**
- * AbstractMigrationBuilder contains shortcut methods to create instances of {@see ColumnInterface}.
+ * `AbstractMigrationBuilder` contains shortcut methods to create instances of {@see ColumnInterface}.
  *
  * These can be used in database migrations to define database schema types using a PHP interface. This is useful to
  * define a schema in a DBMS independent way so that the application may run on different DBMS the same way.
@@ -34,8 +33,6 @@ use Yiisoft\Db\Schema\SchemaInterface;
  */
 abstract class AbstractMigrationBuilder
 {
-    public function __construct(private SchemaInterface $schema) {}
-
     /**
      * Creates a bigint column.
      *

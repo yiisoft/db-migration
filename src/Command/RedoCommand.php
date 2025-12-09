@@ -41,10 +41,10 @@ use function count;
 final class RedoCommand extends Command
 {
     public function __construct(
-        private MigrationService $migrationService,
-        private Migrator $migrator,
-        private DownRunner $downRunner,
-        private UpdateRunner $updateRunner,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
+        private readonly DownRunner $downRunner,
+        private readonly UpdateRunner $updateRunner,
     ) {
         parent::__construct();
     }

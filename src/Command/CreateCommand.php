@@ -68,9 +68,9 @@ final class CreateCommand extends Command
     private const AVAILABLE_COMMANDS = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
 
     public function __construct(
-        private CreateService $createService,
-        private MigrationService $migrationService,
-        private Migrator $migrator,
+        private readonly CreateService $createService,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
     ) {
         parent::__construct();
     }
