@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 2.0.1 under development
+
+- no changes in this release.
+
 ## 2.0.0 December 09, 2025
 
 - New #295: Add `--force-yes` (`-y`) option to `migrate:create`, `migrate:up`, `migrate:down` and `migrate:redo`
