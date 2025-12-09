@@ -17,7 +17,7 @@
 - Chg #300: Replace deprecated `self::getDefaultName()` with `$this->getName()` (@Tigrov)
 - Enh #301: Add `MigrationBuilder::columnBuilder()` method (@Tigrov)
 - Enh #299: Update `MigrationBuilder::update()` method to adapt changes in `yiisoft/db` (@rustamwin)
-- Chg #311: Remove `AbstractMigrationBuilder` constructor (@vjik)
+- Chg #311: Move `AbstractMigrationBuilder` methods to `MigrationBuilder` and remove `AbstractMigrationBuilder` (@vjik)
 - Enh #311: Explicitly mark readonly properties (@vjik)
 
 ## 1.2.0 November 27, 2024
