@@ -42,9 +42,9 @@ use function count;
 final class DownCommand extends Command
 {
     public function __construct(
-        private DownRunner $downRunner,
-        private MigrationService $migrationService,
-        private Migrator $migrator,
+        private readonly DownRunner $downRunner,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
     ) {
         parent::__construct();
     }

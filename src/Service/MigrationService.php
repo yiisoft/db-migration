@@ -55,9 +55,9 @@ final class MigrationService
     private ?SymfonyStyle $io = null;
 
     public function __construct(
-        private ConnectionInterface $db,
-        private Injector $injector,
-        private Migrator $migrator,
+        private readonly ConnectionInterface $db,
+        private readonly Injector $injector,
+        private readonly Migrator $migrator,
     ) {}
 
     public function setIo(?SymfonyStyle $io): void

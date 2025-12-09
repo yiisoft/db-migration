@@ -7,11 +7,11 @@ namespace Yiisoft\Db\Migration\Service\Generate;
 final class ForeignKey
 {
     public function __construct(
-        private string $indexName,
-        private string $foreignKeyName,
-        private ?string $column,
-        private string $relatedTable,
-        private string $relatedColumn,
+        private readonly string $indexName,
+        private readonly string $foreignKeyName,
+        private readonly ?string $column,
+        private readonly string $relatedTable,
+        private readonly string $relatedColumn,
     ) {}
 
     public function getIndexName(): string

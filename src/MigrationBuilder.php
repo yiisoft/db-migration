@@ -30,15 +30,15 @@ use function substr;
 /**
  * @psalm-import-type RawFrom from QueryInterface
  */
-final class MigrationBuilder extends AbstractMigrationBuilder
+final class MigrationBuilder
 {
     /** @psalm-var class-string<ColumnBuilder> */
     private ?string $columnBuilderClass = null;
 
     public function __construct(
-        private ConnectionInterface $db,
-        private MigrationInformerInterface $informer,
-        private ?int $maxSqlOutputLength = null,
+        private readonly ConnectionInterface $db,
+        private readonly MigrationInformerInterface $informer,
+        private readonly ?int $maxSqlOutputLength = null,
     ) {}
 
     /** @psalm-return class-string<ColumnBuilder> */

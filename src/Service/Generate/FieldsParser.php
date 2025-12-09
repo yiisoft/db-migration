@@ -18,7 +18,9 @@ use function str_starts_with;
  */
 final class FieldsParser
 {
-    public function __construct(private ForeignKeyFactory $foreignKeyFactory) {}
+    public function __construct(
+        private readonly ForeignKeyFactory $foreignKeyFactory,
+    ) {}
 
     /**
      * @return array[]

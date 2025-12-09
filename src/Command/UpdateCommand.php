@@ -41,9 +41,9 @@ use function strlen;
 final class UpdateCommand extends Command
 {
     public function __construct(
-        private UpdateRunner $updateRunner,
-        private MigrationService $migrationService,
-        private Migrator $migrator,
+        private readonly UpdateRunner $updateRunner,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
     ) {
         parent::__construct();
     }

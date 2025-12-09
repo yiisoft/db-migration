@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Service;
+namespace Yiisoft\Db\Migration\Tests\Migration\Service;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;

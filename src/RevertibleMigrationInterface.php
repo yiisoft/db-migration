@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration;
 
 /**
- * The RevertibleMigrationInterface defines the minimum set of methods to be implemented
+ * The `RevertibleMigrationInterface` defines the minimum set of methods to be implemented
  * by a revertible database migration.
  *
  * Each migration class should provide the {@see up()} method containing the logic for "upgrading" the database.

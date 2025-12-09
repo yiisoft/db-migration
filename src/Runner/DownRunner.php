@@ -17,7 +17,9 @@ final class DownRunner
 {
     private ?SymfonyStyle $io = null;
 
-    public function __construct(private Migrator $migrator) {}
+    public function __construct(
+        private readonly Migrator $migrator,
+    ) {}
 
     public function setIo(?SymfonyStyle $io): void
     {

@@ -33,8 +33,8 @@ use function date;
 final class HistoryCommand extends Command
 {
     public function __construct(
-        private MigrationService $migrationService,
-        private Migrator $migrator,
+        private readonly MigrationService $migrationService,
+        private readonly Migrator $migrator,
     ) {
         parent::__construct();
     }
