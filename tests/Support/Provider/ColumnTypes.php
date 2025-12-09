@@ -13,9 +13,7 @@ use function array_values;
 
 final class ColumnTypes extends AbstractMigrationBuilder
 {
-    public function __construct(private PdoConnectionInterface $db)
-    {
-    }
+    public function __construct(private PdoConnectionInterface $db) {}
 
     /**
      * This is not used as a data provider for `testGetColumnType` to speed up the test when used as data provider every
