@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 2.0.2 under development
+
+- no changes in this release.
+
 ## 2.0.1 December 20, 2025
 
 - Enh #312: Add Symfony Console 8 support (@vjik)
