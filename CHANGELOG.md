@@ -2,7 +2,7 @@
 
 ## 2.0.1 under development
 
-- no changes in this release.
+- Enh #312: Add Symfony Console 8 support (@vjik)
 
 ## 2.0.0 December 09, 2025
 
