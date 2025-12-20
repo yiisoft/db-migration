@@ -1,6 +1,6 @@
 # Yii DB Migration Change Log
 
-## 2.0.1 under development
+## 2.0.1 December 20, 2025
 
 - Enh #312: Add Symfony Console 8 support (@vjik)
 - Bug #312: Prevent deprecation notice when using `CreateService::getTemplate()` with `null` (@vjik)
