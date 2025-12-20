@@ -3,6 +3,7 @@
 ## 2.0.1 under development
 
 - Enh #312: Add Symfony Console 8 support (@vjik)
+- Bug #312: Prevent deprecation notice when using `CreateService::getTemplate()` with `null` (@vjik)
 
 ## 2.0.0 December 09, 2025
 
