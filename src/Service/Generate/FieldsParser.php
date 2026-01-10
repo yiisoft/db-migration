@@ -13,6 +13,8 @@ use function preg_split;
 use function str_replace;
 use function str_starts_with;
 
+use const PREG_SPLIT_NO_EMPTY;
+
 /**
  * @internal
  */

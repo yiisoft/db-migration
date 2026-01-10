@@ -11,6 +11,8 @@ use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 
+use const SORT_DESC;
+
 final class Migrator
 {
     private bool $checkMigrationHistoryTable = true;

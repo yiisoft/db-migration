@@ -43,6 +43,8 @@ use function substr;
 use function trim;
 use function ucwords;
 
+use const DIRECTORY_SEPARATOR;
+
 final class MigrationService
 {
     private string $newMigrationNamespace = '';

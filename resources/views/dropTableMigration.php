@@ -5,9 +5,10 @@ declare(strict_types=1);
 use Yiisoft\Db\Migration\Service\Generate\Column;
 use Yiisoft\Db\Migration\Service\Generate\ForeignKey;
 use Yiisoft\Db\Migration\Service\Generate\PhpRenderer;
+use Yiisoft\Db\Migration\Command\CreateCommand;
 
 /**
- * This view is used by {@see Yiisoft\Db\Migration\Command\CreateCommand}.
+ * This view is used by {@see CreateCommand}.
  *
  * The following variables are available in this view:
  *
