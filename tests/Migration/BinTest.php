@@ -7,6 +7,8 @@ namespace Yiisoft\Db\Migration\Tests\Migration;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Files\FileHelper;
 
+use function dirname;
+
 final class BinTest extends TestCase
 {
     protected function setUp(): void

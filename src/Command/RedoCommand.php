@@ -21,6 +21,7 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 use function array_keys;
 use function array_reverse;
 use function count;
+use function array_slice;
 
 /**
  * Redoes the last few migrations.

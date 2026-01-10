@@ -24,6 +24,9 @@ use function is_dir;
 use function preg_match;
 use function strlen;
 
+use const DIRECTORY_SEPARATOR;
+use const LOCK_EX;
+
 /**
  * Creates a new migration.
  *

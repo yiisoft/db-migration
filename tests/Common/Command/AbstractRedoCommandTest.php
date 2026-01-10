@@ -24,6 +24,8 @@ use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty;
 use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2;
 use Yiisoft\Db\Migration\Tests\Support\Stub\StubMigration;
 
+use function dirname;
+
 abstract class AbstractRedoCommandTest extends TestCase
 {
     use AssertTrait;
