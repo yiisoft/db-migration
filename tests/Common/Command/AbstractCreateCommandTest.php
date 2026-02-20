@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Common\Command;
 
-use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -30,7 +29,6 @@ abstract class AbstractCreateCommandTest extends TestCase
         $migrationsPath = MigrationHelper::useMigrationsPath($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -71,7 +69,6 @@ EOF;
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString($className, $output);
         $this->assertStringContainsString('CreatePostTable', $output);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
         $this->assertStringContainsString('Database connection: ' . $this->driverName, $output);
@@ -82,7 +79,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
         $exitCode = $command->execute(['name' => 'post', '--command' => 'table']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
@@ -124,7 +120,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -143,7 +138,6 @@ EOF;
         );
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute([
             'name' => 'post',
@@ -325,7 +319,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertStringContainsString(
             'Related table for field "category_id" exists, but primary key is composite. Default name "id" will be used for related field',
             $output,
@@ -338,7 +331,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $command->execute(
             [
@@ -431,7 +423,6 @@ EOF;
         $command = $this->createCommand($this->container);
 
         foreach (['--namespace', '-ns'] as $option) {
-            $command->setInputs(['yes']);
 
             $exitCode = $command->execute(['name' => 'post', $option => MigrationHelper::NAMESPACE]);
             $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -466,7 +457,6 @@ EOF;
             $generatedMigrationCode = file_get_contents(MigrationHelper::getPathForMigrationNamespace() . '/' . $className . '.php');
 
             $this->assertSame(Command::SUCCESS, $exitCode);
-            $this->assertStringContainsString('Create new migration y/n:', $output);
             $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
         }
     }
@@ -477,13 +467,11 @@ EOF;
         MigrationHelper::resetPathAndNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--path' => MigrationHelper::getRuntimePath()]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertMatchesRegularExpression("/\s+M\d{12}Post/m", $output);
         $this->assertStringContainsString('[OK] New migration created successfully.', $output);
         $this->assertCount(1, FileHelper::findFiles($path));
@@ -494,7 +482,6 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post?']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -511,7 +498,6 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'noExist']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -529,7 +515,6 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute([
             'name' => str_repeat('x', 200),
@@ -545,7 +530,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post', '--command' => 'addColumn', '--fields' => 'position:integer']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -583,7 +567,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -592,7 +575,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute([
             'name' => 'post',
@@ -634,7 +616,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -643,7 +624,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(
             [
@@ -693,7 +673,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -702,7 +681,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(
             [
@@ -753,7 +731,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -762,7 +739,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(
             [
@@ -878,7 +854,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -887,7 +862,6 @@ EOF;
         $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(
             [
@@ -1002,7 +976,6 @@ EOF;
         $generatedMigrationCode = file_get_contents($migrationsPath . '/' . $className . '.php');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Create new migration y/n:', $output);
         $this->assertEqualsWithoutLE($expectedMigrationCode, $generatedMigrationCode);
     }
 
@@ -1013,7 +986,6 @@ EOF;
         $this->container->get(MigrationService::class)->setNewMigrationPath(__DIR__ . '/not-exists');
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -1029,7 +1001,6 @@ EOF;
         $this->container->get(MigrationService::class)->setNewMigrationPath('');
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -1049,7 +1020,6 @@ EOF;
             ->setNewMigrationNamespace('Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists');
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -1065,7 +1035,6 @@ EOF;
         $this->container->get(MigrationService::class)->setNewMigrationNamespace('');
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -1083,7 +1052,6 @@ EOF;
         MigrationHelper::useMigrationsNamespace($this->container);
 
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute(['name' => 'post']);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
@@ -1098,7 +1066,6 @@ EOF;
     public function testWithOptionsPathAndNamespace(): void
     {
         $command = $this->createCommand($this->container);
-        $command->setInputs(['yes']);
 
         $exitCode = $command->execute([
             'name' => 'post',
@@ -1112,24 +1079,6 @@ EOF;
             'Only one of `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output,
         );
-    }
-
-    #[TestWith(['--force-yes'])]
-    #[TestWith(['-y'])]
-    public function testForceYes(string $arg): void
-    {
-        $migrationsPath = MigrationHelper::useMigrationsNamespace($this->container);
-
-        $command = $this->createCommand($this->container);
-        $command->setInputs(['no']);
-
-        $exitCode = $command->execute(['name' => 'post', $arg => true]);
-
-        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
-        $className = MigrationHelper::findMigrationClassNameInOutput($output);
-
-        $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertFileExists($migrationsPath . '/' . $className . '.php');
     }
 
     public function createCommand(ContainerInterface $container): CommandTester
