@@ -18,6 +18,7 @@ use Yiisoft\Db\QueryBuilder\QueryBuilderInterface;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Schema\Column\ColumnBuilder;
 use Yiisoft\Db\Schema\Column\ColumnInterface;
+use Yiisoft\Db\Command\CommandInterface;
 
 use function implode;
 use function ltrim;
@@ -65,7 +66,7 @@ final class MigrationBuilder
      * @throws InvalidConfigException
      * @throws NotSupportedException
      *
-     * @see \Yiisoft\Db\Command\CommandInterface::execute() for more details.
+     * @see CommandInterface::execute() for more details.
      */
     public function execute(string $sql, array $params = []): void
     {
