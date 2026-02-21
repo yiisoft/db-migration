@@ -6,12 +6,10 @@ namespace Yiisoft\Db\Migration\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -88,7 +86,6 @@ final class CreateCommand extends Command
             ->addOption('and', null, InputOption::VALUE_REQUIRED, 'And junction.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
-            ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.')
             ->setHelp('This command generates new migration file.');
     }
 
@@ -159,52 +156,32 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        if ($this->confirm($input, $output)) {
-            /** @var string|null $fields */
-            $fields = $input->getOption('fields');
-            /** @var string|null $tableComment */
-            $tableComment = $input->getOption('table-comment');
+        /** @var string|null $fields */
+        $fields = $input->getOption('fields');
+        /** @var string|null $tableComment */
+        $tableComment = $input->getOption('table-comment');
 
-            $content = $this->createService->run(
-                $command,
-                $table,
-                $className,
-                $namespace,
-                $fields,
-                $and,
-                $tableComment,
-            );
+        $content = $this->createService->run(
+            $command,
+            $table,
+            $className,
+            $namespace,
+            $fields,
+            $and,
+            $tableComment,
+        );
 
-            $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
+        $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';
 
-            file_put_contents($file, $content, LOCK_EX);
+        file_put_contents($file, $content, LOCK_EX);
 
-            $output->writeln("\n\t<info>$className</info>");
-            $output->writeln("\n");
-            $io->success('New migration created successfully.');
-        }
+        $output->writeln("\n\t<info>$className</info>");
+        $output->writeln("\n");
+        $io->success('New migration created successfully.');
 
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
-    }
-
-    private function confirm(InputInterface $input, OutputInterface $output): bool
-    {
-        if ($input->getOption('force-yes')) {
-            return true;
-        }
-
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Create new migration y/n: </>",
-            false,
-        );
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        /** @var bool */
-        return $helper->ask($input, $output, $question);
     }
 
     private function generateName(string $command, string $name, ?string $and): string
