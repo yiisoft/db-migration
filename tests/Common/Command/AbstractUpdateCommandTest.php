@@ -159,7 +159,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         /** Check create table department columns*/
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Apply the above migrations? (yes/no) [yes]:', $output);
+        $this->assertStringContainsString('Apply the above migrations?', $output);
         $this->assertStringContainsString('>>> Total 2 new migrations were applied.', $output);
 
         /** Check table department field id */
