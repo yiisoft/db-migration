@@ -128,7 +128,7 @@ final class UpdateCommand extends Command
             $output->writeln("\t<fg=yellow>" . ($i + 1) . ". $migration</>");
         }
 
-        if ($this->confirm($input, $output, $migrationWord)) {
+        if ($input->getOption('force-yes') || $io->confirm("Apply the above $migrationWord?")) {
             $instances = $this->migrationService->makeMigrations($migrations);
             $migrationWas = ($migrationsCount === 1 ? 'migration was' : 'migrations were');
 
@@ -150,23 +150,5 @@ final class UpdateCommand extends Command
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
-    }
-
-    private function confirm(InputInterface $input, OutputInterface $output, string $migrationWord): bool
-    {
-        if ($input->getOption('force-yes')) {
-            return true;
-        }
-
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Apply the above $migrationWord y/n: ",
-            true,
-        );
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        /** @var bool */
-        return $helper->ask($input, $output, $question);
     }
 }
