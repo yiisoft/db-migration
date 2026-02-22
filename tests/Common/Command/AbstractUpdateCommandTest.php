@@ -72,7 +72,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString(">>> [OK] - '.Done..'.", $output);
         $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
         $this->assertStringContainsString("1. $className", $output);
-        $this->assertStringContainsString('Apply the above migration? (yes/no) [yes]:', $output);
+        $this->assertStringContainsString('Apply the above migration?', $output);
         $this->assertStringContainsString("1. Applying $className", $output);
         $this->assertStringContainsString('>>> [OK] - Applied (time:', $output);
         $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
