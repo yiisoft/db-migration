@@ -65,7 +65,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=Migration --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
 
       - name: Upload coverage to Codecov.
-        if: matrix.php == '8.4'
+        if: matrix.php == '8.5'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

@@ -29,7 +29,7 @@ jobs:
     name: PHP ${{ matrix.php }}-pgsql
 
     env:
-      extensions: pdo, pdo_pgsql
+      extensions: pdo_pgsql
 
     runs-on: ubuntu-latest
 
@@ -44,7 +44,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root
@@ -68,7 +68,7 @@ jobs:
       - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-pgsql
         uses: yiisoft/actions/install-packages@master
         with:
-          composer-root-version: 2.0.0
+          composer-root-version: 2.0.1
           packages: >-
             ['db', 'db-pgsql']
 
@@ -76,7 +76,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=Pgsql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
 
       - name: Upload coverage to Codecov.
-        if: matrix.php == '8.4'
+        if: matrix.php == '8.5'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

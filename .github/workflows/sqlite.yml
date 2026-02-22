@@ -29,7 +29,7 @@ jobs:
     name: PHP ${{ matrix.php }}-sqlite-${{ matrix.os }}
 
     env:
-      extensions: pdo, pdo_sqlite
+      extensions: pdo_sqlite
 
     runs-on: ${{ matrix.os }}
 
@@ -69,7 +69,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=Sqlite --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
 
       - name: Upload coverage to Codecov.
-        if: matrix.php == '8.4'
+        if: matrix.php == '8.5'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
