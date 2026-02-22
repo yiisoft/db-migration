@@ -29,7 +29,7 @@ jobs:
     name: PHP ${{ matrix.php }}-mssql
 
     env:
-      extensions: pdo, pdo_sqlsrv
+      extensions: pdo_sqlsrv
 
     runs-on: ubuntu-latest
 
@@ -57,6 +57,8 @@ jobs:
       - name: Install ODBC driver.
         run: |
           sudo curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get clean
+          sudo apt-get update
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
       - name: Create MS SQL Database.
@@ -84,7 +86,7 @@ jobs:
         run: vendor/bin/phpunit --testsuite=Mssql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
 
       - name: Upload coverage to Codecov.
-        if: matrix.php == '8.4'
+        if: matrix.php == '8.5'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
