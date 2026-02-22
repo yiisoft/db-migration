@@ -6,11 +6,9 @@ namespace Yiisoft\Db\Migration\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 use Yiisoft\Db\Migration\Migrator;
@@ -121,7 +119,7 @@ final class RedoCommand extends Command
             $output->writeln("\t<info>" . ($i + 1) . ". $migration</info>");
         }
 
-        if ($this->confirm($input, $output, $migrationWord)) {
+        if ($input->getOption('force-yes') || $io->confirm("Redo the above $migrationWord?")) {
             $instances = $this->migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
@@ -154,23 +152,5 @@ final class RedoCommand extends Command
         $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
-    }
-
-    private function confirm(InputInterface $input, OutputInterface $output, string $migrationWord): bool
-    {
-        if ($input->getOption('force-yes')) {
-            return true;
-        }
-
-        $question = new ConfirmationQuestion(
-            "\n<fg=cyan>Redo the above $migrationWord y/n: ",
-            true,
-        );
-
-        /** @var QuestionHelper $helper */
-        $helper = $this->getHelper('question');
-
-        /** @var bool */
-        return $helper->ask($input, $output, $question);
     }
 }
