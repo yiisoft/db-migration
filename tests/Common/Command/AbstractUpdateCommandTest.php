@@ -72,7 +72,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString(">>> [OK] - '.Done..'.", $output);
         $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
         $this->assertStringContainsString("1. $className", $output);
-        $this->assertStringContainsString('Apply the above migration y/n:', $output);
+        $this->assertStringContainsString('Apply the above migration? (yes/no) [yes]:', $output);
         $this->assertStringContainsString("1. Applying $className", $output);
         $this->assertStringContainsString('>>> [OK] - Applied (time:', $output);
         $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
@@ -159,7 +159,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
 
         /** Check create table department columns*/
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('Apply the above migrations y/n:', $output);
+        $this->assertStringContainsString('Apply the above migrations? (yes/no) [yes]:', $output);
         $this->assertStringContainsString('>>> Total 2 new migrations were applied.', $output);
 
         /** Check table department field id */
