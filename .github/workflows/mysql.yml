@@ -1,6 +1,6 @@
 on:
   pull_request:
-    paths:
+    paths: &paths
       - 'resources/**'
       - 'src/**'
       - 'tests/**'
@@ -10,13 +10,7 @@ on:
 
   push:
     branches: ['master']
-    paths:
-      - 'resources/**'
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/mysql.yml'
-      - 'composer.json'
-      - 'phpunit.xml.dist'
+    paths: *paths
 
 name: mysql
 
@@ -30,4 +24,3 @@ concurrency:
 jobs:
   tests:
     uses: yiisoft/actions/.github/workflows/db-mysql.yml@add-db-mysql
-
