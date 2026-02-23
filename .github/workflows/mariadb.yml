@@ -1,0 +1,26 @@
+on:
+  pull_request:
+    paths: &paths
+      - 'resources/**'
+      - 'src/**'
+      - 'tests/**'
+      - '.github/workflows/mariadb.yml'
+      - 'composer.json'
+      - 'phpunit.xml.dist'
+
+  push:
+    branches: ['master']
+    paths: *paths
+
+name: mariadb
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    uses: yiisoft/actions/.github/workflows/db-mariadb.yml@add-db-mysql
