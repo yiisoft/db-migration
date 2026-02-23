@@ -30,4 +30,3 @@ concurrency:
 jobs:
   tests:
     uses: yiisoft/actions/.github/workflows/db-mysql.yml@add-db-mysql
-
