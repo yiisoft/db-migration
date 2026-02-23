@@ -1,6 +1,6 @@
 on:
   pull_request:
-    paths:
+    paths: &paths
       - 'resources/**'
       - 'src/**'
       - 'tests/**'
@@ -10,15 +10,12 @@ on:
 
   push:
     branches: ['master']
-    paths:
-      - 'resources/**'
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/pgsql.yml'
-      - 'composer.json'
-      - 'phpunit.xml.dist'
+    paths: *paths
 
 name: pgsql
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,58 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-pgsql
-
-    env:
-      extensions: pdo_pgsql
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php:
-          - 8.1
-          - 8.2
-          - 8.3
-          - 8.4
-          - 8.5
-
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: yiitest
-        ports:
-          - 5432:5432
-        options: --name=postgres --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    steps:
-      - name: Checkout.
-        uses: actions/checkout@v4
-
-      - name: Install PHP with extensions.
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          ini-values: date.timezone='UTC'
-          coverage: pcov
-
-      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-pgsql
-        uses: yiisoft/actions/install-packages@master
-        with:
-          composer-root-version: 2.0.1
-          packages: >-
-            ['db', 'db-pgsql']
-
-      - name: Run tests with phpunit.
-        run: vendor/bin/phpunit --testsuite=Pgsql --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
-
-      - name: Upload coverage to Codecov.
-        if: matrix.php == '8.5'
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.xml
+    uses: yiisoft/actions/.github/workflows/db-pgsql.yml@add-db-mysql
