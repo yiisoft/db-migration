@@ -1,6 +1,6 @@
 on:
   pull_request:
-    paths:
+    paths: &paths
       - 'resources/**'
       - 'src/**'
       - 'tests/**'
@@ -10,15 +10,12 @@ on:
 
   push:
     branches: ['master']
-    paths:
-      - 'resources/**'
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/oracle.yml'
-      - 'composer.json'
-      - 'phpunit.xml.dist'
+    paths: *paths
 
 name: oracle
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,62 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}
-
-    env:
-      extensions: pdo_oci
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php:
-          - 8.1
-          - 8.2
-          - 8.3
-          - 8.4
-          - 8.5
-
-    services:
-      oci:
-        image: gvenzl/oracle-xe:latest
-        ports:
-          - 1521:1521
-        env:
-          ORACLE_DATABASE : yiitest
-          ORACLE_PASSWORD : root
-        options: >-
-          --name=oci
-          --health-cmd healthcheck.sh
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
-    steps:
-      - name: Checkout.
-        uses: actions/checkout@v4
-
-      - name: Install PHP with extensions.
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          ini-values: date.timezone='UTC'
-          coverage: pcov
-
-      - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-oracle
-        uses: yiisoft/actions/install-packages@master
-        with:
-          composer-root-version: 2.0.0
-          packages: >-
-            ['db', 'db-oracle']
-
-      - name: Run tests with phpunit.
-        run: vendor/bin/phpunit --testsuite=Oracle --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
-
-      - name: Upload coverage to Codecov.
-        if: matrix.php == '8.5'
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage.xml
+    uses: yiisoft/actions/.github/workflows/db-oracle.yml@master

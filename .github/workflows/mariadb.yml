@@ -4,7 +4,7 @@ on:
       - 'resources/**'
       - 'src/**'
       - 'tests/**'
-      - '.github/workflows/mysql.yml'
+      - '.github/workflows/mariadb.yml'
       - 'composer.json'
       - 'phpunit.xml.dist'
 
@@ -12,7 +12,7 @@ on:
     branches: ['master']
     paths: *paths
 
-name: mysql
+name: mariadb
 
 permissions:
   contents: read
@@ -23,4 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    uses: yiisoft/actions/.github/workflows/db-mysql.yml@master
+    uses: yiisoft/actions/.github/workflows/db-mariadb.yml@master
