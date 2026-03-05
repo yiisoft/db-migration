@@ -6,6 +6,9 @@
 - Enh #318: Remove unnecessary files from Composer package (@mspirkov)
 - Enh #319: Remove confirmation prompt from `migrate:create` command as creating a migration is non-destructive (@samdark)
 - Enh #319: Improve styling of confirmations (@samdark)
+- Enh #320: Improve output of `migrate:up`, `migrate:down`, `migrate:redo`, `migrate:new`, `migrate:history`, and
+  `migrate:create` commands: remove redundant messages, replace `>>>` with cleaner output, and move "Database
+  connection" info to the top
 
 ## 2.0.1 December 20, 2025
 
