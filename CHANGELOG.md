@@ -8,7 +8,7 @@
 - Enh #319: Improve styling of confirmations (@samdark)
 - Enh #320: Improve output of `migrate:up`, `migrate:down`, `migrate:redo`, `migrate:new`, `migrate:history`, and
   `migrate:create` commands: remove redundant messages, replace `>>>` with cleaner output, and move "Database
-  connection" info to the top
+  connection" info to the top (@samdark)
 
 ## 2.0.1 December 20, 2025
 
