@@ -18,10 +18,7 @@ final class ConsoleMigrationInformer implements MigrationInformerInterface
         $this->io?->section($message);
     }
 
-    public function endCreateHistoryTable(string $message): void
-    {
-        $this->io?->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
-    }
+    public function endCreateHistoryTable(string $message): void {}
 
     public function beginCommand(string $message): void
     {

@@ -69,13 +69,12 @@ abstract class AbstractUpdateCommandTest extends TestCase
         // check title
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
 
-        $this->assertStringContainsString(">>> [OK] - '.Done..'.", $output);
         $this->assertStringContainsString('Total 1 new migration to be applied:', $output);
         $this->assertStringContainsString("1. $className", $output);
         $this->assertStringContainsString('Apply the above migration?', $output);
         $this->assertStringContainsString("1. Applying $className", $output);
-        $this->assertStringContainsString('>>> [OK] - Applied (time:', $output);
-        $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
+        $this->assertStringContainsString('[OK] Applied (time:', $output);
+        $this->assertStringContainsString('Total 1 new migration was applied.', $output);
     }
 
     public function testExecuteWithNamespace(): void
@@ -160,7 +159,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         /** Check create table department columns*/
         $this->assertSame(Command::SUCCESS, $exitCode);
         $this->assertStringContainsString('Apply the above migrations?', $output);
-        $this->assertStringContainsString('>>> Total 2 new migrations were applied.', $output);
+        $this->assertStringContainsString('Total 2 new migrations were applied.', $output);
 
         /** Check table department field id */
         $this->assertSame('id', $departmentSchema->getColumn('id')->getName());
@@ -446,7 +445,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
-        $this->assertStringContainsString('>>> Total 1 out of 2 new migrations were applied.', $output);
+        $this->assertStringContainsString('Total 1 out of 2 new migrations were applied.', $output);
         $this->assertStringContainsString('[ERROR] Partially updated.', $output);
 
         $this->container->get(Migrator::class)->down(new $createBookClass());
@@ -480,7 +479,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
-        $this->assertStringContainsString('>>> Total 0 out of 1 new migration was applied.', $output);
+        $this->assertStringContainsString('Total 0 out of 1 new migration was applied.', $output);
         $this->assertStringContainsString('[ERROR] Not updated.', $output);
 
         $this->container->get(Migrator::class)->down(new $createBookClass());
@@ -507,7 +506,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::SUCCESS, $exitCode);
-        $this->assertStringContainsString('>>> Total 1 new migration was applied.', $output);
+        $this->assertStringContainsString('Total 1 new migration was applied.', $output);
     }
 
     public function createCommand(ContainerInterface $container): CommandTester

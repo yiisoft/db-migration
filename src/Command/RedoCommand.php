@@ -66,6 +66,8 @@ final class RedoCommand extends Command
         $this->downRunner->setIo($io);
         $this->updateRunner->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
@@ -74,7 +76,6 @@ final class RedoCommand extends Command
 
         if ($limit !== null && $limit <= 0) {
             $io->error('The limit option must be greater than 0.');
-            $this->migrationService->databaseConnection();
 
             return Command::INVALID;
         }
@@ -127,7 +128,7 @@ final class RedoCommand extends Command
                 try {
                     $this->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas reverted.</>\n");
+                    $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
 
                     throw $e;
@@ -138,18 +139,16 @@ final class RedoCommand extends Command
                 try {
                     $this->updateRunner->run($instance, $countMigrations - $i);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas applied.</>\n");
+                    $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Reverted but partially applied.' : 'Reverted but not applied.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<info> >>> $countMigrations $migrationWas redone.</info>\n");
+            $output->writeln("\n<info>$countMigrations $migrationWas redone.</info>\n");
             $io->success('Migration redone successfully.');
         }
-
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }

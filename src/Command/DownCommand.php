@@ -64,6 +64,8 @@ final class DownCommand extends Command
         $this->migrationService->setIo($io);
         $this->downRunner->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
@@ -72,7 +74,6 @@ final class DownCommand extends Command
 
         if ($limit !== null && $limit <= 0) {
             $io->error('The limit option must be greater than 0.');
-            $this->migrationService->databaseConnection();
 
             return Command::INVALID;
         }
@@ -100,7 +101,7 @@ final class DownCommand extends Command
             $migrations = $this->migrator->getHistory($limit);
 
             if (empty($migrations)) {
-                $output->writeln("<fg=yellow> >>> Apply at least one migration first.</>\n");
+                $output->writeln("<fg=yellow>Apply at least one migration first.</>\n");
                 $io->warning('No migration has been done before.');
 
                 return Command::FAILURE;
@@ -128,18 +129,16 @@ final class DownCommand extends Command
                 try {
                     $this->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $countMigrations $migrationWas reverted.</>\n");
+                    $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<fg=green> >>> [OK] $countMigrations $migrationWas reverted.\n");
+            $output->writeln("\n<fg=green>[OK] $countMigrations $migrationWas reverted.\n");
             $io->success('Migrated down successfully.');
         }
-
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }

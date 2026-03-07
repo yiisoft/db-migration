@@ -60,6 +60,8 @@ final class NewCommand extends Command
         $this->migrator->setIo($io);
         $this->migrationService->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         /** @var string[] $paths */
         $paths = $input->getOption('path');
 
@@ -79,7 +81,6 @@ final class NewCommand extends Command
 
         if ($limit !== null && $limit <= 0) {
             $io->error('The limit option must be greater than 0.');
-            $this->migrationService->databaseConnection();
 
             return Command::INVALID;
         }
@@ -88,7 +89,6 @@ final class NewCommand extends Command
 
         if (empty($migrations)) {
             $io->warning('No new migrations found. Your system is up-to-date.');
-            $this->migrationService->databaseConnection();
 
             return Command::FAILURE;
         }
@@ -107,8 +107,6 @@ final class NewCommand extends Command
         foreach ($migrations as $i => $migration) {
             $output->writeln("<info>\t" . ($i + 1) . ". $migration</info>");
         }
-
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }
