@@ -23,4 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    uses: yiisoft/actions/.github/workflows/db-mysql.yml@master
+    uses: yiisoft/actions/.github/workflows/db-mysql.yml@auto-detect-versions

@@ -23,4 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    uses: yiisoft/actions/.github/workflows/db-oracle.yml@master
+    uses: yiisoft/actions/.github/workflows/db-oracle.yml@auto-detect-versions
