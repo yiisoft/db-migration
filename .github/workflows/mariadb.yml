@@ -23,4 +23,4 @@ concurrency:
 
 jobs:
   tests:
-    uses: yiisoft/actions/.github/workflows/db-mariadb.yml@master
+    uses: yiisoft/actions/.github/workflows/db-mariadb.yml@auto-detect-versions
