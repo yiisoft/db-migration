@@ -260,7 +260,7 @@ public function up(MigrationBuilder $b): void
 | `insert($table, $columns)` | Insere uma linha em uma tabela |
 | `batchInsert($table, $columns, $rows)` | Insere múltiplas linhas em uma tabela |
 | `upsert($table, $insertColumns, $updateColumns)` | Insere ou atualiza uma linha |
-| `update($table, $columns, $condition)` | Atualiza linhas em uma tabela |
+| `update($table, $columns, $condition = '', $from = null, $params = [])` | Atualiza linhas em uma tabela |
 | `delete($table, $condition)` | Remove linhas de uma tabela |
 | `createTable($table, $columns)` | Cria uma nova tabela |
 | `renameTable($table, $newName)` | Renomeia uma tabela |
