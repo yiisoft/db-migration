@@ -1,74 +1,26 @@
 on:
   pull_request:
-    paths:
+    paths: &paths
+      - 'resources/**'
       - 'src/**'
+      - 'tests/**'
       - '.github/workflows/mutation.yml'
       - 'composer.json'
-      - 'infection.json.dist'
+      - 'phpunit.xml.dist'
 
   push:
     branches: ['master']
-    paths:
-      - 'src/**'
-      - '.github/workflows/mutation.yml'
-      - 'composer.json'
-      - 'infection.json.dist'
+    paths: *paths
 
-name: mutation test
+name: mutation
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  mutation:
-    name: PHP ${{ matrix.php }}
-
-    env:
-      extensions: pdo, pdo_pgsql, pdo_sqlite
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php:
-          - 8.5
-
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: yiitest
-        ports:
-          - 5432:5432
-        options: --name=postgres --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    steps:
-      - name: Checkout.
-        uses: actions/checkout@v4
-
-      - name: Install PHP.
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          ini-values: date.timezone='UTC'
-          coverage: pcov
-
-      - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
-
-      - name: Install required yiisoft/db and yiisoft/db-pgsql
-        uses: yiisoft/actions/install-packages@master
-        with:
-          composer-root-version: 2.0.1
-          packages: >-
-            ['db', 'db-pgsql']
-
-      - name: Run infection.
-        run: |
-          vendor/bin/infection --threads=2 --ignore-msi-with-no-mutations --test-framework-options="--testsuite=Pgsql"
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+  tests:
+    uses: yiisoft/actions/.github/workflows/db-mutation.yml@add-db-mutation
