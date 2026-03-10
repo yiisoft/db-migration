@@ -1,7 +1,9 @@
 on:
   pull_request:
     paths: &paths
+      - 'resources/**'
       - 'src/**'
+      - 'tests/**'
       - '.github/workflows/mutation.yml'
       - 'composer.json'
       - 'infection.json.dist'
