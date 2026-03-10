@@ -22,7 +22,7 @@ final class ConsoleMigrationInformerTest extends TestCase
     public function testBeginCreateHistoryTableWithIo(): void
     {
         $io = $this->createMock(SymfonyStyle::class);
-        $io->expects($this->once())->method('section')->with('Creating migration history table...');
+        $io->expects($this->once())->method('write')->with('Creating migration history table...');
 
         $informer = new ConsoleMigrationInformer();
         $informer->setIo($io);
