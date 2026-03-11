@@ -86,9 +86,9 @@ final class M250101120000CreatePostTable implements RevertibleMigrationInterface
 }
 ```
 
-Use esta interface em combinação com `MigrationInterface` ou `RevertibleMigrationInterface` quando quiser que a
-migração seja executada dentro de uma transação. Note que nem todos os SGBDs suportam DDL transacional. Por exemplo,
-o MySQL faz commit implícito de declarações DDL e elas não podem ser revertidas.
+Implemente esta interface (opcionalmente junto com `RevertibleMigrationInterface`) para executar a migração
+dentro de uma transação. Note que nem todos os SGBDs suportam DDL transacional. Por exemplo, o MySQL faz commit
+implícito de declarações DDL e elas não podem ser revertidas.
 
 ## Comparação
 

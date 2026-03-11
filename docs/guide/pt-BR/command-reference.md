@@ -34,8 +34,8 @@ Cria um novo arquivo de migração.
 # Criar uma migração para uma nova tabela com campos
 ./yii migrate:create post --command=table --fields="title:string:notNull,body:text,created_at:datetime:notNull"
 
-# Criar uma migração para remover uma tabela
-./yii migrate:create post --command=dropTable
+# Criar uma migração para remover uma tabela (informando os campos para que o down() a recrie corretamente)
+./yii migrate:create post --command=dropTable --fields="title:string:notNull,body:text,created_at:datetime:notNull"
 
 # Criar uma migração para adicionar uma coluna
 ./yii migrate:create post --command=addColumn --fields="views:integer:notNull:defaultValue(0)"

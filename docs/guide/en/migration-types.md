@@ -87,9 +87,9 @@ final class M250101120000CreatePostTable implements RevertibleMigrationInterface
 }
 ```
 
-Use this interface in combination with `MigrationInterface` or `RevertibleMigrationInterface` when you want
-the migration to run inside a transaction. Note that not all DBMS support transactional DDL. For example, MySQL
-implicitly commits DDL statements and they cannot be rolled back.
+Implement this interface (optionally together with `RevertibleMigrationInterface`) to run the migration inside
+a transaction. Note that not all DBMS support transactional DDL. For example, MySQL implicitly commits DDL
+statements and they cannot be rolled back.
 
 ## Comparison
 

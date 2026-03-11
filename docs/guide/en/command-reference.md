@@ -34,8 +34,8 @@ Creates a new migration file.
 # Create a migration for a new table with fields
 ./yii migrate:create post --command=table --fields="title:string:notNull,body:text,created_at:datetime:notNull"
 
-# Create a migration to drop a table
-./yii migrate:create post --command=dropTable
+# Create a migration to drop a table (fields are used to recreate the table in down())
+./yii migrate:create post --command=dropTable --fields="title:string:notNull,body:text,created_at:datetime:notNull"
 
 # Create a migration to add a column
 ./yii migrate:create post --command=addColumn --fields="views:integer:notNull:defaultValue(0)"

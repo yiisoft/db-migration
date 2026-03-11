@@ -261,7 +261,7 @@ public function up(MigrationBuilder $b): void
 | `batchInsert($table, $columns, $rows)` | Inserts multiple rows into a table |
 | `upsert($table, $insertColumns, $updateColumns)` | Inserts or updates a row |
 | `update($table, $columns, $condition = '', $from = null, $params = [])` | Updates rows in a table |
-| `delete($table, $condition)` | Deletes rows from a table |
+| `delete($table, $condition = '', $params = [])` | Deletes rows from a table |
 | `createTable($table, $columns)` | Creates a new table |
 | `renameTable($table, $newName)` | Renames a table |
 | `dropTable($table)` | Drops a table |
