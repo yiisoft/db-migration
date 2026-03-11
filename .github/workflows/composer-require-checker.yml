@@ -1,6 +1,6 @@
 on:
   pull_request:
-    paths:
+    paths: &paths
       - 'bin/**'
       - 'config/**'
       - 'resources/**'
@@ -11,14 +11,7 @@ on:
 
   push:
     branches: ['master']
-    paths:
-      - 'bin/**'
-      - 'config/**'
-      - 'resources/**'
-      - 'src/**'
-      - '.github/workflows/composer-require-checker.yml'
-      - 'composer.json'
-      - 'composer-require-checker.json'
+    paths: *paths
 
 name: Composer require checker
 
@@ -34,4 +27,3 @@ jobs:
         ['8.1', '8.2', '8.3', '8.4', '8.5']
       required-packages: >-
         ['db']
-      composer-root-version: 2.0.0
