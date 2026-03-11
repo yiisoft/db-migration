@@ -24,4 +24,3 @@ concurrency:
 jobs:
   tests:
     uses: yiisoft/actions/.github/workflows/db-mutation.yml@add-db-mutation
-
