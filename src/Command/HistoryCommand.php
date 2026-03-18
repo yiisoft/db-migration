@@ -52,6 +52,8 @@ final class HistoryCommand extends Command
         $this->migrator->setIo($io);
         $this->migrationService->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         $this->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
@@ -60,7 +62,6 @@ final class HistoryCommand extends Command
 
         if ($limit !== null && $limit <= 0) {
             $io->error('The limit option must be greater than 0.');
-            $this->migrationService->databaseConnection();
 
             return Command::INVALID;
         }
@@ -87,7 +88,6 @@ final class HistoryCommand extends Command
 
         $output->writeln("\n");
         $io->success('Success.');
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }

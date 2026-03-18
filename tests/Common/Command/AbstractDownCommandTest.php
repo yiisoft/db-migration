@@ -315,7 +315,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
-        $this->assertStringContainsString('>>> Total 1 out of 2 migrations were reverted.', $output);
+        $this->assertStringContainsString('Total 1 out of 2 migrations were reverted.', $output);
         $this->assertStringContainsString('[ERROR] Partially reverted.', $output);
     }
 
@@ -343,7 +343,7 @@ abstract class AbstractDownCommandTest extends TestCase
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertFalse(isset($exitCode));
-        $this->assertStringContainsString('>>> Total 0 out of 1 migration was reverted.', $output);
+        $this->assertStringContainsString('Total 0 out of 1 migration was reverted.', $output);
         $this->assertStringContainsString('[ERROR] Not reverted.', $output);
     }
 

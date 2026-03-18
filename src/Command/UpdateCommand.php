@@ -62,6 +62,8 @@ final class UpdateCommand extends Command
         $this->migrationService->setIo($io);
         $this->updateRunner->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         /** @var string[] $paths */
         $paths = $input->getOption('path');
 
@@ -84,7 +86,6 @@ final class UpdateCommand extends Command
 
             if ($limit <= 0) {
                 $io->error('The limit option must be greater than 0.');
-                $this->migrationService->databaseConnection();
 
                 return Command::INVALID;
             }
@@ -93,9 +94,8 @@ final class UpdateCommand extends Command
         $migrations = $this->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
-            $output->writeln("<fg=green> >>> No new migrations found.</>\n");
+            $output->writeln("<fg=green>No new migrations found.</>\n");
             $io->success('Your system is up-to-date.');
-            $this->migrationService->databaseConnection();
 
             return Command::SUCCESS;
         }
@@ -134,18 +134,16 @@ final class UpdateCommand extends Command
                 try {
                     $this->updateRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
-                    $output->writeln("\n<fg=yellow> >>> Total $i out of $migrationsCount new $migrationWas applied.</>\n");
+                    $output->writeln("\n<fg=yellow>Total $i out of $migrationsCount new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');
 
                     throw $e;
                 }
             }
 
-            $output->writeln("\n<fg=green> >>> Total $migrationsCount new $migrationWas applied.</>\n");
+            $output->writeln("\n<fg=green>Total $migrationsCount new $migrationWas applied.</>\n");
             $io->success('Updated successfully.');
         }
-
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }

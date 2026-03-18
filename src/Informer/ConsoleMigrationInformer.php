@@ -15,12 +15,12 @@ final class ConsoleMigrationInformer implements MigrationInformerInterface
 
     public function beginCreateHistoryTable(string $message): void
     {
-        $this->io?->section($message);
+        $this->io?->write($message);
     }
 
     public function endCreateHistoryTable(string $message): void
     {
-        $this->io?->writeln("\t<fg=green>>>> [OK] - '.$message.'.</>");
+        $this->io?->writeln("\t<fg=green>$message</>");
     }
 
     public function beginCommand(string $message): void

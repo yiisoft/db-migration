@@ -96,6 +96,8 @@ final class CreateCommand extends Command
         $this->migrationService->setIo($io);
         $this->createService->setIo($io);
 
+        $this->migrationService->databaseConnection();
+
         /** @var string|null $path */
         $path = $input->getOption('path');
 
@@ -178,8 +180,6 @@ final class CreateCommand extends Command
         $output->writeln("\n\t<info>$className</info>");
         $output->writeln("\n");
         $io->success('New migration created successfully.');
-
-        $this->migrationService->databaseConnection();
 
         return Command::SUCCESS;
     }

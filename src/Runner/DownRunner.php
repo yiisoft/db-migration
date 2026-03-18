@@ -45,7 +45,7 @@ final class DownRunner
             $time = microtime(true) - $start;
 
             $this->io->writeln(
-                "\n\n\t<error>>>> [ERROR] - Not reverted (time: " . sprintf('%.3f', $time) . 's)</error>',
+                "\n\n\t<error>[ERROR] Not reverted (time: " . sprintf('%.3f', $time) . 's)</error>',
             );
 
             throw $e;
@@ -54,7 +54,7 @@ final class DownRunner
         $time = microtime(true) - $start;
 
         $this->io->writeln(
-            "\n\t<info>>>> [OK] - Reverted (time: " . sprintf('%.3f', $time) . 's)</info>',
+            "\n\t<info>[OK] Reverted (time: " . sprintf('%.3f', $time) . 's)</info>',
         );
     }
 }
