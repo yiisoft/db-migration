@@ -43,8 +43,12 @@ use Yiisoft\Injector\Injector;
 /** @var ConnectionInterface $database */
 $migrator = new Migrator($database, new NullMigrationInformer());
 $migrationService = new MigrationService($database, new Injector(), $migrator);
-$migrationService->setSourcePaths([dirname(__DIR__, 2), 'migrations']);
+$migrationService->setNewMigrationPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'migrations');
 ```
+
+> [!NOTE]
+> If `sourceNamespaces` and `sourcePaths` are not specified, `newMigrationNamespace` or `newMigrationPath` will be used
+> to find migrations.
 
 Then initialize the command for using without CLI. For example, for applying migrations it will be `UpdateCommand`:
 
@@ -55,7 +59,7 @@ use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
 
 $command = new UpdateCommand(new UpdateRunner($migrator), $migrationService, $migrator);
-$command->setHelperSet(new HelperSet(['queestion' => new QuestionHelper()]));
+$command->setHelperSet(new HelperSet(['question' => new QuestionHelper()]));
 ```
 
 And, finally, run the command:
