@@ -296,7 +296,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $this->assertStringContainsString('[OK] Your system is up-to-date.', $output);
     }
 
-    public function testWithoutMigrationPaths()
+    public function testWithoutMigrationPaths(): void
     {
         MigrationHelper::useMigrationsPath($this->container);
 
