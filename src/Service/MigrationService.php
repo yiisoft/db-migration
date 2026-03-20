@@ -96,9 +96,13 @@ final class MigrationService
                 }
                 break;
             case 'migrate:up':
-                if (empty($this->sourceNamespaces) && empty($this->sourcePaths)) {
+                if (empty($this->sourceNamespaces)
+                    && empty($this->sourcePaths)
+                    && empty($this->newMigrationNamespace)
+                    && empty($this->newMigrationPath)
+                ) {
                     $this->io?->error(
-                        'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
+                        'At least one of `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` or `newMigrationPath` should be specified.',
                     );
 
                     return Command::INVALID;
@@ -124,15 +128,7 @@ final class MigrationService
             $applied[trim($class, '\\')] = true;
         }
 
-        $migrationPaths = [];
-
-        foreach ($this->sourcePaths as $path) {
-            $migrationPaths[] = [$path, ''];
-        }
-
-        foreach ($this->sourceNamespaces as $namespace) {
-            $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
-        }
+        $migrationPaths = $this->findSourcePaths();
 
         $migrations = [];
         foreach ($migrationPaths as $item) {
@@ -394,7 +390,7 @@ final class MigrationService
 
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
-            foreach ($this->sourcePaths as $path) {
+            foreach ($this->findSourcePaths() as [$path]) {
                 $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
@@ -414,6 +410,38 @@ final class MigrationService
         $class = '\\' . $class;
 
         return $this->injector->make($class);
+    }
+
+    /**
+     * Returns the migration paths with namespaces if they are specified.
+     *
+     * @return array<array{0: string, 1: string}>
+     */
+    private function findSourcePaths(): array
+    {
+        $paths = [];
+
+        foreach ($this->sourcePaths as $path) {
+            $paths[] = [$path, ''];
+        }
+
+        foreach ($this->sourceNamespaces as $namespace) {
+            $paths[] = [$this->getNamespacePath($namespace), $namespace];
+        }
+
+        if ($paths !== []) {
+            return $paths;
+        }
+
+        if ($this->newMigrationPath !== '') {
+            return [[$this->newMigrationPath, '']];
+        }
+
+        if ($this->newMigrationNamespace !== '') {
+            return [[$this->getNamespacePath($this->newMigrationNamespace), $this->newMigrationNamespace]];
+        }
+
+        return [];
     }
 
     /**

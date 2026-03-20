@@ -33,6 +33,10 @@ Adicione em `config/console/params.php`:
 ...
 ```
 
+> [!NOTE]
+> Se `sourceNamespaces` e `sourcePaths` não forem especificados, `newMigrationNamespace` ou `newMigrationPath` serão 
+> usados para encontrar as migrações.
+
 Execute `composer du` no console para reconstruir a configuração.
 
 Agora temos o pacote [`yiisoft/db-migration`](https://github.com/yiisoft/db-migration) configurado e ele pode ser chamado no console.
