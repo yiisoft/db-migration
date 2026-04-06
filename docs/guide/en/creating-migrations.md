@@ -84,14 +84,12 @@ For example:
 
 ### Available column types
 
-The following abstract column types are supported (the actual SQL type depends on the DBMS used):
+The following column types correspond to `ColumnBuilder` static methods (the actual SQL type depends on the DBMS used):
 
 | Type | Description |
 |------|-------------|
-| `pk` | Auto-incremental primary key |
-| `upk` | Unsigned auto-incremental primary key |
-| `bigpk` | Big auto-incremental primary key |
-| `ubigpk` | Unsigned big auto-incremental primary key |
+| `primaryKey` | Auto-increment integer primary key |
+| `bigPrimaryKey` | Auto-increment bigint primary key |
 | `char` | Fixed-length character string |
 | `string` | Variable-length character string (default 255) |
 | `text` | Long text |
@@ -112,7 +110,8 @@ The following abstract column types are supported (the actual SQL type depends o
 
 ### Available decorators
 
-Decorators are used to set column properties. They are chained after the type:
+Decorators are used to set column properties. They are chained after the type.
+Parentheses can be omitted for decorators without arguments (e.g. `notNull` is equivalent to `notNull()`).
 
 | Decorator | Description |
 |-----------|-------------|

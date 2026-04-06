@@ -84,14 +84,12 @@ Por exemplo:
 
 ### Tipos de colunas disponíveis
 
-Os seguintes tipos de colunas abstratos são suportados (o tipo SQL real depende do SGBD usado):
+Os seguintes tipos de colunas correspondem aos métodos estáticos do `ColumnBuilder` (o tipo SQL real depende do SGBD usado):
 
 | Tipo | Descrição |
 |------|-----------|
-| `pk` | Chave primária auto-incremental |
-| `upk` | Chave primária auto-incremental sem sinal |
-| `bigpk` | Chave primária auto-incremental grande |
-| `ubigpk` | Chave primária auto-incremental grande sem sinal |
+| `primaryKey` | Chave primária inteira auto-incremental |
+| `bigPrimaryKey` | Chave primária bigint auto-incremental |
 | `char` | String de tamanho fixo |
 | `string` | String de tamanho variável (padrão 255) |
 | `text` | Texto longo |
@@ -112,7 +110,8 @@ Os seguintes tipos de colunas abstratos são suportados (o tipo SQL real depende
 
 ### Decoradores disponíveis
 
-Decoradores são usados para definir propriedades da coluna. Eles são encadeados após o tipo:
+Decoradores são usados para definir propriedades da coluna. Eles são encadeados após o tipo.
+Os parênteses podem ser omitidos para decoradores sem argumentos (ex.: `notNull` é equivalente a `notNull()`).
 
 | Decorador | Descrição |
 |-----------|-----------|
