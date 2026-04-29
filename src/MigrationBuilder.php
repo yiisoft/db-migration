@@ -108,7 +108,7 @@ final class MigrationBuilder
      *
      * @param string $table The table that new rows will be inserted into.
      * @param iterable $rows The rows to be batch inserted into the table.
-     * @param array $columns The column names.
+     * @param string[] $columns The column names.
      *
      * @psalm-param iterable<iterable<array-key, mixed>> $rows
      *
