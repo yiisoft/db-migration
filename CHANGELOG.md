@@ -10,6 +10,7 @@
 - Enh #322, #330: Improve output of `migrate:up`, `migrate:down`, `migrate:redo`, `migrate:new`, `migrate:history`, and
   `migrate:create` commands: remove redundant messages, replace `>>>` with cleaner output, and move "Database
   connection" info to the top (@samdark, @vjik)
+- Enh #333: Use `newMigrationPath` and `newMigrationNamespace` if `sourceNamespaces` and `sourcePaths` are not specified (@Tigrov)
 
 ## 2.0.1 December 20, 2025
 
