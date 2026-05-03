@@ -2,6 +2,7 @@
 
 ## 2.0.2 under development
 
+- New #332: Add `MigrationBuilder::insertBatch()` method, deprecate `batchInsert()` (@vjik)
 - Enh #317: Explicitly import classes, functions, and constants in "use" section (@mspirkov)
 - Enh #318: Remove unnecessary files from Composer package (@mspirkov)
 - Enh #319: Remove confirmation prompt from `migrate:create` command as creating a migration is non-destructive (@samdark)
