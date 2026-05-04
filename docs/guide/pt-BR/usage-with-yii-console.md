@@ -34,8 +34,8 @@ Adicione em `config/console/params.php`:
 ```
 
 > [!NOTE]
-> Se `sourceNamespaces` e `sourcePaths` não forem especificados, `newMigrationNamespace` ou `newMigrationPath` serão 
-> usados para encontrar as migrações.
+> `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` e `newMigrationPath` serão usados para encontrar
+> as migrações.
 
 Execute `composer du` no console para reconstruir a configuração.
 

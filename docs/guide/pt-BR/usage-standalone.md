@@ -47,8 +47,8 @@ $migrationService->setNewMigrationPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR
 ```
 
 > [!NOTE]
-> Se `sourceNamespaces` e `sourcePaths` não forem especificados, `newMigrationNamespace` ou `newMigrationPath` serão
-> usados para encontrar as migrações.
+> `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` e `newMigrationPath` serão usados para encontrar 
+> as migrações.
 
 Em seguida, inicialize o comando para usar sem CLI. Por exemplo, para aplicar migrações será `UpdateCommand`:
 
