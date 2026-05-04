@@ -128,12 +128,10 @@ final class MigrationService
             $applied[trim($class, '\\')] = true;
         }
 
+        $migrations = [];
         $migrationPaths = $this->findSourcePaths();
 
-        $migrations = [];
-        foreach ($migrationPaths as $item) {
-            [$sourcePath, $namespace] = $item;
-
+        foreach ($migrationPaths as [$sourcePath, $namespace]) {
             if (!is_dir($sourcePath)) {
                 continue;
             }
@@ -163,8 +161,8 @@ final class MigrationService
             }
             closedir($handle);
         }
-        ksort($migrations);
 
+        ksort($migrations);
         return array_values($migrations);
     }
 
@@ -421,27 +419,23 @@ final class MigrationService
     {
         $paths = [];
 
-        foreach ($this->sourcePaths as $path) {
-            $paths[] = [$path, ''];
+        if ($this->newMigrationPath !== '') {
+            $paths = [[$this->newMigrationPath, '']];
+        } elseif ($this->newMigrationNamespace !== '') {
+            $newMigrationPath = $this->getNamespacePath($this->newMigrationNamespace);
+            $paths = [[$newMigrationPath, $this->newMigrationNamespace]];
+        }
+
+        foreach ($this->sourcePaths as $sourcePaths) {
+            $paths[] = [$sourcePaths, ''];
         }
 
         foreach ($this->sourceNamespaces as $namespace) {
-            $paths[] = [$this->getNamespacePath($namespace), $namespace];
+            $sourcePaths = $this->getNamespacePath($namespace);
+            $paths[] = [$sourcePaths, $namespace];
         }
 
-        if ($paths !== []) {
-            return $paths;
-        }
-
-        if ($this->newMigrationPath !== '') {
-            return [[$this->newMigrationPath, '']];
-        }
-
-        if ($this->newMigrationNamespace !== '') {
-            return [[$this->getNamespacePath($this->newMigrationNamespace), $this->newMigrationNamespace]];
-        }
-
-        return [];
+        return $paths;
     }
 
     /**
