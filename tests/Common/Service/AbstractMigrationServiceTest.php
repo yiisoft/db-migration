@@ -99,7 +99,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'expected' => [
                     'Yiisoft\Db\Migration\Tests\Support\Migrations\M231015155500ExecuteSql',
                     'Yiisoft\Db\Migration\Tests\Support\Migrations\M231017150317EmptyDown',
-                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty::class',
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
                     'Yiisoft\Db\Migration\Tests\Support\Migrations\M250312122400ChangeDbPrefixUp',
                     'Yiisoft\Db\Migration\Tests\Support\Migrations\M250312122500ChangeDbPrefixDown',
                 ],
