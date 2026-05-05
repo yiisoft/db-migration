@@ -388,7 +388,12 @@ final class MigrationService
 
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
-            foreach ($this->findSourcePaths() as [$path]) {
+
+            $sourcePaths = $this->newMigrationPath !== ''
+                ? [$this->newMigrationPath, ...$this->sourcePaths]
+                : $this->sourcePaths;
+
+            foreach ($sourcePaths as $path) {
                 $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
@@ -420,10 +425,10 @@ final class MigrationService
         $paths = [];
 
         if ($this->newMigrationPath !== '') {
-            $paths = [[$this->newMigrationPath, '']];
+            $paths[] = [$this->newMigrationPath, ''];
         } elseif ($this->newMigrationNamespace !== '') {
             $newMigrationPath = $this->getNamespacePath($this->newMigrationNamespace);
-            $paths = [[$newMigrationPath, $this->newMigrationNamespace]];
+            $paths[] = [$newMigrationPath, $this->newMigrationNamespace];
         }
 
         foreach ($this->sourcePaths as $sourcePaths) {
@@ -431,8 +436,8 @@ final class MigrationService
         }
 
         foreach ($this->sourceNamespaces as $namespace) {
-            $sourcePaths = $this->getNamespacePath($namespace);
-            $paths[] = [$sourcePaths, $namespace];
+            $sourcePath = $this->getNamespacePath($namespace);
+            $paths[] = [$sourcePath, $namespace];
         }
 
         return $paths;
