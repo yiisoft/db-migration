@@ -96,9 +96,13 @@ final class MigrationService
                 }
                 break;
             case 'migrate:up':
-                if (empty($this->sourceNamespaces) && empty($this->sourcePaths)) {
+                if (empty($this->sourceNamespaces)
+                    && empty($this->sourcePaths)
+                    && empty($this->newMigrationNamespace)
+                    && empty($this->newMigrationPath)
+                ) {
                     $this->io?->error(
-                        'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
+                        'At least one of `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` or `newMigrationPath` should be specified.',
                     );
 
                     return Command::INVALID;
@@ -124,20 +128,10 @@ final class MigrationService
             $applied[trim($class, '\\')] = true;
         }
 
-        $migrationPaths = [];
-
-        foreach ($this->sourcePaths as $path) {
-            $migrationPaths[] = [$path, ''];
-        }
-
-        foreach ($this->sourceNamespaces as $namespace) {
-            $migrationPaths[] = [$this->getNamespacePath($namespace), $namespace];
-        }
-
         $migrations = [];
-        foreach ($migrationPaths as $item) {
-            [$sourcePath, $namespace] = $item;
+        $migrationPaths = $this->findSourcePaths();
 
+        foreach ($migrationPaths as [$sourcePath, $namespace]) {
             if (!is_dir($sourcePath)) {
                 continue;
             }
@@ -167,8 +161,8 @@ final class MigrationService
             }
             closedir($handle);
         }
-        ksort($migrations);
 
+        ksort($migrations);
         return array_values($migrations);
     }
 
@@ -394,7 +388,12 @@ final class MigrationService
 
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
-            foreach ($this->sourcePaths as $path) {
+
+            $sourcePaths = $this->newMigrationPath !== ''
+                ? [$this->newMigrationPath, ...$this->sourcePaths]
+                : $this->sourcePaths;
+
+            foreach ($sourcePaths as $path) {
                 $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
@@ -414,6 +413,34 @@ final class MigrationService
         $class = '\\' . $class;
 
         return $this->injector->make($class);
+    }
+
+    /**
+     * Returns the migration paths with namespaces if they are specified.
+     *
+     * @return array<array{0: string, 1: string}>
+     */
+    private function findSourcePaths(): array
+    {
+        $paths = [];
+
+        if ($this->newMigrationPath !== '') {
+            $paths[] = [$this->newMigrationPath, ''];
+        } elseif ($this->newMigrationNamespace !== '') {
+            $newMigrationPath = $this->getNamespacePath($this->newMigrationNamespace);
+            $paths[] = [$newMigrationPath, $this->newMigrationNamespace];
+        }
+
+        foreach ($this->sourcePaths as $sourcePaths) {
+            $paths[] = [$sourcePaths, ''];
+        }
+
+        foreach ($this->sourceNamespaces as $namespace) {
+            $sourcePath = $this->getNamespacePath($namespace);
+            $paths[] = [$sourcePath, $namespace];
+        }
+
+        return $paths;
     }
 
     /**

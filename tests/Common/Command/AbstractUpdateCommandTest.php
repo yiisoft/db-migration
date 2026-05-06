@@ -274,11 +274,9 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
-        $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
-            $output,
-        );
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('No new migrations found.', $output);
+        $this->assertStringContainsString('[OK] Your system is up-to-date.', $output);
     }
 
     public function testWithoutSourceNamespaces(): void
@@ -293,9 +291,49 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $exitCode = $command->execute([]);
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
+        $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('No new migrations found.', $output);
+        $this->assertStringContainsString('[OK] Your system is up-to-date.', $output);
+    }
+
+    public function testWithoutMigrationPaths(): void
+    {
+        MigrationHelper::useMigrationsPath($this->container);
+
+        $migration = $this->container->get(MigrationService::class);
+        $migration->setSourcePaths([]);
+        $migration->setNewMigrationPath('');
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
+
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsStringCollapsingSpaces(
-            'At least one of `sourceNamespaces` or `sourcePaths` should be specified.',
+        $this->assertStringContainsString(
+            'At least one of `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` or `newMigrationPath` should be specified.',
+            $output,
+        );
+    }
+
+    public function testWithoutMigrationNamespaces(): void
+    {
+        MigrationHelper::useMigrationsNamespace($this->container);
+
+        $migration = $this->container->get(MigrationService::class);
+        $migration->setSourceNamespaces([]);
+        $migration->setNewMigrationNamespace('');
+
+        $command = $this->createCommand($this->container);
+        $command->setInputs(['yes']);
+
+        $exitCode = $command->execute([]);
+        $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
+
+        $this->assertSame(Command::INVALID, $exitCode);
+        $this->assertStringContainsString(
+            'At least one of `sourceNamespaces`, `sourcePaths`, `newMigrationNamespace` or `newMigrationPath` should be specified.',
             $output,
         );
     }
