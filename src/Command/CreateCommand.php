@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Command;
 
+use LogicException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -150,10 +151,16 @@ final class CreateCommand extends Command
             return Command::INVALID;
         }
 
-        $migrationPath = $this->migrationService->findMigrationPath();
+        try {
+            $migrationPath = $this->migrationService->findMigrationPath();
+        } catch (LogicException $e) {
+            $io->error($e->getMessage());
+
+            return Command::INVALID;
+        }
 
         if (!is_dir($migrationPath)) {
-            $io->error("Invalid path directory $migrationPath");
+            $io->error("Invalid path directory \"$migrationPath\"");
 
             return Command::INVALID;
         }

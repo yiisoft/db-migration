@@ -19,6 +19,7 @@ use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 use function array_map;
 use function array_unique;
 use function array_values;
+use function class_exists;
 use function closedir;
 use function dirname;
 use function gmdate;
@@ -33,6 +34,7 @@ use function preg_replace;
 use function readdir;
 use function realpath;
 use function reset;
+use function rtrim;
 use function str_contains;
 use function str_replace;
 use function str_starts_with;
@@ -131,11 +133,7 @@ final class MigrationService
         $migrations = [];
         $migrationPaths = $this->findSourcePaths();
 
-        foreach ($migrationPaths as [$sourcePath, $namespace]) {
-            if (!is_dir($sourcePath)) {
-                continue;
-            }
-
+        foreach ($migrationPaths as $sourcePath => $namespace) {
             /** @var resource $handle */
             $handle = opendir($sourcePath);
             while (($file = readdir($handle)) !== false) {
@@ -145,18 +143,23 @@ final class MigrationService
 
                 $path = $sourcePath . DIRECTORY_SEPARATOR . $file;
 
-                if (is_file($path) && preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches)) {
-                    [, $class, $time] = $matches;
+                if (!is_file($path)) {
+                    continue;
+                }
 
-                    if (!empty($namespace)) {
-                        $class = $namespace . '\\' . $class;
-                    }
+                if (preg_match('/^(M(\d{12}).*)\.php$/s', $file, $matches) !== 1) {
+                    continue;
+                }
 
-                    /** @psalm-var class-string $class */
+                [, $class, $time] = $matches;
 
-                    if (!isset($applied[$class])) {
-                        $migrations[$time . '\\' . $class] = $class;
-                    }
+                if (class_exists($namespace . '\\' . $class)) {
+                    $class = $namespace . '\\' . $class;
+                }
+
+                /** @psalm-var class-string $class */
+                if (!isset($applied[$class])) {
+                    $migrations[$time . '\\' . $class] = $class;
                 }
             }
             closedir($handle);
@@ -389,11 +392,13 @@ final class MigrationService
         if (!str_contains($class, '\\')) {
             $isIncluded = false;
 
-            $sourcePaths = $this->newMigrationPath !== ''
-                ? [$this->newMigrationPath, ...$this->sourcePaths]
-                : $this->sourcePaths;
+            $sourcePaths = $this->findSourcePaths();
 
-            foreach ($sourcePaths as $path) {
+            foreach ($sourcePaths as $path => $namespace) {
+                if (class_exists($namespace . '\\' . $class)) {
+                    continue;
+                }
+
                 $file = $path . DIRECTORY_SEPARATOR . $class . '.php';
 
                 if (is_file($file)) {
@@ -418,26 +423,38 @@ final class MigrationService
     /**
      * Returns the migration paths with namespaces if they are specified.
      *
-     * @return array<array{0: string, 1: string}>
+     * @return array<string, string>
      */
     private function findSourcePaths(): array
     {
         $paths = [];
 
         if ($this->newMigrationPath !== '') {
-            $paths[] = [$this->newMigrationPath, ''];
+            if (!is_dir($this->newMigrationPath)) {
+                throw new LogicException("Invalid path directory \"$this->newMigrationPath\"");
+            }
+
+            $newMigrationPath = rtrim(str_replace('\\', '/', $this->newMigrationPath), '/');
+            $newMigrationNamespace = $this->getNamespacesFromPath($newMigrationPath)[0] ?? '';
+            $paths[$newMigrationPath] = $newMigrationNamespace;
         } elseif ($this->newMigrationNamespace !== '') {
             $newMigrationPath = $this->getNamespacePath($this->newMigrationNamespace);
-            $paths[] = [$newMigrationPath, $this->newMigrationNamespace];
+            $paths[$newMigrationPath] = $this->newMigrationNamespace;
         }
 
-        foreach ($this->sourcePaths as $sourcePaths) {
-            $paths[] = [$sourcePaths, ''];
+        foreach ($this->sourcePaths as $sourcePath) {
+            if (!is_dir($sourcePath)) {
+                throw new LogicException("Invalid path directory \"$sourcePath\"");
+            }
+
+            $sourcePath = rtrim(str_replace('\\', '/', $sourcePath), '/');
+            $sourceNamespace = $this->getNamespacesFromPath($sourcePath)[0] ?? '';
+            $paths[$sourcePath] = $sourceNamespace;
         }
 
-        foreach ($this->sourceNamespaces as $namespace) {
-            $sourcePath = $this->getNamespacePath($namespace);
-            $paths[] = [$sourcePath, $namespace];
+        foreach ($this->sourceNamespaces as $sourceNamespace) {
+            $sourcePath = $this->getNamespacePath($sourceNamespace);
+            $paths[$sourcePath] = $sourceNamespace;
         }
 
         return $paths;
@@ -447,6 +464,8 @@ final class MigrationService
      * Returns the file path matching the give namespace.
      *
      * @param string $namespace Namespace.
+     *
+     * @throws LogicException If the namespace is invalid.
      *
      * @return string File path.
      */
@@ -462,11 +481,15 @@ final class MigrationService
             if (str_starts_with($namespace, trim($mapNamespace, '\\'))) {
                 /** @var string $mapDirectory */
                 $mapDirectory = reset($mapDirectories);
-                return $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
+                $path = $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
+
+                if (is_dir($path)) {
+                    return rtrim($path, '/');
+                }
             }
         }
 
-        throw new LogicException("Invalid namespace: \"$namespace\".");
+        throw new LogicException("Invalid namespace \"$namespace\"");
     }
 
     /**
