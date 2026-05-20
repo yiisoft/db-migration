@@ -397,10 +397,6 @@ final class MigrationService
         $paths = [];
 
         if ($this->newMigrationPath !== '') {
-            if (!is_dir($this->newMigrationPath)) {
-                throw new LogicException("Invalid path directory \"$this->newMigrationPath\"");
-            }
-
             $newMigrationPath = $this->normalizePath($this->newMigrationPath);
             $newMigrationNamespaces = $this->getNamespacesFromPath($newMigrationPath);
             $paths[$newMigrationPath] = array_fill_keys($newMigrationNamespaces, true);
@@ -410,10 +406,6 @@ final class MigrationService
         }
 
         foreach ($this->sourcePaths as $sourcePath) {
-            if (!is_dir($sourcePath)) {
-                throw new LogicException("Invalid path directory \"$sourcePath\"");
-            }
-
             $sourcePath = $this->normalizePath($sourcePath);
             $sourceNamespaces = $this->getNamespacesFromPath($sourcePath);
             $paths[$sourcePath] = ($paths[$sourcePath] ?? []) + array_fill_keys($sourceNamespaces, true);
@@ -577,6 +569,10 @@ final class MigrationService
 
     private function normalizePath(string $path): string
     {
+        if (!is_dir($path)) {
+            throw new LogicException("Invalid path directory \"$path\"");
+        }
+
         return rtrim(str_replace('\\', '/', $path), '/');
     }
 }
