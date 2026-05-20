@@ -18,6 +18,7 @@ use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 
 use function array_keys;
 use function array_map;
+use function array_merge;
 use function array_unique;
 use function array_values;
 use function class_exists;
@@ -387,7 +388,7 @@ final class MigrationService
     }
 
     /**
-     * Returns the migration paths with namespaces if they are specified.
+     * Returns the migration paths with namespaces.
      *
      * @return true[][]
      * @psalm-return array<string, array<string, true>>
@@ -440,11 +441,10 @@ final class MigrationService
             if (str_starts_with($namespace, trim($mapNamespace, '\\'))) {
                 /** @var string $mapDirectory */
                 $mapDirectory = reset($mapDirectories);
-                $mapDirectory = $this->normalizePath($mapDirectory);
                 $path = $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
 
                 if (is_dir($path)) {
-                    return rtrim($path, '/');
+                    return $this->normalizePath($path);
                 }
             }
         }
