@@ -84,7 +84,10 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'newMigrationNamespace' => 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
             ],
             'with newMigrationPath' => [
-                'expected' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty'],
+                'expected' => [
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
+                ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/Support/MigrationsExtra',
             ],
@@ -106,6 +109,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
             'with different sourceNamespaces with the same path' => [
                 'expected' => [
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -118,6 +122,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'expected' => [
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -130,6 +135,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
             'with sourceNamespaces and sourcePaths with the same path' => [
                 'expected' => [
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -153,7 +159,10 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'sourceNamespaces' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra'],
             ],
             'with newMigrationPath and sourcePaths with the same path' => [
-                'expected' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty'],
+                'expected' => [
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
+                ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/Support/MigrationsExtra',
                 'sourceNamespaces' => [],
@@ -162,6 +171,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
             'with newMigrationNamespace and sourcePaths with the same path' => [
                 'expected' => [
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
                 'newMigrationPath' => '',
