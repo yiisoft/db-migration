@@ -31,7 +31,8 @@ final class MigrationServiceTest extends TestCase
         $service->setNewMigrationNamespace('InvalidNamespace\\Hello');
 
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Invalid namespace: "InvalidNamespace\Hello".');
+        $this->expectExceptionMessage('Invalid namespace "InvalidNamespace\Hello"');
+
         $service->findMigrationPath();
     }
 }

@@ -1025,7 +1025,7 @@ EOF;
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $this->assertSame(Command::INVALID, $exitCode);
-        $this->assertStringContainsString('Invalid path directory', $output);
+        $this->assertStringContainsString('Invalid namespace "Yiisoft\Db\Migration\TestsRuntime\NotExists"', $output);
     }
 
     public function testWithoutNewMigrationNamespace(): void
