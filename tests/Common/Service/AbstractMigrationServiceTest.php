@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Common\Service;
 
+use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
-use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
@@ -28,24 +28,6 @@ abstract class AbstractMigrationServiceTest extends TestCase
     public function testGetNewMigrationsWithNotExistNamespace(): void
     {
         MigrationHelper::useMigrationsNamespace($this->container);
-
-        $className = MigrationHelper::createMigration(
-            $this->container,
-            'Create_Post',
-            'table',
-            'post',
-            ['name:string(50)'],
-        );
-        $this->container->get(Migrator::class)->up(new $className());
-
-        $className = MigrationHelper::createMigration(
-            $this->container,
-            'Create_User',
-            'table',
-            'user',
-            ['name:string(32)'],
-        );
-
         $service = $this->container->get(MigrationService::class);
 
         $service->setSourceNamespaces([
@@ -53,9 +35,10 @@ abstract class AbstractMigrationServiceTest extends TestCase
             'Yiisoft\\Db\\Migration\\TestsRuntime\\NotExists',
         ]);
 
-        $migrations = $service->getNewMigrations();
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Invalid namespace "Yiisoft\Db\Migration\TestsRuntime\NotExists"');
 
-        $this->assertSame([$className], $migrations);
+        $service->getNewMigrations();
     }
 
     public static function getNewMigrationsDataProvider(): array
@@ -67,17 +50,26 @@ abstract class AbstractMigrationServiceTest extends TestCase
             'non exists newMigrationNamespace' => [
                 'expected' => [],
                 'newMigrationNamespace' => 'Yiisoft\Db\Migration\TestsRuntime\NotExists',
+                'newMigrationPath' => '',
+                'sourceNamespaces' => [],
+                'sourcePaths' => [],
+                'errorMessage' => 'Invalid namespace "Yiisoft\Db\Migration\TestsRuntime\NotExists"',
             ],
             'non exists newMigrationPath' => [
                 'expected' => [],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/non-exists-directory',
+                'sourceNamespaces' => [],
+                'sourcePaths' => [],
+                'errorMessage' => 'Invalid path directory "' . dirname(__DIR__, 2) . '/non-exists-directory"',
             ],
             'non exists sourceNamespaces' => [
                 'expected' => [],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
                 'sourceNamespaces' => ['Yiisoft\Db\Migration\TestsRuntime\NotExists'],
+                'sourcePaths' => [],
+                'errorMessage' => 'Invalid namespace "Yiisoft\Db\Migration\TestsRuntime\NotExists"',
             ],
             'non exists sourcePaths' => [
                 'expected' => [],
@@ -85,13 +77,17 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'newMigrationPath' => '',
                 'sourceNamespaces' => [],
                 'sourcePaths' => [dirname(__DIR__, 2) . '/non-exists-directory'],
+                'errorMessage' => 'Invalid path directory "' . dirname(__DIR__, 2) . '/non-exists-directory"',
             ],
             'with newMigrationNamespace' => [
                 'expected' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty'],
                 'newMigrationNamespace' => 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
             ],
             'with newMigrationPath' => [
-                'expected' => ['M231108183919Empty'],
+                'expected' => [
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
+                ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/Support/MigrationsExtra',
             ],
@@ -112,8 +108,8 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with different sourceNamespaces with the same path' => [
                 'expected' => [
-                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183919Empty',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -124,8 +120,9 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with sourcePaths with different paths' => [
                 'expected' => [
-                    'M231108183919Empty',
-                    'M231108183919Empty2',
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -137,8 +134,8 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with sourceNamespaces and sourcePaths with the same path' => [
                 'expected' => [
-                    'M231108183919Empty',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -147,8 +144,8 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with sourceNamespaces and sourcePaths with different paths' => [
                 'expected' => [
-                    'M231108183919Empty2',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => '',
@@ -162,7 +159,10 @@ abstract class AbstractMigrationServiceTest extends TestCase
                 'sourceNamespaces' => ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra'],
             ],
             'with newMigrationPath and sourcePaths with the same path' => [
-                'expected' => ['M231108183919Empty'],
+                'expected' => [
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
+                ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/Support/MigrationsExtra',
                 'sourceNamespaces' => [],
@@ -170,8 +170,8 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with newMigrationNamespace and sourcePaths with the same path' => [
                 'expected' => [
-                    'M231108183919Empty',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\ForTest\MigrationsExtra\M231108183920DifferentNamespace',
                 ],
                 'newMigrationNamespace' => 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
                 'newMigrationPath' => '',
@@ -192,8 +192,8 @@ abstract class AbstractMigrationServiceTest extends TestCase
             ],
             'with newMigrationPath and sourceNamespaces with different paths' => [
                 'expected' => [
-                    'M231108183919Empty2',
                     'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty',
+                    'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2',
                 ],
                 'newMigrationNamespace' => '',
                 'newMigrationPath' => dirname(__DIR__, 2) . '/Support/MigrationsExtra2',
@@ -209,6 +209,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
         string $newMigrationPath = '',
         array $sourceNamespaces = [],
         array $sourcePaths = [],
+        string $errorMessage = '',
     ): void {
         MigrationHelper::useMigrationsNamespace($this->container);
 
@@ -218,9 +219,12 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $service->setSourceNamespaces($sourceNamespaces);
         $service->setSourcePaths($sourcePaths);
 
-        $migrations = $service->getNewMigrations();
-
-        $this->assertSame($expected, $migrations);
+        try {
+            $migrations = $service->getNewMigrations();
+            $this->assertSame($expected, $migrations);
+        } catch (LogicException $e) {
+            $this->assertSame($errorMessage, $e->getMessage());
+        }
     }
 
     public function testGetNamespacesFromPathForNoHavingNamespacePath(): void

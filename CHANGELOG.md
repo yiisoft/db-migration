@@ -12,6 +12,7 @@
   `migrate:create` commands: remove redundant messages, replace `>>>` with cleaner output, and move "Database
   connection" info to the top (@samdark, @vjik)
 - Enh #333: Use `newMigrationPath` and `newMigrationNamespace` as source (@Tigrov)
+- Bug #341: Fix migration namespaces and paths (@Tigrov)
 
 ## 2.0.1 December 20, 2025
 
