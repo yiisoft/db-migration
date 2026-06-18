@@ -40,17 +40,19 @@ jobs:
 
     steps:
       - name: Checkout.
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
 
       - name: Install PHP with extensions.
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45
         with:
           php-version: ${{ matrix.php }}
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
           coverage: pcov
 
       - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-sqlite
-        uses: yiisoft/actions/install-packages@master
+        uses: yiisoft/actions/install-packages@ab62d6b3b0e0cff6c9724ec5a395bedb41c639a2
         with:
           packages: >-
             ['db', 'db-sqlite']
@@ -60,7 +62,7 @@ jobs:
 
       - name: Upload coverage to Codecov.
         if: matrix.php == '8.5'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@04b047e8bb82a0c002c8312c1c880fbc6a999d45
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
