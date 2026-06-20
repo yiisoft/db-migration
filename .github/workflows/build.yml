@@ -52,7 +52,7 @@ jobs:
           coverage: pcov
 
       - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-sqlite
-        uses: yiisoft/actions/install-packages@ab62d6b3b0e0cff6c9724ec5a395bedb41c639a2
+        uses: yiisoft/actions/install-packages@master
         with:
           packages: >-
             ['db', 'db-sqlite']
