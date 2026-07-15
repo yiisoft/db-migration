@@ -124,30 +124,6 @@ final class MigrationBuilder
     }
 
     /**
-     * Creates and executes a batch INSERT SQL statement.
-     *
-     * The method will properly escape the column names and bind the values to be inserted.
-     *
-     * @param string $table The table that new rows will be inserted into.
-     * @param string[] $columns The column names.
-     * @param iterable $rows The rows to be batch inserted into the table.
-     *
-     * @psalm-param iterable<iterable<array-key, mixed>> $rows
-     *
-     * @throws Exception
-     * @throws InvalidConfigException
-     * @throws NotSupportedException
-     *
-     * @deprecated Use {@see insertBatch()} instead.
-     */
-    public function batchInsert(string $table, array $columns, iterable $rows): void
-    {
-        $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
-        $this->endCommand($time);
-    }
-
-    /**
      * Creates and executes a command to insert rows into a database table if they do not already exist (matching unique
      * constraints), or update them if they do.
      *
