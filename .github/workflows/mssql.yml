@@ -1,3 +1,5 @@
+name: mssql
+
 on:
   pull_request:
     paths: &paths
@@ -11,8 +13,6 @@ on:
   push:
     branches: ['master']
     paths: *paths
-
-name: mssql
 
 permissions:
   contents: read

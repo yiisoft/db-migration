@@ -1,3 +1,5 @@
+name: oracle
+
 on:
   pull_request:
     paths: &paths
@@ -11,8 +13,6 @@ on:
   push:
     branches: ['master']
     paths: *paths
-
-name: oracle
 
 permissions:
   contents: read
