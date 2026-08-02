@@ -238,7 +238,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
 
         $this->assertSame(
-            dirname(__DIR__, 2) . '/Support/BoundaryDb',
+            str_replace('\\', '/', dirname(__DIR__, 2)) . '/Support/BoundaryDb',
             $getNamespacePath->invoke($migrationService, 'Yiisoft\Db\Migration\Tests\Support\BoundaryDb'),
         );
     }
@@ -253,7 +253,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
         $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
 
         $this->assertSame(
-            dirname(__DIR__, 2) . '/Support/FallbackRoot/App/Unrelated',
+            str_replace('\\', '/', dirname(__DIR__, 2)) . '/Support/FallbackRoot/App/Unrelated',
             $getNamespacePath->invoke($migrationService, 'App\Unrelated'),
         );
     }
