@@ -438,10 +438,17 @@ final class MigrationService
         $map = require $this->getVendorDir() . '/composer/autoload_psr4.php';
 
         foreach ($map as $mapNamespace => $mapDirectories) {
-            if (str_starts_with($namespace, trim($mapNamespace, '\\'))) {
+            $trimmedNamespace = trim($mapNamespace, '\\');
+
+            if (
+                $trimmedNamespace === ''
+                || $namespace === $trimmedNamespace
+                || str_starts_with($namespace, $trimmedNamespace . '\\')
+            ) {
                 /** @var string $mapDirectory */
                 $mapDirectory = reset($mapDirectories);
-                $path = $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, strlen($mapNamespace)));
+                $cut = $trimmedNamespace === '' ? 0 : strlen($trimmedNamespace) + 1;
+                $path = $mapDirectory . '/' . str_replace('\\', '/', substr($namespace, $cut));
 
                 if (is_dir($path)) {
                     return $this->normalizePath($path);

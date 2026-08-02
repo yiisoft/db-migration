@@ -62,7 +62,10 @@
             "Yiisoft\\Db\\Migration\\Tests\\Support\\MigrationsExtra\\": [
                 "tests/Support/MigrationsExtra",
                 "tests/Support/MigrationsExtra2"
-            ]
+            ],
+            "Yiisoft\\Db\\Migration\\Tests\\Support\\Boundary\\": "tests/Support/Boundary",
+            "Yiisoft\\Db\\Migration\\Tests\\Support\\BoundaryDb\\": "tests/Support/BoundaryDb",
+            "": "tests/Support/FallbackRoot"
         }
     },
     "extra": {

@@ -227,6 +227,37 @@ abstract class AbstractMigrationServiceTest extends TestCase
         }
     }
 
+    /**
+     * `Boundary/b` intentionally exists: the old offset bug resolves `BoundaryDb` to it and
+     * bypasses the `is_dir()` fallback.
+     */
+    public function testGetNamespacePathDoesNotMatchASiblingNamespaceWithASimilarPrefix(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
+
+        $this->assertSame(
+            dirname(__DIR__, 2) . '/Support/BoundaryDb',
+            $getNamespacePath->invoke($migrationService, 'Yiisoft\Db\Migration\Tests\Support\BoundaryDb'),
+        );
+    }
+
+    /**
+     * An empty PSR-4 prefix is a valid fallback root and must match any namespace.
+     */
+    public function testGetNamespacePathStillResolvesThePsr4FallbackRoot(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
+
+        $this->assertSame(
+            dirname(__DIR__, 2) . '/Support/FallbackRoot/App/Unrelated',
+            $getNamespacePath->invoke($migrationService, 'App\Unrelated'),
+        );
+    }
+
     public function testGetNamespacesFromPathForNoHavingNamespacePath(): void
     {
         $migrationService = $this->container->get(MigrationService::class);
