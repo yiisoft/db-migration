@@ -228,8 +228,7 @@ abstract class AbstractMigrationServiceTest extends TestCase
     }
 
     /**
-     * `Boundary/b` intentionally exists: the old offset bug resolves `BoundaryDb` to it and
-     * bypasses the `is_dir()` fallback.
+     * @see https://github.com/yiisoft/db-migration/pull/350
      */
     public function testGetNamespacePathDoesNotMatchASiblingNamespaceWithASimilarPrefix(): void
     {
