@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 2.1.1 under development
+
+- no changes in this release.
+
 ## 2.1.0 August 03, 2026
 
 - New #332: Add `MigrationBuilder::insertBatch()` method, deprecate `batchInsert()` (@vjik)
