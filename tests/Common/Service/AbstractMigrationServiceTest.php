@@ -227,6 +227,36 @@ abstract class AbstractMigrationServiceTest extends TestCase
         }
     }
 
+    /**
+     * @see https://github.com/yiisoft/db-migration/pull/350
+     */
+    public function testGetNamespacePathDoesNotMatchASiblingNamespaceWithASimilarPrefix(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
+
+        $this->assertSame(
+            str_replace('\\', '/', dirname(__DIR__, 2)) . '/Support/BoundaryDb',
+            $getNamespacePath->invoke($migrationService, 'Yiisoft\Db\Migration\Tests\Support\BoundaryDb'),
+        );
+    }
+
+    /**
+     * An empty PSR-4 prefix is a valid fallback root and must match any namespace.
+     */
+    public function testGetNamespacePathStillResolvesThePsr4FallbackRoot(): void
+    {
+        $migrationService = $this->container->get(MigrationService::class);
+
+        $getNamespacePath = new ReflectionMethod($migrationService, 'getNamespacePath');
+
+        $this->assertSame(
+            str_replace('\\', '/', dirname(__DIR__, 2)) . '/Support/FallbackRoot/App/Unrelated',
+            $getNamespacePath->invoke($migrationService, 'App\Unrelated'),
+        );
+    }
+
     public function testGetNamespacesFromPathForNoHavingNamespacePath(): void
     {
         $migrationService = $this->container->get(MigrationService::class);

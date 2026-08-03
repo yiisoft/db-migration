@@ -1,3 +1,5 @@
+name: build
+
 on:
   pull_request:
     paths: &paths
@@ -13,8 +15,6 @@ on:
   push:
     branches: ['master']
     paths: *paths
-
-name: build
 
 permissions:
   contents: read
@@ -40,10 +40,12 @@ jobs:
 
     steps:
       - name: Checkout.
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install PHP with extensions.
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php }}
           ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
@@ -60,7 +62,7 @@ jobs:
 
       - name: Upload coverage to Codecov.
         if: matrix.php == '8.5'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
