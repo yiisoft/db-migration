@@ -3,6 +3,7 @@
 ## 2.1.1 under development
 
 - Enh #353: Add info about affected rows to `MigrationBuilder` class methods (@Tigrov)
+- Enh #353: Improve private methods visibility in `MigrationBuilder` class (@Tigrov)
 
 ## 2.1.0 August 03, 2026
 
