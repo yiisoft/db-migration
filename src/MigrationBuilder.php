@@ -731,7 +731,7 @@ final class MigrationBuilder
      *
      * @param float $time The time before the command was executed.
      */
-    private function endCommand(float $time, $message = 'Done'): void
+    private function endCommand(float $time, string $message = 'Done'): void
     {
         $this->informer->endCommand($message . ' in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
     }

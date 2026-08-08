@@ -2,7 +2,7 @@
 
 ## 2.1.1 under development
 
-- no changes in this release.
+- Enh #353: Add info about affected rows to `MigrationBuilder` class methods (@Tigrov)
 
 ## 2.1.0 August 03, 2026
 
