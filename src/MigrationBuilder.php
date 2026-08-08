@@ -23,6 +23,7 @@ use Yiisoft\Db\Command\CommandInterface;
 use function implode;
 use function ltrim;
 use function microtime;
+use function number_format;
 use function rtrim;
 use function sprintf;
 use function strlen;
@@ -119,8 +120,9 @@ final class MigrationBuilder
     public function insertBatch(string $table, iterable $rows, array $columns = []): void
     {
         $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
-        $this->endCommand($time);
+        $count = $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
+        $countMessage = $this->rowsCountMessage($count);
+        $this->endCommand($time, "Inserted $countMessage");
     }
 
     /**
@@ -143,8 +145,9 @@ final class MigrationBuilder
     public function batchInsert(string $table, array $columns, iterable $rows): void
     {
         $time = $this->beginCommand("Insert into $table");
-        $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
-        $this->endCommand($time);
+        $count = $this->db->createCommand()->insertBatch($table, $rows, $columns)->execute();
+        $countMessage = $this->rowsCountMessage($count);
+        $this->endCommand($time, "Inserted $countMessage");
     }
 
     /**
@@ -172,8 +175,9 @@ final class MigrationBuilder
         array|bool $updateColumns = true,
     ): void {
         $time = $this->beginCommand("Upsert into $table");
-        $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns)->execute();
-        $this->endCommand($time);
+        $count = $this->db->createCommand()->upsert($table, $insertColumns, $updateColumns)->execute();
+        $countMessage = $this->rowsCountMessage($count);
+        $this->endCommand($time, "Inserted or updated $countMessage");
     }
 
     /**
@@ -203,8 +207,9 @@ final class MigrationBuilder
         array $params = [],
     ): void {
         $time = $this->beginCommand("Update $table");
-        $this->db->createCommand()->update($table, $columns, $condition, $from, $params)->execute();
-        $this->endCommand($time);
+        $count = $this->db->createCommand()->update($table, $columns, $condition, $from, $params)->execute();
+        $countMessage = $this->rowsCountMessage($count);
+        $this->endCommand($time, "Updated $countMessage");
     }
 
     /**
@@ -222,8 +227,9 @@ final class MigrationBuilder
     public function delete(string $table, array|string $condition = '', array $params = []): void
     {
         $time = $this->beginCommand("Delete from $table");
-        $this->db->createCommand()->delete($table, $condition, $params)->execute();
-        $this->endCommand($time);
+        $count = $this->db->createCommand()->delete($table, $condition, $params)->execute();
+        $countMessage = $this->rowsCountMessage($count);
+        $this->endCommand($time, "Deleted $countMessage");
     }
 
     /**
@@ -714,7 +720,7 @@ final class MigrationBuilder
      *
      * @return float The time before the command is executed, for the time elapsed to be calculated.
      */
-    protected function beginCommand(string $description): float
+    private function beginCommand(string $description): float
     {
         $this->informer->beginCommand($description);
         return microtime(true);
@@ -725,9 +731,9 @@ final class MigrationBuilder
      *
      * @param float $time The time before the command was executed.
      */
-    protected function endCommand(float $time): void
+    private function endCommand(float $time, $message = 'Done'): void
     {
-        $this->informer->endCommand('Done in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
+        $this->informer->endCommand($message . ' in ' . sprintf('%.3f', microtime(true) - $time) . 's.');
     }
 
     private function hasIndex(string $table, string $column): bool
@@ -741,5 +747,12 @@ final class MigrationBuilder
         }
 
         return false;
+    }
+
+    private function rowsCountMessage(int $count): string
+    {
+        return $count === 1
+            ? '1 row'
+            : number_format($count) . ' rows';
     }
 }

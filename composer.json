@@ -93,7 +93,7 @@
         "check-dependencies": "composer-require-checker",
         "mutation": "infection",
         "psalm": "psalm",
-        "test": "phpunit --testdox --no-interaction",
+        "test": "phpunit --testdox",
         "cs-fix": "php-cs-fixer fix"
     }
 }
