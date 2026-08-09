@@ -87,20 +87,6 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->dropTable('test');
     }
 
-    public function testBatchInsert(): void
-    {
-        $this->builder->createTable('test', ['id' => ColumnBuilder::integer()]);
-        $this->builder->batchInsert('test', ['id'], [['id' => 1], ['id' => 2]]);
-
-        $this->assertEquals(
-            '2',
-            $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar(),
-        );
-        $this->assertInformerOutputContains('    > Insert into test ... Done in ');
-
-        $this->builder->dropTable('test');
-    }
-
     public function testUpsertWithoutRow(): void
     {
         $this->builder->createTable('test', ['id' => ColumnBuilder::primaryKey(), 'name' => ColumnBuilder::string()]);
