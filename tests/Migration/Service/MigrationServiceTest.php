@@ -15,6 +15,8 @@ use Yiisoft\Db\Sqlite\Driver;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
+use function dirname;
+
 final class MigrationServiceTest extends TestCase
 {
     public function testInvalidNamespace(): void
@@ -34,5 +36,29 @@ final class MigrationServiceTest extends TestCase
         $this->expectExceptionMessage('Invalid namespace "InvalidNamespace\Hello"');
 
         $service->findMigrationPath();
+    }
+
+    /**
+     * A `sourcePaths` directory not covered by any PSR-4 entry must be discovered.
+     */
+    public function testGetNewMigrationsWithSourcePathNotCoveredByPsr4Map(): void
+    {
+        $path = dirname(__DIR__, 3) . '/tests-fixtures/NonPsr4Migrations';
+
+        $db = new Connection(
+            new Driver('sqlite::memory:'),
+            new SchemaCache(new MemorySimpleCache()),
+        );
+        $service = new MigrationService(
+            $db,
+            new Injector(),
+            new Migrator($db, new NullMigrationInformer()),
+        );
+        $service->setSourcePaths([$path]);
+
+        $this->assertSame(
+            ['M231108183919NotCoveredByPsr4'],
+            $service->getNewMigrations(),
+        );
     }
 }
