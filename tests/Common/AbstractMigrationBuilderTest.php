@@ -68,7 +68,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             '2',
             $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar(),
         );
-        $this->assertInformerOutputContains('    > Insert into test ... Done in ');
+        $this->assertInformerOutputContains('    > Insert into test ... Inserted 2 rows in ');
 
         $this->builder->dropTable('test');
     }
@@ -82,7 +82,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             '2',
             $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar(),
         );
-        $this->assertInformerOutputContains('    > Insert into test ... Done in ');
+        $this->assertInformerOutputContains('    > Insert into test ... Inserted 2 rows in ');
 
         $this->builder->dropTable('test');
     }
@@ -96,7 +96,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             '2',
             $this->db->createCommand('SELECT count(*) FROM {{test}} WHERE [[id]] IN (1, 2)')->queryScalar(),
         );
-        $this->assertInformerOutputContains('    > Insert into test ... Done in ');
+        $this->assertInformerOutputContains('    > Insert into test ... Inserted 2 rows in ');
 
         $this->builder->dropTable('test');
     }
@@ -114,7 +114,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             ],
             $this->db->createCommand('SELECT * FROM {{test}}')->queryAll(),
         );
-        $this->assertInformerOutputContains('    > Upsert into test ... Done in ');
+        $this->assertInformerOutputContains('    > Upsert into test ... Inserted or updated 1 row in ');
 
         $this->builder->dropTable('test');
     }
@@ -130,7 +130,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
             ],
             $this->db->createCommand('SELECT * FROM {{test}}')->queryAll(),
         );
-        $this->assertInformerOutputContains('    > Update test ... Done in ');
+        $this->assertInformerOutputContains('    > Update test ... Updated 1 row in ');
 
         $this->builder->dropTable('test');
     }
@@ -142,7 +142,7 @@ abstract class AbstractMigrationBuilderTest extends TestCase
         $this->builder->delete('test', '[[id]]=:id', ['id' => 1]);
 
         $this->assertSame('0', (string) $this->db->createCommand('SELECT count(*) FROM [[test]]')->queryScalar());
-        $this->assertInformerOutputContains('    > Delete from test ... Done in ');
+        $this->assertInformerOutputContains('    > Delete from test ... Deleted 1 row in ');
 
         $this->builder->dropTable('test');
     }
