@@ -1,6 +1,6 @@
 # Yii DB Migration Change Log
 
-## 2.1.1 under development
+## 2.1.1 August 10, 2026
 
 - Enh #353: Add info about affected rows to `MigrationBuilder` class methods (@Tigrov)
 - Enh #353: Improve private methods visibility in `MigrationBuilder` class (@Tigrov)
