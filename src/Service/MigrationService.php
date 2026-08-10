@@ -558,14 +558,13 @@ final class MigrationService
                     if (class_exists($namespace . '\\' . $class, false)) {
                         /** @psalm-var class-string */
                         $migrations[$sortKey] = $namespace . '\\' . $class;
-                        break;
+                        continue 2;
                     }
+                }
 
-                    if (class_exists($class, false)) {
-                        /** @psalm-var class-string $class */
-                        $migrations[$sortKey] = $class;
-                        break;
-                    }
+                if (class_exists($class, false)) {
+                    /** @psalm-var class-string $class */
+                    $migrations[$sortKey] = $class;
                 }
             }
             closedir($handle);
