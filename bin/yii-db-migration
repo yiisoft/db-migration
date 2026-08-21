@@ -25,6 +25,17 @@ $rootPath = dirname(__DIR__, 4);
 /** @psalm-suppress UnresolvableInclude, MissingFile */
 require $_composer_autoload_path ?? $rootPath . '/vendor/autoload.php';
 
+$configFile = $rootPath . '/yii-db-migration.php';
+
+if (!file_exists($configFile)) {
+    fwrite(
+        STDERR,
+        'Configuration file "' . $configFile . '" not found.' . PHP_EOL
+        . 'Copy "' . __DIR__ . '/yii-db-migration.php" to the root folder of your project and configure it.' . PHP_EOL,
+    );
+    exit(1);
+}
+
 /**
  * @psalm-suppress MissingFile
  * @psalm-var array{
@@ -40,7 +51,7 @@ require $_composer_autoload_path ?? $rootPath . '/vendor/autoload.php';
  *     sourcePaths: list<string>,
  * } $params
  */
-$params = require $rootPath . '/yii-db-migration.php';
+$params = require $configFile;
 
 $db = $params['db'] ?? throw new LogicException('DB connection is not configured.');
 
