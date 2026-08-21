@@ -2,7 +2,7 @@
 
 ## 2.1.2 under development
 
-- no changes in this release.
+- Chg #313: Deny pass `null` to `CreateService::getTemplate()` (@KalimeroMK)
 
 ## 2.1.1 August 10, 2026
 
