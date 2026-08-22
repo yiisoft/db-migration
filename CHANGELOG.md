@@ -1,8 +1,12 @@
 # Yii DB Migration Change Log
 
-## 2.1.2 under development
+## 3.0.0 under development
 
 - Chg #313: Deny pass `null` to `CreateService::getTemplate()` (@KalimeroMK)
+
+## 2.1.2 under development
+
+- no changes in this release.
 
 ## 2.1.1 August 10, 2026
 
