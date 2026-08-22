@@ -87,10 +87,8 @@ final class CreateService
         );
     }
 
-    public function getTemplate(?string $key): string
+    public function getTemplate(string $key): string
     {
-        $key = (string) $key;
-
         if ($this->templates === null) {
             $this->setDefaultTemplates();
         }
