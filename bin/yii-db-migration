@@ -31,7 +31,8 @@ if (!file_exists($configFile)) {
     fwrite(
         STDERR,
         'Configuration file "' . $configFile . '" not found.' . PHP_EOL
-        . 'Copy "' . __DIR__ . '/yii-db-migration.php" to the root folder of your project and configure it.' . PHP_EOL,
+        . 'Copy "' . __DIR__ . '/yii-db-migration.php" to the root folder of your project and configure it:' . PHP_EOL
+        . 'cp "' . __DIR__ . '/yii-db-migration.php" "' . $configFile . '"' . PHP_EOL,
     );
     exit(1);
 }

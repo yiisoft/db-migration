@@ -54,6 +54,21 @@ final class BinTest extends TestCase
         $this->assertStringContainsString('LogicException: DB connection is not configured.', $output);
     }
 
+    public function testWithoutConfig(): void
+    {
+        unlink(dirname(__DIR__) . '/runtime/bin/yii-db-migration.php');
+
+        [$output, $exitCode] = $this->runYiiDbMigration();
+
+        $this->assertSame(1, $exitCode);
+        $this->assertStringContainsString('not found', $output);
+        $this->assertStringContainsString(
+            'cp "' . dirname(__DIR__) . '/runtime/bin/vendor/yiisoft/db-migration/bin/yii-db-migration.php" "'
+            . dirname(__DIR__) . '/runtime/bin/yii-db-migration.php"',
+            $output,
+        );
+    }
+
     private function replaceParams($search, $replace): void
     {
         $file = dirname(__DIR__) . '/runtime/bin/yii-db-migration.php';
