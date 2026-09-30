@@ -107,4 +107,3 @@ $input->setInteractive(false);
 
 $this->getMigrateUpdateCommand()->run($input, new NullOutput());
 ```
-
