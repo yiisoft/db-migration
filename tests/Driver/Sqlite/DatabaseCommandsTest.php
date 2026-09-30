@@ -145,6 +145,73 @@ final class DatabaseCommandsTest extends TestCase
         self::assertSame(Command::SUCCESS, $this->command($name)->execute(['--force-yes' => true]));
     }
 
+    public static function sourceOverrides(): array
+    {
+        return [
+            ['up', '--path'],
+            ['up', '--namespace'],
+            ['new', '--path'],
+            ['new', '--namespace'],
+        ];
+    }
+
+    #[DataProvider('sourceOverrides')]
+    public function testSourceOverrideRequiresDatabaseBeforeAnyWork(string $name, string $option): void
+    {
+        $this->writeMigration('analytics');
+        $input = [$option => [$option === '--path'
+            ? $this->directory . '/analytics'
+            : 'Yiisoft\\Db\\Migration\\Tests\\Support\\MigrationsExtra']];
+        if ($name === 'up') {
+            $input['--force-yes'] = true;
+        }
+        $command = $this->command($name);
+        self::assertSame(Command::INVALID, $command->execute($input));
+        self::assertStringContainsString(
+            'The --db option is required with --path or --namespace',
+            preg_replace('/\\s+/', ' ', $command->getDisplay()),
+        );
+        foreach ($this->connections as $connection) {
+            self::assertSame([], $connection->getSchema()->getTableNames());
+        }
+    }
+
+    #[DataProvider('sourceOverrides')]
+    public function testSourceOverrideWorksWithExplicitDatabase(string $name, string $option): void
+    {
+        $class = $this->writeMigration('analytics');
+        $input = ['--db' => 'analytics', $option => [$option === '--path'
+            ? $this->directory . '/analytics'
+            : 'Yiisoft\\Db\\Migration\\Tests\\Support\\MigrationsExtra']];
+        if ($name === 'up') {
+            $input['--force-yes'] = true;
+        }
+        $command = $this->command($name);
+        self::assertSame(Command::SUCCESS, $command->execute($input));
+        self::assertStringContainsString($class, $command->getDisplay());
+        self::assertSame([], $this->connections['default']->getSchema()->getTableNames());
+        self::assertSame([], $this->connections['maps']->getSchema()->getTableNames());
+        if ($name === 'up') {
+            self::assertArrayHasKey($class, $this->migrator('analytics')->getHistory());
+        }
+    }
+
+    #[DataProvider('sourceOverrides')]
+    public function testSourceOverrideWorksWithoutDatabaseWithOneSet(string $name, string $option): void
+    {
+        unset($this->sets['maps'], $this->sets['analytics']);
+        $class = $this->writeMigration('default');
+        $input = [$option => [$option === '--path'
+            ? $this->directory . '/default'
+            : 'Yiisoft\\Db\\Migration\\Tests\\Support\\MigrationsExtra']];
+        if ($name === 'up') {
+            $input['--force-yes'] = true;
+        }
+        $command = $this->command($name);
+        self::assertSame(Command::SUCCESS, $command->execute($input));
+        self::assertStringContainsString($class, $command->getDisplay());
+    }
+
     public function testCreateDefaultsToDefaultAndCanSelectAnotherSet(): void
     {
         $command = $this->command('create');

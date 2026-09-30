@@ -52,6 +52,17 @@ abstract class DatabaseCommand extends Command
             return Command::INVALID;
         }
 
+        if (
+            $name === null
+            && $multipleDatabases
+            && ($this instanceof UpdateCommand || $this instanceof NewCommand)
+            && ($input->getOption('path') !== [] || $input->getOption('namespace') !== [])
+        ) {
+            $io->error('The --db option is required with --path or --namespace when multiple databases are configured.');
+
+            return Command::INVALID;
+        }
+
         if ($name !== null || $this instanceof CreateCommand) {
             $names = [$name ?? 'default'];
         }

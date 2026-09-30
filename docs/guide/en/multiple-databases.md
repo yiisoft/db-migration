@@ -64,6 +64,14 @@ To apply at most two migrations per database:
 If a migration fails, execution stops before proceeding to later databases. Changes already applied to earlier databases
 remain. Fix the failing migration and run the command again; migrations recorded as applied are skipped.
 
+When selecting migration files with `--path` or `--namespace`, also specify `--db` if you have multiple databases:
+
+```shell
+./vendor/bin/yii-db-migration migrate:up --db=analytics --namespace='App\Migrations\Analytics'
+```
+
+This requirement also applies to `migrate:new`, so the selected files are checked against one database's history.
+
 ## Check pending migrations and history
 
 View pending migrations or applied migrations for `maps`:
