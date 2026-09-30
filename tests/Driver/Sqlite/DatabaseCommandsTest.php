@@ -23,6 +23,8 @@ use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Cache\SchemaCache;
+use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Sqlite\Connection;
 use Yiisoft\Db\Sqlite\Driver;
 use Yiisoft\Files\FileHelper;
@@ -47,7 +49,7 @@ final class DatabaseCommandsTest extends TestCase
         $this->sets = [];
         foreach (['default', 'maps', 'analytics'] as $name) {
             FileHelper::ensureDirectory($this->directory . '/' . $name);
-            $this->connections[$name] = new Connection(new Driver('sqlite::memory:'));
+            $this->connections[$name] = new Connection(new Driver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache()));
             $this->sets[$name] = new DatabaseSet(
                 $this->connections[$name],
                 newMigrationPath: $this->directory . '/' . $name,

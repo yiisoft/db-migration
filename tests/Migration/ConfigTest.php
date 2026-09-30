@@ -6,6 +6,7 @@ namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
+use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
@@ -67,7 +68,7 @@ final class ConfigTest extends TestCase
 
     public function testAdditionalDatabaseConfiguration(): void
     {
-        $set = new DatabaseSet(new SqLiteConnection(new SqLiteDriver('sqlite::memory:')));
+        $set = new DatabaseSet(new SqLiteConnection(new SqLiteDriver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache())));
         $container = $this->createConsoleContainer(['maps' => $set]);
         $this->assertSame(['default', 'maps'], $container->get(DatabaseSetRegistry::class)->getNames());
         $command = new CommandTester($container->get(DownCommand::class));

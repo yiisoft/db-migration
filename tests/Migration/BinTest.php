@@ -6,7 +6,10 @@ namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Files\FileHelper;
-use PDO;
+use Yiisoft\Db\Cache\SchemaCache;
+use Yiisoft\Db\Sqlite\Connection;
+use Yiisoft\Db\Sqlite\Driver;
+use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
 use function dirname;
 
@@ -75,14 +78,16 @@ final class BinTest extends TestCase
     {
         $this->replaceParams("'db' => null,", <<<'PHP'
             'db' => new \Yiisoft\Db\Sqlite\Connection(
-                new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/default.sqlite')
+                new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/default.sqlite'),
+                new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
             ),
             PHP);
         $this->replaceParams("'databases' => [],", <<<'PHP'
             'databases' => [
                 'maps' => new \Yiisoft\Db\Migration\DatabaseSet(
                     new \Yiisoft\Db\Sqlite\Connection(
-                        new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/maps.sqlite')
+                        new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/maps.sqlite'),
+                        new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
                     ),
                     newMigrationPath: __DIR__ . '/maps',
                     historyTable: 'maps_history',
@@ -105,9 +110,12 @@ final class BinTest extends TestCase
         $this->assertSame(0, $exitCode, $output);
         $this->assertStringContainsString('Database: maps', $output);
         $this->assertFileDoesNotExist($directory . '/default.sqlite');
-        $pdo = new PDO('sqlite:' . $directory . '/maps.sqlite');
-        $this->assertSame('M260930000000Maps', $pdo->query('SELECT name FROM maps_history')->fetchColumn());
-        $this->assertSame(0, (int) $pdo->query('SELECT COUNT(*) FROM example')->fetchColumn());
+        $db = new Connection(
+            new Driver('sqlite:' . $directory . '/maps.sqlite'),
+            new SchemaCache(new MemorySimpleCache()),
+        );
+        $this->assertSame('M260930000000Maps', $db->createCommand('SELECT name FROM maps_history')->queryScalar());
+        $this->assertSame(0, (int) $db->createCommand('SELECT COUNT(*) FROM example')->queryScalar());
     }
 
     private function replaceParams($search, $replace): void
