@@ -81,8 +81,10 @@ View pending migrations or applied migrations for `maps`:
 ./vendor/bin/yii-db-migration migrate:history --db=maps
 ```
 
-Omit `--db` to view all configured databases. Results are grouped by database, including those with no migrations to
-show. Use `--all` to show the complete list or `--limit=5` to show up to five migrations per database.
+Omit `--db` to view all configured databases. Results are grouped by database. The command succeeds if at least one
+database has migrations to show, and returns a failure exit code if all results are empty. An error stops execution even
+if an earlier database had results. Use `--all` to show the complete list or `--limit=5` to show up to five migrations per
+database.
 
 History is stored in each database's own `migration` table, using its configured table prefix. If you configure multiple
 names for the same physical database and want independent histories, give each a different `historyTable` value.

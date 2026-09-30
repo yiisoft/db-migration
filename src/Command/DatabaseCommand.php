@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseContext;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 
 use function count;
@@ -21,8 +22,6 @@ use function in_array;
  */
 abstract class DatabaseCommand extends Command
 {
-    protected bool $allowEmptyResults = false;
-
     public function __construct(private readonly ?DatabaseSetRegistry $databases = null)
     {
         parent::__construct();
@@ -67,30 +66,33 @@ abstract class DatabaseCommand extends Command
             $names = [$name ?? 'default'];
         }
 
-        foreach ($names as $database) {
-            $command = $this;
-            if ($database !== 'default' && $this->databases !== null) {
-                $command = $this->databases->createCommand($database, static::class);
-            }
+        $isListing = $this instanceof NewCommand || $this instanceof HistoryCommand;
+        $hasResults = false;
 
-            $command->allowEmptyResults = count($names) > 1;
-            $command->setName($this->getName() ?? '');
-            if (($helpers = $this->getHelperSet()) !== null) {
-                $command->setHelperSet($helpers);
-            }
+        foreach ($names as $database) {
+            $context = $database === 'default' ? null : $this->databases?->createContext($database);
 
             if ($multipleDatabases) {
                 $io->section('Database: ' . OutputFormatter::escape($database));
             }
 
-            $status = $command->executeForDatabase($input, $output);
+            $status = $this->executeForDatabase($input, $output, $context);
+            // Listing commands return FAILURE for an empty set; other sets may still have results.
+            if ($isListing && $status === Command::FAILURE) {
+                continue;
+            }
             if ($status !== Command::SUCCESS) {
                 return $status;
             }
+            $hasResults = true;
         }
 
-        return Command::SUCCESS;
+        return $isListing && !$hasResults ? Command::FAILURE : Command::SUCCESS;
     }
 
-    abstract protected function executeForDatabase(InputInterface $input, OutputInterface $output): int;
+    abstract protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int;
 }

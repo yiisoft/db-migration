@@ -2,7 +2,7 @@
 
 ## 2.1.2 under development
 
-- Enh #360: Support named database migration sets with `--db` selection and separate migration history (@samdark)
+- New #360: Support named database migration sets with `--db` selection and separate migration history (@samdark)
 - Enh #255: Show friendly error on run `./vendor/bin/yii-db-migration` without configuration file (@KalimeroMK)
 
 ## 2.1.1 August 10, 2026

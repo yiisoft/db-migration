@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseContext;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -92,14 +93,21 @@ final class CreateCommand extends DatabaseCommand
             ->setHelp('This command generates new migration file.');
     }
 
-    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIo($io);
-        $this->migrationService->setIo($io);
-        $this->createService->setIo($io);
+    protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int {
+        $migrator = $context?->migrator ?? $this->migrator;
+        $migrationService = $context?->migrationService ?? $this->migrationService;
+        $createService = $context?->createService ?? $this->createService;
 
-        $this->migrationService->databaseConnection();
+        $io = new SymfonyStyle($input, $output);
+        $migrator->setIo($io);
+        $migrationService->setIo($io);
+        $createService->setIo($io);
+
+        $migrationService->databaseConnection();
 
         /** @var string|null $path */
         $path = $input->getOption('path');
@@ -108,13 +116,13 @@ final class CreateCommand extends DatabaseCommand
         $namespace = $input->getOption('namespace');
 
         if ($path !== null || $namespace !== null) {
-            $this->migrationService->setNewMigrationPath((string) $path);
-            $this->migrationService->setNewMigrationNamespace((string) $namespace);
+            $migrationService->setNewMigrationPath((string) $path);
+            $migrationService->setNewMigrationNamespace((string) $namespace);
         } else {
-            $namespace = $this->migrationService->getNewMigrationNamespace();
+            $namespace = $migrationService->getNewMigrationNamespace();
         }
 
-        if ($this->migrationService->before($this->getName() ?? '') === Command::INVALID) {
+        if ($migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 
@@ -144,8 +152,8 @@ final class CreateCommand extends DatabaseCommand
         $and = $input->getOption('and');
         $name = $this->generateName($command, $table, $and);
 
-        $className = $this->migrationService->generateClassName($name);
-        $nameLimit = $this->migrator->getMigrationNameLimit();
+        $className = $migrationService->generateClassName($name);
+        $nameLimit = $migrator->getMigrationNameLimit();
 
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
             $io->error('The migration name is too long.');
@@ -154,7 +162,7 @@ final class CreateCommand extends DatabaseCommand
         }
 
         try {
-            $migrationPath = $this->migrationService->findMigrationPath();
+            $migrationPath = $migrationService->findMigrationPath();
         } catch (LogicException $e) {
             $io->error($e->getMessage());
 
@@ -172,7 +180,7 @@ final class CreateCommand extends DatabaseCommand
         /** @var string|null $tableComment */
         $tableComment = $input->getOption('table-comment');
 
-        $content = $this->createService->run(
+        $content = $createService->run(
             $command,
             $table,
             $className,

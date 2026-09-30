@@ -5,13 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration;
 
 use InvalidArgumentException;
-use Yiisoft\Db\Migration\Command\CreateCommand;
-use Yiisoft\Db\Migration\Command\DatabaseCommand;
-use Yiisoft\Db\Migration\Command\DownCommand;
-use Yiisoft\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Db\Migration\Command\NewCommand;
-use Yiisoft\Db\Migration\Command\RedoCommand;
-use Yiisoft\Db\Migration\Command\UpdateCommand;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -59,9 +52,8 @@ final class DatabaseSetRegistry
 
     /**
      * @internal
-     * @param class-string<DatabaseCommand> $class
      */
-    public function createCommand(string $name, string $class): DatabaseCommand
+    public function createContext(string $name): DatabaseContext
     {
         $database = $this->databases[$name] ?? throw new InvalidArgumentException("Unknown database set: $name.");
         $migrator = new Migrator(
@@ -77,14 +69,12 @@ final class DatabaseSetRegistry
         $service->setSourceNamespaces($database->sourceNamespaces);
         $service->setSourcePaths($database->sourcePaths);
 
-        return match ($class) {
-            CreateCommand::class => new CreateCommand(new CreateService($database->db, $database->useTablePrefix), $service, $migrator),
-            DownCommand::class => new DownCommand(new DownRunner($migrator), $service, $migrator),
-            HistoryCommand::class => new HistoryCommand($service, $migrator),
-            NewCommand::class => new NewCommand($service, $migrator),
-            RedoCommand::class => new RedoCommand($service, $migrator, new DownRunner($migrator), new UpdateRunner($migrator)),
-            UpdateCommand::class => new UpdateCommand(new UpdateRunner($migrator), $service, $migrator),
-            default => throw new InvalidArgumentException("Unsupported migration command: $class."),
-        };
+        return new DatabaseContext(
+            $migrator,
+            $service,
+            new CreateService($database->db, $database->useTablePrefix),
+            new DownRunner($migrator),
+            new UpdateRunner($migrator),
+        );
     }
 }

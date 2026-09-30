@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseContext;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -48,15 +49,21 @@ final class HistoryCommand extends DatabaseCommand
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
-    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
-    {
+    protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int {
+        $migrator = $context?->migrator ?? $this->migrator;
+        $migrationService = $context?->migrationService ?? $this->migrationService;
+
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIo($io);
-        $this->migrationService->setIo($io);
+        $migrator->setIo($io);
+        $migrationService->setIo($io);
 
-        $this->migrationService->databaseConnection();
+        $migrationService->databaseConnection();
 
-        $this->migrationService->before($this->getName() ?? '');
+        $migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -68,12 +75,12 @@ final class HistoryCommand extends DatabaseCommand
             return Command::INVALID;
         }
 
-        $migrations = $this->migrator->getHistory($limit);
+        $migrations = $migrator->getHistory($limit);
 
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return $this->allowEmptyResults ? Command::SUCCESS : Command::FAILURE;
+            return Command::FAILURE;
         }
 
         $countMigrations = count($migrations);

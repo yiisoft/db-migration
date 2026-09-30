@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Db\Migration\DatabaseContext;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -59,16 +60,23 @@ final class DownCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
-    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
-    {
+    protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int {
+        $migrator = $context?->migrator ?? $this->migrator;
+        $migrationService = $context?->migrationService ?? $this->migrationService;
+        $downRunner = $context?->downRunner ?? $this->downRunner;
+
         $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIo($io);
-        $this->migrationService->setIo($io);
-        $this->downRunner->setIo($io);
+        $migrator->setIo($io);
+        $migrationService->setIo($io);
+        $downRunner->setIo($io);
 
-        $this->migrationService->databaseConnection();
+        $migrationService->databaseConnection();
 
-        $this->migrationService->before($this->getName() ?? '');
+        $migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -86,9 +94,9 @@ final class DownCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $migrations = $this->migrator->getHistory();
+            $migrations = $migrator->getHistory();
             $migrations = array_keys($migrations);
-            $migrations = $this->migrationService->filterMigrations($migrations, $namespaces, $paths);
+            $migrations = $migrationService->filterMigrations($migrations, $namespaces, $paths);
 
             if (empty($migrations)) {
                 $io->warning('No applied migrations found.');
@@ -100,7 +108,7 @@ final class DownCommand extends DatabaseCommand
                 $migrations = array_slice($migrations, 0, $limit);
             }
         } else {
-            $migrations = $this->migrator->getHistory($limit);
+            $migrations = $migrator->getHistory($limit);
 
             if (empty($migrations)) {
                 $output->writeln("<fg=yellow>Apply at least one migration first.</>\n");
@@ -124,12 +132,12 @@ final class DownCommand extends DatabaseCommand
         }
 
         if ($input->getOption('force-yes') || $io->confirm("Revert the above $migrationWord?")) {
-            $instances = $this->migrationService->makeRevertibleMigrations($migrations);
+            $instances = $migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $this->downRunner->run($instance, $i + 1);
+                    $downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');

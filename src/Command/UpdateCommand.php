@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Db\Migration\DatabaseContext;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -57,14 +58,21 @@ final class UpdateCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
-    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIo($io);
-        $this->migrationService->setIo($io);
-        $this->updateRunner->setIo($io);
+    protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int {
+        $migrator = $context?->migrator ?? $this->migrator;
+        $migrationService = $context?->migrationService ?? $this->migrationService;
+        $updateRunner = $context?->updateRunner ?? $this->updateRunner;
 
-        $this->migrationService->databaseConnection();
+        $io = new SymfonyStyle($input, $output);
+        $migrator->setIo($io);
+        $migrationService->setIo($io);
+        $updateRunner->setIo($io);
+
+        $migrationService->databaseConnection();
 
         /** @var string[] $paths */
         $paths = $input->getOption('path');
@@ -73,11 +81,11 @@ final class UpdateCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $this->migrationService->setSourcePaths($paths);
-            $this->migrationService->setSourceNamespaces($namespaces);
+            $migrationService->setSourcePaths($paths);
+            $migrationService->setSourceNamespaces($namespaces);
         }
 
-        if ($this->migrationService->before($this->getName() ?? '') === Command::INVALID) {
+        if ($migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 
@@ -93,7 +101,7 @@ final class UpdateCommand extends DatabaseCommand
             }
         }
 
-        $migrations = $this->migrationService->getNewMigrations();
+        $migrations = $migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $output->writeln("<fg=green>No new migrations found.</>\n");
@@ -114,7 +122,7 @@ final class UpdateCommand extends DatabaseCommand
         }
 
         foreach ($migrations as $i => $migration) {
-            $nameLimit = $this->migrator->getMigrationNameLimit();
+            $nameLimit = $migrator->getMigrationNameLimit();
 
             if (strlen($migration) > $nameLimit) {
                 $output->writeln(
@@ -129,12 +137,12 @@ final class UpdateCommand extends DatabaseCommand
         }
 
         if ($input->getOption('force-yes') || $io->confirm("Apply the above $migrationWord?")) {
-            $instances = $this->migrationService->makeMigrations($migrations);
+            $instances = $migrationService->makeMigrations($migrations);
             $migrationWas = ($migrationsCount === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $this->updateRunner->run($instance, $i + 1);
+                    $updateRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $migrationsCount new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');

@@ -7,6 +7,7 @@ namespace Yiisoft\Db\Migration\Tests\Driver\Sqlite;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Yiisoft\Db\Exception\Exception as DbException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
@@ -271,6 +272,79 @@ final class DatabaseCommandsTest extends TestCase
         self::assertStringNotContainsString('Database: default', $command->getDisplay());
         // Explicit selection keeps the original empty-result exit code.
         self::assertSame(Command::FAILURE, $command->execute(['--db' => 'default']));
+    }
+
+    #[DataProvider('listingCommands')]
+    public function testListingAllEmptySetsFailsAfterVisitingEverySet(string $name): void
+    {
+        $command = $this->command($name);
+        self::assertSame(Command::FAILURE, $command->execute([]));
+        foreach (['default', 'maps', 'analytics'] as $database) {
+            self::assertStringContainsString('Database: ' . $database, $command->getDisplay());
+        }
+    }
+
+    #[DataProvider('listingCommands')]
+    public function testListingSucceedsWhenOnlyTheLastSetHasResults(string $name): void
+    {
+        $class = $this->writeMigration('analytics');
+        if ($name === 'history') {
+            $this->command('up')->execute(['--db' => 'analytics', '--force-yes' => true]);
+        }
+        $command = $this->command($name);
+        self::assertSame(Command::SUCCESS, $command->execute([]));
+        self::assertStringContainsString($class, $command->getDisplay());
+    }
+
+    #[DataProvider('listingCommands')]
+    public function testListingAllNonemptySetsSucceeds(string $name): void
+    {
+        $classes = [];
+        foreach (['default', 'maps', 'analytics'] as $database) {
+            $classes[] = $this->writeMigration($database);
+        }
+        if ($name === 'history') {
+            $this->command('up')->execute(['--force-yes' => true]);
+        }
+        $command = $this->command($name);
+        self::assertSame(Command::SUCCESS, $command->execute([]));
+        foreach ($classes as $class) {
+            self::assertStringContainsString($class, $command->getDisplay());
+        }
+    }
+
+    #[DataProvider('listingCommands')]
+    public function testListingStopsOnErrorEvenAfterFindingResults(string $name): void
+    {
+        $this->writeMigration('default');
+        if ($name === 'history') {
+            $this->command('up')->execute(['--db' => 'default', '--force-yes' => true]);
+        }
+        $this->sets['maps'] = new DatabaseSet(
+            new Connection(
+                new Driver('sqlite:' . $this->directory . '/missing/maps.sqlite'),
+                new SchemaCache(new MemorySimpleCache()),
+            ),
+            newMigrationPath: $this->directory . '/maps',
+        );
+        $command = $this->command($name);
+        try {
+            $command->execute([]);
+            self::fail('The database error must propagate.');
+        } catch (DbException) {
+            self::assertStringContainsString('Database: maps', $command->getDisplay());
+            self::assertStringNotContainsString('Database: analytics', $command->getDisplay());
+        }
+        self::assertSame([], $this->connections['analytics']->getSchema()->getTableNames());
+    }
+
+    #[DataProvider('listingCommands')]
+    public function testListingRejectsInvalidOptionsBeforeVisitingLaterSets(string $name): void
+    {
+        $command = $this->command($name);
+        self::assertSame(Command::INVALID, $command->execute(['--limit' => 0]));
+        self::assertStringNotContainsString('Database: maps', $command->getDisplay());
+        self::assertStringNotContainsString('Database: analytics', $command->getDisplay());
     }
 
     public function testLimitAppliesToEachDatabase(): void
