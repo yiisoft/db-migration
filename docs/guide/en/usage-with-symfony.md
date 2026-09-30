@@ -54,4 +54,43 @@ sqlite_driver:
 
 That's it. Now you can use `bin/console migrate:*` commands.
 
-For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).
+## Multiple databases
+
+Keep the setup above for the default database. Configure additional sets using your
+existing connection services, and inject the registry into the migration commands through autowiring:
+
+```yaml
+# config/services.yaml
+services:
+    app.migrations.maps:
+        class: Yiisoft\Db\Migration\DatabaseSet
+        arguments:
+            $db: '@yii3.connections.maps'
+            $newMigrationPath: '%kernel.project_dir%/config/migrations/maps'
+
+    app.migrations.analytics:
+        class: Yiisoft\Db\Migration\DatabaseSet
+        arguments:
+            $db: '@yii3.connections.analytics'
+            $newMigrationPath: '%kernel.project_dir%/config/migrations/analytics'
+
+    Yiisoft\Db\Migration\DatabaseSetRegistry:
+        autowire: true
+        arguments:
+            $databases:
+                maps: '@app.migrations.maps'
+                analytics: '@app.migrations.analytics'
+```
+
+The registry uses the configured `Injector` to instantiate migrations, so constructor dependency injection continues to
+work for migrations in additional sets.
+
+Select one set with `--db`, or apply all sets with `migrate:up`:
+
+```shell
+php bin/console migrate:create create_places --db=maps
+php bin/console migrate:up --db=maps
+php bin/console migrate:up
+```
+
+See [Multiple databases](multiple-databases.md) for command behavior, execution order, and history isolation.

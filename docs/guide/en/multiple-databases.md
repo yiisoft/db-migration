@@ -11,15 +11,15 @@ and `analytics`; the name `default` is reserved. Each set may use a different da
 Select one database with `--db`:
 
 ```shell
-./yii migrate:create create_places --db=maps
-./yii migrate:up --db=maps
-./yii migrate:new --db=maps
-./yii migrate:history --db=maps
-./yii migrate:down --db=maps
-./yii migrate:redo --db=maps
+./vendor/bin/yii-db-migration migrate:create create_places --db=maps
+./vendor/bin/yii-db-migration migrate:up --db=maps
+./vendor/bin/yii-db-migration migrate:new --db=maps
+./vendor/bin/yii-db-migration migrate:history --db=maps
+./vendor/bin/yii-db-migration migrate:down --db=maps
+./vendor/bin/yii-db-migration migrate:redo --db=maps
 ```
 
-Replace `./yii` with `php bin/console` for Symfony or `./vendor/bin/yii-db-migration` for standalone use.
+The examples use the standalone executable.
 
 Without `--db`, commands behave as follows:
 
@@ -70,85 +70,6 @@ package migrations.
 
 Each set also accepts `historyTable`, `migrationNameLimit`, `useTablePrefix`, and `maxSqlOutputLength`. These use the same
 defaults as the standalone configuration; settings from the default set are not inherited by additional sets.
-
-## Yii Console
-
-Keep your current default configuration. Add `DatabaseSet` instances to the `databases` parameter:
-
-```php
-use Yiisoft\Db\Migration\DatabaseSet;
-
-// $mapsConnection and $analyticsConnection implement ConnectionInterface.
-return [
-    'yiisoft/db-migration' => [
-        'newMigrationPath' => __DIR__ . '/migrations/default',
-        'databases' => [
-            'maps' => new DatabaseSet(
-                $mapsConnection,
-                newMigrationPath: __DIR__ . '/migrations/maps',
-            ),
-            'analytics' => new DatabaseSet(
-                $analyticsConnection,
-                newMigrationPath: __DIR__ . '/migrations/analytics',
-            ),
-        ],
-    ],
-];
-```
-
-If connections are defined as container services, configure `DatabaseSetRegistry` in your console DI configuration instead:
-
-```php
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
-use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Injector\Injector;
-use Psr\Container\ContainerInterface;
-
-return [
-    DatabaseSetRegistry::class => static fn (
-        ContainerInterface $container,
-        Injector $injector,
-        MigrationInformerInterface $informer,
-    ) => new DatabaseSetRegistry($injector, $informer, [
-        'maps' => new DatabaseSet(
-            $container->get('db.maps'),
-            newMigrationNamespace: 'App\\Migrations\\Maps',
-        ),
-    ]),
-];
-```
-
-## Symfony
-
-Keep the [standard Symfony setup](usage-with-symfony.md) for the default database. Configure additional sets using your
-existing connection services, and inject the registry into the migration commands through autowiring:
-
-```yaml
-# config/services.yaml
-services:
-    app.migrations.maps:
-        class: Yiisoft\Db\Migration\DatabaseSet
-        arguments:
-            $db: '@yii3.connections.maps'
-            $newMigrationPath: '%kernel.project_dir%/config/migrations/maps'
-
-    app.migrations.analytics:
-        class: Yiisoft\Db\Migration\DatabaseSet
-        arguments:
-            $db: '@yii3.connections.analytics'
-            $newMigrationPath: '%kernel.project_dir%/config/migrations/analytics'
-
-    Yiisoft\Db\Migration\DatabaseSetRegistry:
-        autowire: true
-        arguments:
-            $databases:
-                maps: '@app.migrations.maps'
-                analytics: '@app.migrations.analytics'
-```
-
-The registry uses the configured `Injector` to instantiate migrations, so constructor dependency injection continues to
-work for migrations in additional sets.
 
 ## Standalone
 

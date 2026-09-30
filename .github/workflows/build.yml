@@ -48,7 +48,7 @@ jobs:
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php }}
-          ini-values: date.timezone='UTC', pcov.directory=$GITHUB_WORKSPACE, pcov.exclude=#^(?!($GITHUB_WORKSPACE/config/|$GITHUB_WORKSPACE/src/)).*#
+          ini-values: date.timezone='UTC', pcov.directory=${{ github.workspace }}
           coverage: pcov
 
       - name: Install Composer dependencies + required yiisoft/db and yiisoft/db-sqlite
@@ -58,7 +58,7 @@ jobs:
             ['db', 'db-sqlite']
 
       - name: Run tests with phpunit.
-        run: vendor/bin/phpunit --testsuite=Migration --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
+        run: vendor/bin/phpunit --testsuite=Migration,Sqlite --coverage-clover=coverage.xml --colors=always --display-warnings --display-deprecations
 
       - name: Upload coverage to Codecov.
         if: matrix.php == '8.5'

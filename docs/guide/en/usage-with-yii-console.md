@@ -46,4 +46,60 @@ View the list of available commands with `./yii list`:
 ./yii list
 ```
 
-For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).
+## Multiple databases
+
+Keep your current default configuration. Add `DatabaseSet` instances to the `databases` parameter:
+
+```php
+use Yiisoft\Db\Migration\DatabaseSet;
+
+// $mapsConnection and $analyticsConnection implement ConnectionInterface.
+return [
+    'yiisoft/db-migration' => [
+        'newMigrationPath' => __DIR__ . '/migrations/default',
+        'databases' => [
+            'maps' => new DatabaseSet(
+                $mapsConnection,
+                newMigrationPath: __DIR__ . '/migrations/maps',
+            ),
+            'analytics' => new DatabaseSet(
+                $analyticsConnection,
+                newMigrationPath: __DIR__ . '/migrations/analytics',
+            ),
+        ],
+    ],
+];
+```
+
+If connections are defined as container services, configure `DatabaseSetRegistry` in your console DI configuration instead:
+
+```php
+use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Injector\Injector;
+use Psr\Container\ContainerInterface;
+
+return [
+    DatabaseSetRegistry::class => static fn (
+        ContainerInterface $container,
+        Injector $injector,
+        MigrationInformerInterface $informer,
+    ) => new DatabaseSetRegistry($injector, $informer, [
+        'maps' => new DatabaseSet(
+            $container->get('db.maps'),
+            newMigrationNamespace: 'App\\Migrations\\Maps',
+        ),
+    ]),
+];
+```
+
+Select one set with `--db`, or apply all sets with `migrate:up`:
+
+```shell
+./yii migrate:create create_places --db=maps
+./yii migrate:up --db=maps
+./yii migrate:up
+```
+
+See [Multiple databases](multiple-databases.md) for command behavior, execution order, and history isolation.
