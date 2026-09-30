@@ -15,28 +15,11 @@ config/migrations/maps/
 config/migrations/analytics/
 ```
 
-For the standalone executable, add `databases` to your existing `yii-db-migration.php`. The example below assumes you
-have already created the `$mapsConnection` and `$analyticsConnection` database connections, as described in
-[Standalone usage](usage-standalone.md#with-configuration-file).
+Follow the configuration instructions for your application:
 
-```php
-use Yiisoft\Db\Migration\DatabaseSet;
-
-return [
-    // Keep your existing options, including 'db' for the default database.
-    'newMigrationPath' => __DIR__ . '/config/migrations/default',
-    'databases' => [
-        'maps' => new DatabaseSet(
-            $mapsConnection,
-            newMigrationPath: __DIR__ . '/config/migrations/maps',
-        ),
-        'analytics' => new DatabaseSet(
-            $analyticsConnection,
-            newMigrationPath: __DIR__ . '/config/migrations/analytics',
-        ),
-    ],
-];
-```
+- [Standalone](usage-standalone.md#multiple-databases)
+- [Yii Console](usage-with-yii-console.md#multiple-databases)
+- [Symfony](usage-with-symfony.md#multiple-databases)
 
 The following examples use the standalone executable.
 
@@ -67,8 +50,8 @@ To apply pending migrations to all configured databases:
 ./vendor/bin/yii-db-migration migrate:up
 ```
 
-The default database runs first, followed by the additional databases in configuration order. In the example above,
-Maps runs before Analytics. If Analytics needs tables or data created by Maps, keep that order in the configuration.
+The default database runs first, followed by the additional databases in configuration order. If Analytics needs tables
+or data created by Maps, configure Maps before Analytics.
 You confirm migrations separately for each database. Add `--force-yes` to skip these prompts during deployment.
 
 To apply at most two migrations per database:

@@ -27,6 +27,41 @@
     ./vendor/bin/yii-db-migration
     ```
 
+## Multiple databases
+
+Add `databases` to your existing `yii-db-migration.php`. The example below assumes you
+have already created the `$mapsConnection` and `$analyticsConnection` database connections, as described in
+[With configuration file](#with-configuration-file).
+
+```php
+use Yiisoft\Db\Migration\DatabaseSet;
+
+return [
+    // Keep your existing options, including 'db' for the default database.
+    'newMigrationPath' => __DIR__ . '/config/migrations/default',
+    'databases' => [
+        'maps' => new DatabaseSet(
+            $mapsConnection,
+            newMigrationPath: __DIR__ . '/config/migrations/maps',
+        ),
+        'analytics' => new DatabaseSet(
+            $analyticsConnection,
+            newMigrationPath: __DIR__ . '/config/migrations/analytics',
+        ),
+    ],
+];
+```
+
+Create the migration directories before generating migrations. Then select a database with `--db`:
+
+```shell
+./vendor/bin/yii-db-migration migrate:create create_places --db=maps
+./vendor/bin/yii-db-migration migrate:up --db=maps
+```
+
+See [Multiple databases](multiple-databases.md) for applying migrations across databases, checking history, and reverting
+changes.
+
 ## Without configuration file
 
 This can be useful in testing environment and/or when multiple RDBMS are used.
@@ -73,4 +108,3 @@ $input->setInteractive(false);
 $this->getMigrateUpdateCommand()->run($input, new NullOutput());
 ```
 
-For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).
