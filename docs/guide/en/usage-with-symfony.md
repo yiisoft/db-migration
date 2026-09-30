@@ -56,7 +56,7 @@ That's it. Now you can use `bin/console migrate:*` commands.
 
 ## Multiple databases
 
-Keep the setup above for the default database. Configure additional sets using your
+Keep the setup above for the `default` database. Configure additional sets using your
 existing connection services, and inject the registry into the migration commands through autowiring:
 
 ```yaml

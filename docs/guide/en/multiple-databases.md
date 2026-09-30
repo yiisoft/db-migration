@@ -1,6 +1,6 @@
 # Multiple databases
 
-If your application uses separate databases for Maps, Analytics, or other services, you can organize their migrations
+If your application uses separate databases such as `maps` and `analytics`, you can organize their migrations
 into isolated sets. Each set has its own migration directory and a separate migration history table in its database,
 so migrations applied to one set do not affect the recorded status of migrations in another. Use `--db` to work with
 one set, or apply migrations to all sets with a single command.
@@ -26,20 +26,20 @@ The following examples use the standalone executable.
 
 ## Create a migration
 
-To create a migration in the Maps directory:
+To create a migration in the `maps` directory:
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:create create_places --db=maps
 ```
 
 Edit the generated file with your migration operations as usual. When you apply it with `--db=maps`, those operations
-run against the Maps database.
+run against the `maps` database.
 
-Without `--db`, `migrate:create` creates the file in the default database's migration directory.
+Without `--db`, `migrate:create` creates the file in the `default` database's migration directory.
 
 ## Apply migrations
 
-Apply pending migrations to Maps only:
+Apply pending migrations to `maps` only:
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:up --db=maps
@@ -51,8 +51,8 @@ To apply pending migrations to all configured databases:
 ./vendor/bin/yii-db-migration migrate:up
 ```
 
-The default database runs first, followed by the additional databases in configuration order. If Analytics needs tables
-or data created by Maps, configure Maps before Analytics.
+The `default` database runs first, followed by the additional databases in configuration order. If `analytics` needs tables
+or data created by `maps`, configure `maps` before `analytics`.
 You confirm migrations separately for each database. Add `--force-yes` to skip these prompts during deployment.
 
 To apply at most two migrations per database:
@@ -66,7 +66,7 @@ remain. Fix the failing migration and run the command again; migrations recorded
 
 ## Check pending migrations and history
 
-View pending migrations or applied migrations for Maps:
+View pending migrations or applied migrations for `maps`:
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:new --db=maps
@@ -81,17 +81,17 @@ names for the same physical database and want independent histories, give each a
 
 ## Revert or redo a migration
 
-Revert the last Maps migration:
+Revert the last `maps` migration:
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:down --db=maps
 ```
 
-Revert and apply the last Maps migration again:
+Revert and apply the last `maps` migration again:
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:redo --db=maps
 ```
 
-When multiple databases are configured, both commands require `--db`. Use `--db=default` to select the default database.
+When multiple databases are configured, both commands require `--db`. Use `--db=default` to select the `default` database.
 With only one database configured, you can continue to omit the option.
