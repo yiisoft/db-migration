@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -37,14 +38,15 @@ use function count;
  * ```
  */
 #[AsCommand('migrate:down', 'Reverts the specified number of latest migrations.')]
-final class DownCommand extends Command
+final class DownCommand extends DatabaseCommand
 {
     public function __construct(
         private readonly DownRunner $downRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
+        ?DatabaseSetRegistry $databases = null,
     ) {
-        parent::__construct();
+        parent::__construct($databases);
     }
 
     protected function configure(): void
@@ -57,7 +59,7 @@ final class DownCommand extends Command
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIo($io);

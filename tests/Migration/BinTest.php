@@ -6,6 +6,7 @@ namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Files\FileHelper;
+use PDO;
 
 use function dirname;
 
@@ -30,6 +31,7 @@ final class BinTest extends TestCase
 
     public function testBase(): void
     {
+        $this->replaceParams("'databases' => [],", '');
         $this->replaceParams(
             "'db' => null,",
             <<<'PHP'
@@ -69,6 +71,45 @@ final class BinTest extends TestCase
         );
     }
 
+    public function testNamedDatabase(): void
+    {
+        $this->replaceParams("'db' => null,", <<<'PHP'
+            'db' => new \Yiisoft\Db\Sqlite\Connection(
+                new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/default.sqlite')
+            ),
+            PHP);
+        $this->replaceParams("'databases' => [],", <<<'PHP'
+            'databases' => [
+                'maps' => new \Yiisoft\Db\Migration\DatabaseSet(
+                    new \Yiisoft\Db\Sqlite\Connection(
+                        new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/maps.sqlite')
+                    ),
+                    newMigrationPath: __DIR__ . '/maps',
+                    historyTable: 'maps_history',
+                ),
+            ],
+            PHP);
+        $directory = dirname(__DIR__) . '/runtime/bin';
+        FileHelper::ensureDirectory($directory . '/maps');
+        file_put_contents($directory . '/maps/M260930000000Maps.php', <<<'PHP'
+            <?php
+            final class M260930000000Maps implements \Yiisoft\Db\Migration\MigrationInterface
+            {
+                public function up(\Yiisoft\Db\Migration\MigrationBuilder $b): void
+                {
+                    $b->execute('CREATE TABLE example (id INTEGER)');
+                }
+            }
+            PHP);
+        [$output, $exitCode] = $this->runYiiDbMigration(['migrate:up', '--db=maps', '--force-yes']);
+        $this->assertSame(0, $exitCode, $output);
+        $this->assertStringContainsString('Database: maps', $output);
+        $this->assertFileDoesNotExist($directory . '/default.sqlite');
+        $pdo = new PDO('sqlite:' . $directory . '/maps.sqlite');
+        $this->assertSame('M260930000000Maps', $pdo->query('SELECT name FROM maps_history')->fetchColumn());
+        $this->assertSame(0, (int) $pdo->query('SELECT COUNT(*) FROM example')->fetchColumn());
+    }
+
     private function replaceParams($search, $replace): void
     {
         $file = dirname(__DIR__) . '/runtime/bin/yii-db-migration.php';
@@ -78,9 +119,9 @@ final class BinTest extends TestCase
         );
     }
 
-    private function runYiiDbMigration(): array
+    private function runYiiDbMigration(array $arguments = []): array
     {
-        exec(__DIR__ . '/bin-runner.php 2>&1', $output, $exitCode);
+        exec(__DIR__ . '/bin-runner.php ' . implode(' ', array_map(escapeshellarg(...), $arguments)) . ' 2>&1', $output, $exitCode);
         return [implode("\n", $output), $exitCode];
     }
 }

@@ -53,3 +53,5 @@ sqlite_driver:
 ```
 
 That's it. Now you can use `bin/console migrate:*` commands.
+
+For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).

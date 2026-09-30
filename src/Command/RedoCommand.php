@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -37,15 +38,16 @@ use function array_slice;
  * ```
  */
 #[AsCommand('migrate:redo', 'Redoes the last few migrations.')]
-final class RedoCommand extends Command
+final class RedoCommand extends DatabaseCommand
 {
     public function __construct(
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
         private readonly DownRunner $downRunner,
         private readonly UpdateRunner $updateRunner,
+        ?DatabaseSetRegistry $databases = null,
     ) {
-        parent::__construct();
+        parent::__construct($databases);
     }
 
     protected function configure(): void
@@ -58,7 +60,7 @@ final class RedoCommand extends Command
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIo($io);

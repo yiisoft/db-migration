@@ -72,3 +72,5 @@ $input->setInteractive(false);
 
 $this->getMigrateUpdateCommand()->run($input, new NullOutput());
 ```
+
+For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).

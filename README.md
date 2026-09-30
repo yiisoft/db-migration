@@ -52,6 +52,8 @@ migrate:up       Applies new migrations.
 
 The create command allows defining fields for the table being created.
 
+Use `--db=name` to select a [named database migration set](docs/guide/en/multiple-databases.md).
+
 ## Documentation
 
 - Guide: [English](docs/guide/en/README.md), [Português - Brasil](docs/guide/pt-BR/README.md)

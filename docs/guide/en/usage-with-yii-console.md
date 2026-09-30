@@ -45,3 +45,5 @@ View the list of available commands with `./yii list`:
 ```shell
 ./yii list
 ```
+
+For independent migration sets on multiple connections, see [Multiple databases](multiple-databases.md).

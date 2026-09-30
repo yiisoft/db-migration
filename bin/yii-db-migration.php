@@ -18,6 +18,13 @@ return [
     'db' => null,
 
     /**
+     * Additional named database sets (name => Yiisoft\Db\Migration\DatabaseSet instance).
+     * The options outside this array configure the default set. The name "default" is reserved.
+     * See docs/guide/en/multiple-databases.md.
+     */
+    'databases' => [],
+
+    /**
      * Namespace of new migration classes.
      */
     'newMigrationNamespace' => '',

@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
@@ -30,13 +31,14 @@ use function date;
  * ```
  */
 #[AsCommand('migrate:history', 'Displays the migration history.')]
-final class HistoryCommand extends Command
+final class HistoryCommand extends DatabaseCommand
 {
     public function __construct(
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
+        ?DatabaseSetRegistry $databases = null,
     ) {
-        parent::__construct();
+        parent::__construct($databases);
     }
 
     protected function configure(): void
@@ -46,7 +48,7 @@ final class HistoryCommand extends Command
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIo($io);
@@ -71,7 +73,7 @@ final class HistoryCommand extends Command
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return Command::FAILURE;
+            return $this->allowEmptyResults ? Command::SUCCESS : Command::FAILURE;
         }
 
         $countMigrations = count($migrations);

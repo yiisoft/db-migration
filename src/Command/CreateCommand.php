@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -65,7 +66,7 @@ use const LOCK_EX;
  * {@see MigrationService::$newMigrationNamespace} will be used.
  */
 #[AsCommand('migrate:create', 'Creates a new migration.')]
-final class CreateCommand extends Command
+final class CreateCommand extends DatabaseCommand
 {
     private const AVAILABLE_COMMANDS = ['create', 'table', 'dropTable', 'addColumn', 'dropColumn', 'junction'];
 
@@ -73,8 +74,9 @@ final class CreateCommand extends Command
         private readonly CreateService $createService,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
+        ?DatabaseSetRegistry $databases = null,
     ) {
-        parent::__construct();
+        parent::__construct($databases);
     }
 
     protected function configure(): void
@@ -90,7 +92,7 @@ final class CreateCommand extends Command
             ->setHelp('This command generates new migration file.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function executeForDatabase(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->migrator->setIo($io);

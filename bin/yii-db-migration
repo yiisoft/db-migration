@@ -12,6 +12,8 @@ use Yiisoft\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -42,6 +44,7 @@ if (!file_exists($configFile)) {
  * @psalm-var array{
  *     container: ContainerInterface|null,
  *     db: ConnectionInterface|null,
+ *     databases?: array<string, DatabaseSet>,
  *     useTablePrefix: bool,
  *     historyTable: string,
  *     migrationNameLimit: int|null,
@@ -58,6 +61,7 @@ $db = $params['db'] ?? throw new LogicException('DB connection is not configured
 
 $injector = new Injector($params['container']);
 $migrationInformer = new ConsoleMigrationInformer();
+$databases = new DatabaseSetRegistry($injector, $migrationInformer, $params['databases'] ?? []);
 $migrator = new Migrator(
     $db,
     $migrationInformer,
@@ -77,12 +81,12 @@ $migrationService->setSourcePaths($params['sourcePaths']);
 
 $application = new Application('Yii Database Migration Tool', '1.0.0');
 $application->addCommands([
-    new CreateCommand($createService, $migrationService, $migrator),
-    new DownCommand($downRunner, $migrationService, $migrator),
-    new HistoryCommand($migrationService, $migrator),
-    new NewCommand($migrationService, $migrator),
-    new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner),
-    new UpdateCommand($updateRunner, $migrationService, $migrator),
+    new CreateCommand($createService, $migrationService, $migrator, $databases),
+    new DownCommand($downRunner, $migrationService, $migrator, $databases),
+    new HistoryCommand($migrationService, $migrator, $databases),
+    new NewCommand($migrationService, $migrator, $databases),
+    new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner, $databases),
+    new UpdateCommand($updateRunner, $migrationService, $migrator, $databases),
 ]);
 
 $application->run();

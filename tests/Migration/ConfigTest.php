@@ -12,6 +12,9 @@ use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
+use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
@@ -62,7 +65,17 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(Migrator::class, $container->get(Migrator::class));
     }
 
-    private function createConsoleContainer(): Container
+    public function testAdditionalDatabaseConfiguration(): void
+    {
+        $set = new DatabaseSet(new SqLiteConnection(new SqLiteDriver('sqlite::memory:')));
+        $container = $this->createConsoleContainer(['maps' => $set]);
+        $this->assertSame(['default', 'maps'], $container->get(DatabaseSetRegistry::class)->getNames());
+        $command = new CommandTester($container->get(DownCommand::class));
+        $this->assertSame(2, $command->execute([]));
+        $this->assertStringContainsString('--db option is required', $command->getDisplay());
+    }
+
+    private function createConsoleContainer(array $databases = []): Container
     {
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
@@ -78,14 +91,15 @@ final class ConfigTest extends TestCase
                         ],
                     ],
                 ],
-                $this->getConsoleDefinitions(),
+                $this->getConsoleDefinitions($databases),
             ));
         return new Container($config);
     }
 
-    private function getConsoleDefinitions(): array
+    private function getConsoleDefinitions(array $databases): array
     {
         $params = $this->getParams();
+        $params['yiisoft/db-migration']['databases'] = $databases;
         return require dirname(__DIR__, 2) . '/config/di-console.php';
     }
 
