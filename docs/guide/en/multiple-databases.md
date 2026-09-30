@@ -1,60 +1,13 @@
 # Multiple databases
 
-A database set groups a connection, migration sources, a destination for new migrations, and history-table settings.
-Use this when different parts of your application, such as Maps and Analytics, have their own databases and migrations.
+If your application uses separate databases for Maps, Analytics, or other services, you can keep migrations for each
+one in its own directory. Use `--db` to work with one database, or apply migrations to all databases with a single command.
+Each database keeps its own migration history.
 
-Your existing connection and migration configuration form the `default` set. Add other sets under names such as `maps`
-and `analytics`; the name `default` is reserved. Each set may use a different database driver.
+## Configure your databases
 
-## Commands
-
-Select one database with `--db`:
-
-```shell
-./vendor/bin/yii-db-migration migrate:create create_places --db=maps
-./vendor/bin/yii-db-migration migrate:up --db=maps
-./vendor/bin/yii-db-migration migrate:new --db=maps
-./vendor/bin/yii-db-migration migrate:history --db=maps
-./vendor/bin/yii-db-migration migrate:down --db=maps
-./vendor/bin/yii-db-migration migrate:redo --db=maps
-```
-
-The examples use the standalone executable.
-
-Without `--db`, commands behave as follows:
-
-| Command | Behavior |
-| --- | --- |
-| `migrate:up` | Apply migrations to all sets, default first, then additional sets in configuration order. |
-| `migrate:new` | Show pending migrations for all sets in the same order. |
-| `migrate:history` | Show history for all sets in the same order. |
-| `migrate:create` | Create a migration in the default set. |
-| `migrate:down`, `migrate:redo` | Require `--db` when additional sets are configured. With only the default set, behave as before. |
-
-Output identifies each database when multiple sets are configured. Unknown names are rejected before executing any
-migration and the error lists the available names. `--db=default` explicitly selects the existing configuration.
-
-`--limit` applies separately to each selected set. Existing `--path` and `--namespace` options also apply separately to
-selected sets; they do not choose a database. Use `--db` to scope those options to one set.
-
-Execution stops at the first error or nonzero command result. Empty results in `new` and `history` are successful when
-listing all sets, so an empty database does not hide results from later ones. Selecting one empty set retains the existing
-failure exit code. Each set retains the existing confirmation behavior; `migrate:up --force-yes` skips all confirmations.
-
-There is no transaction spanning databases. If Maps fails after the default database succeeds, the default database keeps
-its changes and history. Later sets are skipped. Correct the problem and rerun the command; applied migrations are skipped.
-Order additional sets so that prerequisites run first. All default migrations run before any additional set.
-
-## History and migration classes
-
-Each set stores history using its own connection, in `{{%migration}}` by default. Separate databases may use the same table
-name. If sets share a database, configure distinct `historyTable` names to keep their histories independent.
-
-Migration classes remain ordinary implementations of `MigrationInterface`, `RevertibleMigrationInterface`, or
-`TransactionalMigrationInterface`. The builder supplied to `up()` and `down()` uses the selected set's connection.
-Transactions and history use that same connection. No connection property or special base class is needed.
-
-Use separate directories and unique class names or namespaces for separate sets. For example:
+Your existing database is named `default`. Give each additional database a name, such as `maps` or `analytics`, and a
+directory for its migrations. Create the directories before generating migrations:
 
 ```text
 config/migrations/default/
@@ -62,34 +15,99 @@ config/migrations/maps/
 config/migrations/analytics/
 ```
 
-A `DatabaseSet` accepts the existing `newMigrationNamespace`, `newMigrationPath`, `sourceNamespaces`, and `sourcePaths`
-options. Choose either a new migration namespace or a new migration path, as with single-database configuration. A
-namespace must be resolvable through Composer's PSR-4 configuration, and destination directories must exist. The new
-migration destination is also included when discovering migrations. Additional source paths/namespaces can contain shared
-package migrations.
-
-Each set also accepts `historyTable`, `migrationNameLimit`, `useTablePrefix`, and `maxSqlOutputLength`. These use the same
-defaults as the standalone configuration; settings from the default set are not inherited by additional sets.
-
-## Standalone
-
-Add `databases` to your existing `yii-db-migration.php` configuration. Keep the existing `db` and other options for the
-default set:
+For the standalone executable, add `databases` to your existing `yii-db-migration.php`. The example below assumes you
+have already created the `$mapsConnection` and `$analyticsConnection` database connections, as described in
+[Standalone usage](usage-standalone.md#with-configuration-file).
 
 ```php
 use Yiisoft\Db\Migration\DatabaseSet;
 
 return [
-    // ... existing options, including the default 'db' connection ...
+    // Keep your existing options, including 'db' for the default database.
+    'newMigrationPath' => __DIR__ . '/config/migrations/default',
     'databases' => [
         'maps' => new DatabaseSet(
             $mapsConnection,
             newMigrationPath: __DIR__ . '/config/migrations/maps',
         ),
+        'analytics' => new DatabaseSet(
+            $analyticsConnection,
+            newMigrationPath: __DIR__ . '/config/migrations/analytics',
+        ),
     ],
 ];
 ```
 
-For manual command construction, create a `DatabaseSetRegistry` with your injector, informer, and additional sets, then
-pass it as the optional final `$databases` constructor argument of each command. Existing constructor calls without a
-registry continue to work with the default database only.
+The following examples use the standalone executable.
+
+## Create a migration
+
+To create a migration in the Maps directory:
+
+```shell
+./vendor/bin/yii-db-migration migrate:create create_places --db=maps
+```
+
+Edit the generated file with your migration operations as usual. When you apply it with `--db=maps`, those operations
+run against the Maps database.
+
+Without `--db`, `migrate:create` creates the file in the default database's migration directory.
+
+## Apply migrations
+
+Apply pending migrations to Maps only:
+
+```shell
+./vendor/bin/yii-db-migration migrate:up --db=maps
+```
+
+To apply pending migrations to all configured databases:
+
+```shell
+./vendor/bin/yii-db-migration migrate:up
+```
+
+The default database runs first, followed by the additional databases in configuration order. In the example above,
+Maps runs before Analytics. If Analytics needs tables or data created by Maps, keep that order in the configuration.
+You confirm migrations separately for each database. Add `--force-yes` to skip these prompts during deployment.
+
+To apply at most two migrations per database:
+
+```shell
+./vendor/bin/yii-db-migration migrate:up --limit=2
+```
+
+If a migration fails, execution stops before proceeding to later databases. Changes already applied to earlier databases
+remain. Fix the failing migration and run the command again; migrations recorded as applied are skipped.
+
+## Check pending migrations and history
+
+View pending migrations or applied migrations for Maps:
+
+```shell
+./vendor/bin/yii-db-migration migrate:new --db=maps
+./vendor/bin/yii-db-migration migrate:history --db=maps
+```
+
+Omit `--db` to view all configured databases. Results are grouped by database, including those with no migrations to
+show. Use `--all` to show the complete list or `--limit=5` to show up to five migrations per database.
+
+History is stored in each database's own `migration` table, using its configured table prefix. If you configure multiple
+names for the same physical database and want independent histories, give each a different `historyTable` value.
+
+## Revert or redo a migration
+
+Revert the last Maps migration:
+
+```shell
+./vendor/bin/yii-db-migration migrate:down --db=maps
+```
+
+Revert and apply the last Maps migration again:
+
+```shell
+./vendor/bin/yii-db-migration migrate:redo --db=maps
+```
+
+When multiple databases are configured, both commands require `--db`. Use `--db=default` to select the default database.
+With only one database configured, you can continue to omit the option.
