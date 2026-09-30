@@ -52,6 +52,19 @@ return [
 ];
 ```
 
+To override the `default` database, add a `default` entry alongside `maps` and `analytics` in `databases`:
+
+```php
+'default' => new DatabaseSet(
+    $defaultConnection,
+    newMigrationPath: __DIR__ . '/config/migrations/default',
+    historyTable: 'default_migration',
+),
+```
+
+Here `$defaultConnection` is the connection you want to use for that set. Without this entry, the existing connection
+and migration settings continue to supply `default`. Keep the existing base configuration in place.
+
 Create the migration directories before generating migrations. Then select a database with `--db`:
 
 ```shell

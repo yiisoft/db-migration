@@ -70,7 +70,7 @@ abstract class DatabaseCommand extends Command
         $hasResults = false;
 
         foreach ($names as $database) {
-            $context = $database === 'default' ? null : $this->databases?->createContext($database);
+            $context = $this->databases?->createContext($database);
 
             if ($multipleDatabases) {
                 $io->section('Database: ' . OutputFormatter::escape($database));

@@ -17,7 +17,7 @@ use function is_string;
 use function trim;
 
 /**
- * Additional database sets, in execution order. The existing command dependencies form the default set.
+ * Named database sets, in execution order. Existing command dependencies are used when no default set is configured.
  */
 final class DatabaseSetRegistry
 {
@@ -25,7 +25,7 @@ final class DatabaseSetRegistry
     private readonly array $databases;
 
     /**
-     * @param array<array-key, DatabaseSet> $databases Additional sets. The name "default" is reserved.
+     * @param array<array-key, DatabaseSet> $databases Named sets, optionally including "default".
      */
     public function __construct(
         private readonly Injector $injector,
@@ -34,8 +34,8 @@ final class DatabaseSetRegistry
     ) {
         $sets = [];
         foreach ($databases as $name => $database) {
-            if (!is_string($name) || trim($name) === '' || $name === 'default') {
-                throw new InvalidArgumentException('Database names must be non-empty strings other than "default".');
+            if (!is_string($name) || trim($name) === '') {
+                throw new InvalidArgumentException('Database names must be non-empty strings.');
             }
             $sets[$name] = $database;
         }
@@ -47,14 +47,18 @@ final class DatabaseSetRegistry
      */
     public function getNames(): array
     {
-        return ['default', ...array_keys($this->databases)];
+        return array_keys(['default' => null, ...$this->databases]);
     }
 
     /**
      * @internal
      */
-    public function createContext(string $name): DatabaseContext
+    public function createContext(string $name): ?DatabaseContext
     {
+        if ($name === 'default' && !isset($this->databases[$name])) {
+            return null;
+        }
+
         $database = $this->databases[$name] ?? throw new InvalidArgumentException("Unknown database set: $name.");
         $migrator = new Migrator(
             $database->db,

@@ -7,7 +7,7 @@ namespace Yiisoft\Db\Migration;
 use Yiisoft\Db\Connection\ConnectionInterface;
 
 /**
- * Configuration of an additional database and its migrations.
+ * Configuration of a named database and its migrations.
  */
 final class DatabaseSet
 {
