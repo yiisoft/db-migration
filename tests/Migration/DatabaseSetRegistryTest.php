@@ -30,6 +30,15 @@ final class DatabaseSetRegistryTest extends TestCase
         ]);
     }
 
+    public function testCannotCreateContextForUnknownDatabase(): void
+    {
+        $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown database set: missing.');
+        $registry->createContext('missing');
+    }
+
     public function testDefaultIsFirstFollowedByConfigurationOrder(): void
     {
         $set = new DatabaseSet($this->createMock(ConnectionInterface::class));

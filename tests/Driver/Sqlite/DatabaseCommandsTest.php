@@ -115,7 +115,7 @@ final class DatabaseCommandsTest extends TestCase
             $input['name'] = 'Example';
         }
         self::assertSame(Command::INVALID, $command->execute($input));
-        self::assertStringContainsString('Available databases: default, maps, analytics.', preg_replace('/\s+/', ' ', $command->getDisplay()));
+        self::assertStringContainsString('Unknown database "unknown". Available databases: default, maps, analytics.', preg_replace('/\s+/', ' ', $command->getDisplay()));
         foreach ($this->connections as $connection) {
             self::assertNull($connection->getSchema()->getTableSchema('migration'));
         }
@@ -395,6 +395,54 @@ final class DatabaseCommandsTest extends TestCase
         self::assertStringContainsString("'maps_key'", $content);
         self::assertStringNotContainsString("'default_key'", $content);
         self::assertStringNotContainsString('{{%parent}}', $content);
+    }
+
+    public function testCreateUsesNamedSetMigrationNameLimit(): void
+    {
+        $this->sets['maps'] = new DatabaseSet(
+            $this->connections['maps'],
+            newMigrationPath: $this->directory . '/maps',
+            migrationNameLimit: 5,
+        );
+        self::assertSame(Command::INVALID, $this->command('create')->execute([
+            'name' => 'Example',
+            '--db' => 'maps',
+        ]));
+        self::assertSame([], glob($this->directory . '/maps/*.php'));
+    }
+
+    public function testNamedSetDefaultGenerationSettings(): void
+    {
+        $command = $this->command('create');
+        self::assertSame(Command::SUCCESS, $command->execute([
+            'name' => str_repeat('a', 167),
+            '--db' => 'maps',
+            '--command' => 'create',
+        ]));
+        self::assertSame(Command::INVALID, $command->execute([
+            'name' => str_repeat('a', 168),
+            '--db' => 'maps',
+        ]));
+        self::assertSame(Command::SUCCESS, $command->execute([
+            'name' => 'child',
+            '--command' => 'table',
+            '--fields' => 'parent_id:integer:foreignKey(parent)',
+            '--db' => 'maps',
+        ]));
+        $files = glob($this->directory . '/maps/*CreateChildTable.php');
+        self::assertCount(1, $files);
+        self::assertStringContainsString('{{%parent}}', file_get_contents($files[0]));
+    }
+
+    public function testNamedSetDiscoversMigrationsInItsNewMigrationNamespace(): void
+    {
+        $this->sets['maps'] = new DatabaseSet(
+            $this->connections['maps'],
+            newMigrationNamespace: 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
+        );
+        $command = $this->command('new');
+        self::assertSame(Command::SUCCESS, $command->execute(['--db' => 'maps']));
+        self::assertStringContainsString(M231108183919Empty::class, $command->getDisplay());
     }
 
     public function testNamedSetRespectsItsMigrationNameLimit(): void
