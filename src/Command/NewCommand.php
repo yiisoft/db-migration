@@ -62,8 +62,8 @@ final class NewCommand extends DatabaseCommand
         OutputInterface $output,
         ?DatabaseContext $context,
     ): int {
-        $migrator = $context?->migrator ?? $this->migrator;
-        $migrationService = $context?->migrationService ?? $this->migrationService;
+        $migrator = $context->migrator ?? $this->migrator;
+        $migrationService = $context->migrationService ?? $this->migrationService;
 
         $io = new SymfonyStyle($input, $output);
         $migrator->setIo($io);

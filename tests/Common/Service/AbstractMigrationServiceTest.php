@@ -9,6 +9,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ReflectionMethod;
+use Symfony\Component\Console\Command\Command;
+use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\Helper\MigrationHelper;
 
@@ -17,6 +19,15 @@ use function dirname;
 abstract class AbstractMigrationServiceTest extends TestCase
 {
     protected ContainerInterface $container;
+
+    public function testCreateRequiresANewMigrationLocation(): void
+    {
+        $service = $this->container->get(MigrationService::class);
+        $service->setNewMigrationNamespace('');
+        $service->setNewMigrationPath('');
+
+        $this->assertSame(Command::INVALID, $service->before('migrate:create'));
+    }
 
     public function testVersion(): void
     {
@@ -309,6 +320,12 @@ abstract class AbstractMigrationServiceTest extends TestCase
     {
         $migrationService = $this->container->get(MigrationService::class);
 
-        $this->assertSame([], $migrationService->filterMigrations(['ClassNameWithoutNamespace']));
+        $this->assertSame(
+            [M231108183919Empty::class],
+            $migrationService->filterMigrations(
+                ['ClassNameWithoutNamespace', M231108183919Empty::class],
+                ['Yiisoft\Db\Migration\Tests\Support\MigrationsExtra'],
+            ),
+        );
     }
 }

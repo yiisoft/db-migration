@@ -66,10 +66,10 @@ final class RedoCommand extends DatabaseCommand
         OutputInterface $output,
         ?DatabaseContext $context,
     ): int {
-        $migrator = $context?->migrator ?? $this->migrator;
-        $migrationService = $context?->migrationService ?? $this->migrationService;
-        $downRunner = $context?->downRunner ?? $this->downRunner;
-        $updateRunner = $context?->updateRunner ?? $this->updateRunner;
+        $migrator = $context->migrator ?? $this->migrator;
+        $migrationService = $context->migrationService ?? $this->migrationService;
+        $downRunner = $context->downRunner ?? $this->downRunner;
+        $updateRunner = $context->updateRunner ?? $this->updateRunner;
 
         $io = new SymfonyStyle($input, $output);
         $migrator->setIo($io);

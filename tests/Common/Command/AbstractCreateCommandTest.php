@@ -635,6 +635,7 @@ EOF;
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $this->assertMatchesRegularExpression('/^M[0-9]{12}DropPostTable$/', $className);
         $namespace = MigrationHelper::NAMESPACE;
 
         $expectedMigrationCode = <<<EOF
@@ -874,6 +875,7 @@ EOF;
         $output = preg_replace('/(\R|\s)+/', ' ', $command->getDisplay(true));
 
         $className = MigrationHelper::findMigrationClassNameInOutput($output);
+        $this->assertMatchesRegularExpression('/^M[0-9]{12}JunctionTableForPostAndTagTables$/', $className);
         $namespace = MigrationHelper::NAMESPACE;
 
         $expectedMigrationCode = <<<EOF

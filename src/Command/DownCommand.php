@@ -65,9 +65,9 @@ final class DownCommand extends DatabaseCommand
         OutputInterface $output,
         ?DatabaseContext $context,
     ): int {
-        $migrator = $context?->migrator ?? $this->migrator;
-        $migrationService = $context?->migrationService ?? $this->migrationService;
-        $downRunner = $context?->downRunner ?? $this->downRunner;
+        $migrator = $context->migrator ?? $this->migrator;
+        $migrationService = $context->migrationService ?? $this->migrationService;
+        $downRunner = $context->downRunner ?? $this->downRunner;
 
         $io = new SymfonyStyle($input, $output);
         $migrator->setIo($io);

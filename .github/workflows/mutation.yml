@@ -24,4 +24,41 @@ concurrency:
 
 jobs:
   tests:
-    uses: yiisoft/actions/.github/workflows/db-mutation.yml@master
+    name: PHP 8.5
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: yiitest
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install PHP with extensions.
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.5'
+          extensions: pdo_pgsql, pdo_sqlite
+          ini-values: date.timezone='UTC'
+          tools: infection
+          coverage: pcov
+
+      - name: Install Composer dependencies and database packages.
+        uses: yiisoft/actions/install-packages@master
+        with:
+          packages: >-
+            ['db', 'db-pgsql', 'db-sqlite']
+
+      - name: Run infection.
+        # Command tests share generated migration files and database tables.
+        run: infection --threads=1 --ignore-msi-with-no-mutations --test-framework-options="--testsuite=Migration,Sqlite,Pgsql"

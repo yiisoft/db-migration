@@ -98,9 +98,9 @@ final class CreateCommand extends DatabaseCommand
         OutputInterface $output,
         ?DatabaseContext $context,
     ): int {
-        $migrator = $context?->migrator ?? $this->migrator;
-        $migrationService = $context?->migrationService ?? $this->migrationService;
-        $createService = $context?->createService ?? $this->createService;
+        $migrator = $context->migrator ?? $this->migrator;
+        $migrationService = $context->migrationService ?? $this->migrationService;
+        $createService = $context->createService ?? $this->createService;
 
         $io = new SymfonyStyle($input, $output);
         $migrator->setIo($io);
