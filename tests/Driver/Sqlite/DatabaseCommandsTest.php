@@ -11,6 +11,7 @@ use Yiisoft\Db\Exception\Exception as DbException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
+use Yiisoft\Db\Migration\Command\CommandFactory;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
@@ -102,7 +103,7 @@ final class DatabaseCommandsTest extends TestCase
     }
 
     #[DataProvider('defaultSelection')]
-    public function testExplicitDefaultOverridesConnectionSourcesAndHistory(bool $selectDefault): void
+    public function testNamedDefaultSuppliesConnectionSourcesAndHistory(bool $selectDefault): void
     {
         $class = $this->writeMigration('maps');
         $default = new DatabaseSet(
@@ -564,6 +565,9 @@ final class DatabaseCommandsTest extends TestCase
             $sets['default'] = $default;
         }
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), $sets);
+        if ($default !== null) {
+            return new CommandTester((new CommandFactory($registry))->create($name));
+        }
         $migrator = $this->migrator('default');
         $service = new MigrationService($this->connections['default'], new Injector(), $migrator);
         $service->setNewMigrationPath($this->sets['default']->newMigrationPath);

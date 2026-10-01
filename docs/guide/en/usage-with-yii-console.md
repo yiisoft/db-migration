@@ -48,16 +48,19 @@ View the list of available commands with `./yii list`:
 
 ## Multiple databases
 
-Keep your current default configuration. Add `DatabaseSet` instances to the `databases` parameter:
+Define your migration sets, including `default`, in the `databases` parameter:
 
 ```php
 use Yiisoft\Db\Migration\DatabaseSet;
 
-// $mapsConnection and $analyticsConnection implement ConnectionInterface.
+// These connection objects implement ConnectionInterface.
 return [
     'yiisoft/db-migration' => [
-        'newMigrationPath' => __DIR__ . '/migrations/default',
         'databases' => [
+            'default' => new DatabaseSet(
+                $defaultConnection,
+                newMigrationPath: __DIR__ . '/migrations/default',
+            ),
             'maps' => new DatabaseSet(
                 $mapsConnection,
                 newMigrationPath: __DIR__ . '/migrations/maps',
@@ -71,41 +74,17 @@ return [
 ];
 ```
 
-To override the `default` database, add a `default` entry alongside `maps` and `analytics` in `databases`:
+Move existing `newMigrationNamespace`, `newMigrationPath`, `sourceNamespaces`, and `sourcePaths` parameters into the
+`default` set and remove the original entries. Supplying both forms raises a configuration error. No application-wide
+`ConnectionInterface` binding is required for migration commands in this form; each set supplies its connection.
+Other parts of your application can continue to use their own database services.
 
-```php
-'default' => new DatabaseSet(
-    $defaultConnection,
-    newMigrationPath: __DIR__ . '/migrations/default',
-    historyTable: 'default_migration',
-),
-```
+If you keep the legacy form, omit `databases['default']`. The existing migration service configuration and connection
+then supply `default`, and `databases` can contain additional sets.
 
-Here `$defaultConnection` is the connection you want to use for that set. Without this entry, the existing connection
-and migration settings continue to supply `default`. Keep the existing base configuration in place.
-
-If connections are defined as container services, configure `DatabaseSetRegistry` in your console DI configuration instead:
-
-```php
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
-use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Injector\Injector;
-use Psr\Container\ContainerInterface;
-
-return [
-    DatabaseSetRegistry::class => static fn (
-        ContainerInterface $container,
-        Injector $injector,
-        MigrationInformerInterface $informer,
-    ) => new DatabaseSetRegistry($injector, $informer, [
-        'maps' => new DatabaseSet(
-            $container->get('db.maps'),
-            newMigrationNamespace: 'App\\Migrations\\Maps',
-        ),
-    ]),
-];
-```
+For custom DI wiring, use `CommandFactory` with a registry containing `default` to build commands directly from the
+sets. Replace the old migration service wiring when switching to this form; configuring those services separately
+would leave unused settings. The [Symfony example](usage-with-symfony.md#multiple-databases) shows this approach.
 
 Select one set with `--db`, or apply all sets with `migrate:up`:
 

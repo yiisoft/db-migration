@@ -23,9 +23,5 @@ return [
 
     'yiisoft/db-migration' => [
         'databases' => [],
-        'newMigrationNamespace' => '',
-        'newMigrationPath' => '',
-        'sourceNamespaces' => [],
-        'sourcePaths' => [],
     ],
 ];

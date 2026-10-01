@@ -8,8 +8,9 @@ one set, or apply migrations to all sets with a single command.
 ## Configure your databases
 
 Your existing database is named `default`. Give each additional database a name, such as `maps` or `analytics`, and a
-directory for its migrations. You can also explicitly configure `default` with its own connection, migration directory,
-and history table. If you omit that set, your existing database and migration settings remain in use. Create the directories before generating migrations:
+directory for its migrations. Define `default` in the same way when using named sets, with its own connection,
+migration directory, and history table. Alternatively, keep your existing configuration for `default` and configure only
+the additional sets. Choose one form for `default`; do not configure it in both places. Create the directories before generating migrations:
 
 ```text
 config/migrations/default/
