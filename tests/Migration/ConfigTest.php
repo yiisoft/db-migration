@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use LogicException;
 use Psr\SimpleCache\CacheInterface;
+use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
+use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
@@ -62,7 +68,49 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(Migrator::class, $container->get(Migrator::class));
     }
 
-    private function createConsoleContainer(): Container
+    public function testAdditionalDatabaseConfiguration(): void
+    {
+        $set = new DatabaseSet(new SqLiteConnection(new SqLiteDriver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache())));
+        $container = $this->createConsoleContainer(['maps' => $set]);
+        $this->assertSame(['default', 'maps'], $container->get(DatabaseSetRegistry::class)->getNames());
+        $command = new CommandTester($container->get(DownCommand::class));
+        $this->assertSame(2, $command->execute([]));
+        $this->assertStringContainsString('--db option is required', $command->getDisplay());
+    }
+
+    public function testNamedDefaultNeedsNoLegacyConnection(): void
+    {
+        $db = new SqLiteConnection(new SqLiteDriver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache()));
+        $container = new Container(ContainerConfig::create()->withDefinitions($this->getConsoleDefinitions([
+            'default' => new DatabaseSet($db, newMigrationPath: dirname(__DIR__) . '/Support/MigrationsExtra'),
+        ])));
+        foreach ([CreateCommand::class, DownCommand::class, HistoryCommand::class, NewCommand::class, RedoCommand::class, UpdateCommand::class] as $class) {
+            self::assertInstanceOf($class, $container->get($class));
+        }
+        $command = new CommandTester($container->get(NewCommand::class));
+        self::assertSame(0, $command->execute([]));
+        self::assertStringContainsString('M231108183919Empty', $command->getDisplay());
+    }
+
+    public static function legacyMigrationOptions(): array
+    {
+        return [['newMigrationNamespace'], ['newMigrationPath'], ['sourceNamespaces'], ['sourcePaths']];
+    }
+
+    #[DataProvider('legacyMigrationOptions')]
+    public function testRejectsDuplicateDefaultConfiguration(string $option): void
+    {
+        $params = $this->getParams();
+        $params['yiisoft/db-migration']['databases']['default'] = new DatabaseSet(
+            new SqLiteConnection(new SqLiteDriver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache())),
+        );
+        $params['yiisoft/db-migration'][$option] = '';
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Conflicting option: ' . $option . '.');
+        require dirname(__DIR__, 2) . '/config/di-console.php';
+    }
+
+    private function createConsoleContainer(array $databases = []): Container
     {
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
@@ -78,14 +126,15 @@ final class ConfigTest extends TestCase
                         ],
                     ],
                 ],
-                $this->getConsoleDefinitions(),
+                $this->getConsoleDefinitions($databases),
             ));
         return new Container($config);
     }
 
-    private function getConsoleDefinitions(): array
+    private function getConsoleDefinitions(array $databases): array
     {
         $params = $this->getParams();
+        $params['yiisoft/db-migration']['databases'] = $databases;
         return require dirname(__DIR__, 2) . '/config/di-console.php';
     }
 

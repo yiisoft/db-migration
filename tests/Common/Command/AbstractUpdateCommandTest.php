@@ -50,6 +50,7 @@ abstract class AbstractUpdateCommandTest extends TestCase
         $departmentSchema = $dbSchema->getTableSchema('department');
 
         $this->assertSame(Command::SUCCESS, $exitCode);
+        $this->assertStringContainsString('Database connection: ' . $db->getDriverName() . '.', $output);
 
         /** Check create table department columns*/
         $this->assertCount(2, $departmentSchema->getColumns());

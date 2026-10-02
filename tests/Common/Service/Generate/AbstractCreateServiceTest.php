@@ -13,6 +13,16 @@ abstract class AbstractCreateServiceTest extends TestCase
 {
     protected ContainerInterface $container;
 
+    public function testJunctionWithoutRelatedTable(): void
+    {
+        $service = $this->container->get(CreateService::class);
+
+        $this->assertSame(
+            $service->run('junction', 'post', 'CreateJunction', and: ''),
+            $service->run('junction', 'post', 'CreateJunction'),
+        );
+    }
+
     public function testSetTemplate(): void
     {
         $service = $this->container->get(CreateService::class);

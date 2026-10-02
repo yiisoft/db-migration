@@ -6,18 +6,10 @@ declare(strict_types=1);
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Application;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Migration\Command\CreateCommand;
-use Yiisoft\Db\Migration\Command\DownCommand;
-use Yiisoft\Db\Migration\Command\HistoryCommand;
-use Yiisoft\Db\Migration\Command\NewCommand;
-use Yiisoft\Db\Migration\Command\RedoCommand;
-use Yiisoft\Db\Migration\Command\UpdateCommand;
+use Yiisoft\Db\Migration\Command\CommandFactory;
+use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
-use Yiisoft\Db\Migration\Migrator;
-use Yiisoft\Db\Migration\Runner\DownRunner;
-use Yiisoft\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Db\Migration\Service\Generate\CreateService;
-use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Injector\Injector;
 
 $rootPath = dirname(__DIR__, 4);
@@ -40,49 +32,56 @@ if (!file_exists($configFile)) {
 /**
  * @psalm-suppress MissingFile
  * @psalm-var array{
- *     container: ContainerInterface|null,
- *     db: ConnectionInterface|null,
- *     useTablePrefix: bool,
- *     historyTable: string,
- *     migrationNameLimit: int|null,
- *     maxSqlOutputLength: int|null,
- *     newMigrationNamespace: string,
- *     newMigrationPath: string,
- *     sourceNamespaces: list<string>,
- *     sourcePaths: list<string>,
+ *     container?: ContainerInterface|null,
+ *     db?: ConnectionInterface|null,
+ *     databases?: array<string, DatabaseSet>,
+ *     useTablePrefix?: bool,
+ *     historyTable?: string,
+ *     migrationNameLimit?: int|null,
+ *     maxSqlOutputLength?: int|null,
+ *     newMigrationNamespace?: string,
+ *     newMigrationPath?: string,
+ *     sourceNamespaces?: list<string>,
+ *     sourcePaths?: list<string>,
  * } $params
  */
 $params = require $configFile;
 
-$db = $params['db'] ?? throw new LogicException('DB connection is not configured.');
+$sets = $params['databases'] ?? [];
+$legacyOptions = [
+    'db', 'newMigrationNamespace', 'newMigrationPath', 'sourceNamespaces', 'sourcePaths',
+    'historyTable', 'migrationNameLimit', 'useTablePrefix', 'maxSqlOutputLength',
+];
+if (isset($sets['default'])) {
+    foreach ($legacyOptions as $option) {
+        if (array_key_exists($option, $params)) {
+            throw new LogicException('Configure default migrations either in databases["default"] or with top-level options, not both. Conflicting option: ' . $option . '.');
+        }
+    }
+} else {
+    $sets['default'] = new DatabaseSet(
+        $params['db'] ?? throw new LogicException('DB connection is not configured.'),
+        newMigrationNamespace: $params['newMigrationNamespace'] ?? '',
+        newMigrationPath: $params['newMigrationPath'] ?? '',
+        sourceNamespaces: $params['sourceNamespaces'] ?? [],
+        sourcePaths: $params['sourcePaths'] ?? [],
+        historyTable: $params['historyTable'] ?? '{{%migration}}',
+        migrationNameLimit: array_key_exists('migrationNameLimit', $params) ? $params['migrationNameLimit'] : 180,
+        useTablePrefix: $params['useTablePrefix'] ?? true,
+        maxSqlOutputLength: $params['maxSqlOutputLength'] ?? null,
+    );
+}
 
-$injector = new Injector($params['container']);
-$migrationInformer = new ConsoleMigrationInformer();
-$migrator = new Migrator(
-    $db,
-    $migrationInformer,
-    $params['historyTable'],
-    $params['migrationNameLimit'],
-    $params['maxSqlOutputLength']
+$databases = new DatabaseSetRegistry(
+    new Injector($params['container'] ?? null),
+    new ConsoleMigrationInformer(),
+    $sets,
 );
-$createService = new CreateService($db, $params['useTablePrefix']);
-$downRunner = new DownRunner($migrator);
-$updateRunner = new UpdateRunner($migrator);
-
-$migrationService = new MigrationService($db, $injector, $migrator);
-$migrationService->setNewMigrationNamespace($params['newMigrationNamespace']);
-$migrationService->setNewMigrationPath($params['newMigrationPath']);
-$migrationService->setSourceNamespaces($params['sourceNamespaces']);
-$migrationService->setSourcePaths($params['sourcePaths']);
-
+$factory = new CommandFactory($databases);
 $application = new Application('Yii Database Migration Tool', '1.0.0');
-$application->addCommands([
-    new CreateCommand($createService, $migrationService, $migrator),
-    new DownCommand($downRunner, $migrationService, $migrator),
-    new HistoryCommand($migrationService, $migrator),
-    new NewCommand($migrationService, $migrator),
-    new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner),
-    new UpdateCommand($updateRunner, $migrationService, $migrator),
-]);
-
+$commands = [];
+foreach (['create', 'down', 'history', 'new', 'redo', 'up'] as $name) {
+    $commands[] = $factory->create($name);
+}
+$application->addCommands($commands);
 $application->run();

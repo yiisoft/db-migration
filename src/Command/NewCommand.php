@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
@@ -36,13 +38,14 @@ use function count;
  * ```
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
-final class NewCommand extends Command
+final class NewCommand extends DatabaseCommand
 {
     public function __construct(
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
+        ?DatabaseSetRegistry $databases = null,
     ) {
-        parent::__construct();
+        parent::__construct($databases);
     }
 
     protected function configure(): void
@@ -54,13 +57,19 @@ final class NewCommand extends Command
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to display.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = new SymfonyStyle($input, $output);
-        $this->migrator->setIo($io);
-        $this->migrationService->setIo($io);
+    protected function executeForDatabase(
+        InputInterface $input,
+        OutputInterface $output,
+        ?DatabaseContext $context,
+    ): int {
+        $migrator = $context->migrator ?? $this->migrator;
+        $migrationService = $context->migrationService ?? $this->migrationService;
 
-        $this->migrationService->databaseConnection();
+        $io = new SymfonyStyle($input, $output);
+        $migrator->setIo($io);
+        $migrationService->setIo($io);
+
+        $migrationService->databaseConnection();
 
         /** @var string[] $paths */
         $paths = $input->getOption('path');
@@ -69,11 +78,11 @@ final class NewCommand extends Command
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $this->migrationService->setSourcePaths($paths);
-            $this->migrationService->setSourceNamespaces($namespaces);
+            $migrationService->setSourcePaths($paths);
+            $migrationService->setSourceNamespaces($namespaces);
         }
 
-        $this->migrationService->before($this->getName() ?? '');
+        $migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -85,7 +94,7 @@ final class NewCommand extends Command
             return Command::INVALID;
         }
 
-        $migrations = $this->migrationService->getNewMigrations();
+        $migrations = $migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $io->warning('No new migrations found. Your system is up-to-date.');
