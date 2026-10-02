@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 3.0.0 under development
+
+- Chg #313: Deny pass `null` to `CreateService::getTemplate()` (@KalimeroMK)
+
 ## 2.1.2 under development
 
 - New #360: Support named database migration sets with `--db` selection, a single configuration source for `default`, and separate migration history (@samdark)
