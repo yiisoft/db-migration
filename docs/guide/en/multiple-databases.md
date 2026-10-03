@@ -107,3 +107,13 @@ Revert and apply the last `maps` migration again:
 
 When multiple databases are configured, both commands require `--db`. Use `--db=default` to select the `default` database.
 With only one database configured, you can continue to omit the option.
+
+## Modify migration history
+
+Use `migrate:mark` to record migrations without executing them. With multiple databases, `--db` is required:
+
+```shell
+./vendor/bin/yii-db-migration migrate:mark 'App\Migrations\Maps\M260101000002CreateIndex' --db=maps
+```
+
+See [Modifying migration history](migration-history.md) for target selection and resetting history.
