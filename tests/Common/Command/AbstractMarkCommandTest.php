@@ -12,15 +12,18 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000001First;
+use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000002Second;
+use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000003Third;
 
 use function array_keys;
 use function dirname;
 
 abstract class AbstractMarkCommandTest extends TestCase
 {
-    private const FIRST = 'Yiisoft\\Db\\Migration\\Tests\\Support\\MarkMigrations\\M260101000001First';
-    private const SECOND = 'Yiisoft\\Db\\Migration\\Tests\\Support\\MarkMigrations\\M260101000002Second';
-    private const THIRD = 'Yiisoft\\Db\\Migration\\Tests\\Support\\MarkMigrations\\M260101000003Third';
+    private const FIRST = M260101000001First::class;
+    private const SECOND = M260101000002Second::class;
+    private const THIRD = M260101000003Third::class;
     protected ContainerInterface $container;
 
     public static function versions(): array
