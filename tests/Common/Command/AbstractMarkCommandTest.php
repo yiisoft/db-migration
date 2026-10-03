@@ -41,25 +41,31 @@ abstract class AbstractMarkCommandTest extends TestCase
         self::assertStringContainsString('No actual migration was performed', preg_replace('/\s+/', ' ', $command->getDisplay()));
     }
 
-    public static function timestampOnlyVersions(): array
+    public static function migrationNameVersions(): array
     {
-        return [['M260101000001'], ['260101000001']];
+        return [
+            ['M260101000001', 'M260101000001', 'MarkTimestampOnly'],
+            ['260101000001', 'M260101000001', 'MarkTimestampOnly'],
+            ['M260101000002123Fix', 'M260101000002123Fix', 'MarkDigitSuffix'],
+            ['260101000002', 'M260101000002123Fix', 'MarkDigitSuffix'],
+            ['260101_000002', 'M260101000002123Fix', 'MarkDigitSuffix'],
+        ];
     }
 
-    #[DataProvider('timestampOnlyVersions')]
-    public function testTimestampOnlyClassCanBeMarked(string $version): void
+    #[DataProvider('migrationNameVersions')]
+    public function testMigrationNamesCanBeMarked(string $version, string $class, string $directory): void
     {
         $command = $this->command();
         $this->container->get(MigrationService::class)->setSourcePaths([
-            dirname(__DIR__, 2) . '/Support/MarkTimestampOnly',
+            dirname(__DIR__, 2) . '/Support/' . $directory,
         ]);
         self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
-        self::assertSame(['M260101000001'], array_keys($this->migrator()->getHistory()));
+        self::assertSame([$class], array_keys($this->migrator()->getHistory()));
         self::assertSame([], $this->container->get(MigrationService::class)->getNewMigrations());
 
-        $this->migrator()->addMigrationToHistory(self::SECOND);
+        $this->migrator()->addMigrationToHistory(self::THIRD);
         self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
-        self::assertSame(['M260101000001'], array_keys($this->migrator()->getHistory()));
+        self::assertSame([$class], array_keys($this->migrator()->getHistory()));
     }
 
     public function testMarkDownUsesHistoryOrderAndPreservesTarget(): void

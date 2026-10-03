@@ -68,7 +68,7 @@ final class MarkCommand extends DatabaseCommand
             : null;
 
         if ($version !== self::BASE_MIGRATION && $timestamp === null
-            && preg_match('/^(?:\w+\\\\)*M\d{12}(?:\D|$).*$/D', $version) !== 1
+            && preg_match('/^(?:\w+\\\\)*M\d{12}.*$/D', $version) !== 1
         ) {
             $io->error('The version must be a migration class name, a migration timestamp, or ' . self::BASE_MIGRATION . '.');
             return Command::INVALID;
@@ -135,6 +135,6 @@ final class MarkCommand extends DatabaseCommand
             return trim($migration, '\\') === $version;
         }
 
-        return preg_match('/(?:^|\\\\)M' . $timestamp . '(?:\D|$)/', $migration) === 1;
+        return preg_match('/(?:^|\\\\)M' . $timestamp . '/', $migration) === 1;
     }
 }
