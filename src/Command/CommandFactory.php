@@ -26,6 +26,7 @@ final class CommandFactory
             'create' => new CreateCommand($context->createService, $service, $migrator, $this->databases),
             'down' => new DownCommand($context->downRunner, $service, $migrator, $this->databases),
             'history' => new HistoryCommand($service, $migrator, $this->databases),
+            'mark' => new MarkCommand($service, $migrator, $this->databases),
             'new' => new NewCommand($service, $migrator, $this->databases),
             'redo' => new RedoCommand($service, $migrator, $context->downRunner, $context->updateRunner, $this->databases),
             'up' => new UpdateCommand($context->updateRunner, $service, $migrator, $this->databases),

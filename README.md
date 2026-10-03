@@ -45,6 +45,7 @@ composer require yiisoft/db-migration
 migrate:create   Creates a new migration.
 migrate:down     Reverts the specified number of latest migrations.
 migrate:history  Displays the migration history.
+migrate:mark     Modifies migration history without executing migrations.
 migrate:new      Displays not yet applied migrations.
 migrate:redo     Redoes the last few migrations.
 migrate:up       Applies new migrations.

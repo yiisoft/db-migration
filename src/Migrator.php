@@ -97,28 +97,33 @@ final class Migrator
         return $this->historyTable;
     }
 
-    private function addMigrationToHistory(MigrationInterface $migration): void
+    /**
+     * Records a migration as applied without executing it.
+     */
+    public function addMigrationToHistory(string $name): void
     {
+        $this->checkMigrationHistoryTable();
+
         $this->db->createCommand()->insert(
             $this->historyTable,
             [
-                'name' => $this->getMigrationName($migration),
+                'name' => $name,
                 'apply_time' => time(),
             ],
         )->execute();
     }
 
-    private function removeMigrationFromHistory(MigrationInterface $migration): void
+    /**
+     * Removes a migration record without reverting it.
+     */
+    public function removeMigrationFromHistory(string $name): void
     {
+        $this->checkMigrationHistoryTable();
+
         $command = $this->db->createCommand();
         $command->delete($this->historyTable, [
-            'name' => $this->getMigrationName($migration),
+            'name' => $name,
         ])->execute();
-    }
-
-    private function getMigrationName(MigrationInterface $migration): string
-    {
-        return $migration::class;
     }
 
     private function checkMigrationHistoryTable(): void
@@ -168,12 +173,12 @@ final class Migrator
     private function migrateUp(MigrationInterface $migration): void
     {
         $migration->up($this->createBuilder());
-        $this->addMigrationToHistory($migration);
+        $this->addMigrationToHistory($migration::class);
     }
 
     private function migrateDown(RevertibleMigrationInterface $migration): void
     {
         $migration->down($this->createBuilder());
-        $this->removeMigrationFromHistory($migration);
+        $this->removeMigrationFromHistory($migration::class);
     }
 }

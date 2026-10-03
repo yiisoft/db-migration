@@ -50,6 +50,7 @@ final class BinTest extends TestCase
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString('Yii Database Migration Tool', $output);
+        $this->assertStringContainsString('migrate:mark', $output);
     }
 
     public function testWithoutConnection(): void
