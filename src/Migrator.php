@@ -126,6 +126,27 @@ final class Migrator
         ])->execute();
     }
 
+    /**
+     * Adds and removes migration records atomically without executing migrations.
+     *
+     * @param list<string> $add Migration names to record as applied.
+     * @param list<string> $remove Migration names to remove from history.
+     */
+    public function updateHistory(array $add, array $remove): void
+    {
+        // Create the table before starting the transaction: DDL may implicitly commit it.
+        $this->checkMigrationHistoryTable();
+
+        $this->db->transaction(function () use ($add, $remove): void {
+            foreach ($add as $name) {
+                $this->addMigrationToHistory($name);
+            }
+            foreach ($remove as $name) {
+                $this->removeMigrationFromHistory($name);
+            }
+        });
+    }
+
     private function checkMigrationHistoryTable(): void
     {
         if (!$this->checkMigrationHistoryTable) {

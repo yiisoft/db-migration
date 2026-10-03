@@ -68,7 +68,7 @@ final class MarkCommand extends DatabaseCommand
             : null;
 
         if ($version !== self::BASE_MIGRATION && $timestamp === null
-            && preg_match('/^(?:\w+\\\\)*M\d{12}\D.*$/D', $version) !== 1
+            && preg_match('/^(?:\w+\\\\)*M\d{12}(?:\D|$).*$/D', $version) !== 1
         ) {
             $io->error('The version must be a migration class name, a migration timestamp, or ' . self::BASE_MIGRATION . '.');
             return Command::INVALID;
@@ -122,12 +122,7 @@ final class MarkCommand extends DatabaseCommand
 
         $io->note('Only migration history will change. No migrations will be applied or reverted.');
         if ($input->getOption('force-yes') || $io->confirm("Set migration history at $label?", false)) {
-            foreach ($add as $migration) {
-                $migrator->addMigrationToHistory($migration);
-            }
-            foreach ($remove as $migration) {
-                $migrator->removeMigrationFromHistory($migration);
-            }
+            $migrator->updateHistory($add, $remove);
             $io->success("The migration history is set at $label. No actual migration was performed.");
         }
 
@@ -140,6 +135,6 @@ final class MarkCommand extends DatabaseCommand
             return trim($migration, '\\') === $version;
         }
 
-        return preg_match('/(?:^|\\\\)M' . $timestamp . '\D/', $migration) === 1;
+        return preg_match('/(?:^|\\\\)M' . $timestamp . '(?:\D|$)/', $migration) === 1;
     }
 }

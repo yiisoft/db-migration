@@ -41,6 +41,27 @@ abstract class AbstractMarkCommandTest extends TestCase
         self::assertStringContainsString('No actual migration was performed', preg_replace('/\s+/', ' ', $command->getDisplay()));
     }
 
+    public static function timestampOnlyVersions(): array
+    {
+        return [['M260101000001'], ['260101000001']];
+    }
+
+    #[DataProvider('timestampOnlyVersions')]
+    public function testTimestampOnlyClassCanBeMarked(string $version): void
+    {
+        $command = $this->command();
+        $this->container->get(MigrationService::class)->setSourcePaths([
+            dirname(__DIR__, 2) . '/Support/MarkTimestampOnly',
+        ]);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
+        self::assertSame(['M260101000001'], array_keys($this->migrator()->getHistory()));
+        self::assertSame([], $this->container->get(MigrationService::class)->getNewMigrations());
+
+        $this->migrator()->addMigrationToHistory(self::SECOND);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
+        self::assertSame(['M260101000001'], array_keys($this->migrator()->getHistory()));
+    }
+
     public function testMarkDownUsesHistoryOrderAndPreservesTarget(): void
     {
         // Application order may differ from filename order, and recorded files may no longer exist.
