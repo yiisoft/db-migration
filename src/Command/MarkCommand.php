@@ -18,7 +18,9 @@ use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function array_keys;
+use function array_map;
 use function array_slice;
+use function in_array;
 use function preg_match;
 use function str_replace;
 use function strlen;
@@ -77,9 +79,15 @@ final class MarkCommand extends DatabaseCommand
         $add = [];
         $remove = [];
         $found = false;
+        $history = array_keys($migrator->getHistory());
+        $isRecordedClass = $timestamp === null && in_array(
+            $version,
+            array_map(static fn(string $name): string => trim($name, '\\'), $history),
+            true,
+        );
 
-        // Like Yii2, first look for a pending target, then for a recorded target.
-        if ($version !== self::BASE_MIGRATION) {
+        // Exact recorded classes do not need source files. Timestamps still select pending targets first.
+        if ($version !== self::BASE_MIGRATION && !$isRecordedClass) {
             $pending = $service->getNewMigrations();
             foreach ($pending as $i => $migration) {
                 if ($this->matches($migration, $version, $timestamp)) {
@@ -91,7 +99,6 @@ final class MarkCommand extends DatabaseCommand
         }
 
         if (!$found) {
-            $history = array_keys($migrator->getHistory());
             $history[] = self::BASE_MIGRATION;
             foreach ($history as $i => $migration) {
                 if ($this->matches($migration, $version, $timestamp)) {
@@ -135,6 +142,6 @@ final class MarkCommand extends DatabaseCommand
             return trim($migration, '\\') === $version;
         }
 
-        return preg_match('/(?:^|\\\\)M' . $timestamp . '/', $migration) === 1;
+        return preg_match('/(?:^|\\\\)M' . $timestamp . '[^\\\\]*$/D', $migration) === 1;
     }
 }

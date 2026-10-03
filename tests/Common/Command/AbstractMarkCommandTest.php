@@ -15,6 +15,8 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000001First;
 use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000002Second;
 use Yiisoft\Db\Migration\Tests\Support\MarkMigrations\M260101000003Third;
+use Yiisoft\Db\Migration\Tests\Support\M260101000002Group\M260101000001First as NamespacedFirst;
+use Yiisoft\Db\Migration\Tests\Support\M260101000002Group\M260101000002Second as NamespacedSecond;
 
 use function array_keys;
 use function dirname;
@@ -85,6 +87,47 @@ abstract class AbstractMarkCommandTest extends TestCase
         $this->migrator()->addMigrationToHistory(self::THIRD);
         self::assertSame(Command::SUCCESS, $this->command()->execute(['version' => 'M260101000004Missing', '-y' => true]));
         self::assertSame(['M260101000004Missing'], array_keys($this->migrator()->getHistory()));
+    }
+
+    public static function recordedTargets(): array
+    {
+        return [[false], [true]];
+    }
+
+    #[DataProvider('recordedTargets')]
+    public function testTimestampMatchesOnlyClassName(bool $recorded): void
+    {
+        $command = $this->command();
+        $this->container->get(MigrationService::class)->setSourcePaths([
+            dirname(__DIR__, 2) . '/Support/M260101000002Group',
+        ]);
+        if ($recorded) {
+            $this->migrator()->addMigrationToHistory(NamespacedSecond::class);
+            $this->migrator()->addMigrationToHistory(NamespacedFirst::class);
+        }
+
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => '260101000002', '-y' => true]));
+        self::assertSame(
+            $recorded ? [NamespacedSecond::class] : [NamespacedSecond::class, NamespacedFirst::class],
+            array_keys($this->migrator()->getHistory()),
+        );
+    }
+
+    #[DataProvider('recordedTargets')]
+    public function testRecordedClassDoesNotNeedSourceDirectory(bool $hasNewerMigration): void
+    {
+        $this->migrator()->addMigrationToHistory(self::FIRST);
+        $before = $this->migrator()->getHistory();
+        if ($hasNewerMigration) {
+            $this->migrator()->addMigrationToHistory(self::SECOND);
+        }
+        $command = $this->command();
+        $this->container->get(MigrationService::class)->setSourcePaths([
+            dirname(__DIR__, 2) . '/Support/nonexistent-mark-migrations',
+        ]);
+
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::FIRST, '-y' => true]));
+        self::assertSame($before, $this->migrator()->getHistory());
     }
 
     public function testResetHistory(): void
