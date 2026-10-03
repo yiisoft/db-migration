@@ -27,7 +27,7 @@ use function trim;
 /**
  * Moves migration history to a version without executing up() or down().
  */
-#[AsCommand('migrate:mark', 'Modifies migration history without executing migrations.')]
+#[AsCommand('migrate:mark', 'Modifies migration history without executing migrations. WARNING: Use only if you understand the consequences; incorrect history can cause data loss.')]
 final class MarkCommand extends DatabaseCommand
 {
     public const BASE_MIGRATION = 'm000000_000000_base';
