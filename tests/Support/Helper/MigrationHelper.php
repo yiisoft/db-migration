@@ -15,11 +15,11 @@ use function dirname;
 
 final class MigrationHelper
 {
-    public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\runtime\\MigrationNamespace';
+    public const NAMESPACE = 'Yiisoft\\Db\\Migration\\Tests\\Runtime\\MigrationNamespace';
 
     public static function getRuntimePath(): string
     {
-        return dirname(__DIR__, 2) . '/runtime/migration-path';
+        return dirname(__DIR__, 3) . '/runtime/tests/migration-path';
     }
 
     /**
@@ -112,7 +112,7 @@ final class MigrationHelper
 
     public static function getPathForMigrationNamespace(): string
     {
-        return dirname(__DIR__, 2) . '/runtime/MigrationNamespace';
+        return dirname(__DIR__, 3) . '/runtime/tests/MigrationNamespace';
     }
 
     public static function resetPathAndNamespace(ContainerInterface $container): void
@@ -135,7 +135,7 @@ final class MigrationHelper
         foreach ($paths as $path) {
             file_exists($path)
                 ? FileHelper::clearDirectory($path)
-                : mkdir($path);
+                : FileHelper::ensureDirectory($path);
         }
     }
 }
