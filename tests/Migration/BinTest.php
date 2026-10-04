@@ -20,17 +20,17 @@ final class BinTest extends TestCase
     {
         FileHelper::copyFile(
             dirname(__DIR__, 2) . '/bin/yii-db-migration',
-            dirname(__DIR__) . '/runtime/bin/vendor/yiisoft/db-migration/bin/yii-db-migration',
+            dirname(__DIR__, 2) . '/runtime/tests/bin/vendor/yiisoft/db-migration/bin/yii-db-migration',
         );
         FileHelper::copyFile(
             dirname(__DIR__, 2) . '/bin/yii-db-migration.php',
-            dirname(__DIR__) . '/runtime/bin/yii-db-migration.php',
+            dirname(__DIR__, 2) . '/runtime/tests/bin/yii-db-migration.php',
         );
     }
 
     protected function tearDown(): void
     {
-        FileHelper::removeDirectory(dirname(__DIR__) . '/runtime/bin');
+        FileHelper::removeDirectory(dirname(__DIR__, 2) . '/runtime/tests/bin');
     }
 
     public function testBase(): void
@@ -62,15 +62,15 @@ final class BinTest extends TestCase
 
     public function testWithoutConfig(): void
     {
-        unlink(dirname(__DIR__) . '/runtime/bin/yii-db-migration.php');
+        unlink(dirname(__DIR__, 2) . '/runtime/tests/bin/yii-db-migration.php');
 
         [$output, $exitCode] = $this->runYiiDbMigration();
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString('not found', $output);
         $this->assertStringContainsString(
-            'cp "' . dirname(__DIR__) . '/runtime/bin/vendor/yiisoft/db-migration/bin/yii-db-migration.php" "'
-            . dirname(__DIR__) . '/runtime/bin/yii-db-migration.php"',
+            'cp "' . dirname(__DIR__, 2) . '/runtime/tests/bin/vendor/yiisoft/db-migration/bin/yii-db-migration.php" "'
+            . dirname(__DIR__, 2) . '/runtime/tests/bin/yii-db-migration.php"',
             $output,
         );
     }
@@ -95,7 +95,7 @@ final class BinTest extends TestCase
                 ),
             ],
             PHP);
-        $directory = dirname(__DIR__) . '/runtime/bin';
+        $directory = dirname(__DIR__, 2) . '/runtime/tests/bin';
         FileHelper::ensureDirectory($directory . '/maps');
         file_put_contents($directory . '/maps/M260930000000Maps.php', <<<'PHP'
             <?php
@@ -121,7 +121,7 @@ final class BinTest extends TestCase
 
     public function testNamedDefaultWithoutLegacyOptions(): void
     {
-        $directory = dirname(__DIR__) . '/runtime/bin';
+        $directory = dirname(__DIR__, 2) . '/runtime/tests/bin';
         FileHelper::ensureDirectory($directory . '/migrations');
         file_put_contents($directory . '/yii-db-migration.php', $this->namedDefaultConfig());
         [$output, $exitCode] = $this->runYiiDbMigration(['migrate:create', 'Example']);
@@ -144,7 +144,7 @@ final class BinTest extends TestCase
     #[DataProvider('legacyOptions')]
     public function testRejectsDuplicateDefaultConfiguration(string $option): void
     {
-        $directory = dirname(__DIR__) . '/runtime/bin';
+        $directory = dirname(__DIR__, 2) . '/runtime/tests/bin';
         file_put_contents($directory . '/yii-db-migration.php', str_replace(
             'return [',
             "return ['$option' => null,",
@@ -177,7 +177,7 @@ final class BinTest extends TestCase
 
     private function replaceParams($search, $replace): void
     {
-        $file = dirname(__DIR__) . '/runtime/bin/yii-db-migration.php';
+        $file = dirname(__DIR__, 2) . '/runtime/tests/bin/yii-db-migration.php';
         file_put_contents(
             $file,
             str_replace($search, $replace, file_get_contents($file)),

@@ -121,7 +121,7 @@ final class ConfigTest extends TestCase
                         'class' => SqLiteConnection::class,
                         '__construct()' => [
                             'driver' => new SqLiteDriver(
-                                'sqlite:' . dirname(__DIR__, 2) . '/runtime/config-test.sq3',
+                                'sqlite:' . dirname(__DIR__, 2) . '/runtime/tests/config-test.sq3',
                             ),
                         ],
                     ],
