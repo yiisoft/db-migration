@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Db\Migration\Tests\Migration;
 
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Sqlite\Connection;
@@ -119,60 +118,28 @@ final class BinTest extends TestCase
         $this->assertSame(0, (int) $db->createCommand('SELECT COUNT(*) FROM example')->queryScalar());
     }
 
-    public function testNamedDefaultWithoutLegacyOptions(): void
+    public function testRejectsDefaultDatabase(): void
     {
-        $directory = dirname(__DIR__, 2) . '/runtime/tests/bin';
-        FileHelper::ensureDirectory($directory . '/migrations');
-        file_put_contents($directory . '/yii-db-migration.php', $this->namedDefaultConfig());
-        [$output, $exitCode] = $this->runYiiDbMigration(['migrate:create', 'Example']);
-        self::assertSame(0, $exitCode, $output);
-        self::assertCount(1, glob($directory . '/migrations/*Example.php'));
-        [$output, $exitCode] = $this->runYiiDbMigration(['migrate:up', '-y']);
-        self::assertSame(0, $exitCode, $output);
-        $db = new Connection(new Driver('sqlite:' . $directory . '/named.sqlite'), new SchemaCache(new MemorySimpleCache()));
-        self::assertCount(1, $db->createCommand('SELECT name FROM named_history')->queryColumn());
-    }
-
-    public static function legacyOptions(): array
-    {
-        return array_map(static fn(string $option): array => [$option], [
-            'db', 'newMigrationNamespace', 'newMigrationPath', 'sourceNamespaces', 'sourcePaths',
-            'historyTable', 'migrationNameLimit', 'useTablePrefix', 'maxSqlOutputLength',
-        ]);
-    }
-
-    #[DataProvider('legacyOptions')]
-    public function testRejectsDuplicateDefaultConfiguration(string $option): void
-    {
-        $directory = dirname(__DIR__, 2) . '/runtime/tests/bin';
-        file_put_contents($directory . '/yii-db-migration.php', str_replace(
-            'return [',
-            "return ['$option' => null,",
-            $this->namedDefaultConfig(),
-        ));
-        [$output, $exitCode] = $this->runYiiDbMigration(['migrate:up', '-y']);
-        self::assertNotSame(0, $exitCode);
-        self::assertStringContainsString('Conflicting option: ' . $option . '.', $output);
-        self::assertFileDoesNotExist($directory . '/named.sqlite');
-    }
-
-    private function namedDefaultConfig(): string
-    {
-        return <<<'PHP'
-            <?php
+        $this->replaceParams('return [', <<<'PHP'
+            $db = new \Yiisoft\Db\Sqlite\Connection(
+                new \Yiisoft\Db\Sqlite\Driver('sqlite::memory:'),
+                new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
+            );
             return [
-                'databases' => [
-                    'default' => new \Yiisoft\Db\Migration\DatabaseSet(
-                        new \Yiisoft\Db\Sqlite\Connection(
-                            new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/named.sqlite'),
-                            new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
-                        ),
-                        newMigrationPath: __DIR__ . '/migrations',
-                        historyTable: 'named_history',
-                    ),
-                ],
-            ];
-            PHP;
+            PHP);
+        $this->replaceParams("'db' => null,", "'db' => \$db,");
+        $this->replaceParams(
+            "'databases' => [],",
+            "'databases' => ['default' => new \\Yiisoft\\Db\\Migration\\DatabaseSet(\$db)],",
+        );
+
+        [$output, $exitCode] = $this->runYiiDbMigration();
+
+        $this->assertSame(255, $exitCode);
+        $this->assertStringContainsString(
+            'The "default" database is configured by the existing migration settings and can\'t be redefined.',
+            $output,
+        );
     }
 
     private function replaceParams($search, $replace): void

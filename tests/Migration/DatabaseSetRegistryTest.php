@@ -30,12 +30,18 @@ final class DatabaseSetRegistryTest extends TestCase
         ]);
     }
 
-    public static function defaultConfiguration(): array
+    public function testRejectsDefaultName(): void
     {
-        return [[false], [true]];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The "default" database is configured by the existing migration settings and can\'t be redefined.',
+        );
+        new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), [
+            'default' => new DatabaseSet($this->createMock(ConnectionInterface::class)),
+        ]);
     }
 
-    public function testUnconfiguredDefaultUsesExistingServices(): void
+    public function testDefaultUsesExistingServices(): void
     {
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer());
         self::assertNull($registry->createContext('default'));
@@ -50,21 +56,13 @@ final class DatabaseSetRegistryTest extends TestCase
         $registry->createContext('missing');
     }
 
-    #[DataProvider('defaultConfiguration')]
-    public function testDefaultIsFirstFollowedByConfigurationOrder(bool $explicitDefault): void
+    public function testDefaultIsFirstFollowedByConfigurationOrder(): void
     {
         $set = new DatabaseSet($this->createMock(ConnectionInterface::class));
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), [
             'maps' => $set,
             'analytics' => $set,
         ]);
-        if ($explicitDefault) {
-            $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), [
-                'maps' => $set,
-                'default' => $set,
-                'analytics' => $set,
-            ]);
-        }
         self::assertSame(['default', 'maps', 'analytics'], $registry->getNames());
     }
 }

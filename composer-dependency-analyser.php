@@ -13,6 +13,13 @@ return (new Configuration())
     ->addPathToScan(__DIR__ . '/resources', isDev: false)
     ->addPathToScan(__DIR__ . '/src', isDev: false)
     ->addPathToScan(__DIR__ . '/tests', isDev: true)
+    // The DI configuration is loaded only by yiisoft/config in Yii applications, where yiisoft/definitions is always
+    // installed as a dependency of yiisoft/di, so it isn't required by standalone and Symfony usage.
+    ->ignoreErrorsOnPackageAndPath(
+        'yiisoft/definitions',
+        __DIR__ . '/config/di-console.php',
+        [ErrorType::DEV_DEPENDENCY_IN_PROD],
+    )
     // These test suites only run in CI after their DBMS driver package (yiisoft/db-mssql,
     // yiisoft/db-mysql, yiisoft/db-oracle, yiisoft/db-pgsql) is installed on demand for the matching
     // per-DBMS workflow (see mssql.yml, mysql.yml, mariadb.yml, oracle.yml, pgsql.yml); the drivers are

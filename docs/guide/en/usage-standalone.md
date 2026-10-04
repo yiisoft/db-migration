@@ -29,19 +29,16 @@
 
 ## Multiple databases
 
-Define all migration sets, including `default`, in `databases`. The example below assumes you have already created
-`$defaultConnection`, `$mapsConnection`, and `$analyticsConnection`, as described in
-[With configuration file](#with-configuration-file).
+The `default` database is configured by the top-level `db` and migration options of the configuration file. Define
+each additional database in `databases`. The example below assumes you have already created `$mapsConnection` and
+`$analyticsConnection` in the same way as `db`, as described in [With configuration file](#with-configuration-file).
 
 ```php
 use Yiisoft\Db\Migration\DatabaseSet;
 
 return [
+    // ...
     'databases' => [
-        'default' => new DatabaseSet(
-            $defaultConnection,
-            newMigrationPath: __DIR__ . '/config/migrations/default',
-        ),
         'maps' => new DatabaseSet(
             $mapsConnection,
             newMigrationPath: __DIR__ . '/config/migrations/maps',
@@ -54,13 +51,7 @@ return [
 ];
 ```
 
-When moving an existing configuration to this form, move `db` and its migration options into the `default` set and
-remove the top-level entries. Supplying both forms raises a configuration error, including when a top-level option has
-an empty or default value. The optional `container` setting remains at the top level.
-
-Existing configurations remain supported: if `databases` does not contain `default`, the top-level `db`, migration
-paths, namespaces, history, and generation options configure that set. You can still add `maps` and `analytics` to
-`databases` while keeping this legacy form for `default`.
+The name `default` is reserved and can't be used in `databases`.
 
 Create the migration directories before generating migrations. Then select a database with `--db`:
 
