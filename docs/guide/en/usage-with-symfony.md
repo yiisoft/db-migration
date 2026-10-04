@@ -21,7 +21,6 @@ services:
           - '../vendor/yiisoft/db-migration/src/DatabaseSetRegistry.php'
           - '../vendor/yiisoft/db-migration/src/DatabaseSet.php'
           - '../vendor/yiisoft/db-migration/src/DatabaseContext.php'
-          - '../vendor/yiisoft/db-migration/src/Command/CommandFactory.php'
 
     Yiisoft\Db\Migration\Informer\MigrationInformerInterface:
         class: 'Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer'
@@ -66,81 +65,35 @@ That's it. Now you can use `bin/console migrate:*` commands.
 
 ## Multiple databases
 
-Use the following migration service configuration in place of the migration resource registration and
-`MigrationService` configuration above. It assumes the three connection services already exist. Each connection,
-migration directory, and history setting is defined in its `DatabaseSet` only; no separate default migration services
-or application-wide `ConnectionInterface` binding are needed.
-
-Do not register the migration package through a broad `resource` rule alongside these definitions. A later resource
-registration can replace explicit service definitions, including the configured registry.
+The `default` database is configured as described above: it uses the `ConnectionInterface` service and the
+`MigrationService` configuration. Add a `DatabaseSet` service for each additional database and pass them to
+`DatabaseSetRegistry`. The commands receive the registry through autowiring. The example below assumes that the
+`app.db.maps` and `app.db.analytics` connection services already exist.
 
 ```yaml
 services:
-    _defaults:
-        autowire: true
-        autoconfigure: true
-
-    Yiisoft\Injector\Injector:
-        arguments: ['@service_container']
-
-    Yiisoft\Db\Migration\Informer\MigrationInformerInterface:
-        class: Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer
-
-    app.migrations.default:
-        class: Yiisoft\Db\Migration\DatabaseSet
-        arguments:
-            $db: '@yii3.connections.default'
-            $newMigrationPath: '%kernel.project_dir%/config/migrations/default'
+    # ...
 
     app.migrations.maps:
         class: Yiisoft\Db\Migration\DatabaseSet
         arguments:
-            $db: '@yii3.connections.maps'
+            $db: '@app.db.maps'
             $newMigrationPath: '%kernel.project_dir%/config/migrations/maps'
 
     app.migrations.analytics:
         class: Yiisoft\Db\Migration\DatabaseSet
         arguments:
-            $db: '@yii3.connections.analytics'
+            $db: '@app.db.analytics'
             $newMigrationPath: '%kernel.project_dir%/config/migrations/analytics'
 
     Yiisoft\Db\Migration\DatabaseSetRegistry:
         arguments:
             $databases:
-                default: '@app.migrations.default'
                 maps: '@app.migrations.maps'
                 analytics: '@app.migrations.analytics'
-
-    Yiisoft\Db\Migration\Command\CommandFactory: ~
-
-    Yiisoft\Db\Migration\Command\CreateCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['create']
-
-    Yiisoft\Db\Migration\Command\DownCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['down']
-
-    Yiisoft\Db\Migration\Command\HistoryCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['history']
-
-    Yiisoft\Db\Migration\Command\NewCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['new']
-
-    Yiisoft\Db\Migration\Command\RedoCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['redo']
-
-    Yiisoft\Db\Migration\Command\UpdateCommand:
-        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
-        arguments: ['up']
 ```
 
-To retain your legacy default configuration instead, keep the single-database setup above, omit the `default` entry
-from the registry, and use the original autowired command services instead of `CommandFactory`. The registry can still
-contain additional sets. Choose one wiring style; do not keep both configurations for the default migration services.
+The name `default` is reserved and can't be used in the registry.
 
 Select one set with `--db`, or apply all sets with `migrate:up`:
 

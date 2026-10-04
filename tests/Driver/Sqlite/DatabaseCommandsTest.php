@@ -11,7 +11,6 @@ use Yiisoft\Db\Exception\Exception as DbException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
-use Yiisoft\Db\Migration\Command\CommandFactory;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
@@ -100,41 +99,6 @@ final class DatabaseCommandsTest extends TestCase
         self::assertSame(Command::SUCCESS, $this->command('down')->execute(['--db' => 'maps', '--force-yes' => true]));
         self::assertSame([], $this->migrator('maps')->getHistory());
         self::assertNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
-    }
-
-    #[DataProvider('defaultSelection')]
-    public function testNamedDefaultSuppliesConnectionSourcesAndHistory(bool $selectDefault): void
-    {
-        $class = $this->writeMigration('maps');
-        $default = new DatabaseSet(
-            $this->connections['maps'],
-            newMigrationPath: $this->directory . '/maps',
-            historyTable: 'custom_history',
-        );
-        unset($this->sets['maps'], $this->sets['analytics']);
-        $input = $selectDefault ? ['--db' => 'default'] : [];
-        $new = $this->command('new', $default);
-        self::assertSame(Command::SUCCESS, $new->execute($input));
-        self::assertStringContainsString($class, $new->getDisplay());
-        self::assertSame(Command::SUCCESS, $this->command('up', $default)->execute($input + ['--force-yes' => true]));
-        $history = $this->command('history', $default);
-        self::assertSame(Command::SUCCESS, $history->execute($input));
-        self::assertStringContainsString($class, $history->getDisplay());
-        self::assertNotNull($this->connections['maps']->getSchema()->getTableSchema('custom_history'));
-        self::assertNull($this->connections['maps']->getSchema()->getTableSchema('migration'));
-        self::assertSame(Command::SUCCESS, $this->command('redo', $default)->execute($input + ['--force-yes' => true]));
-        self::assertNotNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
-        self::assertSame(Command::SUCCESS, $this->command('down', $default)->execute($input + ['--force-yes' => true]));
-        self::assertNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
-        self::assertSame(Command::SUCCESS, $this->command('create', $default)->execute($input + ['name' => 'CustomDefault']));
-        self::assertCount(1, glob($this->directory . '/maps/*CustomDefault.php'));
-        self::assertSame([], glob($this->directory . '/default/*.php'));
-        self::assertSame([], $this->connections['default']->getSchema()->getTableNames());
-    }
-
-    public static function defaultSelection(): array
-    {
-        return [[false], [true]];
     }
 
     public static function commands(): array
@@ -557,17 +521,11 @@ final class DatabaseCommandsTest extends TestCase
         return new Migrator($this->connections[$name], new NullMigrationInformer(), $this->sets[$name]->historyTable);
     }
 
-    private function command(string $name, ?DatabaseSet $default = null): CommandTester
+    private function command(string $name): CommandTester
     {
         $sets = $this->sets;
         unset($sets['default']);
-        if ($default !== null) {
-            $sets['default'] = $default;
-        }
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), $sets);
-        if ($default !== null) {
-            return new CommandTester((new CommandFactory($registry))->create($name));
-        }
         $migrator = $this->migrator('default');
         $service = new MigrationService($this->connections['default'], new Injector(), $migrator);
         $service->setNewMigrationPath($this->sets['default']->newMigrationPath);
