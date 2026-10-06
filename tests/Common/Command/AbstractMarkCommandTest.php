@@ -65,7 +65,7 @@ abstract class AbstractMarkCommandTest extends TestCase
         self::assertSame([$class], array_keys($this->migrator()->getHistory()));
         self::assertSame([], $this->container->get(MigrationService::class)->getNewMigrations());
 
-        $this->migrator()->addMigrationToHistory(self::THIRD);
+        $this->migrator()->updateHistory([self::THIRD], []);
         self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
         self::assertSame([$class], array_keys($this->migrator()->getHistory()));
     }
@@ -73,9 +73,9 @@ abstract class AbstractMarkCommandTest extends TestCase
     public function testMarkDownUsesHistoryOrderAndPreservesTarget(): void
     {
         // Application order may differ from filename order, and recorded files may no longer exist.
-        $this->migrator()->addMigrationToHistory(self::SECOND);
-        $this->migrator()->addMigrationToHistory(self::FIRST);
-        $this->migrator()->addMigrationToHistory('M260101000004Missing');
+        $this->migrator()->updateHistory([self::SECOND], []);
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory(['M260101000004Missing'], []);
         $before = $this->migrator()->getHistory();
         self::assertSame(Command::SUCCESS, $this->command()->execute(['version' => self::SECOND, '-y' => true]));
         self::assertSame([self::SECOND => $before[self::SECOND]], $this->migrator()->getHistory());
@@ -83,8 +83,8 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public function testRecordedTargetDoesNotNeedFile(): void
     {
-        $this->migrator()->addMigrationToHistory('M260101000004Missing');
-        $this->migrator()->addMigrationToHistory(self::THIRD);
+        $this->migrator()->updateHistory(['M260101000004Missing'], []);
+        $this->migrator()->updateHistory([self::THIRD], []);
         self::assertSame(Command::SUCCESS, $this->command()->execute(['version' => 'M260101000004Missing', '-y' => true]));
         self::assertSame(['M260101000004Missing'], array_keys($this->migrator()->getHistory()));
     }
@@ -102,8 +102,8 @@ abstract class AbstractMarkCommandTest extends TestCase
             dirname(__DIR__, 2) . '/Support/M260101000002Group',
         ]);
         if ($recorded) {
-            $this->migrator()->addMigrationToHistory(NamespacedSecond::class);
-            $this->migrator()->addMigrationToHistory(NamespacedFirst::class);
+            $this->migrator()->updateHistory([NamespacedSecond::class], []);
+            $this->migrator()->updateHistory([NamespacedFirst::class], []);
         }
 
         self::assertSame(Command::SUCCESS, $command->execute(['version' => '260101000002', '-y' => true]));
@@ -116,10 +116,10 @@ abstract class AbstractMarkCommandTest extends TestCase
     #[DataProvider('recordedTargets')]
     public function testRecordedClassDoesNotNeedSourceDirectory(bool $hasNewerMigration): void
     {
-        $this->migrator()->addMigrationToHistory(self::FIRST);
+        $this->migrator()->updateHistory([self::FIRST], []);
         $before = $this->migrator()->getHistory();
         if ($hasNewerMigration) {
-            $this->migrator()->addMigrationToHistory(self::SECOND);
+            $this->migrator()->updateHistory([self::SECOND], []);
         }
         $command = $this->command();
         $this->container->get(MigrationService::class)->setSourcePaths([
@@ -132,7 +132,7 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public function testResetHistory(): void
     {
-        $this->migrator()->addMigrationToHistory(self::FIRST);
+        $this->migrator()->updateHistory([self::FIRST], []);
         $command = $this->command();
         self::assertSame(Command::SUCCESS, $command->execute(['version' => MarkCommand::BASE_MIGRATION, '-y' => true]));
         self::assertSame([], $this->migrator()->getHistory());
@@ -142,7 +142,7 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public function testAlreadyAtTarget(): void
     {
-        $this->migrator()->addMigrationToHistory(self::SECOND);
+        $this->migrator()->updateHistory([self::SECOND], []);
         $before = $this->migrator()->getHistory();
         $command = $this->command();
         self::assertSame(Command::SUCCESS, $command->execute(['version' => self::SECOND, '-y' => true]));
@@ -152,8 +152,8 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public function testMarkUpPreservesExistingHistory(): void
     {
-        $this->migrator()->addMigrationToHistory(self::FIRST);
-        $this->migrator()->addMigrationToHistory(self::THIRD);
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory([self::THIRD], []);
         $before = $this->migrator()->getHistory();
         self::assertSame(Command::SUCCESS, $this->command()->execute(['version' => self::SECOND, '-y' => true]));
         $after = $this->migrator()->getHistory();
@@ -165,8 +165,8 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public function testDecliningMarkDownKeepsHistory(): void
     {
-        $this->migrator()->addMigrationToHistory(self::FIRST);
-        $this->migrator()->addMigrationToHistory(self::SECOND);
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory([self::SECOND], []);
         $before = $this->migrator()->getHistory();
         $command = $this->command();
         $command->setInputs(['no']);
@@ -182,7 +182,7 @@ abstract class AbstractMarkCommandTest extends TestCase
     #[DataProvider('invalidVersions')]
     public function testInvalidOrMissingTarget(string $version): void
     {
-        $this->migrator()->addMigrationToHistory(self::FIRST);
+        $this->migrator()->updateHistory([self::FIRST], []);
         $before = $this->migrator()->getHistory();
         self::assertSame(Command::INVALID, $this->command()->execute(['version' => $version, '-y' => true]));
         self::assertSame($before, $this->migrator()->getHistory());

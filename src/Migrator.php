@@ -98,35 +98,6 @@ final class Migrator
     }
 
     /**
-     * Records a migration as applied without executing it.
-     */
-    public function addMigrationToHistory(string $name): void
-    {
-        $this->checkMigrationHistoryTable();
-
-        $this->db->createCommand()->insert(
-            $this->historyTable,
-            [
-                'name' => $name,
-                'apply_time' => time(),
-            ],
-        )->execute();
-    }
-
-    /**
-     * Removes a migration record without reverting it.
-     */
-    public function removeMigrationFromHistory(string $name): void
-    {
-        $this->checkMigrationHistoryTable();
-
-        $command = $this->db->createCommand();
-        $command->delete($this->historyTable, [
-            'name' => $name,
-        ])->execute();
-    }
-
-    /**
      * Adds and removes migration records atomically without executing migrations.
      *
      * @param list<string> $add Migration names to record as applied.
@@ -145,6 +116,31 @@ final class Migrator
                 $this->removeMigrationFromHistory($name);
             }
         });
+    }
+
+    /**
+     * Records a migration as applied without executing it.
+     */
+    private function addMigrationToHistory(string $name): void
+    {
+        $this->db->createCommand()->insert(
+            $this->historyTable,
+            [
+                'name' => $name,
+                'apply_time' => time(),
+            ],
+        )->execute();
+    }
+
+    /**
+     * Removes a migration record without reverting it.
+     */
+    private function removeMigrationFromHistory(string $name): void
+    {
+        $command = $this->db->createCommand();
+        $command->delete($this->historyTable, [
+            'name' => $name,
+        ])->execute();
     }
 
     private function checkMigrationHistoryTable(): void

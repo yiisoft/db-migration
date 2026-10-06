@@ -73,7 +73,7 @@ final class MarkCommandTest extends AbstractMarkCommandTest
     public function testHistoryTransactionCoversBothAdditionsAndRemovals(): void
     {
         $migrator = $this->container->get(Migrator::class);
-        $migrator->addMigrationToHistory(M260101000002Second::class);
+        $migrator->updateHistory([M260101000002Second::class], []);
         $before = $migrator->getHistory();
         $this->container->get(Connection::class)->getActivePdo()->exec(
             "CREATE TRIGGER fail_history_delete BEFORE DELETE ON migration
