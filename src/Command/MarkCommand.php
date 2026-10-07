@@ -28,6 +28,20 @@ use function trim;
 
 /**
  * Moves migration history to a version without executing up() or down().
+ *
+ * Use this command only after verifying that the database schema already matches the target migration state.
+ *
+ * For example,
+ *
+ * ```shell
+ * ./yii migrate:mark 'App\Migrations\M260101000002CreateIndex' # record pending migrations through this class
+ * ./yii migrate:mark M260101000002CreateIndex                   # use an unqualified migration class name
+ * ./yii migrate:mark 260101000002                               # select a migration by its timestamp
+ * ./yii migrate:mark m000000_000000_base                        # remove all migration history entries
+ * ```
+ *
+ * A pending target is recorded along with all earlier pending migrations. A recorded target removes newer history
+ * entries. Use the full class name when several migrations share a timestamp.
  */
 #[AsCommand('migrate:mark', 'Modifies migration history without executing migrations. WARNING: Use only if you understand the consequences; incorrect history can cause data loss.')]
 final class MarkCommand extends DatabaseCommand
