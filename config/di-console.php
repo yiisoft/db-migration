@@ -37,7 +37,7 @@ if (isset($params['yiisoft/db-migration']['databases']['default'])) {
         }
     }
     unset($definitions[MigrationService::class]);
-    foreach (['Create' => 'create', 'Down' => 'down', 'History' => 'history', 'New' => 'new', 'Redo' => 'redo', 'Update' => 'up'] as $class => $name) {
+    foreach (['Create' => 'create', 'Down' => 'down', 'History' => 'history', 'Mark' => 'mark', 'New' => 'new', 'Redo' => 'redo', 'Update' => 'up'] as $class => $name) {
         $definitions['Yiisoft\\Db\\Migration\\Command\\' . $class . 'Command']
             = static fn(CommandFactory $factory): DatabaseCommand => $factory->create($name);
     }

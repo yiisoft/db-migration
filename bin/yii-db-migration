@@ -80,7 +80,7 @@ $databases = new DatabaseSetRegistry(
 $factory = new CommandFactory($databases);
 $application = new Application('Yii Database Migration Tool', '1.0.0');
 $commands = [];
-foreach (['create', 'down', 'history', 'new', 'redo', 'up'] as $name) {
+foreach (['create', 'down', 'history', 'mark', 'new', 'redo', 'up'] as $name) {
     $commands[] = $factory->create($name);
 }
 $application->addCommands($commands);

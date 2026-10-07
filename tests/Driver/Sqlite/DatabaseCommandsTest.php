@@ -14,6 +14,7 @@ use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\CommandFactory;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
@@ -100,6 +101,54 @@ final class DatabaseCommandsTest extends TestCase
         self::assertSame(Command::SUCCESS, $this->command('down')->execute(['--db' => 'maps', '--force-yes' => true]));
         self::assertSame([], $this->migrator('maps')->getHistory());
         self::assertNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
+    }
+
+    public function testMarkRequiresDatabaseAndChangesOnlyItsHistory(): void
+    {
+        $class = $this->writeMigration('maps');
+        $this->sets['maps'] = new DatabaseSet(
+            $this->connections['maps'],
+            newMigrationPath: $this->directory . '/maps',
+            historyTable: 'maps_history',
+        );
+        $command = $this->command('mark');
+        self::assertSame(Command::INVALID, $command->execute(['version' => $class, '-y' => true]));
+        self::assertStringContainsString('--db option is required', $command->getDisplay());
+        self::assertSame([], $this->connections['maps']->getSchema()->getTableNames());
+
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => $class, '--db' => 'maps', '-y' => true]));
+        self::assertSame([$class], array_keys($this->migrator('maps')->getHistory()));
+        self::assertNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
+        self::assertNull($this->connections['maps']->getSchema()->getTableSchema('migration', true));
+        self::assertSame([], $this->connections['default']->getSchema()->getTableNames());
+        self::assertSame([], $this->connections['analytics']->getSchema()->getTableNames());
+    }
+
+    public function testMarkRejectsLongNamesBeforeAddingAnyHistory(): void
+    {
+        $class = $this->writeMigration('maps');
+        $this->sets['maps'] = new DatabaseSet(
+            $this->connections['maps'],
+            newMigrationPath: $this->directory . '/maps',
+            migrationNameLimit: 10,
+        );
+        $command = $this->command('mark');
+        self::assertSame(Command::INVALID, $command->execute(['version' => $class, '--db' => 'maps', '-y' => true]));
+        self::assertStringContainsString('too long', $command->getDisplay());
+        self::assertSame([], $this->migrator('maps')->getHistory());
+    }
+
+    public function testResetHistoryDoesNotRevertSchema(): void
+    {
+        $this->writeMigration('maps');
+        self::assertSame(Command::SUCCESS, $this->command('up')->execute(['--db' => 'maps', '-y' => true]));
+        self::assertSame(Command::SUCCESS, $this->command('mark')->execute([
+            '--db' => 'maps',
+            'version' => MarkCommand::BASE_MIGRATION,
+            '-y' => true,
+        ]));
+        self::assertSame([], $this->migrator('maps')->getHistory());
+        self::assertNotNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
     }
 
     #[DataProvider('defaultSelection')]
@@ -577,6 +626,7 @@ final class DatabaseCommandsTest extends TestCase
             'redo' => new RedoCommand($service, $migrator, new DownRunner($migrator), new UpdateRunner($migrator), $registry),
             'new' => new NewCommand($service, $migrator, $registry),
             'history' => new HistoryCommand($service, $migrator, $registry),
+            'mark' => new MarkCommand($service, $migrator, $registry),
             'create' => new CreateCommand(new CreateService($this->connections['default']), $service, $migrator, $registry),
         };
         return new CommandTester($command);

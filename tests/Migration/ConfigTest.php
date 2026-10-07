@@ -21,6 +21,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
@@ -46,6 +47,7 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(CreateCommand::class, $container->get(CreateCommand::class));
         $this->assertInstanceOf(DownCommand::class, $container->get(DownCommand::class));
         $this->assertInstanceOf(HistoryCommand::class, $container->get(HistoryCommand::class));
+        $this->assertInstanceOf(MarkCommand::class, $container->get(MarkCommand::class));
         $this->assertInstanceOf(NewCommand::class, $container->get(NewCommand::class));
         $this->assertInstanceOf(RedoCommand::class, $container->get(RedoCommand::class));
         $this->assertInstanceOf(UpdateCommand::class, $container->get(UpdateCommand::class));
@@ -84,7 +86,7 @@ final class ConfigTest extends TestCase
         $container = new Container(ContainerConfig::create()->withDefinitions($this->getConsoleDefinitions([
             'default' => new DatabaseSet($db, newMigrationPath: dirname(__DIR__) . '/Support/MigrationsExtra'),
         ])));
-        foreach ([CreateCommand::class, DownCommand::class, HistoryCommand::class, NewCommand::class, RedoCommand::class, UpdateCommand::class] as $class) {
+        foreach ([CreateCommand::class, DownCommand::class, HistoryCommand::class, MarkCommand::class, NewCommand::class, RedoCommand::class, UpdateCommand::class] as $class) {
             self::assertInstanceOf($class, $container->get($class));
         }
         $command = new CommandTester($container->get(NewCommand::class));

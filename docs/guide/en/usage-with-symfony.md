@@ -125,6 +125,10 @@ services:
         factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
         arguments: ['history']
 
+    Yiisoft\Db\Migration\Command\MarkCommand:
+        factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
+        arguments: ['mark']
+
     Yiisoft\Db\Migration\Command\NewCommand:
         factory: ['@Yiisoft\Db\Migration\Command\CommandFactory', 'create']
         arguments: ['new']
