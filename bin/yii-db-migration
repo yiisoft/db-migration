@@ -9,6 +9,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
@@ -85,6 +86,7 @@ $application->addCommands([
     new CreateCommand($createService, $migrationService, $migrator, $databases),
     new DownCommand($downRunner, $migrationService, $migrator, $databases),
     new HistoryCommand($migrationService, $migrator, $databases),
+    new MarkCommand($migrationService, $migrator, $databases),
     new NewCommand($migrationService, $migrator, $databases),
     new RedoCommand($migrationService, $migrator, $downRunner, $updateRunner, $databases),
     new UpdateCommand($updateRunner, $migrationService, $migrator, $databases),

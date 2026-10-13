@@ -17,6 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
 use Yiisoft\Db\Migration\Command\HistoryCommand;
+use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
@@ -42,6 +43,7 @@ final class ConfigTest extends TestCase
         $this->assertInstanceOf(CreateCommand::class, $container->get(CreateCommand::class));
         $this->assertInstanceOf(DownCommand::class, $container->get(DownCommand::class));
         $this->assertInstanceOf(HistoryCommand::class, $container->get(HistoryCommand::class));
+        $this->assertInstanceOf(MarkCommand::class, $container->get(MarkCommand::class));
         $this->assertInstanceOf(NewCommand::class, $container->get(NewCommand::class));
         $this->assertInstanceOf(RedoCommand::class, $container->get(RedoCommand::class));
         $this->assertInstanceOf(UpdateCommand::class, $container->get(UpdateCommand::class));

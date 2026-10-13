@@ -45,7 +45,7 @@ abstract class DatabaseCommand extends Command
             return Command::INVALID;
         }
 
-        if ($name === null && $multipleDatabases && ($this instanceof DownCommand || $this instanceof RedoCommand)) {
+        if ($name === null && $multipleDatabases && ($this instanceof DownCommand || $this instanceof RedoCommand || $this instanceof MarkCommand)) {
             $io->error('The --db option is required when multiple databases are configured.');
 
             return Command::INVALID;
