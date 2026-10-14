@@ -52,6 +52,7 @@ if (!file_exists($configFile)) {
  *     maxSqlOutputLength: int|null,
  *     newMigrationNamespace: string,
  *     newMigrationPath: string,
+ *     newMigrationTransactional?: bool|null,
  *     sourceNamespaces: list<string>,
  *     sourcePaths: list<string>,
  * } $params
@@ -69,7 +70,7 @@ $migrator = new Migrator(
     $params['migrationNameLimit'],
     $params['maxSqlOutputLength']
 );
-$createService = new CreateService($db, $params['useTablePrefix']);
+$createService = new CreateService($db, $params['useTablePrefix'], $params['newMigrationTransactional'] ?? null);
 $downRunner = new DownRunner($migrator);
 $updateRunner = new UpdateRunner($migrator);
 

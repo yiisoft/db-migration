@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Migration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -32,6 +33,7 @@ use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function dirname;
+use function str_contains;
 
 final class ConfigTest extends TestCase
 {
@@ -99,8 +101,50 @@ final class ConfigTest extends TestCase
         );
     }
 
-    private function createConsoleContainer(array $databases = [], array $definitions = []): Container
+    public static function transactionModes(): array
     {
+        return [
+            ['create', null, false],
+            ['table', null, true],
+            ['create', true, true],
+            ['table', false, false],
+        ];
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testTransactionModeConfiguration(string $command, ?bool $transactional, bool $expected): void
+    {
+        $container = $this->createConsoleContainer(transactional: $transactional);
+
+        $code = $container->get(CreateService::class)->run($command, 'post', 'Example');
+
+        $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testNamedDatabaseTransactionModeConfiguration(
+        string $command,
+        ?bool $transactional,
+        bool $expected,
+    ): void {
+        $container = $this->createConsoleContainer([
+            'maps' => [
+                'db' => ConnectionInterface::class,
+                'newMigrationTransactional' => $transactional,
+            ],
+        ]);
+
+        $code = $container->get(DatabaseSetRegistry::class)->createContext('maps')
+            ->createService->run($command, 'post', 'Example');
+
+        $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+    }
+
+    private function createConsoleContainer(
+        array $databases = [],
+        array $definitions = [],
+        ?bool $transactional = null,
+    ): Container {
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
                 [
@@ -116,15 +160,16 @@ final class ConfigTest extends TestCase
                     ],
                 ],
                 $definitions,
-                $this->getConsoleDefinitions($databases),
+                $this->getConsoleDefinitions($databases, $transactional),
             ));
         return new Container($config);
     }
 
-    private function getConsoleDefinitions(array $databases): array
+    private function getConsoleDefinitions(array $databases, ?bool $transactional): array
     {
         $params = $this->getParams();
         $params['yiisoft/db-migration']['databases'] = $databases;
+        $params['yiisoft/db-migration']['newMigrationTransactional'] = $transactional;
         return require dirname(__DIR__, 2) . '/config/di-console.php';
     }
 

@@ -48,6 +48,7 @@ final class ContainerHelper
             CreateService::class => new CreateService(
                 $container->get(ConnectionInterface::class),
                 $config->useTablePrefix,
+                $config->newMigrationTransactional,
             ),
             ConsoleMigrationInformer::class => new ConsoleMigrationInformer(),
             CreateCommand::class => new CreateCommand(
