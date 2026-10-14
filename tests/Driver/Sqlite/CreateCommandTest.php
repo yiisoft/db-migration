@@ -74,13 +74,17 @@ final class CreateCommandTest extends AbstractCreateCommandTest
 
         $this->assertSame(Command::SUCCESS, $firstExitCode);
         $this->assertSame(Command::SUCCESS, $secondExitCode);
+        $firstFiles = glob($path . '/*First.php');
+        $secondFiles = glob($path . '/*Second.php');
+        $this->assertCount(1, $firstFiles);
+        $this->assertCount(1, $secondFiles);
         $this->assertStringContainsString(
             'TransactionalMigrationInterface',
-            file_get_contents(glob($path . '/*First.php')[0]),
+            file_get_contents($firstFiles[0]),
         );
         $this->assertStringNotContainsString(
             'TransactionalMigrationInterface',
-            file_get_contents(glob($path . '/*Second.php')[0]),
+            file_get_contents($secondFiles[0]),
         );
     }
 
