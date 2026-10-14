@@ -1,8 +1,12 @@
 # Transactional migrations
 
-A migration implementing `Yiisoft\Db\Migration\TransactionalMigrationInterface` runs in a transaction. Applying the
-migration and recording it in history share a transaction. Reverting the migration and removing its history record also
-share a transaction. Each migration has its own transaction.
+A migration that implements `Yiisoft\Db\Migration\TransactionalMigrationInterface` runs in a transaction.
+The migrator uses a separate transaction for each migration's `up()` or `down()` method, including the history update.
+
+Some database operations commit automatically or cannot run in a transaction.
+The interface does not change these limits.
+
+## Create a migration
 
 To generate a transactional migration, use `--transaction`:
 
@@ -16,25 +20,27 @@ To generate a migration without a transaction, use `--no-transaction`:
 ./yii migrate:create post --command=table --no-transaction
 ```
 
-These options work with all generator commands: `create`, `table`, `dropTable`, `addColumn`, `dropColumn`, and `junction`.
-Use `php bin/console` for Symfony or `./vendor/bin/yii-db-migration` for the standalone tool instead of `./yii`.
+Both options work with all generator commands:
+`create`, `table`, `dropTable`, `addColumn`, `dropColumn`, and `junction`.
+For Symfony, replace `./yii` with `php bin/console`. For the standalone tool, use `./vendor/bin/yii-db-migration`.
 
 ## Default transaction mode
 
-The nullable `newMigrationTransactional` setting controls the mode for newly generated migrations:
+Set `newMigrationTransactional` to choose the default mode for new migrations:
 
 | Value | Behavior |
 | --- | --- |
 | `true` | Generate transactional migrations. |
 | `false` | Generate migrations without transactions. |
-| `null` | Keep each template's default. |
+| `null` | Use the template's default. |
 
-With `null`, the built-in `table` and `junction` templates generate transactional migrations. The `create`, `dropTable`,
-`addColumn`, and `dropColumn` templates generate migrations without transactions. This preserves the existing behavior.
+By default, the built-in `table` and `junction` templates generate transactional migrations.
+The other built-in templates generate migrations without transactions.
 
-An explicit CLI option overrides the configured mode. If neither specifies a mode, the template chooses its default.
+CLI options override `newMigrationTransactional`.
+If no option is set and the setting is `null`, the generator uses the template's default.
 
-For Yii Console, configure the default database in `config/console/params.php`:
+For Yii Console, set the mode for the default database in `config/console/params.php`:
 
 ```php
 'yiisoft/db-migration' => [
@@ -43,7 +49,7 @@ For Yii Console, configure the default database in `config/console/params.php`:
 ],
 ```
 
-For the standalone tool, set `'newMigrationTransactional' => true` in the root `yii-db-migration.php` configuration file.
+For the standalone tool, set `'newMigrationTransactional' => true` in the project's root `yii-db-migration.php` file.
 
 For Symfony, configure the `CreateService` constructor argument in `config/services.yml`:
 
@@ -54,14 +60,15 @@ services:
             $transactional: true
 ```
 
-When constructing the service directly, use `new CreateService($db, transactional: true)`. A call to
-`CreateService::run()` can override this mode with its `transactional` argument without changing subsequent calls.
+For direct PHP use, pass `transactional: true` to the `CreateService` constructor.
+Pass the `transactional` argument to `CreateService::run()` to override the mode for one call.
 
 ## Named databases
 
-Each additional database has its own `newMigrationTransactional` setting. It does not inherit the default database's
-setting. For Yii Console, add the setting to the corresponding entry in `databases`. For standalone or Symfony usage,
-pass it as a `DatabaseSet` constructor argument:
+Each named database has its own `newMigrationTransactional` setting. It does not inherit the default database's setting.
+
+For Yii Console, add the setting to the database's entry in `databases`.
+For standalone or Symfony usage, pass it to the `DatabaseSet` constructor:
 
 ```php
 new DatabaseSet(
@@ -77,19 +84,20 @@ The CLI option overrides the setting for the selected database:
 ./yii migrate:create update_places --db=maps --no-transaction
 ```
 
-See [Multiple databases](multiple-databases.md) for connection configuration.
+See [Multiple databases](multiple-databases.md) to configure the connections.
 
-## Existing migrations and custom templates
+## Change an existing migration
 
-Generation settings do not change existing migrations. Add or remove `TransactionalMigrationInterface` in an existing
-migration's implemented interfaces to change its transaction mode. Keep `RevertibleMigrationInterface` if the migration
-supports `down()`.
+Generation settings do not change existing migrations.
 
-Custom templates registered through `CreateService::setTemplate()` or `setTemplates()` receive a nullable `$transactional`
-variable. It contains the per-call override, otherwise the configured mode. If both are `null`, the template can choose
-its own default, for example with `$transactional ??= false`. To honor the setting, conditionally emit the import and
-implementation of `TransactionalMigrationInterface`. Existing custom templates that ignore this variable keep their
-previous behavior.
+To enable transactions, add `TransactionalMigrationInterface` to the migration's `implements` list.
+To disable transactions, remove it. Keep `RevertibleMigrationInterface` if the migration supports `down()`.
 
-Transactions remain subject to the database's restrictions. Some schema operations implicitly commit or cannot run in a
-transaction; adding the interface cannot make these operations rollbackable.
+## Custom templates
+
+Templates set with `CreateService::setTemplate()` or `CreateService::setTemplates()` receive `$transactional`.
+This variable contains the mode for the current call, or the configured mode if no override is set.
+If the value is `null`, choose a template default, for example with `$transactional ??= false`.
+
+Include the import and implementation of `TransactionalMigrationInterface` only when `$transactional` is `true`.
+Templates that ignore this variable keep their existing behavior.
