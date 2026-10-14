@@ -46,6 +46,7 @@
         "rector/rector": "^2.4.2",
         "shipmonk/composer-dependency-analyser": "^1.8",
         "yiisoft/db-sqlite": "^2.0",
+        "yiisoft/definitions": "^3.4.1",
         "yiisoft/di": "^1.4.1",
         "yiisoft/files": "^2.1",
         "yiisoft/psr-dummy-provider": "^1.0.2",

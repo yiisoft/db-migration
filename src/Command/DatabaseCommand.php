@@ -32,7 +32,7 @@ abstract class DatabaseCommand extends Command
     {
         /** @var string|null $name */
         $name = $input->getOption('db');
-        $names = $this->databases?->getNames() ?? ['default'];
+        $names = $this->databases?->getNames() ?? [DatabaseSetRegistry::DEFAULT_DATABASE];
         $multipleDatabases = count($names) > 1;
         $io = new SymfonyStyle($input, $output);
 
@@ -63,7 +63,7 @@ abstract class DatabaseCommand extends Command
         }
 
         if ($name !== null || $this instanceof CreateCommand) {
-            $names = [$name ?? 'default'];
+            $names = [$name ?? DatabaseSetRegistry::DEFAULT_DATABASE];
         }
 
         $isListing = $this instanceof NewCommand || $this instanceof HistoryCommand;

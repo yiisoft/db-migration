@@ -18,9 +18,8 @@ return [
     'db' => null,
 
     /**
-     * Named database sets (name => Yiisoft\Db\Migration\DatabaseSet instance).
-     * For a named "default" set, move the legacy options below and "db" into that set, removing their top-level entries.
-     * Without a "default" entry, the top-level options configure default migrations. Do not supply both forms.
+     * Additional named databases (name => Yiisoft\Db\Migration\DatabaseSet instance).
+     * The "default" database is configured by the other options and can't be defined here.
      * See docs/guide/en/multiple-databases.md.
      */
     'databases' => [],

@@ -17,15 +17,21 @@ use function is_string;
 use function trim;
 
 /**
- * Named database sets, in execution order. Existing command dependencies are used when no default set is configured.
+ * Additional named database sets, in execution order. The "default" database is always configured by the existing
+ * command dependencies, so it can't be defined here.
  */
 final class DatabaseSetRegistry
 {
+    /**
+     * Name of the default database configured by the existing command dependencies.
+     */
+    public const DEFAULT_DATABASE = 'default';
+
     /** @var array<string, DatabaseSet> */
     private readonly array $databases;
 
     /**
-     * @param array<array-key, DatabaseSet> $databases Named sets, optionally including "default".
+     * @param array<array-key, DatabaseSet> $databases Additional named sets, excluding "default".
      */
     public function __construct(
         private readonly Injector $injector,
@@ -37,6 +43,12 @@ final class DatabaseSetRegistry
             if (!is_string($name) || trim($name) === '') {
                 throw new InvalidArgumentException('Database names must be non-empty strings.');
             }
+            if ($name === self::DEFAULT_DATABASE) {
+                throw new InvalidArgumentException(
+                    'The "' . self::DEFAULT_DATABASE
+                    . '" database is configured by the existing migration settings and can\'t be redefined.',
+                );
+            }
             $sets[$name] = $database;
         }
         $this->databases = $sets;
@@ -47,7 +59,7 @@ final class DatabaseSetRegistry
      */
     public function getNames(): array
     {
-        return array_keys(['default' => null, ...$this->databases]);
+        return array_keys([self::DEFAULT_DATABASE => null, ...$this->databases]);
     }
 
     /**
@@ -55,7 +67,7 @@ final class DatabaseSetRegistry
      */
     public function createContext(string $name): ?DatabaseContext
     {
-        if ($name === 'default' && !isset($this->databases[$name])) {
+        if ($name === self::DEFAULT_DATABASE) {
             return null;
         }
 
