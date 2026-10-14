@@ -41,7 +41,7 @@ return [
     'newMigrationPath' => '',
 
     /**
-     * Whether generated migrations use transactions. Set to null to keep template defaults.
+     * Whether generated migrations use transactions. Set to `null` to keep template defaults.
      */
     'newMigrationTransactional' => null,
 
