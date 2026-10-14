@@ -6,6 +6,7 @@ use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
+use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Definitions\DynamicReference;
 use Yiisoft\Definitions\Reference;
@@ -13,6 +14,13 @@ use Yiisoft\Definitions\Reference;
 /** @var array $params */
 
 return [
+    CreateService::class => [
+        'class' => CreateService::class,
+        '__construct()' => [
+            'transactional' => $params['yiisoft/db-migration']['newMigrationTransactional'] ?? null,
+        ],
+    ],
+
     DatabaseSetRegistry::class => [
         'class' => DatabaseSetRegistry::class,
         '__construct()' => [

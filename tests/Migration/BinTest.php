@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Migration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Db\Cache\SchemaCache;
@@ -12,6 +13,10 @@ use Yiisoft\Db\Sqlite\Driver;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 
 use function dirname;
+use function file_get_contents;
+use function glob;
+use function str_contains;
+use function var_export;
 
 final class BinTest extends TestCase
 {
@@ -35,6 +40,7 @@ final class BinTest extends TestCase
     public function testBase(): void
     {
         $this->replaceParams("'databases' => [],", '');
+        $this->replaceParams("'newMigrationTransactional' => null,", '');
         $this->replaceParams(
             "'db' => null,",
             <<<'PHP'
@@ -49,6 +55,39 @@ final class BinTest extends TestCase
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString('Yii Database Migration Tool', $output);
+    }
+
+    public static function transactionModes(): array
+    {
+        return [
+            'configured on' => ['create', true, [], true],
+            'configured off' => ['table', false, [], false],
+            'override on' => ['create', false, ['--transaction'], true],
+            'override off' => ['table', true, ['--no-transaction'], false],
+        ];
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testCreateTransactionMode(string $command, bool $default, array $options, bool $expected): void
+    {
+        $this->replaceParams("'db' => null,", <<<'PHP'
+            'db' => new \Yiisoft\Db\Sqlite\Connection(
+                new \Yiisoft\Db\Sqlite\Driver('sqlite::memory:'),
+                new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
+            ),
+            PHP);
+        $this->replaceParams("'newMigrationPath' => '',", "'newMigrationPath' => __DIR__,");
+        $this->replaceParams(
+            "'newMigrationTransactional' => null,",
+            "'newMigrationTransactional' => " . var_export($default, true) . ',',
+        );
+
+        [$output, $exitCode] = $this->runYiiDbMigration(['migrate:create', 'post', "--command=$command", ...$options]);
+
+        $this->assertSame(0, $exitCode, $output);
+        $files = glob(dirname(__DIR__, 2) . '/runtime/tests/bin/M*.php');
+        $this->assertCount(1, $files);
+        $this->assertSame($expected, str_contains(file_get_contents($files[0]), 'TransactionalMigrationInterface'));
     }
 
     public function testWithoutConnection(): void

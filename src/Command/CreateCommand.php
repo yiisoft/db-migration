@@ -90,6 +90,12 @@ final class CreateCommand extends DatabaseCommand
             ->addOption('and', null, InputOption::VALUE_REQUIRED, 'And junction.')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
+            ->addOption(
+                'transaction',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Generate a transactional migration. If omitted, use the configured mode or template default.',
+            )
             ->setHelp('This command generates new migration file.');
     }
 
@@ -179,6 +185,8 @@ final class CreateCommand extends DatabaseCommand
         $fields = $input->getOption('fields');
         /** @var string|null $tableComment */
         $tableComment = $input->getOption('table-comment');
+        /** @var bool|null $transactional */
+        $transactional = $input->getOption('transaction');
 
         $content = $createService->run(
             $command,
@@ -188,6 +196,7 @@ final class CreateCommand extends DatabaseCommand
             $fields,
             $and,
             $tableComment,
+            $transactional,
         );
 
         $file = $migrationPath . DIRECTORY_SEPARATOR . $className . '.php';

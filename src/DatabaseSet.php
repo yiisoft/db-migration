@@ -14,6 +14,8 @@ final class DatabaseSet
     /**
      * @param string[] $sourceNamespaces
      * @param string[] $sourcePaths
+     * @param bool|null $newMigrationTransactional Whether generated migrations use transactions.
+     * `null` keeps template defaults.
      */
     public function __construct(
         public readonly ConnectionInterface $db,
@@ -25,5 +27,6 @@ final class DatabaseSet
         public readonly ?int $migrationNameLimit = 180,
         public readonly bool $useTablePrefix = true,
         public readonly ?int $maxSqlOutputLength = null,
+        public readonly ?bool $newMigrationTransactional = null,
     ) {}
 }

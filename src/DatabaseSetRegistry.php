@@ -88,7 +88,7 @@ final class DatabaseSetRegistry
         return new DatabaseContext(
             $migrator,
             $service,
-            new CreateService($database->db, $database->useTablePrefix),
+            new CreateService($database->db, $database->useTablePrefix, $database->newMigrationTransactional),
             new DownRunner($migrator),
             new UpdateRunner($migrator),
         );
