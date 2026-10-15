@@ -20,6 +20,7 @@ services:
         exclude:
           - '../vendor/yiisoft/db-migration/src/DatabaseRegistry.php'
           - '../vendor/yiisoft/db-migration/src/DatabaseConfig.php'
+          - '../vendor/yiisoft/db-migration/src/DatabaseSetup.php'
           - '../vendor/yiisoft/db-migration/src/Command/Context/'
 
     Yiisoft\Db\Migration\Informer\MigrationInformerInterface:

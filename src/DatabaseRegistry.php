@@ -83,6 +83,8 @@ final class DatabaseRegistry
      * service instances.
      *
      * @throws InvalidArgumentException If the additional database isn't configured.
+     *
+     * @internal
      */
     public function createSetup(string $name): DatabaseSetup
     {

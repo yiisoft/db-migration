@@ -8,6 +8,8 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 
 /**
  * Configuration and migration services of an additional named database.
+ *
+ * @internal
  */
 final class DatabaseSetup
 {
