@@ -15,19 +15,32 @@ use Yiisoft\Injector\Injector;
 
 final class DatabaseRegistryTest extends TestCase
 {
-    public static function invalidNames(): array
+    public static function numericNames(): array
     {
-        return [[''], [' '], [0]];
+        return [
+            'int' => [0, '0'],
+            'numeric string' => ['1', '1'],
+        ];
     }
 
-    #[DataProvider('invalidNames')]
-    public function testRejectsInvalidNames(string|int $name): void
+    #[DataProvider('numericNames')]
+    public function testRejectsNumericNames(string|int $name, string $expectedName): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Database names must be non-empty strings.');
+        $this->expectExceptionMessage('Database names must be non-numeric strings, "' . $expectedName . '" given.');
         new DatabaseRegistry(new Injector(), new NullMigrationInformer(), [
             $name => new DatabaseConfig($this->createMock(ConnectionInterface::class)),
         ]);
+    }
+
+    public function testRejectsInvalidConfiguration(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Configuration of the "maps" database must be an instance of "' . DatabaseConfig::class
+            . '", "array" given.',
+        );
+        new DatabaseRegistry(new Injector(), new NullMigrationInformer(), ['maps' => []]);
     }
 
     public function testRejectsDefaultName(): void

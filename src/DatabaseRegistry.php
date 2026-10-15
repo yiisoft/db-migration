@@ -10,8 +10,9 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Injector\Injector;
 
 use function array_keys;
-use function is_string;
-use function trim;
+use function get_debug_type;
+use function is_int;
+use function sprintf;
 
 /**
  * Additional named databases, in execution order. The "default" database is always configured by the existing
@@ -25,7 +26,7 @@ final class DatabaseRegistry
     public const DEFAULT_DATABASE = 'default';
 
     /** @var array<string, DatabaseConfig> */
-    private readonly array $databases;
+    private readonly array $configs;
 
     /**
      * @param array<array-key, DatabaseConfig> $databases Additional named databases, excluding "default".
@@ -35,20 +36,34 @@ final class DatabaseRegistry
         private readonly MigrationInformerInterface $informer,
         array $databases = [],
     ) {
-        $sets = [];
-        foreach ($databases as $name => $database) {
-            if (!is_string($name) || trim($name) === '') {
-                throw new InvalidArgumentException('Database names must be non-empty strings.');
+        $configs = [];
+        foreach ($databases as $name => $config) {
+            if (is_int($name)) {
+                throw new InvalidArgumentException(
+                    sprintf('Database names must be non-numeric strings, "%s" given.', $name),
+                );
             }
             if ($name === self::DEFAULT_DATABASE) {
                 throw new InvalidArgumentException(
-                    'The "' . self::DEFAULT_DATABASE
-                    . '" database is configured by the existing migration settings and can\'t be redefined.',
+                    sprintf(
+                        'The "%s" database is configured by the existing migration settings and can\'t be redefined.',
+                        self::DEFAULT_DATABASE,
+                    ),
                 );
             }
-            $sets[$name] = $database;
+            if (!$config instanceof DatabaseConfig) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Configuration of the "%s" database must be an instance of "%s", "%s" given.',
+                        $name,
+                        DatabaseConfig::class,
+                        get_debug_type($config),
+                    ),
+                );
+            }
+            $configs[$name] = $config;
         }
-        $this->databases = $sets;
+        $this->configs = $configs;
     }
 
     /**
@@ -60,7 +75,7 @@ final class DatabaseRegistry
      */
     public function getNames(): array
     {
-        return array_keys($this->databases);
+        return array_keys($this->configs);
     }
 
     /**
@@ -71,21 +86,21 @@ final class DatabaseRegistry
      */
     public function createSetup(string $name): DatabaseSetup
     {
-        $database = $this->databases[$name]
-            ?? throw new InvalidArgumentException("Unknown additional database: $name.");
+        $config = $this->configs[$name]
+            ?? throw new InvalidArgumentException(sprintf('Unknown additional database: %s.', $name));
         $migrator = new Migrator(
-            $database->db,
+            $config->db,
             $this->informer,
-            $database->historyTable,
-            $database->migrationNameLimit,
-            $database->maxSqlOutputLength,
+            $config->historyTable,
+            $config->migrationNameLimit,
+            $config->maxSqlOutputLength,
         );
-        $service = new MigrationService($database->db, $this->injector, $migrator);
-        $service->setNewMigrationNamespace($database->newMigrationNamespace);
-        $service->setNewMigrationPath($database->newMigrationPath);
-        $service->setSourceNamespaces($database->sourceNamespaces);
-        $service->setSourcePaths($database->sourcePaths);
+        $service = new MigrationService($config->db, $this->injector, $migrator);
+        $service->setNewMigrationNamespace($config->newMigrationNamespace);
+        $service->setNewMigrationPath($config->newMigrationPath);
+        $service->setSourceNamespaces($config->sourceNamespaces);
+        $service->setSourcePaths($config->sourcePaths);
 
-        return new DatabaseSetup($database, $migrator, $service);
+        return new DatabaseSetup($config, $migrator, $service);
     }
 }
