@@ -15,13 +15,23 @@ use const SORT_DESC;
 
 final class Migrator
 {
+    /**
+     * Default name of the migration history table.
+     */
+    public const DEFAULT_HISTORY_TABLE = '{{%migration}}';
+
+    /**
+     * Default maximum length of a migration name.
+     */
+    public const DEFAULT_MIGRATION_NAME_LIMIT = 180;
+
     private bool $checkMigrationHistoryTable = true;
 
     public function __construct(
         private readonly ConnectionInterface $db,
         private readonly MigrationInformerInterface $informer,
-        private readonly string $historyTable = '{{%migration}}',
-        private ?int $migrationNameLimit = 180,
+        private readonly string $historyTable = self::DEFAULT_HISTORY_TABLE,
+        private ?int $migrationNameLimit = self::DEFAULT_MIGRATION_NAME_LIMIT,
         private readonly ?int $maxSqlOutputLength = null,
     ) {}
 

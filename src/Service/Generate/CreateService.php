@@ -13,6 +13,11 @@ use function in_array;
 
 final class CreateService
 {
+    /**
+     * Default value of whether the generated table names should consider the `tablePrefix` setting.
+     */
+    public const DEFAULT_USE_TABLE_PREFIX = true;
+
     private PhpRenderer $phpRenderer;
     private ?SymfonyStyle $io = null;
 
@@ -27,7 +32,7 @@ final class CreateService
      */
     public function __construct(
         private readonly ConnectionInterface $db,
-        private readonly bool $useTablePrefix = true,
+        private readonly bool $useTablePrefix = self::DEFAULT_USE_TABLE_PREFIX,
     ) {
         $this->phpRenderer = new PhpRenderer();
     }
