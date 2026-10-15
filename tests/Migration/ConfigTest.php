@@ -12,7 +12,7 @@ use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
@@ -85,7 +85,7 @@ final class ConfigTest extends TestCase
                 ],
             ],
         );
-        $this->assertSame(['default', 'maps'], $container->get(DatabaseSetRegistry::class)->getNames());
+        $this->assertSame(['maps'], $container->get(DatabaseRegistry::class)->getNames());
 
         $command = new CommandTester($container->get(DownCommand::class));
         $this->assertSame(2, $command->execute([]));

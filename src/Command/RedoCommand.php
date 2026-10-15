@@ -12,8 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 use Yiisoft\Db\Migration\Command\Context\RedoContext;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -49,7 +49,7 @@ final class RedoCommand extends DatabaseCommand
         private readonly Migrator $migrator,
         private readonly DownRunner $downRunner,
         private readonly UpdateRunner $updateRunner,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $databases = null,
     ) {
         parent::__construct($databases);
     }
@@ -74,16 +74,13 @@ final class RedoCommand extends DatabaseCommand
         return new RedoContext($this->migrator, $this->migrationService, $this->downRunner, $this->updateRunner);
     }
 
-    protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): RedoContext {
+    protected function createContext(DatabaseSetup $setup): RedoContext
+    {
         return new RedoContext(
-            $migrator,
-            $migrationService,
-            new DownRunner($migrator),
-            new UpdateRunner($migrator),
+            $setup->migrator,
+            $setup->migrationService,
+            new DownRunner($setup->migrator),
+            new UpdateRunner($setup->migrator),
         );
     }
 

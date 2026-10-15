@@ -17,8 +17,8 @@ use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseConfig;
+use Yiisoft\Db\Migration\DatabaseRegistry;
 use Yiisoft\Db\Migration\Informer\NullMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -41,7 +41,7 @@ final class DatabaseCommandsTest extends TestCase
     private string $directory;
     /** @var array<string, Connection> */
     private array $connections;
-    /** @var array<string, DatabaseSet> */
+    /** @var array<string, DatabaseConfig> */
     private array $sets;
 
     protected function setUp(): void
@@ -52,7 +52,7 @@ final class DatabaseCommandsTest extends TestCase
         foreach (['default', 'maps', 'analytics'] as $name) {
             FileHelper::ensureDirectory($this->directory . '/' . $name);
             $this->connections[$name] = new Connection(new Driver('sqlite::memory:'), new SchemaCache(new MemorySimpleCache()));
-            $this->sets[$name] = new DatabaseSet(
+            $this->sets[$name] = new DatabaseConfig(
                 $this->connections[$name],
                 newMigrationPath: $this->directory . '/' . $name,
             );
@@ -105,7 +105,7 @@ final class DatabaseCommandsTest extends TestCase
     public function testMarkRequiresDatabaseAndChangesOnlyItsHistory(): void
     {
         $class = $this->writeMigration('maps');
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             historyTable: 'maps_history',
@@ -126,7 +126,7 @@ final class DatabaseCommandsTest extends TestCase
     public function testMarkRejectsLongNamesBeforeAddingAnyHistory(): void
     {
         $class = $this->writeMigration('maps');
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             migrationNameLimit: 10,
@@ -294,7 +294,7 @@ final class DatabaseCommandsTest extends TestCase
     public function testStopsOnNonzeroExitCode(): void
     {
         $this->writeMigration('default');
-        $this->sets['maps'] = new DatabaseSet($this->connections['maps']);
+        $this->sets['maps'] = new DatabaseConfig($this->connections['maps']);
         $this->writeMigration('analytics');
         self::assertSame(Command::INVALID, $this->command('up')->execute(['--force-yes' => true]));
         self::assertCount(1, $this->migrator('default')->getHistory());
@@ -369,7 +369,7 @@ final class DatabaseCommandsTest extends TestCase
         if ($name === 'history') {
             $this->command('up')->execute(['--db' => 'default', '--force-yes' => true]);
         }
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             new Connection(
                 new Driver('sqlite:' . $this->directory . '/missing/maps.sqlite'),
                 new SchemaCache(new MemorySimpleCache()),
@@ -411,7 +411,7 @@ final class DatabaseCommandsTest extends TestCase
     public function testSetsCanShareAConnectionWithSeparateHistoryTables(): void
     {
         $this->connections['maps'] = $this->connections['default'];
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             historyTable: 'maps_history',
@@ -427,7 +427,7 @@ final class DatabaseCommandsTest extends TestCase
     {
         $this->connections['default']->createCommand('CREATE TABLE parent (default_key INTEGER PRIMARY KEY)')->execute();
         $this->connections['maps']->createCommand('CREATE TABLE parent (maps_key INTEGER PRIMARY KEY)')->execute();
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             useTablePrefix: false,
@@ -448,7 +448,7 @@ final class DatabaseCommandsTest extends TestCase
 
     public function testCreateUsesNamedSetMigrationNameLimit(): void
     {
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             migrationNameLimit: 5,
@@ -485,7 +485,7 @@ final class DatabaseCommandsTest extends TestCase
 
     public function testNamedSetDiscoversMigrationsInItsNewMigrationNamespace(): void
     {
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationNamespace: 'Yiisoft\Db\Migration\Tests\Support\MigrationsExtra',
         );
@@ -497,7 +497,7 @@ final class DatabaseCommandsTest extends TestCase
     public function testNamedSetRespectsItsMigrationNameLimit(): void
     {
         $this->writeMigration('maps');
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             migrationNameLimit: 5,
@@ -511,7 +511,7 @@ final class DatabaseCommandsTest extends TestCase
     {
         $class = $this->writeMigration('maps');
         $extraClass = $this->writeMigration('analytics', 'extra_example');
-        $this->sets['maps'] = new DatabaseSet(
+        $this->sets['maps'] = new DatabaseConfig(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
             sourceNamespaces: ['Yiisoft\\Db\\Migration\\Tests\\Support\\MigrationsExtra'],
@@ -574,7 +574,7 @@ final class DatabaseCommandsTest extends TestCase
     {
         $sets = $this->sets;
         unset($sets['default']);
-        $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer(), $sets);
+        $registry = new DatabaseRegistry(new Injector(), new NullMigrationInformer(), $sets);
         $migrator = $this->migrator('default');
         $service = new MigrationService($this->connections['default'], new Injector(), $migrator);
         $service->setNewMigrationPath($this->sets['default']->newMigrationPath);

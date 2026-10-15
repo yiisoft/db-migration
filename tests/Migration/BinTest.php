@@ -84,7 +84,7 @@ final class BinTest extends TestCase
             PHP);
         $this->replaceParams("'databases' => [],", <<<'PHP'
             'databases' => [
-                'maps' => new \Yiisoft\Db\Migration\DatabaseSet(
+                'maps' => new \Yiisoft\Db\Migration\DatabaseConfig(
                     new \Yiisoft\Db\Sqlite\Connection(
                         new \Yiisoft\Db\Sqlite\Driver('sqlite:' . __DIR__ . '/maps.sqlite'),
                         new \Yiisoft\Db\Cache\SchemaCache(new \Yiisoft\Test\Support\SimpleCache\MemorySimpleCache())
@@ -130,7 +130,7 @@ final class BinTest extends TestCase
         $this->replaceParams("'db' => null,", "'db' => \$db,");
         $this->replaceParams(
             "'databases' => [],",
-            "'databases' => ['default' => new \\Yiisoft\\Db\\Migration\\DatabaseSet(\$db)],",
+            "'databases' => ['default' => new \\Yiisoft\\Db\\Migration\\DatabaseConfig(\$db)],",
         );
 
         [$output, $exitCode] = $this->runYiiDbMigration();

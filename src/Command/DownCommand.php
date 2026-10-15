@@ -12,8 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 use Yiisoft\Db\Migration\Command\Context\DownContext;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -48,7 +48,7 @@ final class DownCommand extends DatabaseCommand
         private readonly DownRunner $downRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $databases = null,
     ) {
         parent::__construct($databases);
     }
@@ -73,12 +73,9 @@ final class DownCommand extends DatabaseCommand
         return new DownContext($this->migrator, $this->migrationService, $this->downRunner);
     }
 
-    protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): DownContext {
-        return new DownContext($migrator, $migrationService, new DownRunner($migrator));
+    protected function createContext(DatabaseSetup $setup): DownContext
+    {
+        return new DownContext($setup->migrator, $setup->migrationService, new DownRunner($setup->migrator));
     }
 
     protected function executeForDatabase(

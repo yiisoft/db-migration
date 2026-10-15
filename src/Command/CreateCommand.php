@@ -13,8 +13,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\Command\Context\CreateContext;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -78,7 +78,7 @@ final class CreateCommand extends DatabaseCommand
         private readonly CreateService $createService,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $databases = null,
     ) {
         parent::__construct($databases);
     }
@@ -106,15 +106,12 @@ final class CreateCommand extends DatabaseCommand
         return new CreateContext($this->migrator, $this->migrationService, $this->createService);
     }
 
-    protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): CreateContext {
+    protected function createContext(DatabaseSetup $setup): CreateContext
+    {
         return new CreateContext(
-            $migrator,
-            $migrationService,
-            new CreateService($database->db, $database->useTablePrefix),
+            $setup->migrator,
+            $setup->migrationService,
+            new CreateService($setup->config->db, $setup->config->useTablePrefix),
         );
     }
 

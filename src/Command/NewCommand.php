@@ -11,8 +11,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\Command\Context\MigrationContext;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
@@ -46,7 +46,7 @@ final class NewCommand extends DatabaseCommand
     public function __construct(
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $databases = null,
     ) {
         parent::__construct($databases);
     }
@@ -72,12 +72,9 @@ final class NewCommand extends DatabaseCommand
         return new MigrationContext($this->migrator, $this->migrationService);
     }
 
-    protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): MigrationContext {
-        return new MigrationContext($migrator, $migrationService);
+    protected function createContext(DatabaseSetup $setup): MigrationContext
+    {
+        return new MigrationContext($setup->migrator, $setup->migrationService);
     }
 
     protected function executeForDatabase(

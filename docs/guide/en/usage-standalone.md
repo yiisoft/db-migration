@@ -34,16 +34,16 @@ each additional database in `databases`. The example below assumes you have alre
 `$analyticsConnection` in the same way as `db`, as described in [With configuration file](#with-configuration-file).
 
 ```php
-use Yiisoft\Db\Migration\DatabaseSet;
+use Yiisoft\Db\Migration\DatabaseConfig;
 
 return [
     // ...
     'databases' => [
-        'maps' => new DatabaseSet(
+        'maps' => new DatabaseConfig(
             $mapsConnection,
             newMigrationPath: __DIR__ . '/config/migrations/maps',
         ),
-        'analytics' => new DatabaseSet(
+        'analytics' => new DatabaseConfig(
             $analyticsConnection,
             newMigrationPath: __DIR__ . '/config/migrations/analytics',
         ),

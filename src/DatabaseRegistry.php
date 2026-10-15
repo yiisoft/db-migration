@@ -14,21 +14,21 @@ use function is_string;
 use function trim;
 
 /**
- * Additional named database sets, in execution order. The "default" database is always configured by the existing
+ * Additional named databases, in execution order. The "default" database is always configured by the existing
  * command dependencies, so it can't be defined here.
  */
-final class DatabaseSetRegistry
+final class DatabaseRegistry
 {
     /**
-     * Name of the default database configured by the existing command dependencies.
+     * Reserved name of the default database configured by the existing command dependencies.
      */
     public const DEFAULT_DATABASE = 'default';
 
-    /** @var array<string, DatabaseSet> */
+    /** @var array<string, DatabaseConfig> */
     private readonly array $databases;
 
     /**
-     * @param array<array-key, DatabaseSet> $databases Additional named sets, excluding "default".
+     * @param array<array-key, DatabaseConfig> $databases Additional named databases, excluding "default".
      */
     public function __construct(
         private readonly Injector $injector,
@@ -52,23 +52,27 @@ final class DatabaseSetRegistry
     }
 
     /**
-     * @return list<string>
+     * Returns names of additional databases, excluding "default".
+     *
+     * @return string[]
+     *
+     * @psalm-return list<string>
      */
     public function getNames(): array
     {
-        return array_keys([self::DEFAULT_DATABASE => null, ...$this->databases]);
+        return array_keys($this->databases);
     }
 
     /**
-     * Creates services for a named database.
+     * Creates a setup of an additional database: its configuration and migration services. Each call creates new
+     * service instances.
      *
-     * @internal
-     *
-     * @psalm-return array{DatabaseSet, Migrator, MigrationService}
+     * @throws InvalidArgumentException If the additional database isn't configured.
      */
-    public function createServices(string $name): array
+    public function createSetup(string $name): DatabaseSetup
     {
-        $database = $this->databases[$name] ?? throw new InvalidArgumentException("Unknown database set: $name.");
+        $database = $this->databases[$name]
+            ?? throw new InvalidArgumentException("Unknown additional database: $name.");
         $migrator = new Migrator(
             $database->db,
             $this->informer,
@@ -82,6 +86,6 @@ final class DatabaseSetRegistry
         $service->setSourceNamespaces($database->sourceNamespaces);
         $service->setSourcePaths($database->sourcePaths);
 
-        return [$database, $migrator, $service];
+        return new DatabaseSetup($database, $migrator, $service);
     }
 }

@@ -70,8 +70,8 @@ a DI container service ID:
 ],
 ```
 
-Each set is an array of `Yiisoft\Db\Migration\DatabaseSet` constructor arguments, where `db` is the ID of a connection
-service. Define these connections in the DI container, for example, in `config/common/db.php`:
+Each set is an array of `Yiisoft\Db\Migration\DatabaseConfig` constructor arguments, where `db` is the ID of
+a connection service. Define these connections in the DI container, for example, in `config/common/db.php`:
 
 ```php
 use Yiisoft\Db\Sqlite\Connection as SqliteConnection;

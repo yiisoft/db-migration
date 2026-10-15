@@ -12,8 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 use Yiisoft\Db\Migration\Command\Context\UpdateContext;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -47,7 +47,7 @@ final class UpdateCommand extends DatabaseCommand
         private readonly UpdateRunner $updateRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $databases = null,
     ) {
         parent::__construct($databases);
     }
@@ -73,15 +73,12 @@ final class UpdateCommand extends DatabaseCommand
         return new UpdateContext($this->migrator, $this->migrationService, $this->updateRunner);
     }
 
-    protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): UpdateContext {
+    protected function createContext(DatabaseSetup $setup): UpdateContext
+    {
         return new UpdateContext(
-            $migrator,
-            $migrationService,
-            new UpdateRunner($migrator),
+            $setup->migrator,
+            $setup->migrationService,
+            new UpdateRunner($setup->migrator),
         );
     }
 

@@ -10,10 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
-use Yiisoft\Db\Migration\Migrator;
-use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 
 use function count;
 use function implode;
@@ -27,7 +25,7 @@ use function is_string;
  */
 abstract class DatabaseCommand extends Command
 {
-    public function __construct(private readonly ?DatabaseSetRegistry $databases = null)
+    public function __construct(private readonly ?DatabaseRegistry $databases = null)
     {
         parent::__construct();
         $this->addOption('db', null, InputOption::VALUE_REQUIRED, 'Database configuration to use for migrations.');
@@ -35,7 +33,7 @@ abstract class DatabaseCommand extends Command
 
     final protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $availableNames = $this->databases?->getNames() ?? [DatabaseSetRegistry::DEFAULT_DATABASE];
+        $availableNames = [DatabaseRegistry::DEFAULT_DATABASE, ...($this->databases?->getNames() ?? [])];
         $multipleDatabases = count($availableNames) > 1;
         $io = new SymfonyStyle($input, $output);
 
@@ -48,11 +46,10 @@ abstract class DatabaseCommand extends Command
         $hasResults = false;
 
         foreach ($names as $name) {
-            if ($this->databases === null || $name === DatabaseSetRegistry::DEFAULT_DATABASE) {
+            if ($this->databases === null || $name === DatabaseRegistry::DEFAULT_DATABASE) {
                 $context = $this->createDefaultContext();
             } else {
-                [$database, $migrator, $migrationService] = $this->databases->createServices($name);
-                $context = $this->createContext($database, $migrator, $migrationService);
+                $context = $this->createContext($this->databases->createSetup($name));
             }
 
             if ($multipleDatabases) {
@@ -89,11 +86,7 @@ abstract class DatabaseCommand extends Command
      *
      * @psalm-return TContext
      */
-    abstract protected function createContext(
-        DatabaseSet $database,
-        Migrator $migrator,
-        MigrationService $migrationService,
-    ): object;
+    abstract protected function createContext(DatabaseSetup $setup): object;
 
     /**
      * Executes the command for a single database.
@@ -141,7 +134,7 @@ abstract class DatabaseCommand extends Command
             }
 
             return $policy === MissingDatabaseOptionPolicy::ProcessDefaultDatabase
-                ? [DatabaseSetRegistry::DEFAULT_DATABASE]
+                ? [DatabaseRegistry::DEFAULT_DATABASE]
                 : $availableNames;
         }
 
