@@ -61,6 +61,11 @@ final class RedoCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
+    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    {
+        return MissingDatabaseOptionPolicy::RejectIfMultiple;
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,

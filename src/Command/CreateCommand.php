@@ -93,6 +93,11 @@ final class CreateCommand extends DatabaseCommand
             ->setHelp('This command generates new migration file.');
     }
 
+    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    {
+        return MissingDatabaseOptionPolicy::ProcessDefaultDatabase;
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,

@@ -58,6 +58,13 @@ final class UpdateCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
+    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    {
+        return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
+            ? MissingDatabaseOptionPolicy::RejectIfMultipleWithFilter
+            : MissingDatabaseOptionPolicy::ProcessAllDatabases;
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,

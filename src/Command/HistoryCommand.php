@@ -49,11 +49,16 @@ final class HistoryCommand extends DatabaseCommand
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
+    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    {
+        return MissingDatabaseOptionPolicy::ProcessAllDatabases;
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
         ?DatabaseContext $context,
-    ): int {
+    ): ?int {
         $migrator = $context->migrator ?? $this->migrator;
         $migrationService = $context->migrationService ?? $this->migrationService;
 
@@ -80,7 +85,7 @@ final class HistoryCommand extends DatabaseCommand
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');
 
-            return Command::FAILURE;
+            return null;
         }
 
         $countMigrations = count($migrations);

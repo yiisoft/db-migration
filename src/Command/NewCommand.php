@@ -57,11 +57,18 @@ final class NewCommand extends DatabaseCommand
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to display.');
     }
 
+    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    {
+        return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
+            ? MissingDatabaseOptionPolicy::RejectIfMultipleWithFilter
+            : MissingDatabaseOptionPolicy::ProcessAllDatabases;
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
         ?DatabaseContext $context,
-    ): int {
+    ): ?int {
         $migrator = $context->migrator ?? $this->migrator;
         $migrationService = $context->migrationService ?? $this->migrationService;
 
@@ -99,7 +106,7 @@ final class NewCommand extends DatabaseCommand
         if (empty($migrations)) {
             $io->warning('No new migrations found. Your system is up-to-date.');
 
-            return Command::FAILURE;
+            return null;
         }
 
         $countMigrations = count($migrations);

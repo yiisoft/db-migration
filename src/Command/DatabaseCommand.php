@@ -16,6 +16,7 @@ use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use function count;
 use function implode;
 use function in_array;
+use function is_string;
 
 /**
  * @internal
@@ -30,55 +31,27 @@ abstract class DatabaseCommand extends Command
 
     final protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var string|null $name */
-        $name = $input->getOption('db');
-        $names = $this->databases?->getNames() ?? [DatabaseSetRegistry::DEFAULT_DATABASE];
-        $multipleDatabases = count($names) > 1;
+        $availableNames = $this->databases?->getNames() ?? [DatabaseSetRegistry::DEFAULT_DATABASE];
+        $multipleDatabases = count($availableNames) > 1;
         $io = new SymfonyStyle($input, $output);
 
-        if ($name !== null && !in_array($name, $names, true)) {
-            $io->error(
-                'Unknown database "' . OutputFormatter::escape($name) . '". Available databases: '
-                . OutputFormatter::escape(implode(', ', $names)) . '.',
-            );
-
+        $names = $this->resolveDatabaseNames($input, $availableNames, $multipleDatabases);
+        if (is_string($names)) {
+            $io->error($names);
             return Command::INVALID;
         }
 
-        if ($name === null && $multipleDatabases && ($this instanceof DownCommand || $this instanceof RedoCommand || $this instanceof MarkCommand)) {
-            $io->error('The --db option is required when multiple databases are configured.');
-
-            return Command::INVALID;
-        }
-
-        if (
-            $name === null
-            && $multipleDatabases
-            && ($this instanceof UpdateCommand || $this instanceof NewCommand)
-            && ($input->getOption('path') !== [] || $input->getOption('namespace') !== [])
-        ) {
-            $io->error('The --db option is required with --path or --namespace when multiple databases are configured.');
-
-            return Command::INVALID;
-        }
-
-        if ($name !== null || $this instanceof CreateCommand) {
-            $names = [$name ?? DatabaseSetRegistry::DEFAULT_DATABASE];
-        }
-
-        $isListing = $this instanceof NewCommand || $this instanceof HistoryCommand;
         $hasResults = false;
 
-        foreach ($names as $database) {
-            $context = $this->databases?->createContext($database);
+        foreach ($names as $name) {
+            $context = $this->databases?->createContext($name);
 
             if ($multipleDatabases) {
-                $io->section('Database: ' . OutputFormatter::escape($database));
+                $io->section('Database: ' . OutputFormatter::escape($name));
             }
 
             $status = $this->executeForDatabase($input, $output, $context);
-            // Listing commands return FAILURE for an empty set; other sets may still have results.
-            if ($isListing && $status === Command::FAILURE) {
+            if ($status === null) {
                 continue;
             }
             if ($status !== Command::SUCCESS) {
@@ -87,12 +60,67 @@ abstract class DatabaseCommand extends Command
             $hasResults = true;
         }
 
-        return $isListing && !$hasResults ? Command::FAILURE : Command::SUCCESS;
+        return $hasResults ? Command::SUCCESS : Command::FAILURE;
     }
 
+    /**
+     * Returns how the command behaves when the `--db` option isn't specified.
+     */
+    abstract protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy;
+
+    /**
+     * Executes the command for a single database.
+     *
+     * @return int|null The command exit status, or `null` if the database has an empty result. The command fails if
+     * all processed databases have empty results.
+     */
     abstract protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
         ?DatabaseContext $context,
-    ): int;
+    ): ?int;
+
+    /**
+     * Resolves names of databases to process.
+     *
+     * @param string[] $availableNames
+     * @return string[]|string The database names, or an error message if the databases can't be resolved.
+     *
+     * @psalm-param list<string> $availableNames
+     * @psalm-return list<string>|string
+     */
+    private function resolveDatabaseNames(
+        InputInterface $input,
+        array $availableNames,
+        bool $multipleDatabases,
+    ): array|string {
+        /** @var string|null $name */
+        $name = $input->getOption('db');
+
+        if ($name === null) {
+            $policy = $this->getMissingDatabaseOptionPolicy($input);
+            if ($multipleDatabases) {
+                $error = match ($policy) {
+                    MissingDatabaseOptionPolicy::RejectIfMultiple => 'The --db option is required when multiple databases are configured.',
+                    MissingDatabaseOptionPolicy::RejectIfMultipleWithFilter => 'The --db option is required with --path or --namespace when multiple databases are configured.',
+                    MissingDatabaseOptionPolicy::ProcessDefaultDatabase,
+                    MissingDatabaseOptionPolicy::ProcessAllDatabases => null,
+                };
+                if ($error !== null) {
+                    return $error;
+                }
+            }
+
+            return $policy === MissingDatabaseOptionPolicy::ProcessDefaultDatabase
+                ? [DatabaseSetRegistry::DEFAULT_DATABASE]
+                : $availableNames;
+        }
+
+        if (!in_array($name, $availableNames, true)) {
+            return 'Unknown database "' . OutputFormatter::escape($name) . '". Available databases: '
+                . OutputFormatter::escape(implode(', ', $availableNames)) . '.';
+        }
+
+        return [$name];
+    }
 }
