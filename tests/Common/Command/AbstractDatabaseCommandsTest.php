@@ -26,6 +26,7 @@ use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
+use Yiisoft\Db\Schema\Column\ColumnBuilder;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\Injector\Injector;
 use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty;
@@ -273,6 +274,9 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
     public function testStopsOnExceptionAndRollsBackOnlyTheFailingDatabase(): void
     {
         $defaultClass = $this->writeMigration('default');
+        $this->connections['maps']->createCommand()
+            ->createTable('example', ['value' => ColumnBuilder::integer()])
+            ->execute();
         $this->writeMigration('maps', fail: true);
         $this->writeMigration('analytics');
         try {
@@ -284,7 +288,7 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
         self::assertSame([$defaultClass], array_keys($this->migrator('default')->getHistory()));
         self::assertNotNull($this->connections['default']->getSchema()->getTableSchema('example'));
         self::assertSame([], $this->migrator('maps')->getHistory());
-        self::assertNull($this->connections['maps']->getSchema()->getTableSchema('example', true));
+        self::assertSame(0, $this->countRows($this->connections['maps'], 'example'));
         self::assertNull($this->connections['analytics']->getSchema()->getTableSchema('migration'));
     }
 
@@ -419,8 +423,12 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
 
     public function testNamedSetUsesItsConnectionForGeneration(): void
     {
-        $this->connections['default']->createCommand('CREATE TABLE parent (default_key INTEGER PRIMARY KEY)')->execute();
-        $this->connections['maps']->createCommand('CREATE TABLE parent (maps_key INTEGER PRIMARY KEY)')->execute();
+        $this->connections['default']->createCommand()
+            ->createTable('parent', ['default_key' => ColumnBuilder::integer()->primaryKey()])
+            ->execute();
+        $this->connections['maps']->createCommand()
+            ->createTable('parent', ['maps_key' => ColumnBuilder::integer()->primaryKey()])
+            ->execute();
         $this->sets['maps'] = new DatabaseSet(
             $this->connections['maps'],
             newMigrationPath: $this->directory . '/maps',
@@ -546,7 +554,9 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
     private function writeMigration(string $database, string $table = 'example', bool $fail = false): string
     {
         $class = 'M260930000000' . ucfirst($database) . uniqid();
-        $failure = $fail ? "throw new \\RuntimeException('Migration failed.');" : '';
+        $up = $fail
+            ? "\$b->insert('$table', ['value' => 1]); throw new \\RuntimeException('Migration failed.');"
+            : "\$b->createTable('$table', ['id' => ColumnBuilder::primaryKey()]);";
         file_put_contents($this->directory . '/' . $database . '/' . $class . '.php', <<<PHP
             <?php
             use Yiisoft\Db\Migration\MigrationBuilder;
@@ -557,8 +567,7 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
             {
                 public function up(MigrationBuilder \$b): void
                 {
-                    \$b->createTable('$table', ['id' => ColumnBuilder::primaryKey()]);
-                    $failure
+                    $up
                 }
                 public function down(MigrationBuilder \$b): void
                 {
@@ -567,6 +576,13 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
             }
             PHP);
         return $class;
+    }
+
+    private function countRows(ConnectionInterface $connection, string $table): int
+    {
+        return (int) $connection
+            ->createCommand('SELECT COUNT(*) FROM ' . $connection->getQuoter()->quoteTableName($table))
+            ->queryScalar();
     }
 
     private function migrator(string $name): Migrator
