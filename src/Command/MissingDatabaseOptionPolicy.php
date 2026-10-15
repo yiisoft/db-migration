@@ -25,10 +25,4 @@ enum MissingDatabaseOptionPolicy
      * Reject the command when multiple databases are configured. With a single database, it is processed.
      */
     case RejectIfMultiple;
-
-    /**
-     * Reject the command when multiple databases are configured and `--path` or `--namespace` is used.
-     * Otherwise, all configured databases are processed.
-     */
-    case RejectIfMultipleWithFilter;
 }

@@ -75,6 +75,14 @@ abstract class DatabaseCommand extends Command
     abstract protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy;
 
     /**
+     * Returns the error message shown when the `--db` option is required, but isn't specified.
+     */
+    protected function getMissingDatabaseOptionError(): string
+    {
+        return 'The --db option is required when multiple databases are configured.';
+    }
+
+    /**
      * Creates the command context for the default database from the command dependencies.
      *
      * @psalm-return TContext
@@ -121,16 +129,8 @@ abstract class DatabaseCommand extends Command
 
         if ($name === null) {
             $policy = $this->getMissingDatabaseOptionPolicy($input);
-            if ($multipleDatabases) {
-                $error = match ($policy) {
-                    MissingDatabaseOptionPolicy::RejectIfMultiple => 'The --db option is required when multiple databases are configured.',
-                    MissingDatabaseOptionPolicy::RejectIfMultipleWithFilter => 'The --db option is required with --path or --namespace when multiple databases are configured.',
-                    MissingDatabaseOptionPolicy::ProcessDefaultDatabase,
-                    MissingDatabaseOptionPolicy::ProcessAllDatabases => null,
-                };
-                if ($error !== null) {
-                    return $error;
-                }
+            if ($multipleDatabases && $policy === MissingDatabaseOptionPolicy::RejectIfMultiple) {
+                return $this->getMissingDatabaseOptionError();
             }
 
             return $policy === MissingDatabaseOptionPolicy::ProcessDefaultDatabase

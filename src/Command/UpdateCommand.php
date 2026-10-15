@@ -64,8 +64,13 @@ final class UpdateCommand extends DatabaseCommand
     protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
     {
         return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
-            ? MissingDatabaseOptionPolicy::RejectIfMultipleWithFilter
+            ? MissingDatabaseOptionPolicy::RejectIfMultiple
             : MissingDatabaseOptionPolicy::ProcessAllDatabases;
+    }
+
+    protected function getMissingDatabaseOptionError(): string
+    {
+        return 'The --db option is required with --path or --namespace when multiple databases are configured.';
     }
 
     protected function createDefaultContext(): UpdateContext
