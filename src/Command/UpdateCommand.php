@@ -47,9 +47,9 @@ final class UpdateCommand extends DatabaseCommand
         private readonly UpdateRunner $updateRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseRegistry $databases = null,
+        ?DatabaseRegistry $additionalDatabases = null,
     ) {
-        parent::__construct($databases);
+        parent::__construct($additionalDatabases);
     }
 
     protected function configure(): void

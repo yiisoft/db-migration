@@ -78,9 +78,9 @@ final class CreateCommand extends DatabaseCommand
         private readonly CreateService $createService,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseRegistry $databases = null,
+        ?DatabaseRegistry $additionalDatabases = null,
     ) {
-        parent::__construct($databases);
+        parent::__construct($additionalDatabases);
     }
 
     protected function configure(): void

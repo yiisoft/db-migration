@@ -1,9 +1,9 @@
 # Multiple databases
 
-If your application uses separate databases such as `maps` and `analytics`, you can organize their migrations
-into isolated sets. Each set has its own migration directory and a separate migration history table in its database,
-so migrations applied to one set do not affect the recorded status of migrations in another. Use `--db` to work with
-one set, or apply migrations to all sets with a single command.
+If your application uses separate databases such as `maps` and `analytics`, you can keep their migrations
+isolated. Each database has its own migration directory and a separate migration history table, so migrations applied
+to one database do not affect the recorded status of migrations in another. Use `--db` to work with one database,
+or apply migrations to all databases with a single command.
 
 ## Configure your databases
 

@@ -48,9 +48,9 @@ final class DownCommand extends DatabaseCommand
         private readonly DownRunner $downRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseRegistry $databases = null,
+        ?DatabaseRegistry $additionalDatabases = null,
     ) {
-        parent::__construct($databases);
+        parent::__construct($additionalDatabases);
     }
 
     protected function configure(): void
@@ -82,7 +82,7 @@ final class DownCommand extends DatabaseCommand
         InputInterface $input,
         OutputInterface $output,
         object $context,
-    ): int {
+    ): ?int {
         $io = new SymfonyStyle($input, $output);
         $context->migrator->setIo($io);
         $context->migrationService->setIo($io);
@@ -115,7 +115,7 @@ final class DownCommand extends DatabaseCommand
             if (empty($migrations)) {
                 $io->warning('No applied migrations found.');
 
-                return Command::FAILURE;
+                return null;
             }
 
             if ($limit !== null) {
@@ -128,7 +128,7 @@ final class DownCommand extends DatabaseCommand
                 $output->writeln("<fg=yellow>Apply at least one migration first.</>\n");
                 $io->warning('No migration has been done before.');
 
-                return Command::FAILURE;
+                return null;
             }
 
             $migrations = array_keys($migrations);

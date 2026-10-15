@@ -96,7 +96,7 @@ services:
 
 The name `default` is reserved and can't be used in the registry.
 
-Select one set with `--db`, or apply all sets with `migrate:up`:
+Select one database with `--db`, or apply migrations to all databases with `migrate:up`:
 
 ```shell
 php bin/console migrate:create create_places --db=maps

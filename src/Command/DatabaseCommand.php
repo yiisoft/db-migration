@@ -25,7 +25,7 @@ use function is_string;
  */
 abstract class DatabaseCommand extends Command
 {
-    public function __construct(private readonly ?DatabaseRegistry $databases = null)
+    public function __construct(private readonly ?DatabaseRegistry $additionalDatabases = null)
     {
         parent::__construct();
         $this->addOption('db', null, InputOption::VALUE_REQUIRED, 'Database configuration to use for migrations.');
@@ -33,7 +33,7 @@ abstract class DatabaseCommand extends Command
 
     final protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $availableNames = [DatabaseRegistry::DEFAULT_DATABASE, ...($this->databases?->getNames() ?? [])];
+        $availableNames = [DatabaseRegistry::DEFAULT_DATABASE, ...($this->additionalDatabases?->getNames() ?? [])];
         $multipleDatabases = count($availableNames) > 1;
         $io = new SymfonyStyle($input, $output);
 
@@ -46,10 +46,10 @@ abstract class DatabaseCommand extends Command
         $hasResults = false;
 
         foreach ($names as $name) {
-            if ($this->databases === null || $name === DatabaseRegistry::DEFAULT_DATABASE) {
+            if ($this->additionalDatabases === null || $name === DatabaseRegistry::DEFAULT_DATABASE) {
                 $context = $this->createDefaultContext();
             } else {
-                $context = $this->createContext($this->databases->createSetup($name));
+                $context = $this->createContext($this->additionalDatabases->createSetup($name));
             }
 
             if ($multipleDatabases) {

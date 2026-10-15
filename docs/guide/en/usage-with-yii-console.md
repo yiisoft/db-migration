@@ -70,7 +70,7 @@ a DI container service ID:
 ],
 ```
 
-Each set is an array of `Yiisoft\Db\Migration\DatabaseConfig` constructor arguments, where `db` is the ID of
+Each database configuration is an array of `Yiisoft\Db\Migration\DatabaseConfig` constructor arguments, where `db` is the ID of
 a connection service. Define these connections in the DI container, for example, in `config/common/db.php`:
 
 ```php
@@ -96,7 +96,7 @@ return [
 
 The name `default` is reserved and can't be used in `databases`.
 
-Select one set with `--db`, or apply all sets with `migrate:up`:
+Select one database with `--db`, or apply migrations to all databases with `migrate:up`:
 
 ```shell
 ./yii migrate:create create_places --db=maps
