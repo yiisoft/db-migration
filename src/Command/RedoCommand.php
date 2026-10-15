@@ -11,7 +11,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\Command\Context\RedoContext;
+use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -37,6 +38,8 @@ use function array_slice;
  * ./yii migrate:redo --path=@vendor/yiisoft/rbac-db/migrations # redo the last migration from the directory
  * ./yii migrate:redo --namespace=Yiisoft\\Rbac\\Db\\Migrations # redo the last migration from the namespace
  * ```
+ *
+ * @extends DatabaseCommand<RedoContext>
  */
 #[AsCommand('migrate:redo', 'Redoes the last few migrations.')]
 final class RedoCommand extends DatabaseCommand
@@ -66,25 +69,38 @@ final class RedoCommand extends DatabaseCommand
         return MissingDatabaseOptionPolicy::RejectIfMultiple;
     }
 
+    protected function createDefaultContext(): RedoContext
+    {
+        return new RedoContext($this->migrator, $this->migrationService, $this->downRunner, $this->updateRunner);
+    }
+
+    protected function createContext(
+        DatabaseSet $database,
+        Migrator $migrator,
+        MigrationService $migrationService,
+    ): RedoContext {
+        return new RedoContext(
+            $migrator,
+            $migrationService,
+            new DownRunner($migrator),
+            new UpdateRunner($migrator),
+        );
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-        $downRunner = $context->downRunner ?? $this->downRunner;
-        $updateRunner = $context->updateRunner ?? $this->updateRunner;
-
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
-        $downRunner->setIo($io);
-        $updateRunner->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
+        $context->downRunner->setIo($io);
+        $context->updateRunner->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
-        $migrationService->before($this->getName() ?? '');
+        $context->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -102,9 +118,9 @@ final class RedoCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $migrations = $migrator->getHistory();
+            $migrations = $context->migrator->getHistory();
             $migrations = array_keys($migrations);
-            $migrations = $migrationService->filterMigrations($migrations, $namespaces, $paths);
+            $migrations = $context->migrationService->filterMigrations($migrations, $namespaces, $paths);
 
             if (empty($migrations)) {
                 $io->warning('No applied migrations found.');
@@ -116,7 +132,7 @@ final class RedoCommand extends DatabaseCommand
                 $migrations = array_slice($migrations, 0, $limit);
             }
         } else {
-            $migrations = $migrator->getHistory($limit);
+            $migrations = $context->migrator->getHistory($limit);
 
             if (empty($migrations)) {
                 $io->warning('No migration has been done before.');
@@ -137,12 +153,12 @@ final class RedoCommand extends DatabaseCommand
         }
 
         if ($input->getOption('force-yes') || $io->confirm("Redo the above $migrationWord?")) {
-            $instances = $migrationService->makeRevertibleMigrations($migrations);
+            $instances = $context->migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $downRunner->run($instance, $i + 1);
+                    $context->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');
@@ -153,7 +169,7 @@ final class RedoCommand extends DatabaseCommand
 
             foreach (array_reverse($instances) as $i => $instance) {
                 try {
-                    $updateRunner->run($instance, $countMigrations - $i);
+                    $context->updateRunner->run($instance, $countMigrations - $i);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Reverted but partially applied.' : 'Reverted but not applied.');

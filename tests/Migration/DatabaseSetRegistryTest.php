@@ -41,19 +41,22 @@ final class DatabaseSetRegistryTest extends TestCase
         ]);
     }
 
-    public function testDefaultUsesExistingServices(): void
+    public function testCannotCreateServicesForDefaultDatabase(): void
     {
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer());
-        self::assertNull($registry->createContext('default'));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unknown database set: default.');
+        $registry->createServices('default');
     }
 
-    public function testCannotCreateContextForUnknownDatabase(): void
+    public function testCannotCreateServicesForUnknownDatabase(): void
     {
         $registry = new DatabaseSetRegistry(new Injector(), new NullMigrationInformer());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown database set: missing.');
-        $registry->createContext('missing');
+        $registry->createServices('missing');
     }
 
     public function testDefaultIsFirstFollowedByConfigurationOrder(): void

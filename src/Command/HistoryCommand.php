@@ -10,7 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\Command\Context\MigrationContext;
+use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -30,6 +31,8 @@ use function date;
  * ./yii migrate:history --limit=5 # last 5 migrations
  * ./yii migrate:history --all     # whole history
  * ```
+ *
+ * @extends DatabaseCommand<MigrationContext>
  */
 #[AsCommand('migrate:history', 'Displays the migration history.')]
 final class HistoryCommand extends DatabaseCommand
@@ -54,21 +57,31 @@ final class HistoryCommand extends DatabaseCommand
         return MissingDatabaseOptionPolicy::ProcessAllDatabases;
     }
 
+    protected function createDefaultContext(): MigrationContext
+    {
+        return new MigrationContext($this->migrator, $this->migrationService);
+    }
+
+    protected function createContext(
+        DatabaseSet $database,
+        Migrator $migrator,
+        MigrationService $migrationService,
+    ): MigrationContext {
+        return new MigrationContext($migrator, $migrationService);
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): ?int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
-        $migrationService->before($this->getName() ?? '');
+        $context->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -80,7 +93,7 @@ final class HistoryCommand extends DatabaseCommand
             return Command::INVALID;
         }
 
-        $migrations = $migrator->getHistory($limit);
+        $migrations = $context->migrator->getHistory($limit);
 
         if (empty($migrations)) {
             $io->warning('No migration has been done before.');

@@ -10,7 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\Command\Context\MigrationContext;
+use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -36,6 +37,8 @@ use function count;
  * ./yii migrate:new --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
  * ./yii migrate:new --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
+ *
+ * @extends DatabaseCommand<MigrationContext>
  */
 #[AsCommand('migrate:new', 'Displays not yet applied migrations.')]
 final class NewCommand extends DatabaseCommand
@@ -64,19 +67,29 @@ final class NewCommand extends DatabaseCommand
             : MissingDatabaseOptionPolicy::ProcessAllDatabases;
     }
 
+    protected function createDefaultContext(): MigrationContext
+    {
+        return new MigrationContext($this->migrator, $this->migrationService);
+    }
+
+    protected function createContext(
+        DatabaseSet $database,
+        Migrator $migrator,
+        MigrationService $migrationService,
+    ): MigrationContext {
+        return new MigrationContext($migrator, $migrationService);
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): ?int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
         /** @var string[] $paths */
         $paths = $input->getOption('path');
@@ -85,11 +98,11 @@ final class NewCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $migrationService->setSourcePaths($paths);
-            $migrationService->setSourceNamespaces($namespaces);
+            $context->migrationService->setSourcePaths($paths);
+            $context->migrationService->setSourceNamespaces($namespaces);
         }
 
-        $migrationService->before($this->getName() ?? '');
+        $context->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -101,7 +114,7 @@ final class NewCommand extends DatabaseCommand
             return Command::INVALID;
         }
 
-        $migrations = $migrationService->getNewMigrations();
+        $migrations = $context->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $io->warning('No new migrations found. Your system is up-to-date.');

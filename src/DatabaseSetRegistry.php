@@ -6,9 +6,6 @@ namespace Yiisoft\Db\Migration;
 
 use InvalidArgumentException;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
-use Yiisoft\Db\Migration\Runner\DownRunner;
-use Yiisoft\Db\Migration\Runner\UpdateRunner;
-use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Injector\Injector;
 
@@ -63,14 +60,14 @@ final class DatabaseSetRegistry
     }
 
     /**
+     * Creates services for a named database.
+     *
      * @internal
+     *
+     * @psalm-return array{DatabaseSet, Migrator, MigrationService}
      */
-    public function createContext(string $name): ?DatabaseContext
+    public function createServices(string $name): array
     {
-        if ($name === self::DEFAULT_DATABASE) {
-            return null;
-        }
-
         $database = $this->databases[$name] ?? throw new InvalidArgumentException("Unknown database set: $name.");
         $migrator = new Migrator(
             $database->db,
@@ -85,12 +82,6 @@ final class DatabaseSetRegistry
         $service->setSourceNamespaces($database->sourceNamespaces);
         $service->setSourcePaths($database->sourcePaths);
 
-        return new DatabaseContext(
-            $migrator,
-            $service,
-            new CreateService($database->db, $database->useTablePrefix),
-            new DownRunner($migrator),
-            new UpdateRunner($migrator),
-        );
+        return [$database, $migrator, $service];
     }
 }

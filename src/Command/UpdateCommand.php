@@ -11,7 +11,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\Command\Context\UpdateContext;
+use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\UpdateRunner;
@@ -36,6 +37,8 @@ use function strlen;
  * ./yii migrate:up --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
  * ./yii migrate:up --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
+ *
+ * @extends DatabaseCommand<UpdateContext>
  */
 #[AsCommand('migrate:up', 'Applies new migrations.')]
 final class UpdateCommand extends DatabaseCommand
@@ -65,21 +68,34 @@ final class UpdateCommand extends DatabaseCommand
             : MissingDatabaseOptionPolicy::ProcessAllDatabases;
     }
 
+    protected function createDefaultContext(): UpdateContext
+    {
+        return new UpdateContext($this->migrator, $this->migrationService, $this->updateRunner);
+    }
+
+    protected function createContext(
+        DatabaseSet $database,
+        Migrator $migrator,
+        MigrationService $migrationService,
+    ): UpdateContext {
+        return new UpdateContext(
+            $migrator,
+            $migrationService,
+            new UpdateRunner($migrator),
+        );
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-        $updateRunner = $context->updateRunner ?? $this->updateRunner;
-
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
-        $updateRunner->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
+        $context->updateRunner->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
         /** @var string[] $paths */
         $paths = $input->getOption('path');
@@ -88,11 +104,11 @@ final class UpdateCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $migrationService->setSourcePaths($paths);
-            $migrationService->setSourceNamespaces($namespaces);
+            $context->migrationService->setSourcePaths($paths);
+            $context->migrationService->setSourceNamespaces($namespaces);
         }
 
-        if ($migrationService->before($this->getName() ?? '') === Command::INVALID) {
+        if ($context->migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 
@@ -108,7 +124,7 @@ final class UpdateCommand extends DatabaseCommand
             }
         }
 
-        $migrations = $migrationService->getNewMigrations();
+        $migrations = $context->migrationService->getNewMigrations();
 
         if (empty($migrations)) {
             $output->writeln("<fg=green>No new migrations found.</>\n");
@@ -129,7 +145,7 @@ final class UpdateCommand extends DatabaseCommand
         }
 
         foreach ($migrations as $i => $migration) {
-            $nameLimit = $migrator->getMigrationNameLimit();
+            $nameLimit = $context->migrator->getMigrationNameLimit();
 
             if (strlen($migration) > $nameLimit) {
                 $output->writeln(
@@ -144,12 +160,12 @@ final class UpdateCommand extends DatabaseCommand
         }
 
         if ($input->getOption('force-yes') || $io->confirm("Apply the above $migrationWord?")) {
-            $instances = $migrationService->makeMigrations($migrations);
+            $instances = $context->migrationService->makeMigrations($migrations);
             $migrationWas = ($migrationsCount === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $updateRunner->run($instance, $i + 1);
+                    $context->updateRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $migrationsCount new $migrationWas applied.</>\n");
                     $io->error($i > 0 ? 'Partially updated.' : 'Not updated.');

@@ -10,8 +10,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Db\Migration\DatabaseContext;
+use Yiisoft\Db\Migration\DatabaseSet;
 use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\Migrator;
+use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function count;
 use function implode;
@@ -20,6 +22,8 @@ use function is_string;
 
 /**
  * @internal
+ *
+ * @template TContext of object
  */
 abstract class DatabaseCommand extends Command
 {
@@ -44,7 +48,12 @@ abstract class DatabaseCommand extends Command
         $hasResults = false;
 
         foreach ($names as $name) {
-            $context = $this->databases?->createContext($name);
+            if ($this->databases === null || $name === DatabaseSetRegistry::DEFAULT_DATABASE) {
+                $context = $this->createDefaultContext();
+            } else {
+                [$database, $migrator, $migrationService] = $this->databases->createServices($name);
+                $context = $this->createContext($database, $migrator, $migrationService);
+            }
 
             if ($multipleDatabases) {
                 $io->section('Database: ' . OutputFormatter::escape($name));
@@ -69,7 +78,27 @@ abstract class DatabaseCommand extends Command
     abstract protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy;
 
     /**
+     * Creates the command context for the default database from the command dependencies.
+     *
+     * @psalm-return TContext
+     */
+    abstract protected function createDefaultContext(): object;
+
+    /**
+     * Creates the command context for a named database.
+     *
+     * @psalm-return TContext
+     */
+    abstract protected function createContext(
+        DatabaseSet $database,
+        Migrator $migrator,
+        MigrationService $migrationService,
+    ): object;
+
+    /**
      * Executes the command for a single database.
+     *
+     * @psalm-param TContext $context
      *
      * @return int|null The command exit status, or `null` if the database has an empty result. The command fails if
      * all processed databases have empty results.
@@ -77,7 +106,7 @@ abstract class DatabaseCommand extends Command
     abstract protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): ?int;
 
     /**

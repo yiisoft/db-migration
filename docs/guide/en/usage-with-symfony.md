@@ -20,7 +20,7 @@ services:
         exclude:
           - '../vendor/yiisoft/db-migration/src/DatabaseSetRegistry.php'
           - '../vendor/yiisoft/db-migration/src/DatabaseSet.php'
-          - '../vendor/yiisoft/db-migration/src/DatabaseContext.php'
+          - '../vendor/yiisoft/db-migration/src/Command/Context/'
 
     Yiisoft\Db\Migration\Informer\MigrationInformerInterface:
         class: 'Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer'
