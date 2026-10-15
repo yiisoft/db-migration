@@ -33,6 +33,24 @@ final class DatabaseRegistryTest extends TestCase
         ]);
     }
 
+    public static function blankNames(): array
+    {
+        return [
+            'empty' => [''],
+            'whitespace' => [' '],
+        ];
+    }
+
+    #[DataProvider('blankNames')]
+    public function testRejectsBlankNames(string $name): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Database names must be non-empty strings.');
+        new DatabaseRegistry(new Injector(), new NullMigrationInformer(), [
+            $name => new DatabaseConfig($this->createMock(ConnectionInterface::class)),
+        ]);
+    }
+
     public function testRejectsInvalidConfiguration(): void
     {
         $this->expectException(InvalidArgumentException::class);

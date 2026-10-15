@@ -13,6 +13,7 @@ use function array_keys;
 use function get_debug_type;
 use function is_int;
 use function sprintf;
+use function trim;
 
 /**
  * Additional named databases, in execution order. The "default" database is always configured by the existing
@@ -42,6 +43,9 @@ final class DatabaseRegistry
                 throw new InvalidArgumentException(
                     sprintf('Database names must be non-numeric strings, "%s" given.', $name),
                 );
+            }
+            if (trim($name) === '') {
+                throw new InvalidArgumentException('Database names must be non-empty strings.');
             }
             if ($name === self::DEFAULT_DATABASE) {
                 throw new InvalidArgumentException(
