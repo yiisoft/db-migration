@@ -32,10 +32,10 @@ The command modifies history as follows:
 - If the target is already the latest recorded entry, nothing changes.
 - If the target is unknown, report an error without adding or removing history entries.
 
-To clear the entire history, use the `--all` (`-a`) option:
+To clear the entire history, use the `--clear` (`-c`) option:
 
 ```shell
-./vendor/bin/yii-db-migration migrate:mark --all
+./vendor/bin/yii-db-migration migrate:mark --clear
 ```
 
 The command lists the entries to be added and removed, and asks for confirmation before changing history. Use

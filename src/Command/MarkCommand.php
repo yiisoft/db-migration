@@ -38,7 +38,7 @@ use function trim;
  * ./yii migrate:mark 'App\Migrations\M260101000002CreateIndex' # record pending migrations through this class
  * ./yii migrate:mark M260101000003AddColumn                    # use an unqualified migration class name
  * ./yii migrate:mark 260101000004                              # select a migration by its timestamp
- * ./yii migrate:mark --all                                     # remove all migration history entries
+ * ./yii migrate:mark --clear                                   # remove all migration history entries
  * ```
  *
  * A pending target is recorded along with all earlier pending migrations. A recorded target removes newer history
@@ -61,7 +61,7 @@ final class MarkCommand extends DatabaseCommand
     {
         $this
             ->addArgument('version', InputArgument::OPTIONAL, 'Migration class name or timestamp.')
-            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all migration history entries.')
+            ->addOption('clear', 'c', InputOption::VALUE_NONE, 'Remove all migration history entries.')
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
@@ -87,10 +87,10 @@ final class MarkCommand extends DatabaseCommand
 
         /** @var string|null $version */
         $version = $input->getArgument('version');
-        $all = (bool) $input->getOption('all');
+        $clear = (bool) $input->getOption('clear');
 
-        if ($all === ($version !== null)) {
-            $io->error('Specify either a version or the "--all" option.');
+        if ($clear === ($version !== null)) {
+            $io->error('Specify either a version or the "--clear" option.');
             return Command::INVALID;
         }
 

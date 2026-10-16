@@ -174,13 +174,13 @@ abstract class AbstractMarkCommandTest extends TestCase
         $this->migrator()->updateHistory([self::FIRST], []);
         $this->migrator()->updateHistory([self::SECOND], []);
         $command = $this->command();
-        self::assertSame(Command::SUCCESS, $command->execute(['--all' => true, '-y' => true]));
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true, '-y' => true]));
         self::assertSame([], $this->migrator()->getHistory());
         self::assertStringContainsString(
             'Total 2 migrations to be removed from history: 1. ' . self::SECOND . ' 2. ' . self::FIRST . ' ',
             preg_replace('/\s+/', ' ', $command->getDisplay()),
         );
-        self::assertSame(Command::SUCCESS, $command->execute(['--all' => true]));
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true]));
         self::assertStringContainsString('Nothing needs to be done', $command->getDisplay());
     }
 
@@ -190,13 +190,13 @@ abstract class AbstractMarkCommandTest extends TestCase
         $before = $this->migrator()->getHistory();
         $command = $this->command();
         $command->setInputs(['no']);
-        self::assertSame(Command::SUCCESS, $command->execute(['--all' => true]));
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true]));
         self::assertSame($before, $this->migrator()->getHistory());
     }
 
     public static function invalidArguments(): array
     {
-        return [[[]], [['version' => self::FIRST, '--all' => true]]];
+        return [[[]], [['version' => self::FIRST, '--clear' => true]]];
     }
 
     #[DataProvider('invalidArguments')]
@@ -206,7 +206,7 @@ abstract class AbstractMarkCommandTest extends TestCase
         $before = $this->migrator()->getHistory();
         $command = $this->command();
         self::assertSame(Command::INVALID, $command->execute([...$arguments, '-y' => true]));
-        self::assertStringContainsString('Specify either a version or the "--all" option.', $command->getDisplay());
+        self::assertStringContainsString('Specify either a version or the "--clear" option.', $command->getDisplay());
         self::assertSame($before, $this->migrator()->getHistory());
     }
 

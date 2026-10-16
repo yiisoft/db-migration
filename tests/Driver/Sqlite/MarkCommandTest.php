@@ -59,7 +59,7 @@ final class MarkCommandTest extends AbstractMarkCommandTest
 
         try {
             $command->execute([
-                ...($operation === 'INSERT' ? ['version' => M260101000003Third::class] : ['--all' => true]),
+                ...($operation === 'INSERT' ? ['version' => M260101000003Third::class] : ['--clear' => true]),
                 '-y' => true,
             ]);
             self::fail('Expected the history change to fail.');
