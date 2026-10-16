@@ -39,5 +39,5 @@ To clear the entire history, use the special base version:
 ./vendor/bin/yii-db-migration migrate:mark m000000_000000_base
 ```
 
-The command asks for confirmation before adding or removing entries. Use `--force-yes` (`-y`) for unattended execution.
+The command lists the entries to be added and removed, and asks for confirmation before changing history. Use `--force-yes` (`-y`) for unattended execution.
 With multiple databases configured, select one explicitly using `--db=maps`.

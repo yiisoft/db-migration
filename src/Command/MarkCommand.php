@@ -21,6 +21,7 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 use function array_keys;
 use function array_map;
 use function array_slice;
+use function count;
 use function in_array;
 use function preg_match;
 use function str_replace;
@@ -152,6 +153,9 @@ final class MarkCommand extends DatabaseCommand
             }
         }
 
+        $this->writeMigrations($output, $add, 'to be marked as applied');
+        $this->writeMigrations($output, $remove, 'to be removed from history');
+
         $io->note('Only migration history will change. No migrations will be applied or reverted.');
         if ($input->getOption('force-yes') || $io->confirm("Set migration history at $label?", false)) {
             $context->migrator->updateHistory($add, $remove);
@@ -159,6 +163,27 @@ final class MarkCommand extends DatabaseCommand
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param string[] $migrations
+     */
+    private function writeMigrations(OutputInterface $output, array $migrations, string $action): void
+    {
+        if ($migrations === []) {
+            return;
+        }
+
+        $count = count($migrations);
+        $migrationWord = $count === 1 ? 'migration' : 'migrations';
+
+        $output->writeln("<fg=yellow>Total $count $migrationWord $action:</>\n");
+
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("\t<fg=yellow>" . ($i + 1) . '. ' . OutputFormatter::escape($migration) . '</>');
+        }
+
+        $output->writeln('');
     }
 
     private function matches(string $migration, string $version, ?string $timestamp): bool

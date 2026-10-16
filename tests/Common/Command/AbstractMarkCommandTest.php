@@ -70,6 +70,46 @@ abstract class AbstractMarkCommandTest extends TestCase
         self::assertSame([$class], array_keys($this->migrator()->getHistory()));
     }
 
+    public function testMarkUpShowsMigrationsToBeAdded(): void
+    {
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::SECOND]));
+        $display = preg_replace('/\s+/', ' ', $command->getDisplay());
+        self::assertStringContainsString(
+            'Total 2 migrations to be marked as applied: 1. ' . self::FIRST . ' 2. ' . self::SECOND . ' ',
+            $display,
+        );
+        self::assertStringNotContainsString('to be removed from history', $display);
+    }
+
+    public function testMarkDownShowsMigrationsToBeRemoved(): void
+    {
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory([self::SECOND], []);
+        $this->migrator()->updateHistory([self::THIRD], []);
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::FIRST]));
+        $display = preg_replace('/\s+/', ' ', $command->getDisplay());
+        self::assertStringContainsString(
+            'Total 2 migrations to be removed from history: 1. ' . self::THIRD . ' 2. ' . self::SECOND . ' ',
+            $display,
+        );
+        self::assertStringNotContainsString('to be marked as applied', $display);
+    }
+
+    public function testMarkShowsSingleMigration(): void
+    {
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::FIRST]));
+        self::assertStringContainsString(
+            'Total 1 migration to be marked as applied: 1. ' . self::FIRST . ' ',
+            preg_replace('/\s+/', ' ', $command->getDisplay()),
+        );
+    }
+
     public function testMarkDownUsesHistoryOrderAndPreservesTarget(): void
     {
         // Application order may differ from filename order, and recorded files may no longer exist.
