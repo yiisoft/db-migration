@@ -184,7 +184,7 @@ final class MarkCommand extends DatabaseCommand
     }
 
     /**
-     * @param string[] $migrations
+     * @psalm-param list<string> $migrations
      */
     private function writeMigrations(OutputInterface $output, array $migrations, string $action): void
     {
