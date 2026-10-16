@@ -30,7 +30,7 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public static function versions(): array
     {
-        return [[self::SECOND], ['\\' . self::SECOND], ['260101000002'], ['260101_000002']];
+        return [[self::SECOND], ['\\' . self::SECOND], ['260101000002']];
     }
 
     #[DataProvider('versions')]
@@ -50,7 +50,6 @@ abstract class AbstractMarkCommandTest extends TestCase
             ['260101000001', 'M260101000001', 'MarkTimestampOnly'],
             ['M260101000002123Fix', 'M260101000002123Fix', 'MarkDigitSuffix'],
             ['260101000002', 'M260101000002123Fix', 'MarkDigitSuffix'],
-            ['260101_000002', 'M260101000002123Fix', 'MarkDigitSuffix'],
         ];
     }
 
@@ -68,6 +67,46 @@ abstract class AbstractMarkCommandTest extends TestCase
         $this->migrator()->updateHistory([self::THIRD], []);
         self::assertSame(Command::SUCCESS, $command->execute(['version' => $version, '-y' => true]));
         self::assertSame([$class], array_keys($this->migrator()->getHistory()));
+    }
+
+    public function testMarkUpShowsMigrationsToBeAdded(): void
+    {
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::SECOND]));
+        $display = preg_replace('/\s+/', ' ', $command->getDisplay());
+        self::assertStringContainsString(
+            'Total 2 migrations to be marked as applied: 1. ' . self::FIRST . ' 2. ' . self::SECOND . ' ',
+            $display,
+        );
+        self::assertStringNotContainsString('to be removed from history', $display);
+    }
+
+    public function testMarkDownShowsMigrationsToBeRemoved(): void
+    {
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory([self::SECOND], []);
+        $this->migrator()->updateHistory([self::THIRD], []);
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::FIRST]));
+        $display = preg_replace('/\s+/', ' ', $command->getDisplay());
+        self::assertStringContainsString(
+            'Total 2 migrations to be removed from history: 1. ' . self::THIRD . ' 2. ' . self::SECOND . ' ',
+            $display,
+        );
+        self::assertStringNotContainsString('to be marked as applied', $display);
+    }
+
+    public function testMarkShowsSingleMigration(): void
+    {
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['version' => self::FIRST]));
+        self::assertStringContainsString(
+            'Total 1 migration to be marked as applied: 1. ' . self::FIRST . ' ',
+            preg_replace('/\s+/', ' ', $command->getDisplay()),
+        );
     }
 
     public function testMarkDownUsesHistoryOrderAndPreservesTarget(): void
@@ -133,11 +172,42 @@ abstract class AbstractMarkCommandTest extends TestCase
     public function testResetHistory(): void
     {
         $this->migrator()->updateHistory([self::FIRST], []);
+        $this->migrator()->updateHistory([self::SECOND], []);
         $command = $this->command();
-        self::assertSame(Command::SUCCESS, $command->execute(['version' => MarkCommand::BASE_MIGRATION, '-y' => true]));
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true, '-y' => true]));
         self::assertSame([], $this->migrator()->getHistory());
-        self::assertSame(Command::SUCCESS, $command->execute(['version' => MarkCommand::BASE_MIGRATION]));
+        self::assertStringContainsString(
+            'Total 2 migrations to be removed from history: 1. ' . self::SECOND . ' 2. ' . self::FIRST . ' ',
+            preg_replace('/\s+/', ' ', $command->getDisplay()),
+        );
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true]));
         self::assertStringContainsString('Nothing needs to be done', $command->getDisplay());
+    }
+
+    public function testDecliningResetHistoryKeepsHistory(): void
+    {
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $before = $this->migrator()->getHistory();
+        $command = $this->command();
+        $command->setInputs(['no']);
+        self::assertSame(Command::SUCCESS, $command->execute(['--clear' => true]));
+        self::assertSame($before, $this->migrator()->getHistory());
+    }
+
+    public static function invalidArguments(): array
+    {
+        return [[[]], [['version' => self::FIRST, '--clear' => true]]];
+    }
+
+    #[DataProvider('invalidArguments')]
+    public function testVersionOrAllIsRequired(array $arguments): void
+    {
+        $this->migrator()->updateHistory([self::FIRST], []);
+        $before = $this->migrator()->getHistory();
+        $command = $this->command();
+        self::assertSame(Command::INVALID, $command->execute([...$arguments, '-y' => true]));
+        self::assertStringContainsString('Specify either a version or the "--clear" option.', $command->getDisplay());
+        self::assertSame($before, $this->migrator()->getHistory());
     }
 
     public function testAlreadyAtTarget(): void
@@ -176,7 +246,16 @@ abstract class AbstractMarkCommandTest extends TestCase
 
     public static function invalidVersions(): array
     {
-        return [[''], ['invalid'], ['2026-01-01'], ['1767225600'], ['260101000099'], ['M260101000002Unknown']];
+        return [
+            [''],
+            ['invalid'],
+            ['2026-01-01'],
+            ['1767225600'],
+            ['260101000099'],
+            ['260101_000002'],
+            ['M260101000002Unknown'],
+            ['m000000_000000_base'],
+        ];
     }
 
     #[DataProvider('invalidVersions')]
