@@ -12,8 +12,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiisoft\Db\Migration\DatabaseContext;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\Command\Context\CreateContext;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -65,6 +66,8 @@ use const LOCK_EX;
  *
  * In case {@see MigrationService::$newMigrationPath} is not set, and no namespace is provided,
  * {@see MigrationService::$newMigrationNamespace} will be used.
+ *
+ * @extends DatabaseCommand<CreateContext>
  */
 #[AsCommand('migrate:create', 'Creates a new migration.')]
 final class CreateCommand extends DatabaseCommand
@@ -75,9 +78,9 @@ final class CreateCommand extends DatabaseCommand
         private readonly CreateService $createService,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $additionalDatabases = null,
     ) {
-        parent::__construct($databases);
+        parent::__construct($additionalDatabases);
     }
 
     protected function configure(): void
@@ -93,21 +96,36 @@ final class CreateCommand extends DatabaseCommand
             ->setHelp('This command generates new migration file.');
     }
 
+    protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array
+    {
+        return [DatabaseRegistry::DEFAULT_DATABASE];
+    }
+
+    protected function createDefaultContext(): CreateContext
+    {
+        return new CreateContext($this->migrator, $this->migrationService, $this->createService);
+    }
+
+    protected function createContext(DatabaseSetup $setup): CreateContext
+    {
+        return new CreateContext(
+            $setup->migrator,
+            $setup->migrationService,
+            new CreateService($setup->config->db, $setup->config->useTablePrefix),
+        );
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
+        object $context,
     ): int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-        $createService = $context->createService ?? $this->createService;
-
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
-        $createService->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
+        $context->createService->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
         /** @var string|null $path */
         $path = $input->getOption('path');
@@ -116,13 +134,13 @@ final class CreateCommand extends DatabaseCommand
         $namespace = $input->getOption('namespace');
 
         if ($path !== null || $namespace !== null) {
-            $migrationService->setNewMigrationPath((string) $path);
-            $migrationService->setNewMigrationNamespace((string) $namespace);
+            $context->migrationService->setNewMigrationPath((string) $path);
+            $context->migrationService->setNewMigrationNamespace((string) $namespace);
         } else {
-            $namespace = $migrationService->getNewMigrationNamespace();
+            $namespace = $context->migrationService->getNewMigrationNamespace();
         }
 
-        if ($migrationService->before($this->getName() ?? '') === Command::INVALID) {
+        if ($context->migrationService->before($this->getName() ?? '') === Command::INVALID) {
             return Command::INVALID;
         }
 
@@ -152,8 +170,8 @@ final class CreateCommand extends DatabaseCommand
         $and = $input->getOption('and');
         $name = $this->generateName($command, $table, $and);
 
-        $className = $migrationService->generateClassName($name);
-        $nameLimit = $migrator->getMigrationNameLimit();
+        $className = $context->migrationService->generateClassName($name);
+        $nameLimit = $context->migrator->getMigrationNameLimit();
 
         if ($nameLimit !== 0 && strlen($className) > $nameLimit) {
             $io->error('The migration name is too long.');
@@ -162,7 +180,7 @@ final class CreateCommand extends DatabaseCommand
         }
 
         try {
-            $migrationPath = $migrationService->findMigrationPath();
+            $migrationPath = $context->migrationService->findMigrationPath();
         } catch (LogicException $e) {
             $io->error($e->getMessage());
 
@@ -180,7 +198,7 @@ final class CreateCommand extends DatabaseCommand
         /** @var string|null $tableComment */
         $tableComment = $input->getOption('table-comment');
 
-        $content = $createService->run(
+        $content = $context->createService->run(
             $command,
             $table,
             $className,

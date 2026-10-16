@@ -18,9 +18,10 @@ services:
     Yiisoft\Db\Migration\:
         resource: '../vendor/yiisoft/db-migration/src/'
         exclude:
-          - '../vendor/yiisoft/db-migration/src/DatabaseSetRegistry.php'
-          - '../vendor/yiisoft/db-migration/src/DatabaseSet.php'
-          - '../vendor/yiisoft/db-migration/src/DatabaseContext.php'
+          - '../vendor/yiisoft/db-migration/src/DatabaseRegistry.php'
+          - '../vendor/yiisoft/db-migration/src/DatabaseConfig.php'
+          - '../vendor/yiisoft/db-migration/src/DatabaseSetup.php'
+          - '../vendor/yiisoft/db-migration/src/Command/Context/'
 
     Yiisoft\Db\Migration\Informer\MigrationInformerInterface:
         class: 'Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer'
@@ -66,27 +67,27 @@ That's it. Now you can use `bin/console migrate:*` commands.
 ## Multiple databases
 
 The `default` database is configured as described above: it uses the `ConnectionInterface` service and the
-`MigrationService` configuration. Add a `DatabaseSet` service for each additional database and pass them to
-`DatabaseSetRegistry`. The commands receive the registry through autowiring. The example below assumes that the
-`app.db.maps` and `app.db.analytics` connection services already exist.
+`MigrationService` configuration. Add a `DatabaseConfig` service for each additional database and pass them
+to `DatabaseRegistry`. The commands receive the registry through autowiring. The example below assumes that
+the `app.db.maps` and `app.db.analytics` connection services already exist.
 
 ```yaml
 services:
     # ...
 
     app.migrations.maps:
-        class: Yiisoft\Db\Migration\DatabaseSet
+        class: Yiisoft\Db\Migration\DatabaseConfig
         arguments:
             $db: '@app.db.maps'
             $newMigrationPath: '%kernel.project_dir%/config/migrations/maps'
 
     app.migrations.analytics:
-        class: Yiisoft\Db\Migration\DatabaseSet
+        class: Yiisoft\Db\Migration\DatabaseConfig
         arguments:
             $db: '@app.db.analytics'
             $newMigrationPath: '%kernel.project_dir%/config/migrations/analytics'
 
-    Yiisoft\Db\Migration\DatabaseSetRegistry:
+    Yiisoft\Db\Migration\DatabaseRegistry:
         arguments:
             $databases:
                 maps: '@app.migrations.maps'
@@ -95,7 +96,7 @@ services:
 
 The name `default` is reserved and can't be used in the registry.
 
-Select one set with `--db`, or apply all sets with `migrate:up`:
+Select one database with `--db`, or apply migrations to all databases with `migrate:up`:
 
 ```shell
 php bin/console migrate:create create_places --db=maps

@@ -11,8 +11,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
-use Yiisoft\Db\Migration\DatabaseContext;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\Command\Context\DownContext;
+use Yiisoft\Db\Migration\DatabaseRegistry;
+use Yiisoft\Db\Migration\DatabaseSetup;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
@@ -37,6 +38,8 @@ use function count;
  * ./yii migrate:down --path=@vendor/yiisoft/rbac-db/migrations --path=@vendor/yiisoft/cache-db/migrations
  * ./yii migrate:down --namespace=Yiisoft\\Rbac\\Db\\Migrations --namespace=Yiisoft\\Cache\\Db\\Migrations
  * ```
+ *
+ * @extends DatabaseCommand<DownContext>
  */
 #[AsCommand('migrate:down', 'Reverts the specified number of latest migrations.')]
 final class DownCommand extends DatabaseCommand
@@ -45,9 +48,9 @@ final class DownCommand extends DatabaseCommand
         private readonly DownRunner $downRunner,
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
-        ?DatabaseSetRegistry $databases = null,
+        ?DatabaseRegistry $additionalDatabases = null,
     ) {
-        parent::__construct($databases);
+        parent::__construct($additionalDatabases);
     }
 
     protected function configure(): void
@@ -60,23 +63,29 @@ final class DownCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
+    protected function createDefaultContext(): DownContext
+    {
+        return new DownContext($this->migrator, $this->migrationService, $this->downRunner);
+    }
+
+    protected function createContext(DatabaseSetup $setup): DownContext
+    {
+        return new DownContext($setup->migrator, $setup->migrationService, new DownRunner($setup->migrator));
+    }
+
     protected function executeForDatabase(
         InputInterface $input,
         OutputInterface $output,
-        ?DatabaseContext $context,
-    ): int {
-        $migrator = $context->migrator ?? $this->migrator;
-        $migrationService = $context->migrationService ?? $this->migrationService;
-        $downRunner = $context->downRunner ?? $this->downRunner;
-
+        object $context,
+    ): ?int {
         $io = new SymfonyStyle($input, $output);
-        $migrator->setIo($io);
-        $migrationService->setIo($io);
-        $downRunner->setIo($io);
+        $context->migrator->setIo($io);
+        $context->migrationService->setIo($io);
+        $context->downRunner->setIo($io);
 
-        $migrationService->databaseConnection();
+        $context->migrationService->databaseConnection();
 
-        $migrationService->before($this->getName() ?? '');
+        $context->migrationService->before($this->getName() ?? '');
 
         $limit = !$input->getOption('all')
             ? (int) $input->getOption('limit')
@@ -94,27 +103,27 @@ final class DownCommand extends DatabaseCommand
         $namespaces = $input->getOption('namespace');
 
         if (!empty($paths) || !empty($namespaces)) {
-            $migrations = $migrator->getHistory();
+            $migrations = $context->migrator->getHistory();
             $migrations = array_keys($migrations);
-            $migrations = $migrationService->filterMigrations($migrations, $namespaces, $paths);
+            $migrations = $context->migrationService->filterMigrations($migrations, $namespaces, $paths);
 
             if (empty($migrations)) {
                 $io->warning('No applied migrations found.');
 
-                return Command::FAILURE;
+                return null;
             }
 
             if ($limit !== null) {
                 $migrations = array_slice($migrations, 0, $limit);
             }
         } else {
-            $migrations = $migrator->getHistory($limit);
+            $migrations = $context->migrator->getHistory($limit);
 
             if (empty($migrations)) {
                 $output->writeln("<fg=yellow>Apply at least one migration first.</>\n");
                 $io->warning('No migration has been done before.');
 
-                return Command::FAILURE;
+                return null;
             }
 
             $migrations = array_keys($migrations);
@@ -132,12 +141,12 @@ final class DownCommand extends DatabaseCommand
         }
 
         if ($input->getOption('force-yes') || $io->confirm("Revert the above $migrationWord?")) {
-            $instances = $migrationService->makeRevertibleMigrations($migrations);
+            $instances = $context->migrationService->makeRevertibleMigrations($migrations);
             $migrationWas = ($countMigrations === 1 ? 'migration was' : 'migrations were');
 
             foreach ($instances as $i => $instance) {
                 try {
-                    $downRunner->run($instance, $i + 1);
+                    $context->downRunner->run($instance, $i + 1);
                 } catch (Throwable $e) {
                     $output->writeln("\n<fg=yellow>Total $i out of $countMigrations $migrationWas reverted.</>\n");
                     $io->error($i > 0 ? 'Partially reverted.' : 'Not reverted.');

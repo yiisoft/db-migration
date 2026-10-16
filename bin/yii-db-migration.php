@@ -18,7 +18,7 @@ return [
     'db' => null,
 
     /**
-     * Additional named databases (name => Yiisoft\Db\Migration\DatabaseSet instance).
+     * Additional named databases (name => Yiisoft\Db\Migration\DatabaseConfig instance).
      * The "default" database is configured by the other options and can't be defined here.
      * See docs/guide/en/multiple-databases.md.
      */
