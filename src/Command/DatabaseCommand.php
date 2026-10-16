@@ -125,7 +125,7 @@ abstract class DatabaseCommand extends Command
 
     protected function isMultipleDatabases(): bool
     {
-        return $this->additionalDatabases !== null;
+        return $this->additionalDatabases !== null && $this->additionalDatabases->getNames() !== [];
     }
 
     /**
