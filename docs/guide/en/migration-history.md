@@ -20,8 +20,8 @@ to move migration history to a particular version without executing `up()` or `d
 ```
 
 Use the full class name, including its namespace when present, or a 12-digit migration timestamp. These are migration
-filename timestamps, not Unix timestamps or date strings. If several migrations share a timestamp, the first matching migration in the relevant list
-is selected; use its full class name to select an exact target.
+filename timestamps, not Unix timestamps or date strings. If several migrations share a timestamp, the first matching
+migration in the relevant list is selected; use its full class name to select an exact target.
 
 The command modifies history as follows:
 
@@ -38,5 +38,6 @@ To clear the entire history, use the `--all` (`-a`) option:
 ./vendor/bin/yii-db-migration migrate:mark --all
 ```
 
-The command lists the entries to be added and removed, and asks for confirmation before changing history. Use `--force-yes` (`-y`) for unattended execution.
-With multiple databases configured, select one explicitly using `--db=maps`.
+The command lists the entries to be added and removed, and asks for confirmation before changing history. Use
+`--force-yes` (`-y`) for unattended execution. With multiple databases configured, select one explicitly using
+`--db=maps`.
