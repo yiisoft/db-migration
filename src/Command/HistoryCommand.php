@@ -54,7 +54,7 @@ final class HistoryCommand extends DatabaseCommand
 
     protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array
     {
-        return $this->getAllDatabaseNames();
+        return $this->getAvailableDatabaseNames();
     }
 
     protected function createDefaultContext(): MigrationContext

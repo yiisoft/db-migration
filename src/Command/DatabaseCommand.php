@@ -118,7 +118,7 @@ abstract class DatabaseCommand extends Command
      * @return string[]
      * @psalm-return non-empty-list<string>
      */
-    protected function getAllDatabaseNames(): array
+    protected function getAvailableDatabaseNames(): array
     {
         return [DatabaseRegistry::DEFAULT_DATABASE, ...($this->additionalDatabases?->getNames() ?? [])];
     }
@@ -144,7 +144,7 @@ abstract class DatabaseCommand extends Command
             return $this->resolveDatabaseNamesWithMissingOption($input);
         }
 
-        $availableNames = $this->getAllDatabaseNames();
+        $availableNames = $this->getAvailableDatabaseNames();
 
         if (!in_array($name, $availableNames, true)) {
             return 'Unknown database "' . OutputFormatter::escape($name) . '". Available databases: '

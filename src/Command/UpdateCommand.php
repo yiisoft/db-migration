@@ -69,7 +69,7 @@ final class UpdateCommand extends DatabaseCommand
 
         return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
             ? 'The --db option is required with --path or --namespace when multiple databases are configured.'
-            : $this->getAllDatabaseNames();
+            : $this->getAvailableDatabaseNames();
     }
 
     protected function createDefaultContext(): UpdateContext
