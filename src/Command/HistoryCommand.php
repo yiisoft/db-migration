@@ -52,9 +52,9 @@ final class HistoryCommand extends DatabaseCommand
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'All migrations.');
     }
 
-    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array
     {
-        return MissingDatabaseOptionPolicy::ProcessAllDatabases;
+        return $this->getAllDatabaseNames();
     }
 
     protected function createDefaultContext(): MigrationContext

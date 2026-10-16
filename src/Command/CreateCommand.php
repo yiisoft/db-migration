@@ -96,9 +96,9 @@ final class CreateCommand extends DatabaseCommand
             ->setHelp('This command generates new migration file.');
     }
 
-    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array
     {
-        return MissingDatabaseOptionPolicy::ProcessDefaultDatabase;
+        return [DatabaseRegistry::DEFAULT_DATABASE];
     }
 
     protected function createDefaultContext(): CreateContext
