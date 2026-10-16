@@ -13,7 +13,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Yiisoft\Db\Migration\DatabaseRegistry;
 use Yiisoft\Db\Migration\DatabaseSetup;
 
-use function count;
 use function implode;
 use function in_array;
 use function is_string;
@@ -33,22 +32,22 @@ abstract class DatabaseCommand extends Command
 
     final protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $availableNames = [DatabaseRegistry::DEFAULT_DATABASE, ...($this->additionalDatabases?->getNames() ?? [])];
-        $multipleDatabases = count($availableNames) > 1;
         $io = new SymfonyStyle($input, $output);
 
-        $names = $this->resolveDatabaseNames($input, $availableNames, $multipleDatabases);
+        $names = $this->resolveDatabaseNames($input);
         if (is_string($names)) {
             $io->error($names);
             return Command::INVALID;
         }
 
+        $multipleDatabases = $this->isMultipleDatabases();
         $hasResults = false;
 
         foreach ($names as $name) {
-            if ($this->additionalDatabases === null || $name === DatabaseRegistry::DEFAULT_DATABASE) {
+            if (!$multipleDatabases || $name === DatabaseRegistry::DEFAULT_DATABASE) {
                 $context = $this->createDefaultContext();
             } else {
+                /** @psalm-var DatabaseRegistry $this->additionalDatabases */
                 $context = $this->createContext($this->additionalDatabases->createSetup($name));
             }
 
@@ -70,15 +69,20 @@ abstract class DatabaseCommand extends Command
     }
 
     /**
-     * Returns how the command behaves when the `--db` option isn't specified.
+     * Resolves the database names or returns a message indicating that an option is missing if multiple databases
+     * are configured.
+     *
+     * @param InputInterface $input The input interface containing the command options and arguments.
+     *
+     * @return string[]|string
+     * @psalm-return non-empty-list<string>|string
      */
-    abstract protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy;
-
-    /**
-     * Returns the error message shown when the `--db` option is required, but isn't specified.
-     */
-    protected function getMissingDatabaseOptionError(): string
+    protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array|string
     {
+        if (!$this->isMultipleDatabases()) {
+            return [DatabaseRegistry::DEFAULT_DATABASE];
+        }
+
         return 'The --db option is required when multiple databases are configured.';
     }
 
@@ -111,32 +115,36 @@ abstract class DatabaseCommand extends Command
     ): ?int;
 
     /**
+     * @return string[]
+     * @psalm-return non-empty-list<string>
+     */
+    protected function getAvailableDatabaseNames(): array
+    {
+        return [DatabaseRegistry::DEFAULT_DATABASE, ...($this->additionalDatabases?->getNames() ?? [])];
+    }
+
+    protected function isMultipleDatabases(): bool
+    {
+        return $this->additionalDatabases !== null && $this->additionalDatabases->getNames() !== [];
+    }
+
+    /**
      * Resolves names of databases to process.
      *
-     * @param string[] $availableNames
      * @return string[]|string The database names, or an error message if the databases can't be resolved.
      *
-     * @psalm-param list<string> $availableNames
-     * @psalm-return list<string>|string
+     * @psalm-return non-empty-list<string>|string
      */
-    private function resolveDatabaseNames(
-        InputInterface $input,
-        array $availableNames,
-        bool $multipleDatabases,
-    ): array|string {
+    private function resolveDatabaseNames(InputInterface $input): array|string
+    {
         /** @var string|null $name */
         $name = $input->getOption('db');
 
         if ($name === null) {
-            $policy = $this->getMissingDatabaseOptionPolicy($input);
-            if ($multipleDatabases && $policy === MissingDatabaseOptionPolicy::RejectIfMultiple) {
-                return $this->getMissingDatabaseOptionError();
-            }
-
-            return $policy === MissingDatabaseOptionPolicy::ProcessDefaultDatabase
-                ? [DatabaseRegistry::DEFAULT_DATABASE]
-                : $availableNames;
+            return $this->resolveDatabaseNamesWithMissingOption($input);
         }
+
+        $availableNames = $this->getAvailableDatabaseNames();
 
         if (!in_array($name, $availableNames, true)) {
             return 'Unknown database "' . OutputFormatter::escape($name) . '". Available databases: '

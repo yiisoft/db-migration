@@ -60,16 +60,15 @@ final class NewCommand extends DatabaseCommand
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Namespace of migrations to display.');
     }
 
-    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
+    protected function resolveDatabaseNamesWithMissingOption(InputInterface $input): array|string
     {
-        return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
-            ? MissingDatabaseOptionPolicy::RejectIfMultiple
-            : MissingDatabaseOptionPolicy::ProcessAllDatabases;
-    }
+        if (!$this->isMultipleDatabases()) {
+            return [DatabaseRegistry::DEFAULT_DATABASE];
+        }
 
-    protected function getMissingDatabaseOptionError(): string
-    {
-        return 'The --db option is required with --path or --namespace when multiple databases are configured.';
+        return $input->getOption('path') !== [] || $input->getOption('namespace') !== []
+            ? 'The --db option is required with --path or --namespace when multiple databases are configured.'
+            : $this->getAvailableDatabaseNames();
     }
 
     protected function createDefaultContext(): MigrationContext

@@ -63,11 +63,6 @@ final class DownCommand extends DatabaseCommand
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
-    protected function getMissingDatabaseOptionPolicy(InputInterface $input): MissingDatabaseOptionPolicy
-    {
-        return MissingDatabaseOptionPolicy::RejectIfMultiple;
-    }
-
     protected function createDefaultContext(): DownContext
     {
         return new DownContext($this->migrator, $this->migrationService, $this->downRunner);
