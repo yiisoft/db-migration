@@ -15,13 +15,12 @@ to move migration history to a particular version without executing `up()` or `d
 
 ```shell
 ./vendor/bin/yii-db-migration migrate:mark 'App\Migrations\M260101000002CreateIndex'
-./vendor/bin/yii-db-migration migrate:mark M260101000002CreateIndex
-./vendor/bin/yii-db-migration migrate:mark 260101000002
+./vendor/bin/yii-db-migration migrate:mark M260101000003AddColumn
+./vendor/bin/yii-db-migration migrate:mark 260101000004
 ```
 
-Use the full class name, including its namespace when present, or a 12-digit migration timestamp. A timestamp with an
-underscore between date and time (`260101_000002`) is also accepted. These are migration filename timestamps, not Unix
-timestamps or date strings. If several migrations share a timestamp, the first matching migration in the relevant list
+Use the full class name, including its namespace when present, or a 12-digit migration timestamp. These are migration
+filename timestamps, not Unix timestamps or date strings. If several migrations share a timestamp, the first matching migration in the relevant list
 is selected; use its full class name to select an exact target.
 
 The command modifies history as follows:
@@ -33,10 +32,10 @@ The command modifies history as follows:
 - If the target is already the latest recorded entry, nothing changes.
 - If the target is unknown, report an error without adding or removing history entries.
 
-To clear the entire history, use the special base version:
+To clear the entire history, use the `--all` (`-a`) option:
 
 ```shell
-./vendor/bin/yii-db-migration migrate:mark m000000_000000_base
+./vendor/bin/yii-db-migration migrate:mark --all
 ```
 
 The command lists the entries to be added and removed, and asks for confirmation before changing history. Use `--force-yes` (`-y`) for unattended execution.
