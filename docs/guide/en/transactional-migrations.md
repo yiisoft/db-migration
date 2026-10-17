@@ -68,10 +68,10 @@ Pass the `transactional` argument to `CreateService::run()` to override the mode
 Each named database has its own `newMigrationTransactional` setting. It does not inherit the default database's setting.
 
 For Yii Console, add the setting to the database's entry in `databases`.
-For standalone or Symfony usage, pass it to the `DatabaseSet` constructor:
+For standalone or Symfony usage, pass it to the `DatabaseConfig` constructor:
 
 ```php
-new DatabaseSet(
+new DatabaseConfig(
     $mapsConnection,
     newMigrationPath: __DIR__ . '/migrations/maps',
     newMigrationTransactional: true,

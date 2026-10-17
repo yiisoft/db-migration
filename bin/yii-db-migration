@@ -13,8 +13,8 @@ use Yiisoft\Db\Migration\Command\MarkCommand;
 use Yiisoft\Db\Migration\Command\NewCommand;
 use Yiisoft\Db\Migration\Command\RedoCommand;
 use Yiisoft\Db\Migration\Command\UpdateCommand;
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseConfig;
+use Yiisoft\Db\Migration\DatabaseRegistry;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Migrator;
 use Yiisoft\Db\Migration\Runner\DownRunner;
@@ -45,7 +45,7 @@ if (!file_exists($configFile)) {
  * @psalm-var array{
  *     container: ContainerInterface|null,
  *     db: ConnectionInterface|null,
- *     databases?: array<string, DatabaseSet>,
+ *     databases?: array<string, DatabaseConfig>,
  *     useTablePrefix: bool,
  *     historyTable: string,
  *     migrationNameLimit: int|null,
@@ -80,7 +80,7 @@ $migrationService->setNewMigrationPath($params['newMigrationPath']);
 $migrationService->setSourceNamespaces($params['sourceNamespaces']);
 $migrationService->setSourcePaths($params['sourcePaths']);
 
-$databases = new DatabaseSetRegistry($injector, $migrationInformer, $params['databases'] ?? []);
+$databases = new DatabaseRegistry($injector, $migrationInformer, $params['databases'] ?? []);
 
 $application = new Application('Yii Database Migration Tool', '1.0.0');
 $application->addCommands([

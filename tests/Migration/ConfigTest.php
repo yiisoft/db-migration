@@ -12,8 +12,9 @@ use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
+use Yiisoft\Files\FileHelper;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseRegistry;
 use Symfony\Component\Console\Tester\CommandTester;
 use Yiisoft\Db\Migration\Command\CreateCommand;
 use Yiisoft\Db\Migration\Command\DownCommand;
@@ -33,7 +34,11 @@ use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function dirname;
+use function file_get_contents;
+use function glob;
 use function str_contains;
+use function sys_get_temp_dir;
+use function uniqid;
 
 final class ConfigTest extends TestCase
 {
@@ -87,7 +92,7 @@ final class ConfigTest extends TestCase
                 ],
             ],
         );
-        $this->assertSame(['default', 'maps'], $container->get(DatabaseSetRegistry::class)->getNames());
+        $this->assertSame(['maps'], $container->get(DatabaseRegistry::class)->getNames());
 
         $command = new CommandTester($container->get(DownCommand::class));
         $this->assertSame(2, $command->execute([]));
@@ -127,17 +132,28 @@ final class ConfigTest extends TestCase
         ?bool $transactional,
         bool $expected,
     ): void {
+        $directory = sys_get_temp_dir() . '/yii-migration-config-' . uniqid();
         $container = $this->createConsoleContainer([
             'maps' => [
                 'db' => ConnectionInterface::class,
+                'newMigrationPath' => $directory,
                 'newMigrationTransactional' => $transactional,
             ],
         ]);
 
-        $code = $container->get(DatabaseSetRegistry::class)->createContext('maps')
-            ->createService->run($command, 'post', 'Example');
+        try {
+            FileHelper::ensureDirectory($directory);
+            $tester = new CommandTester($container->get(CreateCommand::class));
+            $exitCode = $tester->execute(['name' => 'post', '--command' => $command, '--db' => 'maps']);
 
-        $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+            $this->assertSame(0, $exitCode, $tester->getDisplay());
+            $files = glob($directory . '/*.php');
+            $this->assertCount(1, $files);
+            $code = file_get_contents($files[0]);
+            $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+        } finally {
+            FileHelper::removeDirectory($directory);
+        }
     }
 
     private function createConsoleContainer(

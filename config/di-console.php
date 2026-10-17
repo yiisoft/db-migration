@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Db\Migration\DatabaseSet;
-use Yiisoft\Db\Migration\DatabaseSetRegistry;
+use Yiisoft\Db\Migration\DatabaseConfig;
+use Yiisoft\Db\Migration\DatabaseRegistry;
 use Yiisoft\Db\Migration\Informer\ConsoleMigrationInformer;
 use Yiisoft\Db\Migration\Informer\MigrationInformerInterface;
 use Yiisoft\Db\Migration\Service\Generate\CreateService;
@@ -21,12 +21,11 @@ return [
         ],
     ],
 
-    DatabaseSetRegistry::class => [
-        'class' => DatabaseSetRegistry::class,
+    DatabaseRegistry::class => [
         '__construct()' => [
             'databases' => array_map(
                 static fn(array $database): DynamicReference => DynamicReference::to([
-                    'class' => DatabaseSet::class,
+                    'class' => DatabaseConfig::class,
                     '__construct()' => ['db' => Reference::to($database['db'])] + $database,
                 ]),
                 $params['yiisoft/db-migration']['databases'],
