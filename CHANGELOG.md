@@ -2,7 +2,8 @@
 
 ## 2.1.2 under development
 
-- New #363: Add `migrate:mark` to move migration history to a version without executing migrations (@samdark)
+- New #363, #373: Add `migrate:mark` to move migration history to a version without executing migrations (@samdark,
+  @vjik)
 - New #360, #366, #371: Add support for additional named databases with separate migration history and `--db`
   option to select database (@samdark, @vjik)
 - Enh #255: Show friendly error on run `./vendor/bin/yii-db-migration` without configuration file (@KalimeroMK)

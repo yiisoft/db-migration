@@ -141,7 +141,7 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
         self::assertSame(Command::SUCCESS, $this->command('up')->execute(['--db' => 'maps', '-y' => true]));
         self::assertSame(Command::SUCCESS, $this->command('mark')->execute([
             '--db' => 'maps',
-            'version' => MarkCommand::BASE_MIGRATION,
+            '--clear' => true,
             '-y' => true,
         ]));
         self::assertSame([], $this->migrator('maps')->getHistory());

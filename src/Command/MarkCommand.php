@@ -21,9 +21,9 @@ use Yiisoft\Db\Migration\Service\MigrationService;
 use function array_keys;
 use function array_map;
 use function array_slice;
+use function count;
 use function in_array;
 use function preg_match;
-use function str_replace;
 use function strlen;
 use function trim;
 
@@ -36,9 +36,9 @@ use function trim;
  *
  * ```shell
  * ./yii migrate:mark 'App\Migrations\M260101000002CreateIndex' # record pending migrations through this class
- * ./yii migrate:mark M260101000002CreateIndex                   # use an unqualified migration class name
- * ./yii migrate:mark 260101000002                               # select a migration by its timestamp
- * ./yii migrate:mark m000000_000000_base                        # remove all migration history entries
+ * ./yii migrate:mark M260101000003AddColumn                    # use an unqualified migration class name
+ * ./yii migrate:mark 260101000004                              # select a migration by its timestamp
+ * ./yii migrate:mark --clear                                   # remove all migration history entries
  * ```
  *
  * A pending target is recorded along with all earlier pending migrations. A recorded target removes newer history
@@ -49,8 +49,6 @@ use function trim;
 #[AsCommand('migrate:mark', 'Modifies migration history without executing migrations. WARNING: Use only if you understand the consequences; incorrect history can cause data loss.')]
 final class MarkCommand extends DatabaseCommand
 {
-    public const BASE_MIGRATION = 'm000000_000000_base';
-
     public function __construct(
         private readonly MigrationService $migrationService,
         private readonly Migrator $migrator,
@@ -62,7 +60,8 @@ final class MarkCommand extends DatabaseCommand
     protected function configure(): void
     {
         $this
-            ->addArgument('version', InputArgument::REQUIRED, 'Migration class name, timestamp, or m000000_000000_base to clear history.')
+            ->addArgument('version', InputArgument::OPTIONAL, 'Migration class name or timestamp.')
+            ->addOption('clear', 'c', InputOption::VALUE_NONE, 'Remove all migration history entries.')
             ->addOption('force-yes', 'y', InputOption::VALUE_NONE, 'Force yes to all questions.');
     }
 
@@ -86,25 +85,46 @@ final class MarkCommand extends DatabaseCommand
         $context->migrationService->setIo($io);
         $context->migrationService->databaseConnection();
 
-        /** @var string $version */
+        /** @var string|null $version */
         $version = $input->getArgument('version');
+        $clear = (bool) $input->getOption('clear');
+
+        if ($clear === ($version !== null)) {
+            $io->error('Specify either a version or the "--clear" option.');
+            return Command::INVALID;
+        }
+
+        $history = array_keys($context->migrator->getHistory());
+
+        if ($version === null) {
+            if ($history === []) {
+                $io->success('The migration history is already empty. Nothing needs to be done.');
+                return Command::SUCCESS;
+            }
+
+            $this->writeMigrations($output, $history, 'to be removed from history');
+
+            $io->note('Only migration history will change. No migrations will be reverted.');
+            if ($input->getOption('force-yes') || $io->confirm('Remove all migration history entries?', false)) {
+                $context->migrator->updateHistory([], $history);
+                $io->success('The migration history is cleared. No actual migration was performed.');
+            }
+
+            return Command::SUCCESS;
+        }
+
         $version = trim($version, '\\');
         $label = OutputFormatter::escape($version);
-        $timestamp = preg_match('/^\d{6}_?\d{6}$/D', $version) === 1
-            ? str_replace('_', '', $version)
-            : null;
+        $timestamp = preg_match('/^\d{12}$/D', $version) === 1 ? $version : null;
 
-        if ($version !== self::BASE_MIGRATION && $timestamp === null
-            && preg_match('/^(?:\w+\\\\)*M\d{12}.*$/D', $version) !== 1
-        ) {
-            $io->error('The version must be a migration class name, a migration timestamp, or ' . self::BASE_MIGRATION . '.');
+        if ($timestamp === null && preg_match('/^(?:\w+\\\\)*M\d{12}.*$/D', $version) !== 1) {
+            $io->error('The version must be a migration class name or a migration timestamp.');
             return Command::INVALID;
         }
 
         $add = [];
         $remove = [];
         $found = false;
-        $history = array_keys($context->migrator->getHistory());
         $isRecordedClass = $timestamp === null && in_array(
             $version,
             array_map(static fn(string $name): string => trim($name, '\\'), $history),
@@ -112,7 +132,7 @@ final class MarkCommand extends DatabaseCommand
         );
 
         // Exact recorded classes do not need source files. Timestamps still select pending targets first.
-        if ($version !== self::BASE_MIGRATION && !$isRecordedClass) {
+        if (!$isRecordedClass) {
             $pending = $context->migrationService->getNewMigrations();
             foreach ($pending as $i => $migration) {
                 if ($this->matches($migration, $version, $timestamp)) {
@@ -124,7 +144,6 @@ final class MarkCommand extends DatabaseCommand
         }
 
         if (!$found) {
-            $history[] = self::BASE_MIGRATION;
             foreach ($history as $i => $migration) {
                 if ($this->matches($migration, $version, $timestamp)) {
                     $remove = array_slice($history, 0, $i);
@@ -152,6 +171,9 @@ final class MarkCommand extends DatabaseCommand
             }
         }
 
+        $this->writeMigrations($output, $add, 'to be marked as applied');
+        $this->writeMigrations($output, $remove, 'to be removed from history');
+
         $io->note('Only migration history will change. No migrations will be applied or reverted.');
         if ($input->getOption('force-yes') || $io->confirm("Set migration history at $label?", false)) {
             $context->migrator->updateHistory($add, $remove);
@@ -159,6 +181,27 @@ final class MarkCommand extends DatabaseCommand
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @psalm-param list<string> $migrations
+     */
+    private function writeMigrations(OutputInterface $output, array $migrations, string $action): void
+    {
+        if ($migrations === []) {
+            return;
+        }
+
+        $count = count($migrations);
+        $migrationWord = $count === 1 ? 'migration' : 'migrations';
+
+        $output->writeln("<fg=yellow>Total $count $migrationWord $action:</>\n");
+
+        foreach ($migrations as $i => $migration) {
+            $output->writeln("\t<fg=yellow>" . ($i + 1) . '. ' . OutputFormatter::escape($migration) . '</>');
+        }
+
+        $output->writeln('');
     }
 
     private function matches(string $migration, string $version, ?string $timestamp): bool
