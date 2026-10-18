@@ -277,8 +277,8 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
         return [
             'configured on' => ['create', true, [], true],
             'configured off' => ['table', false, [], false],
-            'override on' => ['create', false, ['--transaction' => true], true],
-            'override off' => ['table', true, ['--no-transaction' => true], false],
+            'override on' => ['create', false, ['--transactional' => true], true],
+            'override off' => ['table', true, ['--no-transactional' => true], false],
         ];
     }
 

@@ -40,10 +40,10 @@ final class CreateCommandTest extends AbstractCreateCommandTest
             'table default' => ['table', null, [], true],
             'configured on' => ['create', true, [], true],
             'configured off' => ['table', false, [], false],
-            'override on' => ['create', null, ['--transaction' => true], true],
-            'override off' => ['table', null, ['--no-transaction' => true], false],
-            'override configured on' => ['create', true, ['--no-transaction' => true], false],
-            'override configured off' => ['table', false, ['--transaction' => true], true],
+            'override on' => ['create', null, ['--transactional' => true], true],
+            'override off' => ['table', null, ['--no-transactional' => true], false],
+            'override configured on' => ['create', true, ['--no-transactional' => true], false],
+            'override configured off' => ['table', false, ['--transactional' => true], true],
         ];
     }
 
@@ -69,7 +69,7 @@ final class CreateCommandTest extends AbstractCreateCommandTest
         $path = MigrationHelper::useMigrationsPath($this->container);
         $command = $this->createCommand($this->container);
 
-        $firstExitCode = $command->execute(['name' => 'First', '--transaction' => true]);
+        $firstExitCode = $command->execute(['name' => 'First', '--transactional' => true]);
         $secondExitCode = $command->execute(['name' => 'Second']);
 
         $this->assertSame(Command::SUCCESS, $firstExitCode);

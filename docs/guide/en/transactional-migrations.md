@@ -8,16 +8,16 @@ The interface does not change these limits.
 
 ## Create a migration
 
-To generate a transactional migration, use `--transaction`:
+To generate a transactional migration, use `--transactional`:
 
 ```shell
-./yii migrate:create update_posts --transaction
+./yii migrate:create update_posts --transactional
 ```
 
-To generate a migration without a transaction, use `--no-transaction`:
+To generate a migration without a transaction, use `--no-transactional`:
 
 ```shell
-./yii migrate:create post --command=table --no-transaction
+./yii migrate:create post --command=table --no-transactional
 ```
 
 Both options work with all generator commands:
@@ -81,7 +81,7 @@ new DatabaseConfig(
 The CLI option overrides the setting for the selected database:
 
 ```shell
-./yii migrate:create update_places --db=maps --no-transaction
+./yii migrate:create update_places --db=maps --no-transactional
 ```
 
 See [Multiple databases](multiple-databases.md) to configure the connections.

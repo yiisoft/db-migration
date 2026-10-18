@@ -2,7 +2,7 @@
 
 ## 2.1.2 under development
 
-- New #367: Add configurable transaction mode and `--transaction` / `--no-transaction` options for migration generation
+- New #367: Add configurable transaction mode and `--transactional` / `--no-transactional` options for migration generation
   (@samdark)
 - New #363, #373: Add `migrate:mark` to move migration history to a version without executing migrations (@samdark,
   @vjik)

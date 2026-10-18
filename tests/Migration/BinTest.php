@@ -62,8 +62,8 @@ final class BinTest extends TestCase
         return [
             'configured on' => ['create', true, [], true],
             'configured off' => ['table', false, [], false],
-            'override on' => ['create', false, ['--transaction'], true],
-            'override off' => ['table', true, ['--no-transaction'], false],
+            'override on' => ['create', false, ['--transactional'], true],
+            'override off' => ['table', true, ['--no-transactional'], false],
         ];
     }
 

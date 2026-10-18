@@ -94,7 +94,7 @@ final class CreateCommand extends DatabaseCommand
             ->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to migration directory.')
             ->addOption('namespace', 'ns', InputOption::VALUE_REQUIRED, 'Migration file namespace.')
             ->addOption(
-                'transaction',
+                'transactional',
                 null,
                 InputOption::VALUE_NEGATABLE,
                 'Generate a transactional migration. If omitted, use the configured mode or template default.',
@@ -208,7 +208,7 @@ final class CreateCommand extends DatabaseCommand
         /** @var string|null $tableComment */
         $tableComment = $input->getOption('table-comment');
         /** @var bool|null $transactional */
-        $transactional = $input->getOption('transaction');
+        $transactional = $input->getOption('transactional');
 
         $content = $context->createService->run(
             $command,
