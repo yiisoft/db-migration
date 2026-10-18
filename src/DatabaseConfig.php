@@ -15,6 +15,8 @@ final class DatabaseConfig
     /**
      * @param string[] $sourceNamespaces
      * @param string[] $sourcePaths
+     * @param bool|null $newMigrationTransactional Whether generated migrations use transactions.
+     * `null` keeps template defaults.
      */
     public function __construct(
         public readonly ConnectionInterface $db,
@@ -26,5 +28,6 @@ final class DatabaseConfig
         public readonly ?int $migrationNameLimit = Migrator::DEFAULT_MIGRATION_NAME_LIMIT,
         public readonly bool $useTablePrefix = CreateService::DEFAULT_USE_TABLE_PREFIX,
         public readonly ?int $maxSqlOutputLength = null,
+        public readonly ?bool $newMigrationTransactional = null,
     ) {}
 }

@@ -53,6 +53,9 @@ migrate:up       Applies new migrations.
 
 The create command allows defining fields for the table being created.
 
+Use `--transactional` or `--no-transactional` to choose the transaction mode when creating a migration.
+See [Transactional migrations](docs/guide/en/transactional-migrations.md) to configure the default mode.
+
 Use `--db=name` to select one of [multiple databases](docs/guide/en/multiple-databases.md).
 
 ## Documentation

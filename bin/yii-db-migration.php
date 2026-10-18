@@ -41,6 +41,11 @@ return [
     'newMigrationPath' => '',
 
     /**
+     * Whether generated migrations use transactions. Set to `null` to keep template defaults.
+     */
+    'newMigrationTransactional' => null,
+
+    /**
      * List of directories containing the migration classes.
      * Migration classes located at these paths should be declared without a namespace.
      * Use the "sourceNamespaces" option in case you are using namespaced migrations.

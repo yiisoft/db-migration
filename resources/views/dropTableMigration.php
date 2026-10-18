@@ -15,10 +15,13 @@ use Yiisoft\Db\Migration\Command\CreateCommand;
  * @var PhpRenderer $this
  * @var string $className The new migration class name without namespace.
  * @var string $namespace The new migration class namespace.
+ * @var bool|null $transactional Whether the migration uses transactions. `null` keeps the template default.
  * @var string $table The table name.
  * @var Column[] $columns Fields.
  * @var ForeignKey[] $foreignKeys Foreign keys.
  */
+
+$transactional ??= false;
 
 echo "<?php\n";
 
@@ -31,6 +34,9 @@ if (!empty($namespace)) {
 
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+<?php if ($transactional): ?>
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
+<?php endif; ?>
 
 /**
  * Handles the dropping of table `<?= $table ?>`.
@@ -38,7 +44,9 @@ use Yiisoft\Db\Migration\RevertibleMigrationInterface;
     'foreignKeys' => $foreignKeys,
 ]) ?>
  */
-final class <?= $className ?> implements RevertibleMigrationInterface
+final class <?= $className ?> implements RevertibleMigrationInterface<?=
+    $transactional ? ", TransactionalMigrationInterface\n" : "\n"
+?>
 {
     public function up(MigrationBuilder $b): void
     {

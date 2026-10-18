@@ -29,14 +29,20 @@ final class CreateService
     /**
      * @param bool $useTablePrefix Indicates whether the table names generated should consider the `tablePrefix` setting
      * of the DB connection. For example, if the table name is `post`, the generator will return `{{%post}}`.
+     * @param bool|null $transactional Whether generated migrations use transactions. `null` keeps template defaults.
      */
     public function __construct(
         private readonly ConnectionInterface $db,
         private readonly bool $useTablePrefix = self::DEFAULT_USE_TABLE_PREFIX,
+        private readonly ?bool $transactional = null,
     ) {
         $this->phpRenderer = new PhpRenderer();
     }
 
+    /**
+     * @param bool|null $transactional Overrides the configured transaction mode for this migration.
+     * `null` uses the configured mode or the template default.
+     */
     public function run(
         string $command,
         string $table,
@@ -45,6 +51,7 @@ final class CreateService
         ?string $fields = null,
         ?string $and = null,
         ?string $tableComment = null,
+        ?bool $transactional = null,
     ): string {
         $templateFile = $this->getTemplate($command);
 
@@ -88,6 +95,7 @@ final class CreateService
                 'columns' => $columns,
                 'foreignKeys' => $foreignKeys,
                 'tableComment' => $tableComment,
+                'transactional' => $transactional ?? $this->transactional,
             ],
         );
     }

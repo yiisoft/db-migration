@@ -33,6 +33,7 @@ use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty;
 use Yiisoft\Db\Migration\Tests\Support\MigrationsExtra\M231108183919Empty2;
 
 use function dirname;
+use function str_contains;
 
 abstract class AbstractDatabaseCommandsTest extends TestCase
 {
@@ -269,6 +270,39 @@ abstract class AbstractDatabaseCommandsTest extends TestCase
         self::assertSame(Command::SUCCESS, $command->execute(['name' => 'MapsExample', '--db' => 'maps']));
         self::assertCount(1, glob($this->directory . '/maps/*.php'));
         self::assertSame([], glob($this->directory . '/analytics/*.php'));
+    }
+
+    public static function transactionModes(): array
+    {
+        return [
+            'configured on' => ['create', true, [], true],
+            'configured off' => ['table', false, [], false],
+            'override on' => ['create', false, ['--transactional' => true], true],
+            'override off' => ['table', true, ['--no-transactional' => true], false],
+        ];
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testCreateUsesNamedDatabaseTransactionMode(
+        string $type,
+        bool $default,
+        array $options,
+        bool $expected,
+    ): void {
+        $this->sets['maps'] = new DatabaseConfig(
+            $this->connections['maps'],
+            newMigrationPath: $this->directory . '/maps',
+            newMigrationTransactional: $default,
+        );
+        $command = $this->command('create');
+
+        $exitCode = $command->execute(['name' => 'post', '--command' => $type, '--db' => 'maps'] + $options);
+
+        self::assertSame(Command::SUCCESS, $exitCode);
+        $files = glob($this->directory . '/maps/*.php');
+        self::assertCount(1, $files);
+        self::assertSame($expected, str_contains(file_get_contents($files[0]), 'TransactionalMigrationInterface'));
+        self::assertSame([], glob($this->directory . '/default/*.php'));
     }
 
     public function testStopsOnExceptionAndRollsBackOnlyTheFailingDatabase(): void

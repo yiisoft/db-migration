@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Db\Migration\Tests\Migration;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
@@ -11,6 +12,7 @@ use Yiisoft\Db\Sqlite\Connection as SqLiteConnection;
 use Yiisoft\Db\Sqlite\Driver as SqLiteDriver;
 use Yiisoft\Di\Container;
 use Yiisoft\Di\ContainerConfig;
+use Yiisoft\Files\FileHelper;
 use Yiisoft\Test\Support\SimpleCache\MemorySimpleCache;
 use Yiisoft\Db\Migration\DatabaseRegistry;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -32,6 +34,11 @@ use Yiisoft\Db\Migration\Service\Generate\CreateService;
 use Yiisoft\Db\Migration\Service\MigrationService;
 
 use function dirname;
+use function file_get_contents;
+use function glob;
+use function str_contains;
+use function sys_get_temp_dir;
+use function uniqid;
 
 final class ConfigTest extends TestCase
 {
@@ -99,8 +106,61 @@ final class ConfigTest extends TestCase
         );
     }
 
-    private function createConsoleContainer(array $databases = [], array $definitions = []): Container
+    public static function transactionModes(): array
     {
+        return [
+            ['create', null, false],
+            ['table', null, true],
+            ['create', true, true],
+            ['table', false, false],
+        ];
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testTransactionModeConfiguration(string $command, ?bool $transactional, bool $expected): void
+    {
+        $container = $this->createConsoleContainer(transactional: $transactional);
+
+        $code = $container->get(CreateService::class)->run($command, 'post', 'Example');
+
+        $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+    }
+
+    #[DataProvider('transactionModes')]
+    public function testNamedDatabaseTransactionModeConfiguration(
+        string $command,
+        ?bool $transactional,
+        bool $expected,
+    ): void {
+        $directory = sys_get_temp_dir() . '/yii-migration-config-' . uniqid();
+        $container = $this->createConsoleContainer([
+            'maps' => [
+                'db' => ConnectionInterface::class,
+                'newMigrationPath' => $directory,
+                'newMigrationTransactional' => $transactional,
+            ],
+        ]);
+
+        try {
+            FileHelper::ensureDirectory($directory);
+            $tester = new CommandTester($container->get(CreateCommand::class));
+            $exitCode = $tester->execute(['name' => 'post', '--command' => $command, '--db' => 'maps']);
+
+            $this->assertSame(0, $exitCode, $tester->getDisplay());
+            $files = glob($directory . '/*.php');
+            $this->assertCount(1, $files);
+            $code = file_get_contents($files[0]);
+            $this->assertSame($expected, str_contains($code, 'TransactionalMigrationInterface'));
+        } finally {
+            FileHelper::removeDirectory($directory);
+        }
+    }
+
+    private function createConsoleContainer(
+        array $databases = [],
+        array $definitions = [],
+        ?bool $transactional = null,
+    ): Container {
         $config = ContainerConfig::create()
             ->withDefinitions(array_merge(
                 [
@@ -116,15 +176,16 @@ final class ConfigTest extends TestCase
                     ],
                 ],
                 $definitions,
-                $this->getConsoleDefinitions($databases),
+                $this->getConsoleDefinitions($databases, $transactional),
             ));
         return new Container($config);
     }
 
-    private function getConsoleDefinitions(array $databases): array
+    private function getConsoleDefinitions(array $databases, ?bool $transactional): array
     {
         $params = $this->getParams();
         $params['yiisoft/db-migration']['databases'] = $databases;
+        $params['yiisoft/db-migration']['newMigrationTransactional'] = $transactional;
         return require dirname(__DIR__, 2) . '/config/di-console.php';
     }
 
