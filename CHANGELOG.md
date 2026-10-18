@@ -4,7 +4,6 @@
 
 - New #367: Add configurable transaction mode and `--transaction` / `--no-transaction` options for migration generation
   (@samdark)
-- New #363: Add `migrate:mark` to move migration history to a version without executing migrations (@samdark)
 - New #363, #373: Add `migrate:mark` to move migration history to a version without executing migrations (@samdark,
   @vjik)
 - New #360, #366, #371: Add support for additional named databases with separate migration history and `--db`
