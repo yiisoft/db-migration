@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 2.2.1 under development
+
+- no changes in this release.
+
 ## 2.2.0 October 18, 2026
 
 - New #360, #366, #371: Add support for additional named databases with separate migration history and `--db`
