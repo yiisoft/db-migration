@@ -1,5 +1,9 @@
 # Yii DB Migration Change Log
 
+## 3.0.0 under development
+
+- Chg #313: Deny pass `null` to `CreateService::getTemplate()` (@KalimeroMK)
+
 ## 2.1.2 under development
 
 - New #367: Add configurable transaction mode and `--transactional` / `--no-transactional` options for migration
